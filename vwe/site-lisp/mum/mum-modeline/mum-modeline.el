@@ -407,7 +407,7 @@ corresponding to the mode line clicked."
 	nil))
 
 (defun mum-modeline/segment-indent-spc ()
-  "Displays the indentation information."
+  "Display the indentation information."
   (if indent-tabs-mode
 	  (let ((spc)
 			(indent
