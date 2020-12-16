@@ -38,7 +38,10 @@
      mum-modeline/segment-buffer-name
 	 mum-modeline/segment-remote-host
      mum-modeline/segment-process
+	 mum-modeline/segment-space
      mum-modeline/segment-vc
+	 mum-modeline/segment-space
+	 mum-modeline/segment-vc-diff
 	 mum-modeline/segment-space
 	 mum-modeline/segment-position-percent
 	 mum-modeline/segment-separator
@@ -360,6 +363,19 @@ corresponding to the mode line clicked."
   "Display color-coded version control information in the mode-line."
   '(vc-mode vc-mode))
 
+(defun mum-modeline/segment-vc-diff ()
+  "Display vc diff."
+  (let* ((status (vc-state (buffer-name))))
+	(when (not (equal status 'up-to-date))
+	  (propertize (format "D:%S" status)
+				  'face 'mum-modeline/info-face
+				  'help-echo (format "diff: %s" status)
+				  'local-map (purecopy
+							  (mum-modeline/make-mouse-map 'mouse-1 (lambda ()
+																	  (interactive)
+																	  (magit-diff-dwim))))
+				  'mouse-face 'mode-line-highlight))))
+
 (defun mum-modeline/segment-remote-host ()
   "Hostname for remote buffers."
   (when default-directory
@@ -421,7 +437,7 @@ corresponding to the mode line clicked."
 	nil))
 
 (defun mum-modeline/segment-eol ()
-  "Displays the EOL style of the current buffer in the mode-line."
+  "Display the EOL style of the current buffer in the mode-line."
   (let* ((eol (coding-system-eol-type buffer-file-coding-system))
 		 (mnemonic (pcase eol
 					 ('0 "LF")
