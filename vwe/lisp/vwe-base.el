@@ -276,7 +276,7 @@ ON/OFF?"
 
 (when vwe@lib--sys-win-p
   (start-process "emacs-hide-cmd" nil
-				 (vwe@lib--path-vwe-ect' "win/emacs_hide_cmd.exe" t)))
+				 (vwe@lib--path-vwe-etc' "win/emacs_hide_cmd.exe" t)))
 
 (vwe@base--init)
 
