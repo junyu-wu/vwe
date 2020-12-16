@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: println
+# key: pn
+# --
+fmt.Println("${1:msg}", ${2:args})
+$0

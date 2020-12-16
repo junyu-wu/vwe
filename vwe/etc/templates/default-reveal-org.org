@@ -1,0 +1,16 @@
+#+OPTIONS: reveal_title_slide:"<h2>%t</h2><h3>%s</h3><h6>%a</h6><h6>%d</h6>"
+#+OPTIONS: toc:nil num:nil todo:nil pri:nil tags:nil ^:nil
+#+REVEAL_TRANS: slide
+#+REVEAL_THEME: black
+#+REVEAL_INIT_OPTIONS: slideNumber:true
+#+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
+#+LATEX_COMPILER: xelatex
+#+TODO: TODO(t) WAITING(w) VERIFY(v) | DONE(d) CANCELLED(c)
+#+CATEGORY:${1:[Default]}
+#+TAGS:${2:[Note]}
+#+TITLE: ${3:`(file-name-sans-extension (file-name-nondirectory (buffer-file-name)))`}
+#+SUBTITLE:${4:by}
+#+AUTHOR:${5:`(user-full-name)`}
+#+DATE:${6:`(format-time-string "%Y-%m-%d")`}
+#+EMAIL:${7:`(format "%s" vwiss/user--mail-address)`}
+$0

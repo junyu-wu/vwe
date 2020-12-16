@@ -1,0 +1,5 @@
+# -*- mode: snippet -*-
+# name: group
+# key: gro
+# --
+${1:[seg goroup]} group ${2:[seg name]}$0

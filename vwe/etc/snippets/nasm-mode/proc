@@ -1,0 +1,7 @@
+# -*- mode: snippet -*-
+# name: proc
+# key: pro
+# --
+${1:[proc name]} proc ${2:[near/far]}
+    $0
+endp

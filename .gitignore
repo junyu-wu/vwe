@@ -1,0 +1,25 @@
+# 忽略缓存或临时文件
+.cache
+custom.el
+elpa
+assets/mail/*
+assets/lsp/*
+assets/dap/*
+assets/python/*
+assets/rime/
+!assets/rime/default.custom.yaml
+!assets/rime/luna_pinyin.custom.yaml
+!assets/rime/luna_pinyin.sougou.dict.yaml
+
+README.html
+.tramp
+.last-package-update-day
+.org-id-locations
+recentf
+projectile-bookmarks.eld
+network-security.data
+
+tutorial/
+auto-save-list/*
+url/
+annaconda-mode/*

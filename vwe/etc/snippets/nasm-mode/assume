@@ -1,0 +1,4 @@
+# key: ass
+# name: assume
+# --
+assume ${1:[seg reg]}:${2:[seg, ...]}$0

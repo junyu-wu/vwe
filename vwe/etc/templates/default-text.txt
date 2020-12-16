@@ -1,0 +1,12 @@
+#+LATEX_COMPILER: xelatex
+#+TODO: TODO(t) WAITING(w) VERIFY(v) | DONE(d) CANCELLED(c)
+#+CATEGORY:${1:[Default]}
+#+TAGS:${2:[Note]}
+#+TITLE: ${3:`(file-name-sans-extension (file-name-nondirectory (buffer-file-name)))`}
+#+SUBTITLE:${4:by}
+#+AUTHOR:${5:`(user-full-name)`}
+#+DATE:${6:`(format-time-string "%Y-%m-%d")`}
+#+EMAIL:${7:`(format "%s" vwiss/user--mail-address)`}
+$0
+
+

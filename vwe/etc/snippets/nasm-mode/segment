@@ -1,0 +1,6 @@
+# key: seg
+# name: segment
+# --
+${1:name} segment ${2:[align type]} ${3:[combine type]} ${4:[type]}
+    $0
+ends

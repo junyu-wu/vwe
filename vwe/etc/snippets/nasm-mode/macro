@@ -1,0 +1,7 @@
+# key: mac
+# name: macro
+# --
+${1:[name]} macro ${2:[para...]}
+    ${3:local} ${4:[symbol]}
+    $0
+endm

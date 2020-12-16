@@ -1,0 +1,6 @@
+# -*- mode: snippet -*-
+# name: sprintf
+# key: sp
+# --
+fmt.Sprintf("${1:msg}", ${2:args})
+$0
