@@ -121,7 +121,8 @@ MODE."
 	  (add-to-list 'grep-find-ignored-files v))))
 
 (use-package flycheck
-  :diminish (flycheck-mode . nil)
+  :diminish
+  (flycheck-mode)
   :hook
   (prog-mode . global-flycheck-mode)
   :init

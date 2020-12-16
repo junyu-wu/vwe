@@ -439,9 +439,7 @@
 (use-package tramp
   :ensure nil
   :init
-  (setq tramp-default-method (lambda()
-							   (if vwe@lib--sys-win-p "plink" "ssh"))
-		tramp-auto-save-directory (vwe@lib--path-cache "tramp")
+  (setq tramp-auto-save-directory (vwe@lib--path-cache "tramp")
 		tramp-persistency-file-name (vwe@lib--path-cache "tramp/tramp" t)
 		tramp-backup-directory-alist (vwe@lib--path-cache "tramp")))
 

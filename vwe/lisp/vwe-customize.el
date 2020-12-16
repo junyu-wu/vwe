@@ -350,6 +350,21 @@ If nil hide all buffers."
   :type 'string)
 
 ;; ***************************************************************************
+;; debug
+;; ***************************************************************************
+(defcustom vwe@custom--debug?
+  nil
+  "Is debug running?"
+  :group 'vwe-base
+  :type 'boolean)
+
+(defcustom vwe@custom--debug-max-lisp-eval-depth
+  10000
+  "Is debug running?"
+  :group 'vwe-base
+  :type 'integer)
+
+;; ***************************************************************************
 ;; lib
 ;; ***************************************************************************
  (defun vwe@custom--vwe-customize ()

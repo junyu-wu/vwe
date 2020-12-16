@@ -8,7 +8,7 @@
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
 
-- [Vwiss Emacs](#vwiss-emacs)
+- [VWE](#vwiss-emacs)
     - [Features](#features)
     - [Prerequisites](#prerequisites)
     - [Install](#install)

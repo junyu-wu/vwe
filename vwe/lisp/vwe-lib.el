@@ -171,7 +171,7 @@ WIN is Window."
 (defun vwe@lib--buffer-kill-current ()
   "Kill Current Buffer."
   (interactive)
-  (kill-buffer (buffer-name)))
+  (kill-buffer (current-buffer)))
 
 (defun vwe@lib--buffer-kill-other (&optional list filter)
   "Kill other all buffer, but do not kill current buffer.
@@ -482,16 +482,30 @@ FILE-P if t make path and file."
   (kill-emacs))
 
 ;; ************************************************************************
-;; misc
+;; debug
+;; ************************************************************************
+(defun vwe@lib--debug-close ()
+  "Debug init."
+  (setq debug-on-error nil
+		max-lisp-eval-depth 800))
+
+;; ************************************************************************
+;; face
 ;; ************************************************************************
 (defmacro vwe@lib--face-of-string (str &rest properties)
   "Used to set the face of STR with PROPERTIES."
   `(propertize ,str 'face (list ,@properties)))
 
+;; ************************************************************************
+;; func call
+;; ************************************************************************
 (defun vwe@lib--func-call-by-name (name)
   "Call functuion by NAME."
   (funcall (nth-value 0 (read-from-string name))))
 
+;; ************************************************************************
+;; package
+;; ************************************************************************
 (defmacro vwe@lib--package-install (package)
   "Install PACKAGE."
   `(unless (package-installed-p ,package)

@@ -99,6 +99,12 @@
 				(add-hook 'minibuffer-exit-hook
 						  #'(lambda () (setq gc-cons-threshold threshold)))))))
 
+(defun vwe@base--debug-init ()
+  "Debug init."
+  (when vwe@custom--debug?
+	(setq debug-on-error t
+		  max-lisp-eval-depth vwe@custom--debug-max-lisp-eval-depth)))
+
 (defun vwe@base--make-welcome-msg ()
   "Make welcome message."
   (format ";; hello %s, welcome vwiss emacs (vwe), let's enjoy hacking!\n;; %s\n"
@@ -116,6 +122,7 @@
   (vwe@base--font-init)
   (vwe@base--server-init)
   (vwe@base--deamon-init)
+  (vwe@base--debug-init)
 
   (add-hook 'emacs-startup-hook #'vwe@lib--sys-startup-info)
   (add-hook 'before-save-hook  #'delete-trailing-whitespace)

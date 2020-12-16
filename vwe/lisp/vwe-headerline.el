@@ -120,12 +120,12 @@
   "Header-line init."
   (interactive)
 
-  (add-hook 'buffer-list-update-hook #'vwe@headerline--show-p)
+  ;; (add-hook 'buffer-list-update-hook #'vwe@headerline--show-p)
   (add-hook 'window-configuration-change-hook #'vwe@headerline--show-p)
-  (add-hook 'find-file-hook #'vwe@headerline--show-p)
-  (add-hook 'read-only-mode-hook #'vwe@headerline--show-p)
-  (add-hook 'after-save-hook #'vwe@headerline--show-p)
-  (add-hook 'emacs-startup-hook #'vwe@headerline--init)
+  ;; (add-hook 'find-file-hook #'vwe@headerline--show-p)
+  ;; (add-hook 'read-only-mode-hook #'vwe@headerline--show-p)
+  ;; (add-hook 'after-save-hook #'vwe@headerline--show-p)
+  ;; (add-hook 'emacs-startup-hook #'vwe@headerline--init)
 
   (unless vwe@custom--headerline-show?
 	(vwe@headerline--deactive)))
