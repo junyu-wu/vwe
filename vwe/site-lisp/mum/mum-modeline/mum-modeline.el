@@ -357,7 +357,7 @@ corresponding to the mode line clicked."
 	(mum-modeline/segment-flycheck-text)))
 
 (defun mum-modeline/segment-vc ()
-  "Displays color-coded version control information in the mode-line."
+  "Display color-coded version control information in the mode-line."
   '(vc-mode vc-mode))
 
 (defun mum-modeline/segment-remote-host ()

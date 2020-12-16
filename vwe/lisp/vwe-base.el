@@ -79,6 +79,7 @@
 (defun vwe@base--deamon-init ()
   "Deamon init."
   (interactive)
+  ;; TODO deamon init.
   )
 
 (defun vwe@base--gc-init ()
