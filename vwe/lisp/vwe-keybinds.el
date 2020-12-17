@@ -40,6 +40,8 @@
 	("M-C-f"       . vwe@theme--toggle)
 	("M-C-r"       . browse-kill-ring)
 	("M-C-b"       . (lambda () (interactive) (vwe@buffer--switch-to)))
+	("C-@"         . vwe@lib--minibuffer-switch)
+	("C-c C-f"     . format-all-buffer)
 	;; ([mouse-4]     . (lambda () (interactive) (scroll-down 3)))
 	;; ([mouse-5]     . (lambda () (interactive) (scroll-up 3)))
 	)

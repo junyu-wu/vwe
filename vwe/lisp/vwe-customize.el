@@ -333,6 +333,7 @@
 	"\\*treemacs.*\\'"
 	"\\*company-box.*\\'"
 	"\\*dashboard\\*\\'"
+	"\\*mum-key\\*\\'"
 	"\\*mu4e-[0-9 a-z A-Z].*\\'"
     "*scratch*"
     "*Messages*")

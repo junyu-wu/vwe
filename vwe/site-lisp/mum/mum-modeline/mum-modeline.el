@@ -20,9 +20,14 @@
 
 
 ;;; Commentary:
+
+
+;;; Code:
+
 (require 'seq)
 (require 'subr-x)
-;;; Code:
+
+
 (defgroup mum-modeline nil
   "Mum mode line."
   :prefix "mum-modeline/"
@@ -268,7 +273,7 @@ corresponding to the mode line clicked."
       (let* ((read-only (and buffer-read-only (buffer-file-name)))
              (modified (buffer-modified-p)))
         (propertize
-         (if read-only "o" (if modified "m" "r"))
+         (if read-only "O" (if modified "W" "R"))
          'face `(:inherit
                  ,(if modified 'mum-modeline/modified-face
                     (if read-only 'mum-modeline/info-face
@@ -367,7 +372,7 @@ corresponding to the mode line clicked."
   "Display vc diff."
   (let* ((status (vc-state (buffer-name))))
 	(when (not (equal status 'up-to-date))
-	  (propertize (format "D:%S" status)
+	  (propertize (format "D:%s" (if status status "?"))
 				  'face 'mum-modeline/info-face
 				  'help-echo (format "diff: %s" status)
 				  'local-map (purecopy
@@ -549,7 +554,7 @@ corresponding to the mode line clicked."
                          (visible-frame-list)))))
         (propertize (format "%s" num)
                     'face 'mum-modeline/info-face)
-	  (propertize (format "O")
+	  (propertize (format "-")
 				  'face 'mum-modeline/info-face
 				  'help-echo (format "only window")))))
 
@@ -633,6 +638,28 @@ DEL is add or delete?"
 	(advice-add #'winum--install-mode-line :override #'ignore)
 	(advice-add #'winum--clear-mode-line :override #'ignore)))
 
+(defun mum-modeline/enable ()
+  "Mode line enable."
+  (mum-modeline/init-hook)
+  (setq-default mode-line-format '(:eval mum-modeline/init)))
+
+(defun mum-modeline/disenable ()
+  "Mode line disenable."
+  (mum-modeline/init-hook)
+  (setq-default mode-line-format mum-modeline/default-format))
+
+(defun mum-modeline/re-init ()
+  "Reset mode line."
+  (interactive)
+  (mum-modeline/enable))
+
+;;;###autoload
+(defun mum-modeline/buffer-show-modeline ()
+  "Show modeline in current buffer."
+  (interactive)
+  (mum-modeline/init-hook)
+  (setq mode-line-format '(:eval mum-modeline/init)))
+
 ;;;###autoload
 (define-minor-mode mum-modeline-mode
   "Mum modeline minor mode."
@@ -641,13 +668,7 @@ DEL is add or delete?"
   :lighter ""
   :group 'mum-modeline
   :global t
-  (if mum-modeline-mode
-	  (progn
-		(mum-modeline/init-hook)
-		(setq-default mode-line-format '(:eval mum-modeline/init)))
-	(progn
-	  (mum-modeline/init-hook)
-	  (setq-default mode-line-format mum-modeline/default-format))))
+  (if mum-modeline-mode (mum-modeline/enable) (mum-modeline/disenable)))
 
 (provide 'mum-modeline)
 ;;; mum-modeline.el ends here
