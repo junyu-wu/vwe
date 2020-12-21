@@ -2,8 +2,8 @@
 # VWE [vwiss emacs]
 > vwe is for myself use configuration, not general configuration.
 
-[![](https://img.shields.io/badge/build-vwiss-green.svg)](https://github.com/junyu-wu/.emacs.d)
-[![](https://img.shields.io/badge/license-GPL3-red.svg)](https://github.com/junyu-wu/.emacs.d)
+[![](https://img.shields.io/badge/build-vwiss-green.svg)](https://github.com/junyu-wu/vwe/tree/master)
+[![](https://img.shields.io/badge/license-GPL3-red.svg)](https://github.com/junyu-wu/vwe/tree/master)
 
 <!-- markdown-toc start - Don't edit this section. Run M-x markdown-toc-refresh-toc -->
 **Table of Contents**
@@ -18,7 +18,7 @@
 It's geared GNU Linux. but u known, it to also work on OSX and Windows.
 
 ---
-![](https://raw.githubusercontent.com/junyu-wu/.emacs.d/main/assets/icons/vwemacs-logo.png)
+![](https://raw.githubusercontent.com/junyu-wu/vwe/tree/master/assets/icons/vwemacs-logo.png)
 
 ## Features
 - It's simple and easy to use.
@@ -53,7 +53,8 @@ It's geared GNU Linux. but u known, it to also work on OSX and Windows.
 2. Clone the repository:
 
 	``` shell
-	git clone https://github.com/junyu-wu/.emacs.d.git
+	git clone https://github.com/junyu-wu/vwe.git
+	mv vwe .emacs.d
 
 	```
 3. Install english(default font), chinese and icon font: (optional)
@@ -63,9 +64,9 @@ It's geared GNU Linux. but u known, it to also work on OSX and Windows.
 	fc-cache -hv
 	```
 	To install fonts.
-	If choice other fonts, please set custemize variable `vwiss/env--default-font` `vwiss/env--chinese-font`.
+	If choice other fonts, please set custemize variable `vwe@custom--font-ascii` `vwe@custom--font-non-ascii`.
 
 4. Run or Restart emacs:
    In the first run, it will checks the dependent packages and installs it.
 ## Configure
-   For more information about vwiss emacs configure, please see `init-customize.el`.
+   For more information about vwiss emacs configure, please see `vwe-customize.el`.
