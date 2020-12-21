@@ -33,10 +33,6 @@
 
 (defun vwe@modeline--init ()
   "Modeline init."
-  (vwe@lib--package-load 'mum-modeline
-						 (vwe@lib--path-vwe-site-lisp "mum/mum-modeline/"))
-
-  (mum-modeline-mode)
   (add-hook 'emacs-startup-hook 'vwe@modeline--hide)
   (add-hook 'window-configuration-change-hook 'vwe@modeline--hide))
 
@@ -44,15 +40,14 @@
 ;; config
 ;; ***************************************************************************
 
-;;(use-package mum-modeline
-;;  :load-path
-;;  (lambda ()
-;;	(vwe@lib--path-vwe-site-lisp "mum/mum-modeline")))
+(use-package mum-modeline
+ :load-path
+ (lambda ()
+   (vwe@lib--path-vwe-site-lisp "mum/mum-modeline"))
+ :hook
+ (after-init . mum-modeline-mode))
 
 (vwe@modeline--init)
-
-;; (use-package doom-modeline)
-;; (use-package simple-modeline)
 
 (provide 'vwe-modeline)
 ;;; vwe-modeline.el ends here

@@ -544,6 +544,13 @@
   ((after-init . global-diff-hl-mode)
    (magit-post-refresh-hook . diff-hl-magit-post-refresh)))
 
+(use-package mum-key
+  :load-path
+  (lambda ()
+	(vwe@lib--path-vwe-site-lisp "mum/mum-key"))
+  :hook
+  (after-init . mum-key-mode))
+
 (use-package imenu-list)
 
 (provide 'vwe-general)

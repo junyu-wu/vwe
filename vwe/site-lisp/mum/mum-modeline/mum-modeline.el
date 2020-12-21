@@ -33,6 +33,10 @@
   :prefix "mum-modeline/"
   :group 'mode-line)
 
+(defvar mum-modeline-mode-p
+  nil
+  "Mode.")
+
 (defcustom mum-modeline/segments
   '((mum-modeline/segment-active-label
 	 mum-modeline/segment-space

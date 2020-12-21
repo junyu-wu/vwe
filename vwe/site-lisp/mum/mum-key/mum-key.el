@@ -22,27 +22,6 @@
 
 ;;
 
-;; func: mum-key:elisp-keymap
-
-;; Emacs Lisp keymap
-;; ----------------------------------------------
-;; a: eval        b: eval buffer        c: eval region        d: eval defun
-;; e: ediff       f: ibuffer            g: dired
-;;
-;; q: quit    ?: find define    TAB: toggle func/hint    RET: common keymap
-
-;; 1.  plist define keymap func
-;; 1.1 create keymap-obj
-;; ("name"
-;; 	 ("header"
-;; 	 (("key" 'func "discreption"))
-;; 	)
-;; 1.2 define show keymap func
-;; 2.  call func show keymap buffer
-;; 2.1 init keymap buffer
-;; 2.2 generate keymap content and set keymap command
-;; 2.3 show buffer
-;; 3.  close keymap buffer and execute command
 
 ;;; Code:
 
@@ -76,6 +55,10 @@
 (defface mum-key--keymapping-hint-face
   '((t (:background "DarkOrange" :foreground "white" :weight bold)))
   "Keymapping hint face.")
+
+(defvar mum-key-mode-p
+  nil
+  "Mode.")
 
 (defvar mum-key--buffer-name
   "*mum-key*"
@@ -266,28 +249,20 @@ TITLE: [TITLE]"
 ;;;###autoload
 (defmacro mum-key--keymap-define (name define)
   "Define keymap function NAME with DEFINE."
-  (eval `(mum-key--make-call-func ,name ,define)))
+  (when  mum-key-mode-p
+	(eval `(mum-key--make-call-func ,name ,define))))
+
+;;;###autoload
+(define-minor-mode mum-key-mode
+  "Mum Key minor mode."
+  :init-value nil
+  :group 'mum-key
+  :global t
+  (if mum-key-mode-p
+	  (progn
+		(setq mum-key-mode-p nil)
+		(mum-key--close-buffer))
+	(setq mum-key-mode-p t)))
 
 (provide 'mum-key)
 ;;; mum-key.el ends here
-
-;; test
-(mum-key--keymap-define elisp
-						("test keymap"
-						 (("a" vwe@lib--buffer-major-mode "major mode")
-						  ("b" vwe@lib--buffer-kill-current "kill current")
-						  ("e" ibuffer "ibuffer")
-						  ("d" dired "dired")
-						  ("f" find-file "find file")
-						  ("m" mc/edit-beginnings-of-lines "begin of lines")
-						  ("h" (lambda () (interactive) (funcall (intern "mum-key:elisp") t) "call"))
-						  ("g" (lambda () (interactive) (message "func is")) "keymap test message"))))
-
-;; (mum-key--keymap-define test
-;; 						("test keymap"
-;; 						 (("a" vwe@lib--buffer-current-name "current name")
-;; 						  ("f" ibuffer "buffer")
-;; 						  ("g" (lambda () (interactive) (message "======================================= message")) "message"))))
-
-(global-set-key (kbd "<f9>") 'mum-key:elisp)
-;; (global-set-key (kbd "<f10>") 'mum-key:test)
