@@ -46,8 +46,6 @@
 
 ;;; Code:
 
-(require 'cl-lib)
-
 (defgroup mum-key nil
   "Mum key."
   :prefix "mum-key--"
@@ -60,19 +58,19 @@
   :type 'hook)
 
 (defface mum-key--title-face
-  '((t (:background "blue" :foreground "whtie" :weight bold)))
+  '((t (:background "blue" :foreground "white" :weight bold)))
   "Title face.")
 
 (defface mum-key--key-face
-  '((t (:background "DarkOrange" :foreground "whtie" :weight bold)))
+  '((t (:foreground "DarkOrange" :weight bold)))
   "Title face.")
 
 (defface mum-key--hint-face
-  '((t (:background "DarkOrange" :foreground "whtie" :weight bold)))
+  '((t (:background "DarkOrange" :foreground "white" :weight bold)))
   "Title face.")
 
 (defface mum-key--keymapping-hint-face
-  '((t (:background "DarkOrange" :foreground "whtie" :weight bold)))
+  '((t (:background "DarkOrange" :foreground "white" :weight bold)))
   "Title face.")
 
 (defvar mum-key--buffer-name
@@ -83,10 +81,18 @@
   nil
   "Hold keymap buffer.")
 
-(defvar mum-key--keymap-mapping
+(defvar mum-key--callfunc-handle
+  nil
+  "Hold current call function.")
+
+(defvar mum-key--keymap-base-mapping
   (let* ((keymap (make-sparse-keymap)))
 	(define-key keymap (kbd "q") 'mum-key--close-buffer)
 	keymap)
+  "Key mapping.")
+
+(defvar mum-key--keymap-mapping
+  nil
   "Key mapping.")
 
 (defun mum-key--make-content-title (title)
@@ -98,7 +104,7 @@ TITLE: [TITLE]"
 (defun mum-key--make-content-hint-and-keymapping (body)
   "Make content BODY."
   (when (listp body)
-	(let* ((keymap mum-key--keymap-mapping);;(make-sparse-keymap))
+	(let* ((keymap (make-sparse-keymap))
 		   (body-length (length body))
 		   (func-str-list)
 		   (hint-str-list)
@@ -112,13 +118,18 @@ TITLE: [TITLE]"
 
 		  (when (symbolp (quote func))
 			(define-key keymap (cond ((stringp key) (kbd key)) ((mapp key) key)) func)
-			;; (define-key keymap (kbd key) func)
+
 			(setq func-str (concat (propertize key 'face 'mum-key--key-face)
 								   ": " func-str)
 				  func-str-list (append func-str-list (list func-str))
 				  hint-str (concat (propertize key 'face 'mum-key--key-face)
 								   ": " hint-str)
 				  hint-str-list (append hint-str-list (list hint-str))))))
+
+	  (set-keymap-parent keymap mum-key--keymap-base-mapping)
+
+	  (setq mum-key--keymap-mapping keymap)
+
 	  (plist-put content :mapping keymap)
 	  (plist-put content :func func-str-list)
 	  (plist-put content :hint hint-str-list)
@@ -164,13 +175,16 @@ TITLE: [TITLE]"
   (unless (buffer-live-p mum-key--buffer-handle)
     (setq mum-key--buffer-handle (get-buffer-create mum-key--buffer-name))
     (with-current-buffer mum-key--buffer-handle
+	  (let (message-log-max)
+        (toggle-truncate-lines 1)
+        (message ""))
 	  (setq-local cursor-type nil
 				  cursor-in-non-selected-windows nil
 				  mode-line-format nil
 				  word-wrap nil
 				  show-trailing-whitespace nil)
-	  (run-hooks 'mum-key--buffer-hook)
-	  mum-key--buffer-handle)))
+	  (run-hooks 'mum-key--buffer-hook)))
+  mum-key--buffer-handle)
 
 (defun mum-key--insert-content-to-buffer (title body)
   "Insert TITLE and BODY to buffer."
@@ -178,24 +192,33 @@ TITLE: [TITLE]"
 	(erase-buffer)
 	(insert (concat "\n" title "\n" body))))
 
+(defun mum-key--hide-buffer ()
+  "Hide buffer."
+  (when (buffer-live-p mum-key--buffer-handle)
+    (quit-windows-on mum-key--buffer-handle)))
+
+(defun mum-key--close-buffer ()
+  "Close key buffer side window."
+  (interactive)
+  (when mum-key--buffer-handle
+	(delete-windows-on mum-key--buffer-handle)
+	(kill-buffer mum-key--buffer-handle)
+	(setq mum-key--buffer-handle nil
+		  mum-key--callfunc-handle nil
+		  mum-key--keymap-mapping nil)))
+
 (defun mum-key--show-keymap-buffer ()
   "Show keymap buffer."
-  (let* ((window)
-		 (width (frame-width))
-		 (alist `((window-width . ,width)
-				  ;; (window-height . ,height)
-				  ;; (side . 'bottom)
+  (let* ((alist `((window-width . #'frame-width)
+				  (window-min-height . 5)
+				  (direction . 'down)
+				  (side . 'bottom)
 				  (slot . 0))))
 	(when mum-key--buffer-handle
 	  (with-current-buffer mum-key--buffer-handle
-		(suppress-keymap mum-key--keymap-mapping)
-		(use-local-map mum-key--keymap-mapping)
-		;; (set-transient-map mum-key--buffer-handle nil
-		;; 				   (lambda () (interactive) (mum-key--close-buffer)))
-		(setq-local buffer-read-only nil))
-	  (setq window (display-buffer-in-side-window mum-key--buffer-handle alist))
-	  (when (window-live-p window)
-		(select-window window)))))
+		(setq-local buffer-read-only nil)
+		(set-transient-map mum-key--keymap-mapping nil 'mum-key--close-buffer))
+	  (display-buffer-below-selected mum-key--buffer-handle alist))))
 
 (defmacro mum-key--make-call-func (name define)
   "Make call function with NAME DEFINE."
@@ -223,51 +246,34 @@ TITLE: [TITLE]"
 					(plist-get
 					 (mum-key--make-content-hint-and-keymapping (quote ,define-body))
 					 :mapping))
-			(mum-key--show-keymap-buffer)
-			)))))
+			(mum-key--show-keymap-buffer))))))
 
+;;;###autoload
 (defmacro mum-key--keymap-define (name define)
   "Define keymap function NAME with DEFINE."
   (eval `(mum-key--make-call-func ,name ,define)))
 
+(provide 'mum-key)
+;;; mum-key.el ends here
+
+;; test
 ;; (mum-key--keymap-define elisp
 ;; 						("test keymap"
 ;; 						 (("a" vwe@lib--buffer-major-mode "major mode")
 ;; 						  ("b" vwe@lib--buffer-kill-current "kill current")
-;; 						  ("d" buffer-list "buffer list")
-;; 						  ("e" point-max "point max")
-;; 						  ("f" point-min "point min")
-;; 						  ("g" (lambda () (interactive) (message "test mum keymap")) "keymap test message"))))
+;; 						  ("e" ibuffer "ibuffer")
+;; 						  ("d" dired "dired")
+;; 						  ("f" find-file "find file")
+;; 						  ("m" mc/edit-beginnings-of-lines "begin of lines")
+;; 						  ("h" (lambda () (interactive) (funcall (intern "mum-key:elisp") t) "call"))
+;; 						  ("g" (lambda () (interactive) (message "func is %s" mum-key--callfunc-handle)) "keymap test message"))))
+;; ;; (funcall (intern "mum-key:elisp") t)
 
 ;; (mum-key--keymap-define test
 ;; 						("test keymap"
 ;; 						 (("a" vwe@lib--buffer-current-name "current name")
-;; 						  ("f" point-min "point min")
+;; 						  ("f" ibuffer "buffer")
 ;; 						  ("g" (lambda () (interactive) (message "======================================= message")) "message"))))
 
-;; (mum-key:elisp)
-;; (mum-key:test)
-
-;; (accessible-keymaps mum-key--keymap-mapping)
-;; (map-keymap (lambda (key)
-;; 			  (local-unset-key key)) 'mum-key--keymap-mapping)
-
-(defun mum-key--close-buffer ()
-  "Close key buffer side window."
-  (interactive)
-  (when mum-key--buffer-handle
-	(kill-buffer mum-key--buffer-handle)
-	(setq mum-key--buffer-handle nil)))
-
-;;;###autoload
-;; (define-minor-mode mum-key-mode
-;;   "Mum key minor mode."
-;;   :init-value nil
-;;   :keymap nil
-;;   :lighter ""
-;;   :group 'mum-key
-;;   :global t
-;;   (if mum-key-mode ))
-
-(provide 'mum-key)
-;;; mum-key.el ends here
+;; (global-set-key (kbd "<f9>") 'mum-key:elisp)
+;; (global-set-key (kbd "<f10>") 'mum-key:test)
