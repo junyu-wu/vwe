@@ -18,7 +18,7 @@
 It's geared GNU Linux. but u known, it to also work on OSX and Windows.
 
 ---
-![](https://raw.githubusercontent.com/junyu-wu/vwe/tree/master/assets/icons/vwemacs-logo.png)
+![](https://raw.githubusercontent.com/junyu-wu/vwe/tree/master/ect/icons/vwemacs-logo.png)
 
 ## Features
 - It's simple and easy to use.
