@@ -150,8 +150,6 @@ MODE."
 (use-package projectile
   :diminish
   (projectile-mode . nil)
-  :hook
-  (prog-mode . projectile-mode)
   :init
   (setq projectile-known-projects-file (vwe@lib--path-cache
 								   "projectile/projectile-bookmarks.eld" t)

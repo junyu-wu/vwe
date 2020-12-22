@@ -521,6 +521,12 @@ FILE-P if t make path and file."
   "Call functuion by NAME."
   (funcall (nth-value 0 (read-from-string name))))
 
+(defmacro vwe@lib--eval-time (&rest body)
+  "Measure the time it takes to evaluate BODY."
+  `(let ((time (current-time)))
+     ,@body
+     (message "%.06fs" (float-time (time-since time)))))
+
 ;; ************************************************************************
 ;; package
 ;; ************************************************************************
