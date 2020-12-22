@@ -77,7 +77,7 @@
 (use-package yasnippet
   :diminish (yas-minor-mode . nil)
   :hook
-  (after-init . yas-global-mode)
+  (prog-mode . yas-global-mode)
   :init
   (setq yas-snippet-dirs (list (vwe@lib--path-vwe-etc "snippets")))
   :config
@@ -95,7 +95,7 @@
   :commands
   company-abort
   :hook
-  (after-init . global-company-mode)
+  (prog-mode . global-company-mode)
   :defines
   (company-dabbrev-ignore-case company-dabbrev-downcase)
   :bind
@@ -236,7 +236,7 @@
 (use-package smartparens
   :diminish (smartparens-mode . "")
   :hook
-  (after-init . smartparens-global-mode)
+  (prog-mode . smartparens-global-mode)
   :bind
   (:map global-map
 		("M-'" . sp-up-sexp)
@@ -541,7 +541,7 @@
   :diminish
   (diff-hl-mode . nil)
   :hook
-  ((after-init . global-diff-hl-mode)
+  ((prog-mode . global-diff-hl-mode)
    (magit-post-refresh-hook . diff-hl-magit-post-refresh)))
 
 (use-package mum-key

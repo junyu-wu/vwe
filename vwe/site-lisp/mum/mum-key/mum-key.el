@@ -103,6 +103,8 @@ TITLE: [TITLE]"
 			   (func-str (format "%s" func))
 			   (hint-str (format "%s" (car (cddr body-item)))))
 
+		  (unless (< (length func-str) (frame-width))
+			(setq func-str (concat (substring func-str 0 (* 2 (/ (frame-width) 3))) "...")))
 		  (when (symbolp (quote func))
 			(define-key keymap (cond ((stringp key) (kbd key)) ((mapp key) key)) func)
 

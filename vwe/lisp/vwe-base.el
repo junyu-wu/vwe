@@ -107,9 +107,12 @@
 
 (defun vwe@base--make-welcome-msg ()
   "Make welcome message."
-  (format ";; hello %s, welcome vwiss emacs (vwe), let's enjoy hacking!\n;; %s\n"
-		  vwe@custom--user-name
-		  (vwe@lib--sys-startup-info)))
+  (propertize
+   (format ";; hello %s, welcome vwiss emacs (vwe), let's enjoy hacking ^_^ !!!\n\
+;; %s\n"
+		   vwe@custom--user-name
+		   (vwe@lib--sys-startup-info))
+   'face 'vwe@custom--face-default))
 
 (defun vwe@base--init ()
   "Base init."
@@ -141,9 +144,10 @@
 		yes-or-no-p                          'y-or-n-p
 		locale-coding-system                 'utf-8
 		default-process-coding-system        '(utf-8 . utf-8)
-		user-full-name                       (format vwe@custom--user-name)
-		user-mail-address                    (format vwe@custom--user-mail)
+		user-full-name                       (format "%s" vwe@custom--user-name)
+		user-mail-address                    (format "%s" vwe@custom--user-mail)
 		initial-scratch-message              (vwe@base--make-welcome-msg)
+		initial-major-mode                   'text-mode
 
 		column-number-mode                   t
         line-number-mode                     t
