@@ -79,8 +79,7 @@
 (defun vwe@base--deamon-init ()
   "Deamon init."
   (interactive)
-  ;; TODO deamon init.
-  )
+  (run-hooks 'vwe@custom--deamon-create-frame-after-hook))
 
 (defun vwe@base--gc-init ()
   "GC init."
@@ -131,7 +130,7 @@
   (add-hook 'after-init-hook #'save-place-mode)
   (add-hook 'after-init-hook #'recentf-mode)
   (add-hook 'after-init-hook #'show-paren-mode)
-  (add-hook 'server-after-make-frame-hook 'vwe@base--daemon-init)
+  (add-hook 'server-after-make-frame-hook 'vwe@base--deamon-init)
 
 
   (when vwe@custom--frame-max?

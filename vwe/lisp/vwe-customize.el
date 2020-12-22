@@ -159,9 +159,15 @@
   :group 'vwe-base
   :type 'string)
 
-(defcustom vwe@custom--daemon-activated?
+(defcustom vwe@custom--deamon-activated?
   nil
   "Is deamon activated?"
+  :group 'vwe-base
+  :type 'boolean)
+
+(defcustom vwe@custom--deamon-create-frame-after-hook
+  '()
+  "Create frame after hook."
   :group 'vwe-base
   :type 'boolean)
 
