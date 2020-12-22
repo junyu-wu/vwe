@@ -286,6 +286,24 @@ NOT-I is include curretn buffer."
       (set-fontset-font (frame-parameter nil 'font) charset
 						(font-spec :family font :size size)))))
 
+(defun vwe@lib--font-reset (&optional size)
+  "Reset font SIZE."
+  (interactive
+   (let* ((size (read-number (format "size %s:" (vwe@lib--font-size)))))
+	 (list size)))
+  (vwe@lib--font-set-ascii nil size)
+  (vwe@lib--font-set-non-ascii nil size))
+
+(defun vwe@lib--text-scale-reset (&optional size)
+  "Reset text scale SIZE."
+  (interactive
+   (let* ((size (read-number (format "inc/dec %s:" text-scale-mode-amount))))
+	 (list size)))
+  (cond
+   ((> size 0) (text-scale-increase size))
+   ((< size 0) (text-scale-decrease (* size -1)))
+   ((= size 0) (text-scale-adjust 0))))
+
 ;; ************************************************************************
 ;; file
 ;; ************************************************************************
