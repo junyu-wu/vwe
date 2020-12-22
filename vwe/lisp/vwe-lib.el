@@ -95,12 +95,14 @@
 			(cdr (frame-position (selected-frame))))))
 	 (list width hight x y)))
 
-  (let* ((cur-width (frame-width (selected-frame)))
-		 (cur-hight (frame-height (selected-frame)))
-		 (cur-x (car (frame-position (selected-frame))))
+  (let* ((cur-x (car (frame-position (selected-frame))))
 		 (cur-y (cdr (frame-position (selected-frame))))
 		 (old-list '(width hight x y))
-		 (cur-list '(cur-width cur-hight cur-x cur-y)))
+		 (cur-list '((frame-width (selected-frame))
+					 (frame-height (selected-frame))
+					 cur-x
+					 cur-y)))
+
 	(unless (equal old-list cur-list)
 	  (when (frame-parameter nil 'fullscreen)
 		(set-frame-parameter nil 'fullscreen nil))
@@ -294,16 +296,6 @@ NOT-I is include curretn buffer."
   (vwe@lib--font-set-ascii nil size)
   (vwe@lib--font-set-non-ascii nil size))
 
-(defun vwe@lib--text-scale-reset (&optional size)
-  "Reset text scale SIZE."
-  (interactive
-   (let* ((size (read-number (format "inc/dec %s:" text-scale-mode-amount))))
-	 (list size)))
-  (cond
-   ((> size 0) (text-scale-increase size))
-   ((< size 0) (text-scale-decrease (* size -1)))
-   ((= size 0) (text-scale-adjust 0))))
-
 ;; ************************************************************************
 ;; file
 ;; ************************************************************************
@@ -441,6 +433,7 @@ FILE-P is file?"
   "Get emacs.d/.cache/.
 SUBPATH config sub path.
 FILE-P is file?"
+  (when file-p t)
   (when (string-prefix-p (vwe@lib--sys-separator) subpath)
 	(setq subpath (substring subpath 1)))
   (let* ((path (concat (vwe@lib--path-emacs.d ".cache/") subpath)))
@@ -519,7 +512,7 @@ FILE-P if t make path and file."
 ;; ************************************************************************
 (defun vwe@lib--func-call-by-name (name)
   "Call functuion by NAME."
-  (funcall (nth-value 0 (read-from-string name))))
+  (funcall (nth 0 (read-from-string name))))
 
 (defmacro vwe@lib--eval-time (&rest body)
   "Measure the time it takes to evaluate BODY."

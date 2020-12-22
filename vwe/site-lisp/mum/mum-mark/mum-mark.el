@@ -290,7 +290,7 @@ OBJS."
 	  (setq ovs (cons (mum-mark/paren--obj-ovs (nth i objs)) ovs)))
 
 	(define-key mum-mark/paren--move-to-mark-map
-	  (kbd "f") (lambda (p)
+	  (kbd "b") (lambda (p)
 				  (interactive "ngoto after paren:")
 				  (setq p (mum-mark/paren--obj-after (nth p objs)))
 				  (goto-char p)))

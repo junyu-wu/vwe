@@ -57,7 +57,7 @@
      mum-modeline/segment-position
 	 mum-modeline/segment-space
 	 mum-modeline/segment-symbol-count-info)
-    (mum-modeline/segment-minor-modes
+    (;;mum-modeline/segment-minor-modes
 	 mum-modeline/segment-flycheck
 	 mum-modeline/segment-space
      mum-modeline/segment-input-method

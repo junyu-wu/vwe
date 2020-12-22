@@ -27,6 +27,16 @@
 ;; ***************************************************************************
 ;; lib
 ;; ***************************************************************************
+(defun vwe@ui--text-scale-reset (&optional size)
+  "Reset text scale SIZE."
+  (interactive
+   (let* ((size (read-number (format "inc/dec %s:" text-scale-mode-amount))))
+	 (list size)))
+  (cond
+   ((> size 0) (text-scale-increase size))
+   ((< size 0) (text-scale-decrease (* size -1)))
+   ((= size 0) (text-scale-adjust 0))))
+
 (defun vwe@ui--init ()
   "UI init."
   (interactive)
