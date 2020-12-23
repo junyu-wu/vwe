@@ -532,15 +532,16 @@ FILE-P if t make path and file."
 (defun vwe@lib--package-load (pkg &optional path)
   "Load PKG of PATH."
   (interactive)
-  (when (and path (file-directory-p path))
-	(add-to-list 'load-path path))
   (condition-case nil
-	  (progn (require pkg) t)
+	  (progn
+		(when (and path (file-directory-p (format "%s" path)))
+		  (add-to-list 'load-path path))
+		(require pkg) t)
 	(error
 	 (condition-case nil
 		 (progn (vwe@lib--package-install pkg) (require pkg) t)
 	   (error
-		(message "pkg %S not found" pkg) nil)))))
+		(message "pkg %S not found" pkg))))))
 
 (provide 'vwe-lib)
 ;;; vwe-lib.el ends here

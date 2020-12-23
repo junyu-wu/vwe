@@ -41,10 +41,7 @@
 	("M-C-r"       . browse-kill-ring)
 	("M-C-b"       . (lambda () (interactive) (vwe@buffer--switch-to)))
 	("C-@"         . vwe@lib--minibuffer-switch)
-	("C-c C-f"     . format-all-buffer)
-	;; ([mouse-4]     . (lambda () (interactive) (scroll-down 3)))
-	;; ([mouse-5]     . (lambda () (interactive) (scroll-up 3)))
-	)
+	("C-c C-f"     . format-all-buffer))
   "Default keybind list.")
 
 (defun vwe@keybind--init ()
@@ -52,10 +49,27 @@
   (interactive)
   (vwe@lib--keymap-global-set vwe@keybind--default-list))
 
+(with-eval-after-load 'mum-key
+  (eval
+   (mum-key--keymap-define global
+						   ("global"
+							(("s" counsel-etags-grep "grep")
+							 ("r" vwe@lib--replace "replace")
+							 ("x" vwe@lib--frame-reset "reset frame")
+							 ("t" vwe@theme--toggle "toggle theme")
+							 ("f" format-all-buffer "format")
+							 ("p" vwe@prog--switch-mode "switch mode")
+							 ("~" mum-mark--paren--paren-pair "paren mark")
+							 ("(" vwe@base--paren-toggle-style "paren style")
+							 ("+" vwe@ui--text-scale-reset "+/- text scale"))))))
+
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
 (vwe@keybind--init)
+
+(vwe@lib--keymap-global-set '(("M-RET" . mum-key:global)
+							  ("C-M-<return>" . mum-key:global)))
 
 (provide 'vwe-keybinds)
 ;;; vwe-keybinds.el ends here

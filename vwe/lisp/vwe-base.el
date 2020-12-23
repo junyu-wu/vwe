@@ -56,8 +56,8 @@
 (defun vwe@base--frame-init ()
   "Frame config."
   (interactive)
-  (vwe@lib--frame-reset vwe@custom--frame-width
-						vwe@custom--frame-height
+  (vwe@lib--frame-reset (eval 'vwe@custom--frame-width)
+						(eval 'vwe@custom--frame-height)
 						50 50))
 
 (defun vwe@base--font-init ()
@@ -101,16 +101,17 @@
 
 (defun vwe@base--debug-init ()
   "Debug init."
-  (when vwe@custom--debug?
+  (when (eval 'vwe@custom--debug?)
 	(setq debug-on-error t
-		  max-lisp-eval-depth vwe@custom--debug-max-lisp-eval-depth)))
+		  max-lisp-eval-depth (eval 'vwe@custom--debug-max-lisp-eval-depth))
+	(toggle-debug-on-error)))
 
 (defun vwe@base--make-welcome-msg ()
   "Make welcome message."
   (propertize
    (format ";; hello %s, welcome vwiss emacs (vwe), let's enjoy hacking ^_^ !!!\n\
 ;; %s\n"
-		   vwe@custom--user-name
+		   (eval 'vwe@custom--user-name)
 		   (vwe@lib--sys-startup-info))
    'face 'vwe@custom--face-default))
 
@@ -144,8 +145,8 @@
 		yes-or-no-p                          'y-or-n-p
 		locale-coding-system                 'utf-8
 		default-process-coding-system        '(utf-8 . utf-8)
-		user-full-name                       (format "%s" vwe@custom--user-name)
-		user-mail-address                    (format "%s" vwe@custom--user-mail)
+		user-full-name                       (eval 'vwe@custom--user-name)
+		user-mail-address                    (eval 'vwe@custom--user-mail)
 		initial-scratch-message              (vwe@base--make-welcome-msg)
 		initial-major-mode                   'text-mode
 
@@ -257,7 +258,7 @@ ON/OFF?"
   (interactive)
   (if (and on/off? (vwe@lib--package-load 'socks))
 	  (progn
-		(let* ((server:port (split-string vwe@custom--proxy-socks ":"))
+		(let* ((server:port (split-string (format "%s" vwe@custom--proxy-socks) ":"))
 			   (server (car server:port))
 			   (port (nth 1 server:port)))
 		  (setq url-gateway-method 'socks

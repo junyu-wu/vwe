@@ -159,12 +159,8 @@
   :load-path
   (lambda ()
 	(vwe@lib--path-vwe-site-lisp "mum/mum-mark"))
-  :bind
-  (("M-f" . vm/position--forward-word)
-   ("M-b" . vm/position--backward-word))
   :hook
   (after-init . mum-mark-mode))
-
 
 (provide 'vwe-ui)
 ;;; vwe-ui.el ends here

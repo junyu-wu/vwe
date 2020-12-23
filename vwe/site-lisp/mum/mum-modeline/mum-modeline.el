@@ -1,4 +1,4 @@
-;;; mum-modeline/.el --- Mu mode line     -*- lexical-binding: t; -*-
+;;; mum-modeline--.el --- Mu mode line     -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2015  Wu Junyu
 
@@ -30,58 +30,58 @@
 
 (defgroup mum-modeline nil
   "Mum mode line."
-  :prefix "mum-modeline/"
+  :prefix "mum-modeline--"
   :group 'mode-line)
 
 (defvar mum-modeline-mode-p
   nil
   "Mode.")
 
-(defcustom mum-modeline/segments
-  '((mum-modeline/segment-active-label
-	 mum-modeline/segment-space
-	 mum-modeline/segment-winnum
-	 mum-modeline/segment-space
-	 mum-modeline/segment-modified
-	 mum-modeline/segment-major-mode
-     mum-modeline/segment-buffer-name
-	 mum-modeline/segment-remote-host
-     mum-modeline/segment-process
-	 mum-modeline/segment-space
-     mum-modeline/segment-vc
-	 mum-modeline/segment-space
-	 mum-modeline/segment-vc-diff
-	 mum-modeline/segment-space
-	 mum-modeline/segment-position-percent
-	 mum-modeline/segment-separator
-     mum-modeline/segment-position
-	 mum-modeline/segment-space
-	 mum-modeline/segment-symbol-count-info)
-    (;;mum-modeline/segment-minor-modes
-	 mum-modeline/segment-flycheck
-	 mum-modeline/segment-space
-     mum-modeline/segment-input-method
-	 mum-modeline/segment-indent-tab
-	 mum-modeline/segment-separator
-	 mum-modeline/segment-indent-spc
-	 mum-modeline/segment-space
-     mum-modeline/segment-eol
-	 mum-modeline/segment-separator
-     mum-modeline/segment-encoding
-     mum-modeline/segment-misc-info
-	 mum-modeline/segment-time))
+(defcustom mum-modeline--segments
+  '((mum-modeline--segment-active-label
+	 mum-modeline--segment-space
+	 mum-modeline--segment-winnum
+	 mum-modeline--segment-space
+	 mum-modeline--segment-modified
+	 mum-modeline--segment-major-mode
+     mum-modeline--segment-buffer-name
+	 mum-modeline--segment-remote-host
+     mum-modeline--segment-process
+	 mum-modeline--segment-space
+     mum-modeline--segment-vc
+	 mum-modeline--segment-space
+	 mum-modeline--segment-vc-diff
+	 mum-modeline--segment-space
+	 mum-modeline--segment-position-percent
+	 mum-modeline--segment-separator
+     mum-modeline--segment-position
+	 mum-modeline--segment-space
+	 mum-modeline--segment-symbol-count-info)
+    (;;mum-modeline--segment-minor-modes
+	 mum-modeline--segment-flycheck
+	 mum-modeline--segment-space
+     mum-modeline--segment-input-method
+	 mum-modeline--segment-indent-tab
+	 mum-modeline--segment-separator
+	 mum-modeline--segment-indent-spc
+	 mum-modeline--segment-space
+     mum-modeline--segment-eol
+	 mum-modeline--segment-separator
+     mum-modeline--segment-encoding
+     mum-modeline--segment-misc-info
+	 mum-modeline--segment-time))
   "Mum modeline default segments."
   :type '(list (repeat :tag "left" function)
                (repeat :tag "right" function))
   :group 'mum-modeline)
 
-(defcustom mum-modeline/separator
+(defcustom mum-modeline--separator
   "^"
   "Separator."
   :type 'string
   :group 'mum-modeline)
 
-(defcustom mum-modeline/indent-alist
+(defcustom mum-modeline--indent-alist
   '((apache-mode apache-indent-level)
     (awk-mode c-basic-offset)
     (bpftrace-mode c-basic-offset)
@@ -186,54 +186,54 @@
   :type '(alist :key-type symbol :value-type sexp)
   :group 'mum-modeline)
 
-(defface mum-modeline/space-face
+(defface mum-modeline--space-face
   '((t (:inherit 'default)))
   "Space face.")
 
-(defface mum-modeline/default-face
+(defface mum-modeline--default-face
   '((t (:foreground "#B0BEC5"
 					:weight bold)))
   "Default face.")
 
-(defface mum-modeline/label-face
+(defface mum-modeline--label-face
   '((t (:background "DarkOrange")))
   "Default face.")
 
-(defface mum-modeline/misc-face
+(defface mum-modeline--misc-face
   '((t (:inherit 'shadow)))
   "Misc face.")
 
-(defface mum-modeline/modified-face
+(defface mum-modeline--modified-face
   '((t (:foreground "red")))
   "Face for the 'modified' indicator symbol in the mode-line.")
 
-(defface mum-modeline/info-face
+(defface mum-modeline--info-face
   '((t (:foreground "DarkOrange")))
   "Face for generic status indicators in the mode-line.")
 
-(defface mum-modeline/success-face
+(defface mum-modeline--success-face
   '((t (:inherit 'success)))
   "Face used for success status indicators in the mode-line.")
 
-(defface mum-modeline/warning-face
+(defface mum-modeline--warning-face
   '((t (:inherit 'warning)))
   "Face for warning status indicators in the mode-line.")
 
-(defface mum-modeline/error-face
+(defface mum-modeline--error-face
   '((t (:foreground "DarkRed")))
   "Face for error status indicators in the mode-line.")
 
-(defvar mum-modeline/default-format
+(defvar mum-modeline--default-format
   mode-line-format
   "Store default `mode-line-format' value.")
 
-(defvar mum-modeline/init
+(defvar mum-modeline--init
   '((:eval
-     (mum-modeline/format (car mum-modeline/segments)
-						  (cadr mum-modeline/segments))))
+     (mum-modeline--format (car mum-modeline--segments)
+						  (cadr mum-modeline--segments))))
   "Mum modeline init.")
 
-(defvar mum-modeline/segment-encoding-map
+(defvar mum-modeline--segment-encoding-map
   (let ((map (make-sparse-keymap)))
     (define-key map [mode-line mouse-1]
 	  (lambda (e)
@@ -250,7 +250,7 @@
     (purecopy map))
   "Local keymap for coding-system part.")
 
-(defun mum-modeline/make-mouse-map (mouse function)
+(defun mum-modeline--make-mouse-map (mouse function)
   "Return a keymap with single entry for mouse key MOUSE on the mode line.
 MOUSE is defined to run function FUNCTION with no args in the buffer
 corresponding to the mode line clicked."
@@ -258,20 +258,20 @@ corresponding to the mode line clicked."
     (define-key map (vector 'mode-line mouse) function)
     map))
 
-(defun mum-modeline/segment-space ()
+(defun mum-modeline--segment-space ()
   "Space."
   " ")
 
-(defun mum-modeline/segment-active-label ()
+(defun mum-modeline--segment-active-label ()
   "Active label."
-  (when (mum-modeline/active?)
-	(propertize " " 'face 'mum-modeline/label-face)))
+  (when (mum-modeline--active?)
+	(propertize " " 'face 'mum-modeline--label-face)))
 
-(defun  mum-modeline/segment-separator ()
+(defun  mum-modeline--segment-separator ()
   "Space."
-  (propertize mum-modeline/separator 'face 'mum-modeline/default-face))
+  (propertize mum-modeline--separator 'face 'mum-modeline--default-face))
 
-(defun mum-modeline/segment-modified ()
+(defun mum-modeline--segment-modified ()
   "Displays a color-coded buffer modification/read-only indicator in the mode-line."
   (if (not (string-match-p "\\*.*\\*" (buffer-name)))
       (let* ((read-only (and buffer-read-only (buffer-file-name)))
@@ -279,14 +279,14 @@ corresponding to the mode line clicked."
         (propertize
          (if read-only "O" (if modified "W" "R"))
          'face `(:inherit
-                 ,(if modified 'mum-modeline/modified-face
-                    (if read-only 'mum-modeline/info-face
-                      'mum-modeline/warning-face)))
+                 ,(if modified 'mum-modeline--modified-face
+                    (if read-only 'mum-modeline--info-face
+                      'mum-modeline--warning-face)))
          'help-echo (format
                      "Buffer is %s and %smodified\nmouse-1: Toggle read-only status."
                      (if read-only "read-only" "writable")
                      (if modified "" "not "))
-         'local-map (purecopy (mum-modeline/make-mouse-map
+         'local-map (purecopy (mum-modeline--make-mouse-map
                                'mouse-1
                                (lambda (event)
                                  (interactive "e")
@@ -294,19 +294,19 @@ corresponding to the mode line clicked."
                                    (read-only-mode 'toggle)))))
          'mouse-face 'mode-line-highlight))))
 
-(defun mum-modeline/segment-buffer-name ()
+(defun mum-modeline--segment-buffer-name ()
   "Displays the name of the current buffer in the mode-line."
-  (propertize " %b" 'face 'mum-modeline/default-face))
+  (propertize " %b" 'face 'mum-modeline--default-face))
 
-(defun mum-modeline/segment-position-percent ()
+(defun mum-modeline--segment-position-percent ()
   "Displays the current cursor position in the mode-line."
   (let* ((percent (if (boundp 'mode-line-percent-position) mode-line-percent-position '(-3 "%q"))))
 	(propertize (format-mode-line percent)
-				'face 'mum-modeline/default-face)))
+				'face 'mum-modeline--default-face)))
 
-(defun mum-modeline/segment-position ()
+(defun mum-modeline--segment-position ()
   "Displays the current cursor position in the mode-line."
-  `(,(propertize "L%l:C%c" 'face 'mum-modeline/default-face)
+  `(,(propertize "L%l:C%c" 'face 'mum-modeline--default-face)
 	,(if (region-active-p)
 		 (propertize (format "[M+%s]"
 							 (apply #'+ (mapcar
@@ -314,9 +314,9 @@ corresponding to the mode line clicked."
 										   (- (cdr pos)
 											  (car pos)))
 										 (region-bounds))))
-					 'font-lock-face 'mum-modeline/info-face))))
+					 'font-lock-face 'mum-modeline--info-face))))
 
-(defun mum-modeline/segment-make-flycheck-info ()
+(defun mum-modeline--segment-make-flycheck-info ()
   "Make checker info."
   (when (boundp 'flycheck-current-errors)
 	(let ((info 0) (warning 0) (error 0))
@@ -329,19 +329,19 @@ corresponding to the mode line clicked."
 			(flycheck-count-errors flycheck-current-errors))
       `((info . ,info) (warning . ,warning) (error . ,error)))))
 
-(defun mum-modeline/segment-flycheck-text (&optional status)
+(defun mum-modeline--segment-flycheck-text (&optional status)
   "Checker text via STATUS."
   (let* ((text))
-	(let-alist (mum-modeline/segment-make-flycheck-info)
+	(let-alist (mum-modeline--segment-make-flycheck-info)
       (setq text (format "%s%s%s%s%s"
 						 (propertize (concat "I:" (number-to-string .info))
-									 'face 'mum-modeline/info-face)
-						 (mum-modeline/segment-separator)
+									 'face 'mum-modeline--info-face)
+						 (mum-modeline--segment-separator)
 						 (propertize (concat "W:" (number-to-string .warning))
-									 'face 'mum-modeline/warning-face)
-						 (mum-modeline/segment-separator)
+									 'face 'mum-modeline--warning-face)
+						 (mum-modeline--segment-separator)
 						 (propertize (concat "E:" (number-to-string .error))
-									 'face 'mum-modeline/error-face))))
+									 'face 'mum-modeline--error-face))))
 	(propertize text
 				'help-echo (concat "mouse-1: Show all errors\nmouse-3: Next error"
 								   (if (featurep 'mwheel)
@@ -363,37 +363,37 @@ corresponding to the mode line clicked."
 									 (flycheck-next-error 1))))
 							   map)))))
 
-(defun mum-modeline/segment-flycheck ()
+(defun mum-modeline--segment-flycheck ()
   "Checker."
   (when (bound-and-true-p flycheck-mode)
-	(mum-modeline/segment-flycheck-text)))
+	(mum-modeline--segment-flycheck-text)))
 
-(defun mum-modeline/segment-vc ()
+(defun mum-modeline--segment-vc ()
   "Display color-coded version control information in the mode-line."
   '(vc-mode vc-mode))
 
-(defun mum-modeline/segment-vc-diff ()
+(defun mum-modeline--segment-vc-diff ()
   "Display vc diff."
   (let* ((status (vc-state (buffer-name))))
 	(when (not (equal status 'up-to-date))
 	  (propertize (format "D:%s" (if status status "?"))
-				  'face 'mum-modeline/info-face
+				  'face 'mum-modeline--info-face
 				  'help-echo (format "diff: %s" status)
 				  'local-map (purecopy
-							  (mum-modeline/make-mouse-map 'mouse-1 (lambda ()
+							  (mum-modeline--make-mouse-map 'mouse-1 (lambda ()
 																	  (interactive)
 																	  (magit-diff-dwim))))
 				  'mouse-face 'mode-line-highlight))))
 
-(defun mum-modeline/segment-remote-host ()
+(defun mum-modeline--segment-remote-host ()
   "Hostname for remote buffers."
   (when default-directory
 	(when-let ((host (file-remote-p default-directory 'host)))
 	  (propertize
 	   (concat "R:" (system-name) "@" host)
-	   'face 'mum-modeline/default-face))))
+	   'face 'mum-modeline--default-face))))
 
-(defun mum-modeline/segment-symbol-count-info ()
+(defun mum-modeline--segment-symbol-count-info ()
   "Return Symbol Total And Current Symbol Index."
   (let* ((symbol (thing-at-point 'symbol))
 		 (cur-bound (bounds-of-thing-at-point 'symbol)))
@@ -420,32 +420,32 @@ corresponding to the mode line clicked."
 						(if (and (>= cur start) (<= cur end))
 							(setq curindex total))))))
 			  (propertize (format "T%d:C%d" total curindex)
-						  'face 'mum-modeline/default-face
+						  'face 'mum-modeline--default-face
 						  'help-echo (format "total %d\ncurrent %d" total curindex)))))))))
 
-(defun mum-modeline/segment-indent-tab ()
+(defun mum-modeline--segment-indent-tab ()
   "Displays the indentation information."
   (if indent-tabs-mode
 	  (propertize (format "T:%d" tab-width)
-				  'face 'mum-modeline/default-face
+				  'face 'mum-modeline--default-face
 				  'help-echo (format "tab width %d" tab-width))
 	nil))
 
-(defun mum-modeline/segment-indent-spc ()
+(defun mum-modeline--segment-indent-spc ()
   "Display the indentation information."
   (if indent-tabs-mode
 	  (let ((spc)
 			(indent
              (seq-find (lambda (var)
                          (and var (boundp var) (symbol-value var)))
-                       (cdr (assoc major-mode mum-modeline/indent-alist)) nil)))
+                       (cdr (assoc major-mode mum-modeline--indent-alist)) nil)))
 		(if indent (setq spc (symbol-value indent)) (setq spc tab-width))
 		(propertize (format "S:%d" spc)
-					'face 'mum-modeline/default-face
+					'face 'mum-modeline--default-face
 					'help-echo (format "indent offset %d" spc)))
 	nil))
 
-(defun mum-modeline/segment-eol ()
+(defun mum-modeline--segment-eol ()
   "Display the EOL style of the current buffer in the mode-line."
   (let* ((eol (coding-system-eol-type buffer-file-coding-system))
 		 (mnemonic (pcase eol
@@ -460,10 +460,10 @@ corresponding to the mode line clicked."
 				 (_ "undecided"))))
 	(propertize
 	 mnemonic
-	 'face 'mum-modeline/default-face
+	 'face 'mum-modeline--default-face
 	 'help-echo (format "eol: %s\nmouse-1: cycle" desc)
 	 'local-map (purecopy
-				 (mum-modeline/make-mouse-map
+				 (mum-modeline--make-mouse-map
 				  'mouse-1
 				  (lambda (event)
 					(interactive "e")
@@ -473,7 +473,7 @@ corresponding to the mode line clicked."
 						 (cond ((eq eol 0) 'dos) ((eq eol 1) 'mac) (t 'unix))))))))
 	 'mouse-face 'mode-line-highlight)))
 
-(defun mum-modeline/segment-encoding ()
+(defun mum-modeline--segment-encoding ()
   "Display encoding of the buffer in mode-line."
   (let* ((sys (coding-system-plist buffer-file-coding-system))
 		 (encoding))
@@ -483,17 +483,17 @@ corresponding to the mode line clicked."
 		   (setq encoding (upcase (symbol-name (plist-get sys :name))))))
 	(propertize
 	 encoding
-	 'face 'mum-modeline/default-face
+	 'face 'mum-modeline--default-face
 	 'help-echo (format "encoding: %s" encoding)
 	 'mouse-face 'mode-line-highlight)))
 
-(defun mum-modeline/segment-misc-info ()
+(defun mum-modeline--segment-misc-info ()
   "Displays the current value of `mode-line-misc-info' in the mode-line."
-  (let ((misc-info (string-trim (format-mode-line mode-line-misc-info 'mum-modeline/misc-face))))
+  (let ((misc-info (string-trim (format-mode-line mode-line-misc-info 'mum-modeline--misc-face))))
 	(unless (string= misc-info "")
 	  (concat " " misc-info))))
 
-(defun mum-modeline/segment-input-method ()
+(defun mum-modeline--segment-input-method ()
   "Displays the input-method of the buffer in the mode-line."
   `(""
 	(current-input-method
@@ -502,7 +502,7 @@ corresponding to the mode line clicked."
 							 "Current input method: %s\nmouse-1: Describe current input method"
 							 current-input-method)
 				  local-map ,(purecopy
-							  (mum-modeline/make-mouse-map
+							  (mum-modeline--make-mouse-map
 							   'mouse-1
 							   (lambda (e)
 								 (interactive "e")
@@ -510,32 +510,32 @@ corresponding to the mode line clicked."
 								   (describe-current-input-method)))))
 				  mouse-face 'mode-line-highlight))))
 
-(defun mum-modeline/segment-minor-modes ()
+(defun mum-modeline--segment-minor-modes ()
   "Displays current minor modes in mode-line."
   (replace-regexp-in-string "%" "%%%%"
 							(format-mode-line minor-mode-alist)
 							t t))
 
-(defun mum-modeline/segment-process ()
+(defun mum-modeline--segment-process ()
   "Displays current `mode-line-process' in the mode-line."
   (when mode-line-process
 	(propertize (concat " " (string-trim (format-mode-line mode-line-process)))
-				'face 'mum-modeline/default-face)))
+				'face 'mum-modeline--default-face)))
 
-(defun mum-modeline/segment-major-mode ()
+(defun mum-modeline--segment-major-mode ()
   "Displays current major mode in mode-line."
   (propertize
    (concat " "
 		   (or (and (boundp 'delighted-modes)
 					(cadr (assq major-mode delighted-modes)))
 			   (format-mode-line mode-name)))
-   'face 'mum-modeline/default-face))
+   'face 'mum-modeline--default-face))
 
-(defun mum-modeline/segment-time ()
+(defun mum-modeline--segment-time ()
   "Display current data and time."
   '("" display-time-string))
 
-(defun mum-modeline/segment-winnum ()
+(defun mum-modeline--segment-winnum ()
   "Display current windows number in mode-line."
   (let ((num (cond
               ((bound-and-true-p ace-window-display-mode)
@@ -557,16 +557,16 @@ corresponding to the mode line clicked."
                              (window-list)))
                          (visible-frame-list)))))
         (propertize (format "%s" num)
-                    'face 'mum-modeline/info-face)
+                    'face 'mum-modeline--info-face)
 	  (propertize (format "-")
-				  'face 'mum-modeline/info-face
+				  'face 'mum-modeline--info-face
 				  'help-echo (format "only window")))))
 
-(defun mum-modeline/format (left-segments right-segments)
+(defun mum-modeline--format (left-segments right-segments)
   "Make modeline string of `window-width' length.
 Containing LEFT-SEGMENTS and RIGHT-SEGMENTS."
-  (let* ((left (mum-modeline/format-segments left-segments))
-		 (right (mum-modeline/format-segments right-segments))
+  (let* ((left (mum-modeline--format-segments left-segments))
+		 (right (mum-modeline--format-segments right-segments))
 		 (reserve (length right)))
 	(concat
 	 left
@@ -574,95 +574,95 @@ Containing LEFT-SEGMENTS and RIGHT-SEGMENTS."
 				 'display `((space :align-to (- right ,reserve))))
 	 right)))
 
-(defun mum-modeline/format-segments (segments)
+(defun mum-modeline--format-segments (segments)
   "Make modeline string from SEGMENTS."
   (format-mode-line (mapcar (lambda (segment) `(:eval (,segment)))
 							segments)))
 
-(defun mum-modeline/get-current-window (&optional frame)
+(defun mum-modeline--get-current-window (&optional frame)
   "Get the current window but should exclude the child windows."
   (if (and (fboundp 'frame-parent) (frame-parent frame))
       (frame-selected-window (frame-parent frame))
     (frame-selected-window frame)))
 
-(defvar mum-modeline/current-window
-  (mum-modeline/get-current-window)
+(defvar mum-modeline--current-window
+  (mum-modeline--get-current-window)
   "Current window.")
 
-(defun mum-modeline/active? ()
+(defun mum-modeline--active? ()
   "Whether is an active window."
-  (and mum-modeline/current-window
-       (eq (mum-modeline/get-current-window) mum-modeline/current-window)))
+  (and mum-modeline--current-window
+       (eq (mum-modeline--get-current-window) mum-modeline--current-window)))
 
-(defun mum-modeline/set-selected-window (&rest _)
-  "Set `mum-modeline/current-window' appropriately."
-  (when-let ((win (mum-modeline/get-current-window)))
+(defun mum-modeline--set-selected-window (&rest _)
+  "Set `mum-modeline--current-window' appropriately."
+  (when-let ((win (mum-modeline--get-current-window)))
     (unless (or (minibuffer-window-active-p win)
                 (and (bound-and-true-p lv-wnd) (eq lv-wnd win)))
-      (setq mum-modeline/current-window win))))
+      (setq mum-modeline--current-window win))))
 
-(defun mum-modeline/unset-selected-window ()
-  "Unset `mum-modeline/current-window' appropriately."
-  (setq mum-modeline/current-window nil))
+(defun mum-modeline--unset-selected-window ()
+  "Unset `mum-modeline--current-window' appropriately."
+  (setq mum-modeline--current-window nil))
 
-(defun mum-modeline/init-hook (&optional del?)
+(defun mum-modeline--init-hook (&optional del?)
   "Init add hook.
 DEL is add or delete?"
   (if del?
 	  (progn
-		(remove-hook 'flycheck-status-changed-functions #'mum-modeline/segment-flycheck-text)
-		(remove-hook 'flycheck-mode-hook #'mum-modeline/segment-flycheck-text))
+		(remove-hook 'flycheck-status-changed-functions #'mum-modeline--segment-flycheck-text)
+		(remove-hook 'flycheck-mode-hook #'mum-modeline--segment-flycheck-text))
 
-	(add-hook 'window-configuration-change-hook #'mum-modeline/set-selected-window)
-	(add-hook 'buffer-list-update-hook #'mum-modeline/set-selected-window)
-	(add-hook 'after-make-frame-functions #'mum-modeline/set-selected-window)
-	(add-hook 'delete-frame-functions #'mum-modeline/set-selected-window)
-	(add-hook 'exwm-workspace-switch-hook #'mum-modeline/set-selected-window)
-	(advice-add #'handle-switch-frame :after #'mum-modeline/set-selected-window)
+	(add-hook 'window-configuration-change-hook #'mum-modeline--set-selected-window)
+	(add-hook 'buffer-list-update-hook #'mum-modeline--set-selected-window)
+	(add-hook 'after-make-frame-functions #'mum-modeline--set-selected-window)
+	(add-hook 'delete-frame-functions #'mum-modeline--set-selected-window)
+	(add-hook 'exwm-workspace-switch-hook #'mum-modeline--set-selected-window)
+	(advice-add #'handle-switch-frame :after #'mum-modeline--set-selected-window)
 	(with-no-warnings
 	  (if (boundp 'after-focus-change-function)
 		  (progn
-			(defun mum-modeline/refresh-frame ()
-			  (setq mum-modeline/current-window nil)
+			(defun mum-modeline--refresh-frame ()
+			  (setq mum-modeline--current-window nil)
 			  (cl-loop for frame in (frame-list)
 					   if (eq (frame-focus-state frame) t)
-					   return (setq mum-modeline/current-window
-									(mum-modeline/get-current-window frame)))
+					   return (setq mum-modeline--current-window
+									(mum-modeline--get-current-window frame)))
 			  (force-mode-line-update))
-			(add-function :after after-focus-change-function #'mum-modeline/refresh-frame))
+			(add-function :after after-focus-change-function #'mum-modeline--refresh-frame))
 		(progn
-		  (add-hook 'focus-in-hook #'mum-modeline/set-selected-window)
-		  (add-hook 'focus-out-hook #'mum-modeline/unset-selected-window))))
+		  (add-hook 'focus-in-hook #'mum-modeline--set-selected-window)
+		  (add-hook 'focus-out-hook #'mum-modeline--unset-selected-window))))
 
-	(add-hook 'flycheck-status-changed-functions #'mum-modeline/segment-flycheck-text)
-	(add-hook 'flycheck-mode-hook #'mum-modeline/segment-flycheck-text)
+	(add-hook 'flycheck-status-changed-functions #'mum-modeline--segment-flycheck-text)
+	(add-hook 'flycheck-mode-hook #'mum-modeline--segment-flycheck-text)
 
 	(advice-add #'window-numbering-install-mode-line :override #'ignore)
 	(advice-add #'window-numbering-clear-mode-line :override #'ignore)
 	(advice-add #'winum--install-mode-line :override #'ignore)
 	(advice-add #'winum--clear-mode-line :override #'ignore)))
 
-(defun mum-modeline/enable ()
+(defun mum-modeline--enable ()
   "Mode line enable."
-  (mum-modeline/init-hook)
-  (setq-default mode-line-format '(:eval mum-modeline/init)))
+  (mum-modeline--init-hook)
+  (setq-default mode-line-format '(:eval mum-modeline--init)))
 
-(defun mum-modeline/disenable ()
+(defun mum-modeline--disenable ()
   "Mode line disenable."
-  (mum-modeline/init-hook)
-  (setq-default mode-line-format mum-modeline/default-format))
+  (mum-modeline--init-hook)
+  (setq-default mode-line-format mum-modeline--default-format))
 
-(defun mum-modeline/re-init ()
+(defun mum-modeline--re-init ()
   "Reset mode line."
   (interactive)
-  (mum-modeline/enable))
+  (mum-modeline--enable))
 
 ;;;###autoload
-(defun mum-modeline/buffer-show-modeline ()
+(defun mum-modeline--buffer-show-modeline ()
   "Show modeline in current buffer."
   (interactive)
-  (mum-modeline/init-hook)
-  (setq mode-line-format '(:eval mum-modeline/init)))
+  (mum-modeline--init-hook)
+  (setq mode-line-format '(:eval mum-modeline--init)))
 
 ;;;###autoload
 (define-minor-mode mum-modeline-mode
@@ -672,7 +672,7 @@ DEL is add or delete?"
   :lighter ""
   :group 'mum-modeline
   :global t
-  (if mum-modeline-mode (mum-modeline/enable) (mum-modeline/disenable)))
+  (if mum-modeline-mode (mum-modeline--enable) (mum-modeline--disenable)))
 
 (provide 'mum-modeline)
 ;;; mum-modeline.el ends here

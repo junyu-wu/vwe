@@ -463,12 +463,12 @@
 		dired-dwin-target 1)
   :config
   (put 'dired-find-alternate-file 'disabled nil)
-    ;; 丰富dired颜色
+  ;; 丰富dired颜色
   (use-package diredfl
     :init
     (diredfl-global-mode 1))
 
-    ;; 拼音搜索
+  ;; 拼音搜索
   (use-package find-by-pinyin-dired)
 
   (use-package dired-filter
@@ -478,50 +478,26 @@
 	(setq dired-filter-group-saved-groups
 		  (quote
 		   (("default"
-			 ("Lisp"
-			  (extension . "el"))
-			 ("C"
-			  (extension "c" "cpp" "h" "hpp"))
-			 ("Java"
-			  (extension "java" "class"))
-			 ("Python"
-			  (extension "py" "pyc"))
-			 ("Ruby"
-			  (extension . "rb"))
-			 ("Asm"
-			  (extension . "asm"))
-			 ("Web"
-			  (extension "js" "html" "css"))
-			 ("Json"
-			  (extension . "json"))
-			 ("Rust"
-			  (extension . "rs"))
-			 ("Shell"
-			  (extension . "sh"))
-			 ("Golang"
-			  (extension . "go"))
-			 ("Assembly"
-			  (extension . "asm"))
-			 ("PDF"
-			  (extension . "pdf"))
-			 ("LaTeX"
-			  (extension "tex" "bib"))
-			 ("Org"
-			  (extension . "org"))
-			 ("Log"
-			  (extension . "log"))
-			 ("Profile"
-			  (extension "xml" "xsd" "yaml" "yml" "config" "conf"))
-			 ("Markdown"
-			  (extension "md" "markdown" "mkd"))
-			 ("Archives"
-			  (extension "zip" "rar" "gz" "bz2" "tar"))
-			 ("Media"
-			  (extension "mp4" "avi" "wmv" "flv"
-						 "mov" "3gp" "rmvb" "mkv"
-						 "flvc" "mp3" "aac" "ape"))
-			 ("Picture"
-			  (extension "jpg" "jepg" "png" "gif")))))))
+			 ("Lisp" (extension . "el"))
+			 ("C" (extension "c" "cpp" "h" "hpp"))
+			 ("Java" (extension "java" "class"))
+			 ("Python" (extension "py" "pyc"))
+			 ("Ruby" (extension . "rb"))
+			 ("Web" (extension "js" "html" "css"))
+			 ("Json" (extension . "json"))
+			 ("Rust" (extension . "rs"))
+			 ("Shell" (extension . "sh"))
+			 ("Golang" (extension . "go"))
+			 ("Assembly" (extension "asm" "lst" "s"))
+			 ("PDF" (extension . "pdf"))
+			 ("LaTeX" (extension "tex" "bib"))
+			 ("Org" (extension . "org"))
+			 ("Log" (extension . "log"))
+			 ("Profile" (extension "xml" "xsd" "yaml" "yml" "config" "conf"))
+			 ("Markdown" (extension "md" "markdown" "mkd"))
+			 ("Archives" (extension "zip" "rar" "gz" "bz2" "tar"))
+			 ("Media" (extension "mp4" "avi" "wmv" "flv" "mov" "3gp" "rmvb" "mkv" "flvc" "mp3" "aac" "ape"))
+			 ("Picture" (extension "jpg" "jepg" "png" "gif")))))))
 
   ;; 如果目录只有一级或一个文件直接选中
   (use-package dired-collapse
