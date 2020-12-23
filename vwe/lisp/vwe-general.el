@@ -38,6 +38,25 @@
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
+
+(use-package mum-modeline
+ :load-path
+ (lambda ()
+   (vwe@lib--path-vwe-site-lisp "mum/mum-modeline"))
+ :hook
+ (after-init . mum-modeline-mode)
+ :init
+ (setq mum-modeline--buffer-filter-list vwe@custom--modeline--hide-list))
+
+(use-package mum-headerline
+  :load-path
+  (lambda ()
+	(vwe@lib--path-vwe-site-lisp "mum/mum-headerline"))
+  :hook
+  (after-init . mum-headerline-mode)
+  :init
+  (setq mum-headerline--buffer-filter-list vwe@custom--buffer-filter-list))
+
 (use-package which-key
   :diminish
   (which-key-mode . nil)
@@ -50,11 +69,11 @@
   (after-init . ivy-mode)
   :init
   (setq ivy-use-virtual-buffers t
-		enable-recursive-minibuffers t
 		ivy-height 10
 		ivy-initial-inputs-alist nil
 		ivy-count-format "%d/%d"
-		ivy-re-builders-alist `((t . ivy--regex-ignore-order))))
+		ivy-re-builders-alist `((t . ivy--regex-ignore-order))
+		enable-recursive-minibuffers t))
 
 (use-package counsel
   :diminish

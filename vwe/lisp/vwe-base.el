@@ -288,8 +288,6 @@ ON/OFF?"
 (require 'vwe-ui)
 (require 'vwe-theme)
 (require 'vwe-layout)
-(require 'vwe-headerline)
-(require 'vwe-modeline)
 (require 'vwe-buffer)
 
 (provide 'vwe-base)

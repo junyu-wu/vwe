@@ -37,6 +37,12 @@
   nil
   "Mode.")
 
+(defcustom mum-modeline--buffer-filter-list
+  nil
+  "Buffer filter list."
+  :group 'mum-modeline
+  :type 'string)
+
 (defcustom mum-modeline--segments
   '((mum-modeline--segment-active-label
 	 mum-modeline--segment-space
@@ -230,7 +236,7 @@
 (defvar mum-modeline--init
   '((:eval
      (mum-modeline--format (car mum-modeline--segments)
-						  (cadr mum-modeline--segments))))
+						   (cadr mum-modeline--segments))))
   "Mum modeline init.")
 
 (defvar mum-modeline--segment-encoding-map
@@ -381,8 +387,8 @@ corresponding to the mode line clicked."
 				  'help-echo (format "diff: %s" status)
 				  'local-map (purecopy
 							  (mum-modeline--make-mouse-map 'mouse-1 (lambda ()
-																	  (interactive)
-																	  (magit-diff-dwim))))
+																	   (interactive)
+																	   (magit-diff-dwim))))
 				  'mouse-face 'mode-line-highlight))))
 
 (defun mum-modeline--segment-remote-host ()
@@ -657,6 +663,23 @@ DEL is add or delete?"
   (interactive)
   (mum-modeline--enable))
 
+(defun mum-modeline--buffer-hide (&optional filter buffer)
+  "Hide current window BUFFER(buffer name) modeline of FILTER(buffer name list)."
+  (interactive)
+  (unless filter (setq filter (mapcar (lambda(buf) (buffer-name buf)) (buffer-list))))
+  (unless buffer (setq buffer (buffer-name (current-buffer))))
+  (dolist (window (window-list))
+	(with-selected-window window
+	  (dotimes (i (length filter))
+		(when (equal (nth i filter) buffer)
+		  (setq mode-line-format nil))))))
+
+(defun mum-modeline--hide ()
+  "Hide buffer mode line."
+  (if mum-modeline--buffer-filter-list
+	  (mum-modeline--buffer-hide mum-modeline--buffer-filter-list)
+	(mum-modeline--buffer-hide)))
+
 ;;;###autoload
 (defun mum-modeline--buffer-show-modeline ()
   "Show modeline in current buffer."
@@ -672,7 +695,14 @@ DEL is add or delete?"
   :lighter ""
   :group 'mum-modeline
   :global t
-  (if mum-modeline-mode (mum-modeline--enable) (mum-modeline--disenable)))
+  (if mum-modeline-mode
+	  (progn
+		(mum-modeline--enable)
+		(add-hook 'emacs-startup-hook 'mum-modeline--hide)
+		(add-hook 'window-configuration-change-hook 'mum-modeline--hide))
+	(mum-modeline--disenable)
+	(remove-hook 'emacs-startup-hook 'mum-modeline--hide)
+	(remove-hook 'window-configuration-change-hook 'mum-modeline--hide)))
 
 (provide 'mum-modeline)
 ;;; mum-modeline.el ends here
