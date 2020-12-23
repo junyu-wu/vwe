@@ -72,7 +72,7 @@
 (use-package swiper
   :bind
   (:map global-map
-		("C-s" . swiper-thing-at-point)))
+		("C-s" . swiper)))
 
 (use-package yasnippet
   :diminish (yas-minor-mode . nil)

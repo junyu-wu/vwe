@@ -112,70 +112,24 @@ MINI pop frame or minibuffer."
   		ibuffer-display-summary nil
 		ibuffer-saved-filter-groups
   		(quote (("default"
-				 ("lisp" (or
-						  (mode . emacs-lisp-mode)
-  						  (mode . lisp-mode)))
-				 ("cpp" (or
-						 (mode . cperl-mode)
-						 (mode . c-mode)
-						 (mode . c++-mode)
-						 (mode . objc-mode)
-						 ))
-				 ("build" (or
-						   (mode . cmake-mode) ))
-				 ("java" (or
-						  (mode . java-mode)
-						  (mode . scala-mode)))
-				 ("python" (or
-							(mode . python-mode)))
-				 ("ruby" (or
-						  (mode . ruby-mode) ))
-				 ("db" (or
-						(mode . sql-mode)	))
-				 ("golang" (or
-							(mode . go-mode)	))
-				 ("rust" (or
-						  (mode . rust-mode) ))
-				 ("web" (or
-						 (mode . web-mode)
-						 (mode . js2-mode)
-						 (mode . css-mode)
-						 (mode . scss-mode)
-						 (mode . javascript-mode)
-						 (mode . rjsx-mode)
-						 (mode . lua-mode)
-						 (mode . json-mode)))
-				 ("assembly" (or
-							  (mode . asm-mode)
-							  (mode . nasm-mode)))
-				 ("shell" (or
-						   (mode . sh-mode) ))
-  				 ("dired" (or
-  						   (mode . dired-mode)
-  						   (mode . sr-mode)))
+				 ("lisp" (or (mode . emacs-lisp-mode) (mode . lisp-mode)))
+				 ("cpp" (or (mode . cperl-mode) (mode . c-mode) (mode . c++-mode) (mode . objc-mode)))
+				 ("build" (or (mode . cmake-mode)))
+				 ("java" (or (mode . java-mode) (mode . scala-mode)))
+				 ("python" (or (mode . python-mode)))
+				 ("ruby" (or (mode . ruby-mode)))
+				 ("db" (or (mode . sql-mode)))
+				 ("golang" (or (mode . go-mode)))
+				 ("rust" (or (mode . rust-mode) ))
+				 ("web" (or (mode . web-mode) (mode . js2-mode) (mode . css-mode) (mode . scss-mode) (mode . javascript-mode) (mode . rjsx-mode) (mode . lua-mode) (mode . json-mode)))
+				 ("assembly" (or (mode . asm-mode) (mode . nasm-mode)))
+				 ("shell" (or (mode . sh-mode)))
+  				 ("dired" (or (mode . dired-mode) (mode . sr-mode)))
   				 ("erc" (mode . erc-mode))
-  				 ("edit" (or
-  						  (name . "^\\*Calendar\\*$")
-  						  (name . "^diary$")
-  						  (mode . muse-mode)
-  						  (mode . org-mode)
-  						  (mode . org-agenda-mode)
-  						  (mode . text-mode)
-						  (mode . yaml-mode)))
-  				 ("buffer" (or
-  							(name . "^\\*scratch\\*$")
-  							(name . "^\\*Messages\\*$")))
-				 ("email" (or
-						   (name . "^\\*mu4e-headers\\*$")))
-  				 ("mesasge" (or
-  							 (mode . message-mode)
-  							 (mode . bbdb-mode)
-  							 (mode . mail-mode)
-  							 (mode . gnus-group-mode)
-  							 (mode . gnus-summary-mode)
-  							 (mode . gnus-article-mode)
-  							 (name . "^\\.bbdb$")
-  							 (name . "^\\.newsrc-dribble")))))))
+  				 ("edit" (or (name . "^\\*Calendar\\*$") (name . "^diary$") (mode . muse-mode) (mode . org-mode) (mode . org-agenda-mode) (mode . text-mode) (mode . yaml-mode)))
+  				 ("buffer" (or (name . "^\\*scratch\\*$") (name . "^\\*Messages\\*$")))
+				 ("email" (or (name . "^\\*mu4e-headers\\*$")))
+  				 ("mesasge" (or (mode . message-mode) (mode . bbdb-mode) (mode . mail-mode) (mode . gnus-group-mode) (mode . gnus-summary-mode) (mode . gnus-article-mode) (name . "^\\.bbdb$") (name . "^\\.newsrc-dribble")))))))
   (add-hook 'ibuffer-mode-hook
   			(lambda ()
   			  (unless (eq ibuffer-sorting-mode 'filename/process)

@@ -53,11 +53,14 @@
   (eval
    (mum-key--keymap-define global
 						   ("global"
-							(("s" counsel-etags-grep "grep")
+							(("g" counsel-etags-grep "grep")
+							 ("b" ibuffer "ibuffer")
+							 ("d" dired "dired")
+							 ("s" swiper-thing-at-point "thing at point")
 							 ("r" vwe@lib--replace "replace")
 							 ("x" vwe@lib--frame-reset "reset frame")
 							 ("t" vwe@theme--toggle "toggle theme")
-							 ("f" format-all-buffer "format")
+							 ("f" format-all-buffer "format code")
 							 ("p" vwe@prog--switch-mode "switch mode")
 							 ("~" mum-mark--paren--paren-pair "paren mark")
 							 ("(" vwe@base--paren-toggle-style "paren style")
