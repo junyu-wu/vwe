@@ -26,6 +26,10 @@
 ;; ***************************************************************************
 ;; lib
 ;; ***************************************************************************
+(defvar vwe@base--socks-proxy-services
+  nil
+  "Socks proxy services.")
+
 ;;; custom file
 (defun vwe@base--custom-file-init ()
   "Make and set `custom-file'."
@@ -288,7 +292,6 @@ ON/OFF?"
 (require 'vwe-ui)
 (require 'vwe-theme)
 (require 'vwe-layout)
-(require 'vwe-buffer)
 
 (provide 'vwe-base)
 ;;; vwe-base.el ends here
