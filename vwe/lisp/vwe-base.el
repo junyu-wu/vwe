@@ -211,10 +211,10 @@
   (recentf-save-list))
 
 (defun vwe@base--paren-toggle-style (&optional style)
-  "Paren style."
+  "Paren STYLE."
   (interactive
    (list
-    (completing-read "paren style: "
+    (completing-read (format "style (%s):" show-paren-style)
 					 '("parenthesis" "expression" "mixed"))))
   (let* ((styles '(("parenthesis" . parenthesis)
 				   ("expression" . expression)
