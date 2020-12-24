@@ -66,6 +66,8 @@
 	 mum-modeline--segment-space
 	 mum-modeline--segment-buffer-counter)
     (;;mum-modeline--segment-minor-modes
+	 mum-modeline--segment-lsp
+	 mum-modeline--segment-space
 	 mum-modeline--segment-flycheck
 	 mum-modeline--segment-space
      mum-modeline--segment-input-method
@@ -433,25 +435,21 @@ corresponding to the mode line clicked."
 
 (defun mum-modeline--segment-indent-tab ()
   "Displays the indentation information."
-  (if indent-tabs-mode
-	  (propertize (format "T:%d" tab-width)
-				  'face 'mum-modeline--default-face
-				  'help-echo (format "tab width %d" tab-width))
-	nil))
+  (propertize (format "T%s" tab-width)
+			  'face 'mum-modeline--default-face
+			  'help-echo (format "tab width %s" tab-width)))
 
 (defun mum-modeline--segment-indent-spc ()
   "Display the indentation information."
-  (if indent-tabs-mode
-	  (let ((spc)
-			(indent
-             (seq-find (lambda (var)
-                         (and var (boundp var) (symbol-value var)))
-                       (cdr (assoc major-mode mum-modeline--indent-alist)) nil)))
-		(if indent (setq spc (symbol-value indent)) (setq spc tab-width))
-		(propertize (format "S:%d" spc)
-					'face 'mum-modeline--default-face
-					'help-echo (format "indent offset %d" spc)))
-	nil))
+  (let ((spc)
+		(indent
+         (seq-find (lambda (var)
+                     (and var (boundp var) (symbol-value var)))
+                   (cdr (assoc major-mode mum-modeline--indent-alist)) nil)))
+	(if indent (setq spc (symbol-value indent)) (setq spc tab-width))
+	(propertize (format "S%s" spc)
+				'face 'mum-modeline--default-face
+				'help-echo (format "indent offset %s" spc))))
 
 (defun mum-modeline--segment-eol ()
   "Display the EOL style of the current buffer in the mode-line."
@@ -571,6 +569,58 @@ NOT-I is include curretn buffer."
   "Display current data and time."
   '("" display-time-string))
 
+(defun mum-modeline--lsp-state ()
+  "Update lsp state."
+  (let* ((workspaces (lsp-workspaces)))
+	(if workspaces
+		(concat "L^"
+				(string-join
+				 (mapcar (lambda (w) (format "[%s]" (lsp--workspace-print w)))
+						 workspaces))))))
+
+(defun mum-modeline--segment-lsp ()
+  "Display lsp status."
+  (let ((lsp-info (when (bound-and-true-p lsp-mode) (mum-modeline--lsp-state))))
+    (when lsp-info
+	  (propertize lsp-info
+				  'face 'mum-modeline--default-face
+				  'help-echo (format "%s" (if lsp-info
+											  (concat "LSP Connected "
+													  lsp-info
+													  "C-mouse-1: Switch to another workspace folder"
+													  "mouse-1: Describe current session"
+													  "mouse-2: Quit server"
+													  "mouse-3: Reconnect to server")
+											"LSP Disconnected\nmouse-1: Reload to start server"))
+				  'mouse-face 'mode-line-highlight
+				  'local-map (let ((map (make-sparse-keymap)))
+                               (if lsp-info
+                                   (progn
+                                     (define-key map [mode-line C-mouse-1]
+                                       #'lsp-workspace-folders-open)
+                                     (define-key map [mode-line mouse-1]
+                                       #'lsp-describe-session)
+                                     (define-key map [mode-line mouse-2]
+                                       #'lsp-workspace-shutdown)
+                                     (define-key map [mode-line mouse-3]
+                                       #'lsp-workspace-restart))
+                                 (progn
+                                   (define-key map [mode-line mouse-1]
+                                     (lambda ()
+                                       (interactive)
+                                       (ignore-errors (revert-buffer t t))))))
+                               map)))))
+
+(defun mum-modeline--segment-debug ()
+  "Display debug."
+
+  )
+
+(defun mum-modeline--segment-repl ()
+  "Display repl."
+
+  )
+
 (defun mum-modeline--segment-winnum ()
   "Display current windows number in mode-line."
   (let ((num (cond
@@ -647,7 +697,13 @@ DEL is add or delete?"
   (if del?
 	  (progn
 		(remove-hook 'flycheck-status-changed-functions #'mum-modeline--segment-flycheck-text)
-		(remove-hook 'flycheck-mode-hook #'mum-modeline--segment-flycheck-text))
+		(remove-hook 'flycheck-mode-hook #'mum-modeline--segment-flycheck-text)
+
+		(remove-hook 'lsp-before-initialize-hook #'mum-modeline--lsp-state)
+		(remove-hook 'lsp-after-initialize-hook #'mum-modeline--lsp-state)
+		(remove-hook 'lsp-after-uninitialized-functions #'mum-modeline--lsp-state)
+		(remove-hook 'lsp-before-open-hook #'mum-modeline--lsp-state)
+		(remove-hook 'lsp-after-open-hook #'mum-modeline--lsp-state))
 
 	(add-hook 'window-configuration-change-hook #'mum-modeline--set-selected-window)
 	(add-hook 'buffer-list-update-hook #'mum-modeline--set-selected-window)
@@ -673,8 +729,12 @@ DEL is add or delete?"
 	(add-hook 'flycheck-status-changed-functions #'mum-modeline--segment-flycheck-text)
 	(add-hook 'flycheck-mode-hook #'mum-modeline--segment-flycheck-text)
 
-	(advice-add #'window-numbering-install-mode-line :override #'ignore)
-	(advice-add #'window-numbering-clear-mode-line :override #'ignore)
+	(add-hook 'lsp-before-initialize-hook #'mum-modeline--lsp-state)
+	(add-hook 'lsp-after-initialize-hook #'mum-modeline--lsp-state)
+	(add-hook 'lsp-after-uninitialized-functions #'mum-modeline--lsp-state)
+	(add-hook 'lsp-before-open-hook #'mum-modeline--lsp-state)
+	(add-hook 'lsp-after-open-hook #'mum-modeline--lsp-state)
+
 	(advice-add #'winum--install-mode-line :override #'ignore)
 	(advice-add #'winum--clear-mode-line :override #'ignore)))
 

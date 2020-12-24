@@ -142,5 +142,9 @@
   :hook
   (after-init . mum-mark-mode))
 
+(use-package all-the-icons
+  :init
+  (setq inhibit-compacting-font-caches t))
+
 (provide 'vwe-ui)
 ;;; vwe-ui.el ends here

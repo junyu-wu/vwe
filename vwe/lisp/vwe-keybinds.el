@@ -89,6 +89,7 @@
 							 ("t" vwe@theme--toggle "toggle theme")
 							 ("f" format-all-buffer "format code")
 							 ("p" vwe@prog--switch-mode "switch mode")
+							 ("l" vwe@lsp--run "lsp")
 							 ("~" mum-mark--paren--paren-pair "paren mark")
 							 ("(" vwe@base--paren-toggle-style "paren style")
 							 ("+" vwe@ui--text-scale-reset "+/- text scale"))))))

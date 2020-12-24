@@ -147,7 +147,7 @@
 (defun mum-headerline--deactive ()
   "Header line deactive."
   (interactive)
-  (setq-default header-line-format 'nil))
+  (setq-default header-line-format nil))
 
 (defun mum-headerline--buffer-match-p (regs &optional buffer)
   "Is BUFFER name match in REGS?"
@@ -163,8 +163,9 @@
 
 (defun mum-headerline--show-p ()
   "Header line is show."
-  (unless (mum-headerline--buffer-match-p mum-headerline--buffer-filter-list)
-	(setq header-line-format (mum-headerline--make-buffer-info))))
+  (when mum-headerline-mode
+	(unless (mum-headerline--buffer-match-p mum-headerline--buffer-filter-list)
+	  (setq header-line-format (mum-headerline--make-buffer-info)))))
 
 (define-minor-mode mum-headerline-mode
   "Mum headreline minor mode."
@@ -177,8 +178,8 @@
 	  (progn
 		(mum-headerline--active)
 		(add-hook 'window-configuration-change-hook #'mum-headerline--show-p))
-	(mum-modeline--disenable)
-	(remove-hook 'window-configuration-change-hook #'mum-headerline--show-p)))
+	(mum-headerline--deactive)
+	(add-hook 'window-configuration-change-hook #'mum-headerline--show-p)))
 
 (provide 'mum-headerline)
 ;;; mum-headerline.el ends here

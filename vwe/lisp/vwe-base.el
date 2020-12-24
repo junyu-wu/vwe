@@ -161,6 +161,8 @@
         track-eol                            t
         set-mark-command-repeat-pop          t
 
+		read-process-output-max              (* 1024 1024)
+
 		display-time-24hr-format             t
 		display-time-day-and-date            t
 

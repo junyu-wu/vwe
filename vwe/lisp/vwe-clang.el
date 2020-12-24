@@ -20,44 +20,24 @@
 
 ;;; Commentary:
 
-;; apt install cmake llvm llvm-dev ccls cppcheck
-;; apt install clang-6.0 or +
-;; apt install clang-tools
-;; apt install clangd
-;; apt install libcppunit-dev
-;; apt install clang clang-format
-;; install rtags or ggtags
-;; before must install cmake clang and libclang-dev
-;; after install irony server
+;; apt install llvm libclang-dev clang clang-format clang-tools
+;; apt install clangd-9 libcppunit-dev cppcheck
+;; apt install gdb or lldb
+;; install ctags
 
 ;;; Code:
 ;; ***************************************************************************
+;; lib
+;; ***************************************************************************
+
+;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
-(use-package c++-mode
-  :ensure nil
-  :config
-  (use-package modern-cpp-font-lock
-	:hook
-	(c++-mode-hook . modern-c++-font-lock-mode)
-	:config
-	(modern-c++-font-lock-mode t)))
-
-(use-package google-c-style
+(use-package modern-cpp-font-lock
   :hook
-  (c-mode-common-hook . google-set-c-style)
-  (c-mode-common-hook . google-make-newline-indent))
-
-(use-package clang-format
-  :init
-  (setq clang-format-style-option "llvm")
+  (c++-mode-hook . modern-c++-font-lock-mode)
   :config
-  (add-hook 'c-mode-hook
-			(lambda ()
-			  (add-hook 'before-save-hook 'clang-format-buffer)))
-  (add-hook 'c++-mode-hook
-			(lambda ()
-			  (add-hook 'before-save-hook 'clang-format-buffer))))
+  (modern-c++-font-lock-mode t))
 
 ;; 查看当前的汇编代码
 (use-package disaster)
