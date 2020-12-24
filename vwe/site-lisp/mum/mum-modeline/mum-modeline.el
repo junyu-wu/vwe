@@ -62,7 +62,9 @@
 	 mum-modeline--segment-separator
      mum-modeline--segment-position
 	 mum-modeline--segment-space
-	 mum-modeline--segment-symbol-count-info)
+	 mum-modeline--segment-symbol-count-info
+	 mum-modeline--segment-space
+	 mum-modeline--segment-buffer-counter)
     (;;mum-modeline--segment-minor-modes
 	 mum-modeline--segment-flycheck
 	 mum-modeline--segment-space
@@ -539,6 +541,31 @@ corresponding to the mode line clicked."
 					(cadr (assq major-mode delighted-modes)))
 			   (format-mode-line mode-name)))
    'face 'mum-modeline--default-face))
+
+(defun mum-modeline--buffer-list (regexp &optional not-i)
+  "Find buffer list of REGEXP.
+NOT-I is include curretn buffer."
+  (if regexp
+	  (progn
+		(seq-filter 'stringp
+					(mapcar
+					 (lambda (item)
+					   (if (string-match regexp (buffer-name item))
+
+						   (if not-i
+							   (format "%s" (buffer-name item))
+							 (unless (equal item (current-buffer))
+							   (format "%s" (buffer-name item))))))
+					 (buffer-list))))
+	(buffer-list)))
+
+(defun mum-modeline--segment-buffer-counter ()
+  "Displays current open buffer total."
+  (let* ((buffer (length (mum-modeline--buffer-list "^[^\s*]" t)))
+		 (tmp-buffer (length (mum-modeline--buffer-list "^*" t))))
+	(propertize (format "B%d^T%d" buffer tmp-buffer)
+				'face 'mum-modeline--default-face
+				'help-echo (format "open buffer %d temp buffer %d" buffer tmp-buffer))))
 
 (defun mum-modeline--segment-time ()
   "Display current data and time."
