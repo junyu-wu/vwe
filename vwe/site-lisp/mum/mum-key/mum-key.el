@@ -37,11 +37,11 @@
   :type 'hook)
 
 (defface mum-key--title-face
-  '((t (:background "DarkBlue" :foreground "white" :weight bold)))
+  '((t (:background "#434C5E" :foreground "white" :weight bold)))
   "Title face.")
 
 (defface mum-key--key-face
-  '((t (:foreground "DarkOrange" :weight bold)))
+  '((t (:foreground "SpringGreen" :weight bold)))
   "Key face.")
 
 (defface mum-key--hint-face
@@ -153,7 +153,7 @@ TITLE: [TITLE]"
 	(let* ((doc-length (length doc-list))
 		   (doc-str)
 		   (space "    ")
-		   (width (- (window-width) 8))
+		   (width (- (frame-width) 8))
 		   (column-max (mum-key--count-column-max doc-list))
 		   (column (/ width (+ column-max 4)))
 		   (split (mum-key--loop-str "-" (+ (* column column-max) 8))))
@@ -163,13 +163,24 @@ TITLE: [TITLE]"
 			   (d-value (- (+ column-max 2) str-length)))
 		  (when (> d-value 0)
 			(setq str (concat str (mum-key--loop-str " " d-value))))
-		  (setq doc-str (concat doc-str (if (= (% (1+ i) column) 0) (concat str space "\n") (concat str))))))
+		  (setq doc-str (concat doc-str (if (= (% (1+ i) column) 0) (progn (concat str space "\n")) (concat str))))))
 	  (concat split "\n" doc-str))))
 
 (defun mum-key--make-content-footer ()
   "Make content footer."
   (propertize (format "[q]: quit        [tab]: toggle hint/func")
 			  'face 'mum-key--footer-face))
+
+(defun mum-key--window-get-top (&optional win)
+  "Get Top Window.
+WIN is Window."
+  (interactive)
+  (unless win
+	(setq win (selected-window)))
+  (if (windowp win)
+	  (if (window-parent win)
+		  (mum-key--window-get-top (window-parent win))
+		(window-parent (window-child win)))))
 
 (defun mum-key--make-buffer ()
   "Make show keymap buffer."
@@ -191,7 +202,7 @@ TITLE: [TITLE]"
   "Insert TITLE and BODY to buffer."
   (with-current-buffer mum-key--buffer-handle
 	(erase-buffer)
-	(insert (concat "\n" title "\n" body "\n\n" (mum-key--make-content-footer)))))
+	(insert (concat "\n" title "\n" body "\n.........\n" (mum-key--make-content-footer)))))
 
 (defun mum-key--hide-buffer ()
   "Hide buffer."
@@ -209,49 +220,50 @@ TITLE: [TITLE]"
 
 (defun mum-key--show-keymap-buffer ()
   "Show keymap buffer."
-  (let* ((alist `((window-width . #'frame-width)
+  (let* ((alist '((window-width . #'frame-width)
+				  (window-height . fit-window-to-buffer)
 				  (window-min-height . 5)
 				  (direction . 'down)
-				  (side . 'bottom)
 				  (slot . 0))))
+
 	(when mum-key--buffer-handle
 	  (with-current-buffer mum-key--buffer-handle
 		(setq-local buffer-read-only nil)
 		(set-transient-map mum-key--keymap-mapping nil 'mum-key--close-buffer))
-	  (display-buffer-below-selected mum-key--buffer-handle alist))))
+	  (display-buffer-in-side-window mum-key--buffer-handle alist))))
 
 ;;;###autoload
 (defmacro mum-key--keymap-define (name define)
   "Make call function with NAME DEFINE."
-  	`(let* ((name-symbol (quote ,name))
-			(define-list (quote ,define)))
-	   (unless (null name-symbol)
-		 (let* ((name-str (format "%s" name-symbol))
-				(func-name-str (concat "mum-key:" name-str))
-				(func-name (intern func-name-str))
-				(define-title (car define-list))
-				(define-body (cadr define-list)))
-		   `(defun ,func-name (&optional funcp)
-			  (interactive)
-			  (mum-key--make-buffer)
-			  (mum-key--insert-content-to-buffer
-			   (mum-key--make-content-title ,define-title)
-			   (mum-key--make-content-to-string
-				(if funcp
-					(progn
-					  (setq mum-key--show-hint-p t)
-					  (plist-get
-					   (mum-key--make-content-hint-and-keymapping ,func-name-str (quote ,define-body))
-					   :func))
-				  (setq mum-key--show-hint-p nil)
-				  (plist-get
-				   (mum-key--make-content-hint-and-keymapping ,func-name-str (quote ,define-body))
-				   :hint))))
-			  (setq mum-key--keymap-mapping
+  `(let* ((name-symbol (quote ,name))
+		  (define-list (quote ,define)))
+	 (unless (null name-symbol)
+	   (let* ((name-str (format "%s" name-symbol))
+			  (func-name-str (concat "mum-key:" name-str))
+			  (func-name (intern func-name-str))
+			  (define-title (car define-list))
+			  (define-body (cadr define-list)))
+		 `(defun ,func-name (&optional funcp)
+			(interactive)
+			(mum-key--make-buffer)
+			(mum-key--insert-content-to-buffer
+			 (mum-key--make-content-title ,define-title)
+			 (mum-key--make-content-to-string
+			  (if funcp
+				  (progn
+					(setq mum-key--show-hint-p t)
 					(plist-get
 					 (mum-key--make-content-hint-and-keymapping ,func-name-str (quote ,define-body))
-					 :mapping))
-			  (mum-key--show-keymap-buffer))))))
+					 :func))
+				(setq mum-key--show-hint-p nil)
+				(plist-get
+				 (mum-key--make-content-hint-and-keymapping ,func-name-str (quote ,define-body))
+				 :hint))))
+			(setq mum-key--keymap-mapping
+				  (plist-get
+				   (mum-key--make-content-hint-and-keymapping ,func-name-str (quote ,define-body))
+				   :mapping))
+			(mum-key--show-keymap-buffer))))))
 
 ;;;###autoload
 (define-minor-mode mum-key-mode

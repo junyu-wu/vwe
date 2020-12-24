@@ -50,11 +50,11 @@
 	 mum-modeline--segment-space
 	 mum-modeline--segment-modified
 	 mum-modeline--segment-major-mode
-     mum-modeline--segment-buffer-name
+     ;;mum-modeline--segment-buffer-name
 	 mum-modeline--segment-remote-host
      mum-modeline--segment-process
 	 mum-modeline--segment-space
-     mum-modeline--segment-vc
+     ;; mum-modeline--segment-vc
 	 mum-modeline--segment-space
 	 mum-modeline--segment-vc-diff
 	 mum-modeline--segment-space
@@ -491,6 +491,9 @@ corresponding to the mode line clicked."
 	 encoding
 	 'face 'mum-modeline--default-face
 	 'help-echo (format "encoding: %s" encoding)
+	 'local-map (purecopy
+				 (mum-modeline--make-mouse-map
+				  'mouse-1 'revert-buffer-with-coding-system))
 	 'mouse-face 'mode-line-highlight)))
 
 (defun mum-modeline--segment-misc-info ()

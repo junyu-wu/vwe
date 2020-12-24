@@ -134,6 +134,13 @@ WIN is Window."
 	  (vwe@lib--window-get-top (window-parent win))
 	(window-parent (window-child win))))
 
+;; (defun toggle-maximize-buffer () "Maximize buffer"
+;; (interactive)
+;; (if (= 1 (length (window-list)))
+;;     (jump-to-register '_)
+;;   (progn
+;;     (window-configuration-to-register '_)
+;;     (delete-other-windows))))
 (defun vwe@lib--window-maximize ()
   "Maximize current buffer."
   (interactive)

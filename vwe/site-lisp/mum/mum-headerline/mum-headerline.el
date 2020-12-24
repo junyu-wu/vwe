@@ -176,15 +176,9 @@
   (if mum-headerline-mode
 	  (progn
 		(mum-headerline--active)
-		(add-hook 'buffer-list-update-hook #'mum-headerline--show-p)
-		(add-hook 'window-configuration-change-hook #'mum-headerline--show-p)
-		(add-hook 'find-file-hook #'mum-headerline--show-p)
-		(add-hook 'after-save-hook #'mum-headerline--show-p))
+		(add-hook 'window-configuration-change-hook #'mum-headerline--show-p))
 	(mum-modeline--disenable)
-	(remove-hook 'buffer-list-update-hook #'mum-headerline--show-p)
-	(remove-hook 'window-configuration-change-hook #'mum-headerline--show-p)
-	(remove-hook 'find-file-hook #'mum-headerline--show-p)
-	(remove-hook 'after-save-hook #'mum-headerline--show-p)))
+	(remove-hook 'window-configuration-change-hook #'mum-headerline--show-p)))
 
 (provide 'mum-headerline)
 ;;; mum-headerline.el ends here
