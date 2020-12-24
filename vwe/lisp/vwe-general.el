@@ -128,9 +128,6 @@ MINI pop frame or minibuffer."
 
 (use-package ibuffer
   :ensure nil
-  :bind
-  (:map global-map
-  		("C-x C-b" . ibuffer))
   :init
   (setq ibuffer-expert t
   		ibuffer-show-empty-filter-groups nil
@@ -185,9 +182,6 @@ MINI pop frame or minibuffer."
 (use-package counsel
   :diminish
   (counsel-mode . "")
-  :bind
-  (("M-x" . counsel-M-x)
-   ("C-x C-f" . counsel-find-file))
   :config
   (if (executable-find "rg")
       (setq counsel-grep-base-command
@@ -195,10 +189,7 @@ MINI pop frame or minibuffer."
             counsel-rg-base-command
             "rg -i -M 120 --no-heading --line-number --color never %s .")))
 
-(use-package swiper
-  :bind
-  (:map global-map
-		("C-s" . swiper)))
+(use-package swiper)
 
 (use-package yasnippet
   :diminish (yas-minor-mode . nil)
@@ -225,9 +216,7 @@ MINI pop frame or minibuffer."
   :defines
   (company-dabbrev-ignore-case company-dabbrev-downcase)
   :bind
-  (("M-/" . company-complete)
-   ("C-M-/" . company-yasnippet)
-   :map company-search-map
+  (:map company-search-map
    ("C-n" . company-select-next)
    ("C-p" . company-select-previous)
    :map company-active-map
@@ -329,20 +318,13 @@ MINI pop frame or minibuffer."
   (setq-default hungry-delete-chars-to-skip " \t\f\v"))
 
 ;; 快捷选中
-(use-package expand-region
-  :bind
-  ("C-=" . er/expand-region))
+(use-package expand-region)
 
 ;; 跳转到最后一次修改
-(use-package goto-chg
-  :bind
-  ("C-," . goto-last-change))
+(use-package goto-chg)
 
 ;; 根据代码移动光标
-(use-package mwim
-  :bind
-  (([remap move-beginning-of-line] . mwim-beginning-of-code-or-line)
-   ([remap move-end-of-line] . mwim-end-of-code-or-line)))
+(use-package mwim)
 
 ;; 拖拽行、区域、字
 (use-package drag-stuff
@@ -354,21 +336,13 @@ MINI pop frame or minibuffer."
   (drag-stuff-define-keys))
 
 ;; 预览指定行
-(use-package goto-line-preview
-  :bind
-  ([remap goto-line] . goto-line-preview))
+(use-package goto-line-preview)
 
 ;; 括号
 (use-package smartparens
   :diminish (smartparens-mode . "")
   :hook
   (prog-mode . smartparens-global-mode)
-  :bind
-  (:map global-map
-		("M-'" . sp-up-sexp)
-		("M-)" . sp-up-sexp)
-		("M-(" . sp-down-sexp)
-		("M-C-'" . sp-backward-unwrap-sexp))
   :config
   (smartparens-mode t)
   (sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
@@ -388,24 +362,16 @@ MINI pop frame or minibuffer."
 ;; 批量编辑
 (use-package iedit
   :bind
-  (("C-;" . iedit-mode)
-   ("C-M-;" . iedit-rectangle-mode)
-   :map isearch-mode-map
+  (:map isearch-mode-map
    ("C-;" . iedit-mode-from-isearch)))
 
 ;; 多个光标
 (use-package multiple-cursors
-  :bind
-  (("C-M-[" . mc/edit-beginnings-of-lines)
-   ("C-M-]" . mc/edit-ends-of-lines)
-   ("C-M-|" . set-rectangular-region-anchor))
   :init
   (setq mc/list-file (vwe@lib--path-cache "mc/.mc-lists.el" t)))
 
 ;; 注释
-(use-package comment-dwim-2
-  :bind
-  ([remap comment-dwim] . comment-dwim-2))
+(use-package comment-dwim-2)
 
 ;; 清除未使用的空格
 (use-package clean-aindent-mode
@@ -415,11 +381,7 @@ MINI pop frame or minibuffer."
   (setq clean-aindent-is-simple-indent t))
 
 ;; 字符串大小写切换
-(use-package string-inflection
-  :bind
-  (:map global-map
-        ("M-l" . string-inflection-lower-camelcase)
-        ("M-u" . string-inflection-upcase)))
+(use-package string-inflection)
 
 (use-package diminish)
 
@@ -448,8 +410,6 @@ MINI pop frame or minibuffer."
   (prog-mode . format-all-mode))
 
 (use-package treemacs
-  :bind
-  ("M-*" . treemacs)
   :config
   (setq treemacs-collapse-dirs                 (if treemacs-python-executable
 												   3 0)

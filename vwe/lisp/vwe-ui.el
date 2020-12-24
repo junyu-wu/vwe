@@ -101,15 +101,6 @@
   (setq highlight-indent-guides-highlighter-function
 		'vwe@pkg--highlighter-func))
 
-;; 光标提示，拖尾
-(use-package beacon
-  :diminish
-  (beacon-mode)
-  :hook
-  (after-init . beacon-mode)
-  :config
-  (beacon-mode t))
-
 (use-package symbol-overlay
   :diminish
   (symbol-overlay-mode . nil)
@@ -118,17 +109,6 @@
   :init
   (setq symbol-overlay-idle-time 0.1)
   :config
-  (with-eval-after-load 'all-the-icons
-	(setq symbol-overlay-faces
-		  '((:inherit (all-the-icons-blue bold) :inverse-video t)
-			(:inherit (all-the-icons-pink bold) :inverse-video t)
-			(:inherit (all-the-icons-yellow bold) :inverse-video t)
-			(:inherit (all-the-icons-maroon bold) :inverse-video t)
-			(:inherit (all-the-icons-red bold) :inverse-video t)
-			(:inherit (all-the-icons-orange bold) :inverse-video t)
-			(:inherit (all-the-icons-green bold) :inverse-video t)
-			(:inherit (all-the-icons-cyan bold) :inverse-video t))))
-
   (defun vwe@pkg--symbol-overlay-turn-off (&rest _)
 	"Turn off symbol highlighting."
 	(interactive)

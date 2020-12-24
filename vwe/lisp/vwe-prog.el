@@ -102,9 +102,6 @@ MODE."
 
 ;; 根据已有代码快速填充当前代码
 (use-package eacl
-  :bind
-  (:map global-map
-		("M-C-," . eacl-complete-multiline))
   :config
   (with-eval-after-load 'grep
 	(dolist (v '("node_modules"
@@ -200,8 +197,6 @@ MODE."
   (push "asm" quickrun--support-languages))
 
 (use-package counsel-etags
-  :bind
-  (("C-]" . counsel-etags-find-tag-at-point))
   :hook
   (prog-mode . counsel-mode)
   :init
