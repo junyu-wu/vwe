@@ -77,29 +77,28 @@
   (vwe@lib--keymap-global-set vwe@keybind--default-list))
 
 (with-eval-after-load 'mum-key
-  (eval
-   (mum-key--keymap-define global
-						   ("global"
-							(("g" counsel-etags-grep "grep")
-							 ("b" ibuffer "ibuffer")
-							 ("d" dired "dired")
-							 ("s" swiper-thing-at-point "thing at point")
-							 ("r" vwe@lib--replace "replace")
-							 ("x" vwe@lib--frame-reset "reset frame")
-							 ("t" vwe@theme--toggle "toggle theme")
-							 ("f" format-all-buffer "format code")
-							 ("p" vwe@prog--switch-mode "switch mode")
-							 ("l" vwe@lsp--run "lsp")
-							 ("~" mum-mark--paren--paren-pair "paren mark")
-							 ("(" vwe@base--paren-toggle-style "paren style")
-							 ("+" vwe@ui--text-scale-reset "+/- text scale"))))))
+  (mum-key-define global
+				  ("global"
+				   (("g" counsel-etags-grep "grep")
+					("b" ibuffer "ibuffer")
+					("d" dired "dired")
+					("s" swiper-thing-at-point "thing at point")
+					("r" vwe@lib--replace "replace")
+					("x" vwe@lib--frame-reset "reset frame")
+					("t" vwe@theme--toggle "toggle theme")
+					("f" format-all-buffer "format code")
+					("p" vwe@prog--switch-mode "switch mode")
+					("l" vwe@lsp--run "lsp")
+					("~" mum-mark--paren--paren-pair "paren mark")
+					("(" vwe@base--paren-toggle-style "paren style")
+					("+" vwe@ui--text-scale-reset "+/- text scale")))))
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
 
 (vwe@keybind--init)
 
-(vwe@lib--keymap-global-set '(("M-RET" . mum-key:global)
+(vwe@lib--keymap-global-set '(("M-#" . mum-key:global)
 							  ("C-M-<return>" . mum-key:global)))
 
 (provide 'vwe-keybinds)

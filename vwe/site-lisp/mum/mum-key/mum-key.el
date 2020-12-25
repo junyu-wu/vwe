@@ -266,6 +266,11 @@ WIN is Window."
 			(mum-key--show-keymap-buffer))))))
 
 ;;;###autoload
+(defmacro mum-key-define (name define)
+  "Define keymap with NAME DEFINE."
+  `(eval (mum-key--keymap-define ,name ,define)))
+
+;;;###autoload
 (define-minor-mode mum-key-mode
   "Mum Key minor mode."
   :init-value nil
