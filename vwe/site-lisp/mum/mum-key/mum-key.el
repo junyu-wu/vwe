@@ -196,7 +196,7 @@ TITLE: [TITLE]"
 							   " : "
 							   (format "%s" (cadr (nth i mum-key--footer-list)))
 							   "    ")))
-	(propertize (format "%s[q]: quit    [tab]: toggle hint/func    ◕‿-｡ " custom-str)
+	(propertize (format "%s[q] : quit    [tab] : toggle hint/func    ◕‿-｡ " custom-str)
 				'face 'mum-key--footer-face)))
 
 (defun mum-key--window-get-top (&optional win)

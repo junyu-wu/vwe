@@ -34,7 +34,13 @@
 ;; go get golang.org/x/tools/gopls@latest  ;; go lsp
 
 ;;; Code:
+;; ***************************************************************************
+;; lib
+;; ***************************************************************************
 
+;; ***************************************************************************
+;; config
+;; ***************************************************************************
 (use-package go-mode
   :mode
   (("\\.go\\'" . go-mode))
@@ -44,33 +50,23 @@
   :hook
   ((before-save . gofmt-before-save))
   :init
-  (setq go-command
-		(concat (getenv "GOROOT") "/bin/go")
-		gofmt-command
-		(concat (getenv "GOPATH") "/bin/goimports")
-		flycheck-go-gofmt-executable
-		(concat (getenv "GOPATH") "/bin/goimports")
-		flycheck-go-golint-executable
-		(concat (getenv "GOPATH") "/bin/golint")
-		flycheck-go-build-executable
-		(concat (getenv "GOROOT") "/bin/go")
-		flycheck-go-vet-executable
-		(concat (getenv "GOROOT") "/bin/go")
-		flycheck-go-test-executable
-		(concat (getenv "GOROOT") "/bin/go"))
+  (setq go-command (concat (getenv "GOROOT") "/bin/go")
+		gofmt-command (concat (getenv "GOPATH") "/bin/goimports")
+		flycheck-go-gofmt-executable (concat (getenv "GOPATH") "/bin/goimports")
+		flycheck-go-golint-executable (concat (getenv "GOPATH") "/bin/golint")
+		flycheck-go-build-executable (concat (getenv "GOROOT") "/bin/go")
+		flycheck-go-vet-executable (concat (getenv "GOROOT") "/bin/go")
+		flycheck-go-test-executable (concat (getenv "GOROOT") "/bin/go"))
   :config
   (with-eval-after-load 'exec-path-from-shell
 	(exec-path-from-shell-copy-envs
 	 '("GOPATH" "GO111MODULE" "GOPROXY")))
 
   (use-package company-go
-	:after
-	(go-mode)
 	:hook
 	(go-mode . (lambda()
-				 (add-to-list
-				  (make-local-variable 'company-backends)
-				  '(company-go)))))
+				 (add-to-list (make-local-variable 'company-backends)
+							  '(company-go)))))
 
   (use-package go-eldoc
 	:hook
@@ -79,13 +75,7 @@
   ;; go代码编辑扩展
   (use-package go-guru
 	:hook
-	(go-mode . go-guru-hl-identifier-mode))
-
-   ;; 与GUD交互地调试Go程序
-  (use-package go-dlv)
-  ;; 自动填充struct默认值
-  ;; go get -u github.com/davidrjenni/reftools/cmd/fillstruct
-  (use-package go-fill-struct))
+	(go-mode . go-guru-hl-identifier-mode)))
 
 (provide 'vwe-golang)
 ;;; vwe-golang.el ends here

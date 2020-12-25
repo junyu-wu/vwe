@@ -36,13 +36,12 @@
   :config
   ;; c#后端
   (use-package omnisharp
-	:after company
 	:hook
-	(csharp-mode . omnisharp-mode)
+	(csharp-mode . (lambda ()
+					 (omnisharp-mode)
+					 (add-to-list 'company-backends 'company-omnisharp))))
 	:init
-	(setq omnisharp-server-executable-path "omnisharp")
-	:config
-	(add-to-list 'company-backends 'company-omnisharp)))
+	(setq omnisharp-server-executable-path "omnisharp"))
 
 (provide 'vwe-csharp)
 ;;; vwe-csharp.el ends here

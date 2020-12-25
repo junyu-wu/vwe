@@ -22,24 +22,19 @@
 
 ;;; Code:
 ;; ***************************************************************************
+;; lib
+;; ***************************************************************************
+(defun vwe@java--init ()
+  "Java init."
+  (interactive)
+  (lsp-deferred)
+  (lsp-lens-mode t)
+  (lsp-java-lens-mode t)
+  (lsp-java-boot-lens-mode t))
+
+;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
-(use-package java-mode
-  :ensure nil
-  :hook
-  ((java-mode . lsp)
-   (java-mode . lsp-lens-mode)
-   (java-mode . lsp-java-boot-lens-mode)))
-
-(use-package lsp-java-boot
-  :ensure nil
-  :diminish
-  (lsp-java-boot-lens-mode . nil)
-  :after
-  java-mode
-  :config
-  (lsp-lens-mode t)
-  (lsp-java-lens-mode t))
 
 (use-package lsp-java
   :after

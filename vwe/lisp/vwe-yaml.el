@@ -24,18 +24,6 @@
 
 ;;; Code:
 
-(use-package yaml-mode
-  :mode
-  ("\\.yml\\'" . yaml-mode)
-  :hook
-  (yaml-mode . (lambda () (define-key yaml-mode-map "\C-m"
-								 'newline-and-indent)))
-  :config
-  (use-package yaml-imenu
-	:hook
-	(yaml-mode . yaml-imenu-enable)
-	:config
-	(which-func-mode t)))
 
 (provide 'vwe-yaml)
 ;;; vwe-yaml.el ends here

@@ -34,15 +34,11 @@
   :init
   (setq rust-format-on-save t
 		company-tooltip-align-annotations t)
+  :hook
+  (rust-mode-hook . (lambda ()
+					  (setq indent-tabs-mode nil)))
   :config
-  (add-hook 'rust-mode-hook
-			(lambda () (setq indent-tabs-mode nil)))
-
   (use-package cargo
-	:diminish
-	(cargo-minor-mode . nil)
-	:after
-	(rust-mode)
 	:hook
 	(rust-mode . cargo-minor-mode)
 	:config
@@ -52,9 +48,7 @@
   ;; 补全代码
   (use-package racer
 	:hook
-	(rust-mode-hook . racer-mode)
-	(racer-mode-hook . eldoc-mode)
-	(racer-mode-hook . company-mode))
+	(rust-mode . racer-mode))
 
   ;; rust-mode 扩展
   (use-package rustic)
