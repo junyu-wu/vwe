@@ -36,6 +36,10 @@
   :group 'mum-key
   :type 'hook)
 
+(defface mum-key--default-face
+  '((t (:foreground "#B0BEC5" :weight bold)))
+  "Default face.")
+
 (defface mum-key--title-face
   '((t (:background "#434C5E" :foreground "white" :weight bold)))
   "Title face.")
@@ -63,6 +67,14 @@
 (defvar mum-key--buffer-name
   "*mum-key*"
   "Keymap buffer name.")
+
+(defvar mum-key--string-title-separator
+  "▬"
+  "Title and body separator.")
+
+(defvar mum-key--string-footer-separator
+  "▬"
+  "Footer and body separator.")
 
 (defvar mum-key--buffer-handle
   nil
@@ -163,8 +175,7 @@ TITLE: [TITLE]"
 		   (space "    ")
 		   (width (- (frame-width) 8))
 		   (column-max (mum-key--count-column-max doc-list))
-		   (column (/ width (+ column-max 4)))
-		   (split (mum-key--loop-str "-" (+ (* column column-max) 8))))
+		   (column (/ width (+ column-max 4))))
 	  (dotimes (i doc-length)
 		(let* ((str (nth i doc-list))
 			   (str-length (length str))
@@ -172,7 +183,7 @@ TITLE: [TITLE]"
 		  (when (> d-value 0)
 			(setq str (concat str (mum-key--loop-str " " d-value))))
 		  (setq doc-str (concat doc-str (if (= (% (1+ i) column) 0) (progn (concat str space "\n")) (concat str))))))
-	  (concat split "\n" doc-str))))
+	  doc-str)))
 
 (defun mum-key--make-content-footer ()
   "Make content footer."
@@ -219,7 +230,14 @@ WIN is Window."
   "Insert TITLE and BODY to buffer."
   (with-current-buffer mum-key--buffer-handle
 	(erase-buffer)
-	(insert (concat "\n" title "\n" body "\n.........\n" (mum-key--make-content-footer)))))
+	(insert (concat "\n"
+					title "\n"
+					(propertize (mum-key--loop-str mum-key--string-title-separator (* (/ (frame-width) 3) 2))
+								'face 'mum-key--default-face) "\n"
+					body "\n"
+					(propertize (mum-key--loop-str mum-key--string-footer-separator (* (/ (frame-width) 3) 2))
+								'face 'mum-key--default-face) "\n"
+					(mum-key--make-content-footer)))))
 
 (defun mum-key--hide-buffer ()
   "Hide buffer."
