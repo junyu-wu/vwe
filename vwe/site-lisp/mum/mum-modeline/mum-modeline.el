@@ -281,12 +281,21 @@ corresponding to the mode line clicked."
 (defun mum-modeline--segment-active-label ()
   "Active label."
   (when (mum-modeline--active?)
-	(propertize " " 'face 'mum-modeline--label-face)))
+	(propertize "✔" 'face 'mum-modeline--label-face)))
 
 (defun mum-modeline--segment-end-label ()
   "Active label."
   (when (mum-modeline--active?)
-	(propertize " " 'face 'mum-modeline--default-face)))
+	(propertize "✘"
+				'face 'mum-modeline--default-face
+				'help-echo (format "disable mum modeline")
+				'mouse-face 'mode-line-highlight
+				'local-map (purecopy (mum-modeline--make-mouse-map
+									  'mouse-1
+									  (lambda (event)
+										(interactive "e")
+										(with-selected-window (posn-window (event-start event))
+										  (mum-modeline--disenable))))))))
 
 (defun  mum-modeline--segment-separator ()
   "Space."
@@ -633,12 +642,12 @@ NOT-I is include curretn buffer."
 
 (defun mum-modeline--segment-debug ()
   "Display debug."
-
+  ;; TODO
   )
 
 (defun mum-modeline--segment-repl ()
   "Display repl."
-
+  ;; TODO
   )
 
 (defun mum-modeline--segment-conda-env ()
@@ -779,11 +788,13 @@ DEL is add or delete?"
 
 (defun mum-modeline--enable ()
   "Mode line enable."
+  (interactive)
   (mum-modeline--init-hook)
   (setq-default mode-line-format '(:eval mum-modeline--init)))
 
 (defun mum-modeline--disenable ()
   "Mode line disenable."
+  (interactive)
   (mum-modeline--init-hook)
   (setq-default mode-line-format mum-modeline--default-format))
 

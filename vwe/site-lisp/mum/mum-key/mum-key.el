@@ -89,7 +89,7 @@
 (defun mum-key--make-content-title (title)
   "Make content TITLE.
 TITLE: [TITLE]"
-  (propertize (format "%s Keymap from [%s]" (upcase title) major-mode)
+  (propertize (format "%s Keymap from [%s]    ｡◕‿◕｡ " (upcase title) major-mode)
 			  'face 'mum-key--title-face))
 
 (defun mum-key--make-content-hint-and-keymapping (func-name body)
@@ -185,7 +185,7 @@ TITLE: [TITLE]"
 							   " : "
 							   (format "%s" (cadr (nth i mum-key--footer-list)))
 							   "    ")))
-	(propertize (format "%s[q]: quit    [tab]: toggle hint/func" custom-str)
+	(propertize (format "%s[q]: quit    [tab]: toggle hint/func    ◕‿-｡ " custom-str)
 				'face 'mum-key--footer-face)))
 
 (defun mum-key--window-get-top (&optional win)
