@@ -82,6 +82,10 @@
   nil
   "If non-nil Show keymapping hint, is t show func name.")
 
+(defvar mum-key--footer-list
+  nil
+  "Footer list.")
+
 (defun mum-key--make-content-title (title)
   "Make content TITLE.
 TITLE: [TITLE]"
@@ -102,7 +106,8 @@ TITLE: [TITLE]"
 			   (func (cadr body-item))
 			   (func-str (format "%s" func))
 			   (hint (car (cddr body-item)))
-			   (hint-str (format "%s" hint)))
+			   (hint-str (format "%s" hint))
+			   (label-footer (plist-get (cdddr body-item) :footer)))
 		  (unless func
 			(setq func (lambda () (interactive) (message "func is nil"))))
 		  (unless (< (length func-str) (frame-width))
@@ -112,12 +117,15 @@ TITLE: [TITLE]"
 		  (when (symbolp (quote func))
 			(define-key keymap (cond ((stringp key) (kbd key)) ((mapp key) key)) func)
 
-			(setq func-str (concat (propertize key 'face 'mum-key--key-face)
-								   " : " func-str)
-				  func-str-list (append func-str-list (list func-str))
-				  hint-str (concat (propertize key 'face 'mum-key--key-face)
-								   " : " hint-str)
-				  hint-str-list (append hint-str-list (list hint-str))))))
+			(if label-footer
+				(setq mum-key--footer-list (append mum-key--footer-list (list (list key hint-str))))
+			  (setq func-str (concat (propertize key 'face 'mum-key--key-face)
+									 " : " func-str)
+					func-str-list (append func-str-list (list func-str))
+					hint-str (concat (propertize key 'face 'mum-key--key-face)
+									 " : " hint-str)
+					hint-str-list (append hint-str-list (list hint-str))))
+			)))
 
 	  (set-keymap-parent keymap mum-key--keymap-base-mapping)
 	  (define-key keymap (kbd "TAB") (lambda () (interactive)
@@ -168,8 +176,17 @@ TITLE: [TITLE]"
 
 (defun mum-key--make-content-footer ()
   "Make content footer."
-  (propertize (format "[q]: quit        [tab]: toggle hint/func")
-			  'face 'mum-key--footer-face))
+  (let* ((custom-str ""))
+	(dotimes (i (length mum-key--footer-list))
+	  (setq custom-str (concat custom-str
+							   "["
+							   (format "%s" (car (nth i mum-key--footer-list)))
+							   "]"
+							   " : "
+							   (format "%s" (cadr (nth i mum-key--footer-list)))
+							   "    ")))
+	(propertize (format "%s[q]: quit    [tab]: toggle hint/func" custom-str)
+				'face 'mum-key--footer-face)))
 
 (defun mum-key--window-get-top (&optional win)
   "Get Top Window.
@@ -216,7 +233,8 @@ WIN is Window."
 	(delete-windows-on mum-key--buffer-handle)
 	(kill-buffer mum-key--buffer-handle)
 	(setq mum-key--buffer-handle nil
-		  mum-key--keymap-mapping nil)))
+		  mum-key--keymap-mapping nil
+		  mum-key--footer-list nil)))
 
 (defun mum-key--show-keymap-buffer ()
   "Show keymap buffer."

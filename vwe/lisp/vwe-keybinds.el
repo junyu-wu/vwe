@@ -99,7 +99,7 @@
 (vwe@keybind--init)
 
 (vwe@lib--keymap-global-set '(("M-#" . mum-key:global)
-							  ("C-M-<return>" . mum-key:global)))
+							  ("M-RET" . mum-key:global)))
 
 (provide 'vwe-keybinds)
 ;;; vwe-keybinds.el ends here

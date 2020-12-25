@@ -36,7 +36,7 @@
 					("k" describe-key "key")
 					("f" describe-function "function")
 					("v" describe-variable "variable")
-					("RET" mum-key:global)))))
+					("RET" mum-key:global "global" :footer t)))))
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
@@ -48,7 +48,7 @@
 									 '(company-elisp)))))
   :bind
   (:map emacs-lisp-mode-map
-		("C-M-<return>" . mum-key:emacs-lisp))
+		("M-RET" . mum-key:emacs-lisp))
   :config
   ;; 高亮elisp符号
   (use-package highlight-defined

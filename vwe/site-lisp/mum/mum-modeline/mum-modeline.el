@@ -82,7 +82,7 @@
 	 mum-modeline--segment-separator
      mum-modeline--segment-encoding
      mum-modeline--segment-misc-info
-	 mum-modeline--segment-separator
+	 mum-modeline--segment-space
 	 mum-modeline--segment-time
 	 mum-modeline--segment-space
 	 mum-modeline--segment-end-label))
