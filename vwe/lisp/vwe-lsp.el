@@ -47,6 +47,7 @@
 		lsp-idle-delay 0.500
 		lsp-enable-file-watchers nil
 		lsp-log-io nil
+		lsp-modeline-diagnostics-enable nil
 		lsp-keep-workspace-alive nil
 		lsp-eldoc-enable-hover nil
 		lsp-session-file (vwe@lib--path-cache "lsp/.lspsession-v1" t))
@@ -60,7 +61,6 @@
 		  lsp-ui-doc-delay 0.5
 		  lsp-ui-doc-include-signature t
 		  lsp-ui-doc-position 'at-point
-
 
 		  lsp-ui-sideline-enable t
 		  lsp-ui-sideline-show-hover nil

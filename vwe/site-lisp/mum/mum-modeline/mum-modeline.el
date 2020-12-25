@@ -66,6 +66,9 @@
 	 mum-modeline--segment-space
 	 mum-modeline--segment-buffer-counter)
     (;;mum-modeline--segment-minor-modes
+	 mum-modeline--segment-conda-env
+	 mum-modeline--segment-ruby-env
+	 mum-modeline--segment-space
 	 mum-modeline--segment-lsp
 	 mum-modeline--segment-space
 	 mum-modeline--segment-flycheck
@@ -79,7 +82,10 @@
 	 mum-modeline--segment-separator
      mum-modeline--segment-encoding
      mum-modeline--segment-misc-info
-	 mum-modeline--segment-time))
+	 mum-modeline--segment-separator
+	 mum-modeline--segment-time
+	 mum-modeline--segment-space
+	 mum-modeline--segment-end-label))
   "Mum modeline default segments."
   :type '(list (repeat :tag "left" function)
                (repeat :tag "right" function))
@@ -277,6 +283,11 @@ corresponding to the mode line clicked."
   (when (mum-modeline--active?)
 	(propertize " " 'face 'mum-modeline--label-face)))
 
+(defun mum-modeline--segment-end-label ()
+  "Active label."
+  (when (mum-modeline--active?)
+	(propertize " " 'face 'mum-modeline--default-face)))
+
 (defun  mum-modeline--segment-separator ()
   "Space."
   (propertize mum-modeline--separator 'face 'mum-modeline--default-face))
@@ -311,12 +322,15 @@ corresponding to the mode line clicked."
 (defun mum-modeline--segment-position-percent ()
   "Displays the current cursor position in the mode-line."
   (let* ((percent (if (boundp 'mode-line-percent-position) mode-line-percent-position '(-3 "%q"))))
-	(propertize (format-mode-line percent)
-				'face 'mum-modeline--default-face)))
+	(propertize (format "P%s" (format-mode-line "%p"));; (format-mode-line percent)
+				'face 'mum-modeline--default-face
+				'help-echo (format "page %s" (format-mode-line "%p"))
+				'mouse-face 'mode-line-highlight)))
 
 (defun mum-modeline--segment-position ()
   "Displays the current cursor position in the mode-line."
-  `(,(propertize "L%l:C%c" 'face 'mum-modeline--default-face)
+  `(,(propertize "L%l:C%c"
+				 'face 'mum-modeline--default-face)
 	,(if (region-active-p)
 		 (propertize (format "[M+%s]"
 							 (apply #'+ (mapcar
@@ -431,13 +445,15 @@ corresponding to the mode line clicked."
 							(setq curindex total))))))
 			  (propertize (format "T%d:C%d" total curindex)
 						  'face 'mum-modeline--default-face
-						  'help-echo (format "total %d\ncurrent %d" total curindex)))))))))
+						  'help-echo (format "total %d\ncurrent %d" total curindex)
+						  'mouse-face 'mode-line-highlight))))))))
 
 (defun mum-modeline--segment-indent-tab ()
   "Displays the indentation information."
   (propertize (format "T%s" tab-width)
 			  'face 'mum-modeline--default-face
-			  'help-echo (format "tab width %s" tab-width)))
+			  'help-echo (format "tab width %s" tab-width)
+			  'mouse-face 'mode-line-highlight))
 
 (defun mum-modeline--segment-indent-spc ()
   "Display the indentation information."
@@ -449,7 +465,8 @@ corresponding to the mode line clicked."
 	(if indent (setq spc (symbol-value indent)) (setq spc tab-width))
 	(propertize (format "S%s" spc)
 				'face 'mum-modeline--default-face
-				'help-echo (format "indent offset %s" spc))))
+				'help-echo (format "indent offset %s" spc)
+				'mouse-face 'mode-line-highlight)))
 
 (defun mum-modeline--segment-eol ()
   "Display the EOL style of the current buffer in the mode-line."
@@ -567,7 +584,10 @@ NOT-I is include curretn buffer."
 
 (defun mum-modeline--segment-time ()
   "Display current data and time."
-  '("" display-time-string))
+  (propertize (format "%s" (current-time-string))
+			  'face 'mum-modeline--default-face
+			  'help-echo (format "current time zone %s" (current-time-zone))
+			  'mouse-face 'mode-line-highlight))
 
 (defun mum-modeline--lsp-state ()
   "Update lsp state."
@@ -620,6 +640,25 @@ NOT-I is include curretn buffer."
   "Display repl."
 
   )
+
+(defun mum-modeline--segment-conda-env ()
+  "Display current python anaconda env."
+  (when (eq major-mode 'python-mode)
+	(let* ((conda-env (if conda-env-current-name
+						  conda-env-current-name "non env")))
+	  (when conda-env
+		(propertize (format "C^[%s]" conda-env)
+					'face 'mum-modeline--default-face
+					'help-echo (format "anaconda env %s" conda-env)
+					'mouse-face 'mode-line-highlight)))))
+
+(defun mum-modeline--segment-ruby-env ()
+  "Display current ruby and gem env."
+  (when (and (eq major-mode 'ruby-mode) (fboundp 'rvm--current-ruby) (rvm-working-p))
+	(propertize (format "R^[v:%s|g:%s]" rvm-current-ruby rvm--current-gemset)
+				'face 'mum-modeline--default-face
+				'help-echo (format "Ruby version %s gem %s" rvm-current-ruby rvm--current-gemset)
+		  		'mouse-face 'mode-line-highlight)))
 
 (defun mum-modeline--segment-winnum ()
   "Display current windows number in mode-line."

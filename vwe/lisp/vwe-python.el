@@ -21,17 +21,11 @@
 
 ;;; Commentary:
 
-;; pip install mypy
-;; pip install pylint
-;; pip install flake8
-;; pip install autopep8
+;; pip install mypy pylint flake8 autopep8
 ;; pip install 'python-language-server[all]'
-;; pip install rope
-;; pip install jedi
-;; # importmagic 用来自动引入需要的包
-;; pip install importmagic
-;; # yapf 用来格式化代码
-;; pip install yapf
+;; pip install rope jedi
+;; pip install importmagic ;; 用来自动引入需要的包
+;; pip install yapf ;; 用来格式化代码
 
 ;;; Code:
 ;; ***************************************************************************
@@ -59,62 +53,33 @@
   :config
   ;; 根据autopep8格式化代码
   (use-package py-autopep8
-	:after
-	(python)
 	:hook
 	(python-mode . py-autopep8-enable-on-save))
 
   ;; company 后端
   (use-package company-anaconda
-	:after
-	(python)
-	:init
-	(add-to-list 'python-mode-hook(lambda ()
-									(add-to-list
-									 (make-local-variable
-									  'company-backends)
-									 'company-anaconda))))
-  ;; 代码导航
-  (use-package anaconda-mode
-	:diminish
-	(anaconda-mode "Cd")
-	:after
-	(python)
 	:hook
-	((python-mode . anaconda-mode)
-	 (python-mode . anaconda-eldoc-mode))
-	:init
-	(setq anaconda-mode-installation-directory (vwe@lib--path-cache
-												"python/anaconda"))
-	:config
-	(anaconda-mode t)
-	(anaconda-eldoc-mode t))
+	(python-mode-hook . (lambda ()
+						  (add-to-list (make-local-variable 'company-backends)
+									   'company-anaconda))))
 
-  ;; python 编程支持
   (use-package elpy
-	:diminish
-	(elpy-mode)
+	:hook
+	((python-mode . elpy-enable)
+	 (elpy-mode-hook . (lambda ()
+						 (elpy-shell-set-local-shell (elpy-project-root)))))
 	:init
-	(advice-add 'python-mode :before 'elpy-enable)
 	(setq elpy-shell-add-to-shell-history t
 		  elpy-rpc-virtualenv-path (vwe@lib--path-cache "elpy/rpc-venv")
 		  elpy-rpc-python-command "python3"
-		  elpy-get-info-from-shell t)
-	:config
-	(elpy-enable)
-	(add-hook 'elpy-mode-hook (lambda ()
-								(elpy-shell-set-local-shell
-								 (elpy-project-root)))))
+		  elpy-get-info-from-shell t))
 
   ;; anaconda
   (use-package conda
-	:hook
-	(python-mode . conda-env-autoactivate-mode)
 	:init
-	(setq conda-anaconda-home (getenv "CONDAHOME"))
+	(setq conda-anaconda-home (getenv "CONDA_HOME"))
 	:config
-	(conda-env-initialize-interactive-shells)
-	(conda-env-initialize-eshell))
+	(conda-env-initialize-interactive-shells))
 
   ;; 整理美化python代码
   (use-package yapfify
