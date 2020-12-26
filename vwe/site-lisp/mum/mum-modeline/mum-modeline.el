@@ -65,7 +65,7 @@
 	 mum-modeline--segment-symbol-count-info
 	 mum-modeline--segment-space
 	 mum-modeline--segment-buffer-counter)
-    (;;mum-modeline--segment-minor-modes
+    (mum-modeline--segment-space
 	 mum-modeline--segment-conda-env
 	 mum-modeline--segment-ruby-env
 	 mum-modeline--segment-space

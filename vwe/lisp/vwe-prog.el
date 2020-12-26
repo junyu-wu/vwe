@@ -257,7 +257,7 @@ MODE."
 (require 'vwe-bat)
 (require 'vwe-scheme)
 (require 'vwe-ahk)
-(require 'vwe-yaml)
+;;;(require 'vwe-yaml)
 
 (provide 'vwe-prog)
 ;;; vwe-prog.el ends here

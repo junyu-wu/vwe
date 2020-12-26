@@ -15,6 +15,7 @@ README.html
 .tramp
 .last-package-update-day
 .org-id-locations
+.dap-breakpoints
 places
 recentf
 projectile-bookmarks.eld
