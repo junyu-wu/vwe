@@ -94,6 +94,7 @@
 					("~" mum-mark--paren--paren-pair "paren mark")
 					("(" vwe@base--paren-toggle-style "paren style")
 					("+" vwe@ui--text-scale-reset "+/- text scale")))))
+
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************

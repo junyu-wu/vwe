@@ -195,24 +195,24 @@ TITLE: [TITLE]"
 (defun mum-key--make-content-to-string (doc-list)
   "Make and format buffer show content with DOC-LIST."
   (when (listp doc-list)
-	(let* ((doc-length (length doc-list))
-		   (doc-str)
-		   (space "    ")
-		   (width (- mum-key--max-width 8))
-		   (column-max (mum-key--count-column-max doc-list))
-		   (column (/ width (+ column-max 4))))
-	  (setq mum-key--frame-min-length column-max)
-	  (dotimes (i doc-length)
-		(let* ((str (nth i doc-list))
-			   (str-length (length str))
-			   (d-value (- (+ column-max 2) str-length)))
-		  (when (> d-value 0)
-			(setq str (concat str (mum-key--loop-str " " d-value))))
+	(let* ((doc-str "")
+		   (column-max (+ (mum-key--count-column-max doc-list) 4))
+		   (column-number (if (< mum-key--max-width column-max) 1 (/ mum-key--max-width column-max))))
+
+	  (setq mum-key--frame-min-length column-max
+			mum-key--line-max-length (* column-number column-max))
+
+	  (dotimes (i (length doc-list))
+		(let* ((str (if (nth i doc-list) (concat (nth i doc-list) (mum-key--loop-str " " 4)) " "))
+			   (str-length (length str)))
+
+		  (when (< str-length column-max)
+			(setq str (concat str (mum-key--loop-str " " (- column-max str-length)))))
+
 		  (setq doc-str (concat doc-str
-								(if (or (> str-length mum-key--max-width) (eq (% (1+ i) column) 0))
-									(progn (concat str space "\n"))
-								  (concat str)))
-				mum-key--line-max-length (length doc-str))))
+								(if (eq (% i column-number) 0)
+									(concat str "\n")
+								  str)))))
 	  doc-str)))
 
 (defun mum-key--make-content-footer ()
