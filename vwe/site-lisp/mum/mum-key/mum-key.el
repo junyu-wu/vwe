@@ -36,6 +36,18 @@
   :group 'mum-key
   :type 'hook)
 
+(defcustom mum-key--quit-key
+  "q"
+  "Keymap quit key."
+  :group 'mum-key
+  :type 'hook)
+
+(defcustom mum-key--toggle-hint-key
+  "SPC"
+  "Keymap toggle hint key."
+  :group 'mum-key
+  :type 'hook)
+
 (defface mum-key--default-face
   '((t (:foreground "#B0BEC5" :weight bold)))
   "Default face.")
@@ -82,7 +94,8 @@
 
 (defvar mum-key--keymap-base-mapping
   (let* ((keymap (make-sparse-keymap)))
-	(define-key keymap (kbd "q") 'mum-key--close-buffer)
+	(define-key keymap (kbd mum-key--quit-key) 'mum-key--close-buffer)
+	(define-key keymap (kbd mum-key--toggle-hint-key) 'nil)
 	keymap)
   "Key mapping.")
 
@@ -97,6 +110,18 @@
 (defvar mum-key--footer-list
   nil
   "Footer list.")
+
+(defvar mum-key--line-max-length
+  (frame-width)
+  "Line max length.")
+
+(defvar mum-key--max-width
+  (frame-width)
+  "Max width.")
+
+(defvar mum-key--frame-min-length
+  0
+  "Frame min length.")
 
 (defun mum-key--make-content-title (title)
   "Make content TITLE.
@@ -122,28 +147,28 @@ TITLE: [TITLE]"
 			   (label-footer (plist-get (cdddr body-item) :footer)))
 		  (unless func
 			(setq func (lambda () (interactive) (message "func is nil"))))
-		  (unless (< (length func-str) (frame-width))
-			(setq func-str (concat (substring func-str 0 (* 2 (/ (frame-width) 3))) "...")))
+		  (unless (< (length func-str) mum-key--max-width)
+			(setq func-str (concat (substring func-str 0 (* 2 (/ mum-key--max-width 3))) "...")))
 		  (unless hint
 			(setq hint-str func-str))
 		  (when (symbolp (quote func))
 			(define-key keymap (cond ((stringp key) (kbd key)) ((mapp key) key)) func)
 
 			(if label-footer
-				(setq mum-key--footer-list (append mum-key--footer-list (list (list key hint-str))))
-			  (setq func-str (concat (propertize key 'face 'mum-key--key-face)
-									 " : " func-str)
-					func-str-list (append func-str-list (list func-str))
-					hint-str (concat (propertize key 'face 'mum-key--key-face)
-									 " : " hint-str)
-					hint-str-list (append hint-str-list (list hint-str))))
+				(setq mum-key--footer-list (append mum-key--footer-list (list (list key hint-str)))))
+			(setq func-str (concat (propertize key 'face 'mum-key--key-face)
+								   " : " func-str)
+				  func-str-list (append func-str-list (list func-str))
+				  hint-str (concat (propertize key 'face 'mum-key--key-face)
+								   " : " hint-str)
+				  hint-str-list (append hint-str-list (list hint-str)))
 			)))
 
 	  (set-keymap-parent keymap mum-key--keymap-base-mapping)
-	  (define-key keymap (kbd "TAB") (lambda () (interactive)
-									   (if mum-key--show-hint-p
-										   (funcall (intern (format "%s" func-name)))
-										 (funcall (intern (format "%s" func-name)) t))))
+	  (define-key keymap (kbd mum-key--toggle-hint-key) (lambda () (interactive)
+														  (if mum-key--show-hint-p
+															  (funcall (intern (format "%s" func-name)))
+															(funcall (intern (format "%s" func-name)) t))))
 	  (setq mum-key--keymap-mapping keymap)
 
 	  (plist-put content :mapping keymap)
@@ -173,16 +198,21 @@ TITLE: [TITLE]"
 	(let* ((doc-length (length doc-list))
 		   (doc-str)
 		   (space "    ")
-		   (width (- (frame-width) 8))
+		   (width (- mum-key--max-width 8))
 		   (column-max (mum-key--count-column-max doc-list))
 		   (column (/ width (+ column-max 4))))
+	  (setq mum-key--frame-min-length column-max)
 	  (dotimes (i doc-length)
 		(let* ((str (nth i doc-list))
 			   (str-length (length str))
 			   (d-value (- (+ column-max 2) str-length)))
 		  (when (> d-value 0)
 			(setq str (concat str (mum-key--loop-str " " d-value))))
-		  (setq doc-str (concat doc-str (if (= (% (1+ i) column) 0) (progn (concat str space "\n")) (concat str))))))
+		  (setq doc-str (concat doc-str
+								(if (or (> str-length mum-key--max-width) (eq (% (1+ i) column) 0))
+									(progn (concat str space "\n"))
+								  (concat str)))
+				mum-key--line-max-length (length doc-str))))
 	  doc-str)))
 
 (defun mum-key--make-content-footer ()
@@ -196,7 +226,7 @@ TITLE: [TITLE]"
 							   " : "
 							   (format "%s" (cadr (nth i mum-key--footer-list)))
 							   "    ")))
-	(propertize (format "%s[q] : quit    [tab] : toggle hint/func    ◕‿-｡ " custom-str)
+	(propertize (format "%s[%s] : quit    [%s] : toggle hint/func    ◕‿-｡ " custom-str mum-key--quit-key mum-key--toggle-hint-key)
 				'face 'mum-key--footer-face)))
 
 (defun mum-key--window-get-top (&optional win)
@@ -231,13 +261,14 @@ WIN is Window."
   (with-current-buffer mum-key--buffer-handle
 	(erase-buffer)
 	(insert (concat "\n"
-					title "\n"
-					(propertize (mum-key--loop-str mum-key--string-title-separator (* (/ (frame-width) 3) 2))
+					(format "%s" title) "\n"
+					(propertize (mum-key--loop-str mum-key--string-title-separator mum-key--line-max-length)
 								'face 'mum-key--default-face) "\n"
-					body "\n"
-					(propertize (mum-key--loop-str mum-key--string-footer-separator (* (/ (frame-width) 3) 2))
+					(format "%s" body) "\n"
+					(propertize (mum-key--loop-str mum-key--string-footer-separator mum-key--line-max-length)
 								'face 'mum-key--default-face) "\n"
-					(mum-key--make-content-footer)))))
+					(mum-key--make-content-footer)))
+	(goto-char (point-min))))
 
 (defun mum-key--hide-buffer ()
   "Hide buffer."
@@ -252,13 +283,14 @@ WIN is Window."
 	(kill-buffer mum-key--buffer-handle)
 	(setq mum-key--buffer-handle nil
 		  mum-key--keymap-mapping nil
-		  mum-key--footer-list nil)))
+		  mum-key--footer-list nil
+		  mum-key--line-max-length (frame-width)
+		  mum-key--max-width (frame-width))))
 
 (defun mum-key--show-keymap-buffer ()
   "Show keymap buffer."
-  (let* ((alist '((window-width . #'frame-width)
+  (let* ((alist '((window-width . mum-key--max-width)
 				  (window-height . fit-window-to-buffer)
-				  (window-min-height . 5)
 				  (direction . 'down)
 				  (slot . 0))))
 
@@ -281,6 +313,7 @@ WIN is Window."
 			  (define-body (cadr define-list)))
 		 `(defun ,func-name (&optional funcp)
 			(interactive)
+			(setq mum-key--max-width (frame-width))
 			(mum-key--make-buffer)
 			(mum-key--insert-content-to-buffer
 			 (mum-key--make-content-title ,define-title)
@@ -299,7 +332,9 @@ WIN is Window."
 				  (plist-get
 				   (mum-key--make-content-hint-and-keymapping ,func-name-str (quote ,define-body))
 				   :mapping))
-			(mum-key--show-keymap-buffer))))))
+			(if (< mum-key--max-width mum-key--frame-min-length)
+				(message "sorry,the frame is too small to display the message.")
+			  (mum-key--show-keymap-buffer)))))))
 
 ;;;###autoload
 (defmacro mum-key-define (name define)

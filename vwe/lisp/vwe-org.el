@@ -41,6 +41,61 @@
 	(mermaid . t))
   "Org language alist.")
 
+(with-eval-after-load 'mum-key
+  (mum-key-define org-template
+				  ("org template"
+				   (("a" (vwiss/org--template-expand "<a")                              "ascii")
+					("c" (vwiss/org--template-expand "<c")                              "center")
+					("m" (vwiss/org--template-expand "<C")                              "comment")
+					("e" (vwiss/org--template-expand "<e")                              "example")
+					("E" (vwiss/org--template-expand "<E")                              "export")
+					("h" (vwiss/org--template-expand "<h")                              "html")
+					("x" (vwiss/org--template-expand "<l")                              "latex")
+					("n" (vwiss/org--template-expand "<n")                              "note")
+					("u" (vwiss/org--template-expand "<q")                              "quote")
+					("v" (vwiss/org--template-expand "<v")                              "verse")
+					("I" (vwiss/org--template-expand "<i")                              "index")
+					("A" (vwiss/org--template-expand "<A")                              "ASCII")
+					("C" (vwiss/org--template-expand "<I")                              "include")
+					("H" (vwiss/org--template-expand "<H")                              "html")
+					("L" (vwiss/org--template-expand "<L")                              "laTeX")
+					("s" (vwiss/org--template-expand "<s")                              "src")
+					("l" (vwiss/org--template-expand "<s" "emacs-lisp")                 "elisp")
+					("p" (vwiss/org--template-expand "<s" "python :results output")     "python")
+					("P" (vwiss/org--template-expand "<s" "perl")                       "perl")
+					("r" (vwiss/org--template-expand "<s" "ruby")                       "ruby")
+					("S" (vwiss/org--template-expand "<s" "shell")                      "shell")
+					("g" (vwiss/org--template-expand "<s" "go :imports '\(\"fmt\"\)")   "golang")
+					("t" (vwiss/org--template-expand "<s" "plantuml :file CHANGE.png")  "plantuml")
+					("i" self-insert-command                                            "ins")
+					("RET" mum-key:org                                                  "org" :footer t)))))
+
+(with-eval-after-load 'mum-key
+  (mum-key-define org
+				  ("org"
+				   (("l" org-insert-link "+link")
+	  				("a" outline-show-all "show all")
+	  				("e" org-meta-return  "+meta elem")
+					("L" org-store-link "store link")
+					("i" vwe@org--insert-sub-level-element "+sub elem")
+					("d" org-shiftmetaright "element down level")
+					("u" org-shiftmetaleft "element up level")
+					("<" org-shiftmetaup "move up")
+					(">" org-shiftmetadown "move down")
+					("," org-up-element "up elem")
+					("." org-down-element "down elem")
+					("F" org-forward-heading-same-level "forward head")
+					("B" org-backward-heading-same-level "backward head")
+					("P" org-export-dispatch "export")
+					("T" org-todo "todo")
+					("I" org-insert-todo-heading "insert todo")
+					("y" org-rich-yank "rich yank")
+					("s" org-tree-slide-mode "tree slide")
+					("r" vwe@org--reveal-load "reveal load")
+					("v" org-preview-html/preview "preview html")
+					("DEL" mum-key:org-template "org template" :footer t)
+					("RET" mum-key:global "global" :footer t)))))
+
 (defun vwe@org--template-expand (str &optional mod)
   "Expand org template.
 insert STR and MOD."
@@ -64,6 +119,11 @@ insert STR and MOD."
   (org-meta-return)
   (org-shiftmetaright))
 
+(defun vwe@org--reveal-load()
+  "Load reveal."
+  (interactive)
+  (vwe@lib--package-load 'ox-reveal))
+
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
@@ -71,6 +131,10 @@ insert STR and MOD."
   :ensure nil
   :hook
   (org-mode . toggle-truncate-lines)
+  :bind
+  (:map org-mode-map
+		("C-RET" . org-meta-return)
+		("M-RET" . mum-key:org))
   :init
   (setq org-hide-leading-start t
 		org-src-fontify-natively t
@@ -83,6 +147,10 @@ insert STR and MOD."
 									  "DONE(d)"
 									  "CANCEL(c)")))
   :config
+
+  (with-eval-after-load 'org
+	(define-key org-mode-map (kbd "M-<return>") #'mum-key:org))
+
   ;; 代码运行环境
   (use-package ob-go)
   (use-package ob-rust)

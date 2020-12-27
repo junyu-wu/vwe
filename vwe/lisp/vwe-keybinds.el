@@ -89,6 +89,8 @@
 					("f" format-all-buffer "format code")
 					("p" vwe@prog--switch-mode "switch mode")
 					("l" vwe@lsp--run "lsp")
+					("a" org-agenda "agenda")
+					("c" org-capture "capture")
 					("~" mum-mark--paren--paren-pair "paren mark")
 					("(" vwe@base--paren-toggle-style "paren style")
 					("+" vwe@ui--text-scale-reset "+/- text scale")))))
