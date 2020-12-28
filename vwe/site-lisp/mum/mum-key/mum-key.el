@@ -171,8 +171,7 @@ TITLE: [TITLE]"
 				  func-str-list (append func-str-list (list func-str))
 				  hint-str (concat (propertize key 'face 'mum-key--key-face)
 								   " : " hint-str)
-				  hint-str-list (append hint-str-list (list hint-str)))
-			)))
+				  hint-str-list (append hint-str-list (list hint-str))))))
 
 	  (set-keymap-parent keymap mum-key--keymap-base-mapping)
 	  (define-key keymap (kbd mum-key--toggle-hint-key) (lambda () (interactive)

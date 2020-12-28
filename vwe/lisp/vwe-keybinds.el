@@ -48,7 +48,7 @@
 	("M-C-y"                              vwe@lib--window-kill-current)
 	("M-C-o"                              vwe@lib--window-maximize)
 	("M-C-r"                              browse-kill-ring)
-	("M-$"                                vwe@buffer--switch-to)
+	("M-\""                               vwe@buffer--switch-to)
 	("C-@"                                vwe@lib--minibuffer-switch)
 	("C-c C-f"                            format-all-buffer)
 	("C-M-["                              mc/edit-beginnings-of-lines)
@@ -111,7 +111,7 @@
 					("RET" mum-key:global "global" :footer t)))
 				  emacs-lisp-mode)
 
-(define-key emacs-lisp-mode-map (kbd "C-c a") 'mum-key:emacs-lisp)
+  (define-key emacs-lisp-mode-map (kbd "C-c a") 'mum-key:emacs-lisp)
   (mum-key-define org-template
 				  ("org template"
 				   (("a" (vwe@org--template "<a")                              "ascii")
@@ -166,6 +166,31 @@
 					("DEL" mum-key:org-template "org template" :footer t)
 					("RET" mum-key:global "global" :footer t)))
 				  org-mode
+				  "C-M-<return>")
+
+  (mum-key-define markdown
+				  ("markdown"
+				   (("l" markdown-live-preview-mode "live preview mode")
+					("b" markdown-insert-gfm-code-block "code block")
+					("c" markdown-insert-code "code" :color teal)
+					("t" markdown-insert-table "table")
+					("l" markdown-insert-link "link")
+					("i" markdown-insert-image "insert image")
+					("u" markdown-insert-uri "insert uri")
+					("k" markdown-insert-kbd "kbd")
+					("g" markdown-toc-generate-toc "generate")
+					("o" markdown-toc-generate-or-refresh-toc "generate/refresh")
+					("p" markdown-toc-follow-link-at-point "follow link")
+					("1" markdown-insert-header-atx-1 "atx 1")
+					("2" markdown-insert-header-atx-2 "atx 2")
+					("3" markdown-insert-header-atx-3 "atx 3")
+					("4" markdown-insert-header-atx-4 "atx 4")
+					("5" markdown-insert-header-atx-5 "atx 5")
+					("6" markdown-insert-header-atx-6 "atx 6")
+					("7" markdown-insert-header-setext-1 "setext 1")
+					("8" markdown-insert-header-setext-2 "setext 2")
+					("RET" mum-key:global "global" :footer t)))
+				  markdown-mode
 				  "C-M-<return>")
 
   (mum-key-define python

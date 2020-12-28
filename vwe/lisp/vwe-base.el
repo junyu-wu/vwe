@@ -60,9 +60,10 @@
 (defun vwe@base--frame-init ()
   "Frame config."
   (interactive)
-  (vwe@lib--frame-reset (eval 'vwe@custom--frame-width)
-						(eval 'vwe@custom--frame-height)
-						50 50))
+  (when (display-graphic-p)
+	(vwe@lib--frame-reset (eval 'vwe@custom--frame-width)
+						  (eval 'vwe@custom--frame-height)
+						  50 50)))
 
 (defun vwe@base--font-init ()
   "Font config."
