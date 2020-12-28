@@ -26,17 +26,7 @@
 ;; ***************************************************************************
 ;; lib
 ;; ***************************************************************************
-(with-eval-after-load 'mum-key
-  (mum-key-define emacs-lisp
-				  ("emacs lisp"
-				   (("b" eval-buffer "eval buffer")
-					("d" eval-defun "eval defun")
-					("r" eval-region "eval region")
-					("e" eval-expression "eval expression")
-					("k" describe-key "key")
-					("f" describe-function "function")
-					("v" describe-variable "variable")
-					("RET" mum-key:global "global" :footer t)))))
+
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
@@ -46,9 +36,6 @@
   ((emacs-lisp-mode . (lambda ()
 						(add-to-list (make-local-variable 'company-backends)
 									 '(company-elisp)))))
-  :bind
-  (:map emacs-lisp-mode-map
-		("M-RET" . mum-key:emacs-lisp))
   :config
   ;; 高亮elisp符号
   (use-package highlight-defined

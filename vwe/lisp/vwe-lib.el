@@ -474,13 +474,17 @@ FILE-P if t make path and file."
 ;; ************************************************************************
 (defun vwe@lib--keymap-global-set (key-alist)
   "Set global keymap of KEY-ALIST."
+  (vwe@lib--keymap-set global-map key-alist))
+
+(defun vwe@lib--keymap-set (keymap key-alist)
+  "Set KEYMAP of KEY-ALIST."
   (when (listp key-alist)
 	(dotimes (i (length key-alist))
 	  (let* ((key (car (nth i key-alist)))
-			 (func (cdr (nth i key-alist))))
+			 (func (cadr (nth i key-alist))))
 		(cond
-		 ((stringp key) (global-set-key (kbd key) func))
-		 ((mapp key) (global-set-key key func)))))))
+		 ((stringp key) (define-key keymap (kbd key) func))
+		 ((mapp key) (define-key keymap key func)))))))
 
 ;; ************************************************************************
 ;; server

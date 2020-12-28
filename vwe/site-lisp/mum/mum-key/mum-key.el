@@ -36,6 +36,12 @@
   :group 'mum-key
   :type 'hook)
 
+(defcustom mum-key--leader-key
+  "M-RET"
+  "Keymap quit key."
+  :group 'mum-key
+  :type 'hook)
+
 (defcustom mum-key--quit-key
   "q"
   "Keymap quit key."
@@ -102,6 +108,10 @@
 (defvar mum-key--keymap-mapping
   nil
   "Key mapping.")
+
+(defvar mum-key--keymap-mode-func-alist
+  '()
+  "Mode and func alist.")
 
 (defvar mum-key--show-hint-p
   nil
@@ -193,7 +203,7 @@ TITLE: [TITLE]"
 	tostr))
 
 (defun mum-key--make-content-to-string (doc-list)
-  "Make and format buffer show content with DOC-LIST."
+  "Make and format buffer show contentnnnn with DOC-LIST."
   (when (listp doc-list)
 	(let* ((doc-str "")
 		   (column-max (+ (mum-key--count-column-max doc-list) 4))
@@ -210,7 +220,7 @@ TITLE: [TITLE]"
 			(setq str (concat str (mum-key--loop-str " " (- column-max str-length)))))
 
 		  (setq doc-str (concat doc-str
-								(if (eq (% i column-number) 0)
+								(if (eq (% (1+ i) column-number) 0)
 									(concat str "\n")
 								  str)))))
 	  doc-str)))
@@ -301,45 +311,54 @@ WIN is Window."
 	  (display-buffer-in-side-window mum-key--buffer-handle alist))))
 
 ;;;###autoload
-(defmacro mum-key--keymap-define (name define)
-  "Make call function with NAME DEFINE."
-  `(let* ((name-symbol (quote ,name))
-		  (define-list (quote ,define)))
-	 (unless (null name-symbol)
-	   (let* ((name-str (format "%s" name-symbol))
-			  (func-name-str (concat "mum-key:" name-str))
-			  (func-name (intern func-name-str))
-			  (define-title (car define-list))
-			  (define-body (cadr define-list)))
-		 `(defun ,func-name (&optional funcp)
-			(interactive)
-			(setq mum-key--max-width (frame-width))
-			(mum-key--make-buffer)
-			(mum-key--insert-content-to-buffer
-			 (mum-key--make-content-title ,define-title)
-			 (mum-key--make-content-to-string
-			  (if funcp
-				  (progn
-					(setq mum-key--show-hint-p t)
-					(plist-get
-					 (mum-key--make-content-hint-and-keymapping ,func-name-str (quote ,define-body))
-					 :func))
-				(setq mum-key--show-hint-p nil)
-				(plist-get
-				 (mum-key--make-content-hint-and-keymapping ,func-name-str (quote ,define-body))
-				 :hint))))
-			(setq mum-key--keymap-mapping
-				  (plist-get
-				   (mum-key--make-content-hint-and-keymapping ,func-name-str (quote ,define-body))
-				   :mapping))
-			(if (< mum-key--max-width mum-key--frame-min-length)
-				(message "sorry,the frame is too small to display the message.")
-			  (mum-key--show-keymap-buffer)))))))
+(defmacro mum-key-define (name define &optional mode leaderkey)
+  "Define MODE keymap with NAME and DEFINE.
+LEADERKEY is leader key."
+  (let* ((name-symbol `,name)
+		 (define-list `,define))
+	(unless (null name-symbol)
+	  (let* ((name-str (format "%s" name-symbol))
+			 (func-name-str (concat "mum-key:" name-str))
+			 (func-name (intern func-name-str))
+			 (define-title (car define-list))
+			 (define-body (cadr define-list)))
+		(if (plist-member mum-key--keymap-mode-func-alist mode)
+			(progn (plist-put mum-key--keymap-mode-func-alist mode `(,func-name ,leaderkey)))
+		  (setq mum-key--keymap-mode-func-alist (append mum-key--keymap-mode-func-alist
+														`(,mode (,func-name ,leaderkey)))))
+		`(defun ,func-name (&optional funcp)
+		   (interactive)
+		   (setq mum-key--max-width (frame-width))
+		   (mum-key--make-buffer)
+		   (mum-key--insert-content-to-buffer
+			(mum-key--make-content-title ,define-title)
+			(mum-key--make-content-to-string
+			 (if funcp
+				 (progn
+				   (setq mum-key--show-hint-p t)
+				   (plist-get
+					(mum-key--make-content-hint-and-keymapping ,func-name-str (quote ,define-body))
+					:func))
+			   (setq mum-key--show-hint-p nil)
+			   (plist-get
+				(mum-key--make-content-hint-and-keymapping ,func-name-str (quote ,define-body))
+				:hint))))
+		   (setq mum-key--keymap-mapping
+				 (plist-get
+				  (mum-key--make-content-hint-and-keymapping ,func-name-str (quote ,define-body))
+				  :mapping))
+		   (if (< mum-key--max-width mum-key--frame-min-length)
+			   (message "sorry,the frame is too small to display the message.")
+			 (mum-key--show-keymap-buffer)))))))
 
 ;;;###autoload
-(defmacro mum-key-define (name define)
-  "Define keymap with NAME DEFINE."
-  `(eval (mum-key--keymap-define ,name ,define)))
+(defun mum-key--define-keymap-on-change-major-mode ()
+  "Define keymap on change major mode."
+  (when mum-key--keymap-mode-func-alist
+	(let* ((mode-func (plist-get mum-key--keymap-mode-func-alist major-mode))
+		   (key (if (cadr mode-func) (cadr mode-func) mum-key--leader-key)))
+	  (when mode-func
+		(define-key (current-local-map) (kbd key) (car mode-func))))))
 
 ;;;###autoload
 (define-minor-mode mum-key-mode
@@ -351,7 +370,8 @@ WIN is Window."
 	  (progn
 		(setq mum-key-mode-p nil)
 		(mum-key--close-buffer))
-	(setq mum-key-mode-p t)))
+	(setq mum-key-mode-p t)
+	(add-hook 'after-change-major-mode-hook 'mum-key--define-keymap-on-change-major-mode)))
 
 (provide 'mum-key)
 ;;; mum-key.el ends here

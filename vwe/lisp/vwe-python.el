@@ -31,19 +31,6 @@
 ;; ***************************************************************************
 ;; lib
 ;; ***************************************************************************
-(with-eval-after-load 'mum-key
-  (mum-key-define python
-				  ("python"
-				   (("r" run-python "run python")
-                    ("c" conda-env-activate "conda activate")
-					("d" conda-env-deactivate "conda deactivate")
-					("l" conda-env-list "conda list")
-					("e" elpy-enable "elpy enable")
-					("s" elpy-shell-switch-to-shell "swithc shell")
-					("j" elpy-django-runserver "run django")
-					("b" python-shell-send-buffer "send buffer")
-					("r" python-shell-send-region "send region")
-					("RET" mum-key:global "global" :footer t)))))
 
 ;; ***************************************************************************
 ;; config
@@ -54,9 +41,6 @@
   ("\\.py\\'" . python-mode)
   :interpreter
   ("python3" . python-mode)
-  :bind
-  (:map python-mode-map
-		("M-RET" . mum-key:python))
   :init
   (setq indent-tabs-mode nil
 		python-indent-offset 4
