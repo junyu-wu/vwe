@@ -352,7 +352,7 @@ corresponding to the mode line clicked."
 
 (defun mum-modeline--segment-location ()
   "Display the current cursor location."
-  `(,(propertize (format "%s:%s^%s"
+  `(,(propertize (format "L%s:C%s^P%s"
 						 (format-mode-line "%l")
 						 (format-mode-line "%c")
 						 (format-mode-line "%p"))
@@ -384,13 +384,13 @@ corresponding to the mode line clicked."
   (let* ((text))
 	(let-alist (mum-modeline--segment-make-flycheck-info)
 	  (setq text (format "%s%s%s%s%s"
-						 (propertize (concat "I:" (number-to-string .info))
+						 (propertize (concat "I" (number-to-string .info))
 									 'face 'mum-modeline--info-face)
 						 (mum-modeline--segment-separator)
-						 (propertize (concat "W:" (number-to-string .warning))
+						 (propertize (concat "W" (number-to-string .warning))
 									 'face 'mum-modeline--warning-face)
 						 (mum-modeline--segment-separator)
-						 (propertize (concat "E:" (number-to-string .error))
+						 (propertize (concat "E" (number-to-string .error))
 									 'face 'mum-modeline--error-face))))
 	(propertize text
 				'help-echo (concat "mouse-1: Show all errors\nmouse-3: Next error"
@@ -610,7 +610,7 @@ NOT-I is include curretn buffer."
 
 (defun mum-modeline--segment-time ()
   "Display current data and time."
-  (propertize (format "%s" (current-time-string))
+  (propertize (format-time-string "%Y%m%d %H:%M %a")
 			  'face 'mum-modeline--default-face
 			  'help-echo (format "current time zone %s" (current-time-zone))
 			  'mouse-face 'mode-line-highlight))
