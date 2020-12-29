@@ -58,9 +58,10 @@
 	 mum-modeline--segment-space
 	 mum-modeline--segment-vc-diff
 	 mum-modeline--segment-space
-	 mum-modeline--segment-position-percent
-	 mum-modeline--segment-separator
-     mum-modeline--segment-position
+	 ;;mum-modeline--segment-position-percent
+	 ;;mum-modeline--segment-separator
+     ;;mum-modeline--segment-position
+	 mum-modeline--segment-location
 	 mum-modeline--segment-space
 	 mum-modeline--segment-symbol-count-info
 	 mum-modeline--segment-space
@@ -349,24 +350,40 @@ corresponding to the mode line clicked."
 										 (region-bounds))))
 					 'font-lock-face 'mum-modeline--info-face))))
 
+(defun mum-modeline--segment-location ()
+  "Display the current cursor location."
+  `(,(propertize (format "%s:%s^%s"
+						 (format-mode-line "%l")
+						 (format-mode-line "%c")
+						 (format-mode-line "%p"))
+				 'face 'mum-modeline--default-face)
+	,(if (region-active-p)
+		 (propertize (format "[M+%s]"
+							 (apply #'+ (mapcar
+										 (lambda (pos)
+										   (- (cdr pos)
+											  (car pos)))
+										 (region-bounds))))
+					 'font-lock-face 'mum-modeline--info-face))))
+
 (defun mum-modeline--segment-make-flycheck-info ()
   "Make checker info."
   (when (boundp 'flycheck-current-errors)
 	(let ((info 0) (warning 0) (error 0))
-      (mapc (lambda (item)
+	  (mapc (lambda (item)
 			  (let ((count (cdr item)))
 				(pcase (flycheck-error-level-compilation-level (car item))
 				  (0 (cl-incf info count))
 				  (1 (cl-incf warning count))
 				  (2 (cl-incf error count)))))
 			(flycheck-count-errors flycheck-current-errors))
-      `((info . ,info) (warning . ,warning) (error . ,error)))))
+	  `((info . ,info) (warning . ,warning) (error . ,error)))))
 
 (defun mum-modeline--segment-flycheck-text (&optional status)
   "Checker text via STATUS."
   (let* ((text))
 	(let-alist (mum-modeline--segment-make-flycheck-info)
-      (setq text (format "%s%s%s%s%s"
+	  (setq text (format "%s%s%s%s%s"
 						 (propertize (concat "I:" (number-to-string .info))
 									 'face 'mum-modeline--info-face)
 						 (mum-modeline--segment-separator)
@@ -470,7 +487,7 @@ corresponding to the mode line clicked."
 		(indent
          (seq-find (lambda (var)
                      (and var (boundp var) (symbol-value var)))
-                   (cdr (assoc major-mode mum-modeline--indent-alist)) nil)))
+				   (cdr (assoc major-mode mum-modeline--indent-alist)) nil)))
 	(if indent (setq spc (symbol-value indent)) (setq spc tab-width))
 	(propertize (format "S%s" spc)
 				'face 'mum-modeline--default-face
@@ -623,22 +640,22 @@ NOT-I is include curretn buffer."
 											"LSP Disconnected\nmouse-1: Reload to start server"))
 				  'mouse-face 'mode-line-highlight
 				  'local-map (let ((map (make-sparse-keymap)))
-                               (if lsp-info
-                                   (progn
+							   (if lsp-info
+								   (progn
                                      (define-key map [mode-line C-mouse-1]
-                                       #'lsp-workspace-folders-open)
+									   #'lsp-workspace-folders-open)
                                      (define-key map [mode-line mouse-1]
-                                       #'lsp-describe-session)
+									   #'lsp-describe-session)
                                      (define-key map [mode-line mouse-2]
-                                       #'lsp-workspace-shutdown)
+									   #'lsp-workspace-shutdown)
                                      (define-key map [mode-line mouse-3]
-                                       #'lsp-workspace-restart))
+									   #'lsp-workspace-restart))
                                  (progn
-                                   (define-key map [mode-line mouse-1]
+								   (define-key map [mode-line mouse-1]
                                      (lambda ()
-                                       (interactive)
-                                       (ignore-errors (revert-buffer t t))))))
-                               map)))))
+									   (interactive)
+									   (ignore-errors (revert-buffer t t))))))
+							   map)))))
 
 (defun mum-modeline--segment-debug ()
   "Display debug."
@@ -672,21 +689,21 @@ NOT-I is include curretn buffer."
 (defun mum-modeline--segment-winnum ()
   "Display current windows number in mode-line."
   (let ((num (cond
-              ((bound-and-true-p ace-window-display-mode)
-               (aw-update)
-               (window-parameter (selected-window) 'ace-window-path))
-              ((bound-and-true-p winum-mode)
-               (setq winum-auto-setup-mode-line nil)
-               (winum-get-number-string))
-              ((bound-and-true-p window-numbering-mode)
-               (window-numbering-get-number-string))
-              (t ""))))
+			  ((bound-and-true-p ace-window-display-mode)
+			   (aw-update)
+			   (window-parameter (selected-window) 'ace-window-path))
+			  ((bound-and-true-p winum-mode)
+			   (setq winum-auto-setup-mode-line nil)
+			   (winum-get-number-string))
+			  ((bound-and-true-p window-numbering-mode)
+			   (window-numbering-get-number-string))
+			  (t ""))))
     (if (and (< 0 (length num))
              (< (if (active-minibuffer-window) 2 1) ; exclude minibuffer
                 (length (cl-mapcan
                          (lambda (frame)
-                           ;; Exclude child frames
-                           (unless (and (fboundp 'frame-parent)
+						   ;; Exclude child frames
+						   (unless (and (fboundp 'frame-parent)
                                         (frame-parent frame))
                              (window-list)))
                          (visible-frame-list)))))
@@ -702,11 +719,7 @@ Containing LEFT-SEGMENTS and RIGHT-SEGMENTS."
   (let* ((left (mum-modeline--format-segments left-segments))
 		 (right (mum-modeline--format-segments right-segments))
 		 (reserve (length right)))
-	(concat
-	 left
-	 (propertize " "
-				 'display `((space :align-to (- right ,reserve))))
-	 right)))
+	(concat left (propertize " " 'display `((space :align-to (- right ,reserve)))) right)))
 
 (defun mum-modeline--format-segments (segments)
   "Make modeline string from SEGMENTS."
@@ -714,9 +727,9 @@ Containing LEFT-SEGMENTS and RIGHT-SEGMENTS."
 							segments)))
 
 (defun mum-modeline--get-current-window (&optional frame)
-  "Get the current window but should exclude the child windows."
+  "Get the current window from FRAME."
   (if (and (fboundp 'frame-parent) (frame-parent frame))
-      (frame-selected-window (frame-parent frame))
+	  (frame-selected-window (frame-parent frame))
     (frame-selected-window frame)))
 
 (defvar mum-modeline--current-window
@@ -726,14 +739,14 @@ Containing LEFT-SEGMENTS and RIGHT-SEGMENTS."
 (defun mum-modeline--active? ()
   "Whether is an active window."
   (and mum-modeline--current-window
-       (eq (mum-modeline--get-current-window) mum-modeline--current-window)))
+	   (eq (mum-modeline--get-current-window) mum-modeline--current-window)))
 
 (defun mum-modeline--set-selected-window (&rest _)
   "Set `mum-modeline--current-window' appropriately."
   (when-let ((win (mum-modeline--get-current-window)))
     (unless (or (minibuffer-window-active-p win)
                 (and (bound-and-true-p lv-wnd) (eq lv-wnd win)))
-      (setq mum-modeline--current-window win))))
+	  (setq mum-modeline--current-window win))))
 
 (defun mum-modeline--unset-selected-window ()
   "Unset `mum-modeline--current-window' appropriately."
@@ -843,6 +856,117 @@ DEL is add or delete?"
 	(mum-modeline--disenable)
 	(remove-hook 'emacs-startup-hook 'mum-modeline--hide)
 	(remove-hook 'window-configuration-change-hook 'mum-modeline--hide)))
+
+;; ***************************************************************************
+;; modeline tray
+;; ***************************************************************************
+
+(defcustom mum-modeline-tray--segments
+  '(mum-modeline-tray--segment-location
+	mum-modeline--segment-space
+	mum-modeline-tray--segment-date)
+  "Segments."
+  :type 'list
+  :group 'mum-modeline)
+
+(defface mum-modeline-tray--default-face
+  '((t (:foreground "#B0BEC5"
+					:weight bold)))
+  "Default face.")
+
+(defvar mum-modeline-tray--active-p
+  nil
+  "Tray is active?")
+
+(defvar mum-modeline-tray--last-str
+  nil
+  "Tray last show str.")
+
+(defun mum-modeline-tray--segment-location ()
+  "Location."
+  (propertize (format "%s^%s:%s" (format-mode-line "%p") (format-mode-line "%l") (format-mode-line "%c"))
+			  'face 'mum-modeline-tray--default-face))
+
+(defun mum-modeline-tray--segment-date ()
+  "Date."
+  (propertize (format-time-string "%Y%m%d %H:%M %a")
+			  'face 'mum-modeline-tray--default-face))
+
+(defun mum-modeline-tray--make-segments-message (segments)
+  "Make message with SEGMENTS."
+  (let* ((str-list (mapcar (lambda (segment) (funcall `,segment)) segments))
+		 (seg-msg ""))
+	(dotimes (i (length str-list))
+	  (let* ((str (nth i str-list)))
+		(when (stringp str)
+		  (setq seg-msg (concat seg-msg (format "%s" (nth i str-list)))))))
+	(concat (make-string (max 0 (- (frame-width) (string-width seg-msg))) 32)
+			seg-msg)))
+
+(defun mum-modeline-tray--make-message (msg)
+  "Make show message with MSG and segments."
+  (let* ((seg-str (mum-modeline-tray--make-segments-message mum-modeline-tray--segments))
+		 (blanks (- (frame-width) (+ (string-width (string-trim seg-str)) (string-width msg) 2)))
+		 (show-msg ""))
+	(cond
+	 ((< blanks 0) (setq show-msg (concat msg "\n" seg-str)))
+	 (t (setq show-msg (concat msg
+							   (make-string (+ blanks 2) 32)
+							   (string-trim seg-str)))))
+	show-msg))
+
+(defun mum-modeline-tray--refresh ()
+  "Refresh tray."
+  (let* ((message-str (mum-modeline-tray--make-segments-message mum-modeline-tray--segments)))
+	(with-current-buffer " *Minibuf-0*"
+	  (erase-buffer)
+	  (insert message-str))))
+
+(defun mum-modeline-tray--advice (msg &rest args)
+  "Tray advice with MSG and ARGS."
+  (cond
+   ((not mum-modeline-tray--active-p) (apply msg args))
+   (inhibit-message (apply msg args))
+   ((not (car args)) (apply msg args) (mum-modeline-tray--refresh))
+   (t (apply msg "%s" (list (mum-modeline-tray--make-message (apply 'format args))))))
+  (if (car args) (apply 'format args) (apply msg args)))
+
+(defun mum-modeline-tray--message-advice (msg &rest args)
+  "Tray current message advice with MSG and ARGS."
+  (let ((message-str (apply msg args)))
+    (if message-str
+		(setq message-str (concat message-str mum-modeline-tray--last-str)))
+	message-str))
+
+(defun mum-modeline-tray-enable ()
+  "Enable tray."
+  (interactive)
+  (setq mum-modeline-tray--active-p t)
+  (advice-add #'message :around #'mum-modeline-tray--advice)
+  (advice-add #'current-message :around #'mum-modeline-tray--message-advice)
+  (advice-add #'beginning-of-buffer :around #'mum-modeline-tray--message-advice)
+  (advice-add #'end-of-buffer :around #'mum-modeline-tray--message-advice))
+
+(defun mum-modeline-tray-disable ()
+  "Disable tray."
+  (interactive)
+  (with-current-buffer " *Minibuf-0*"
+	(erase-buffer))
+  (setq mum-modeline-tray--active-p nil)
+  (advice-remove 'message #'mum-modeline-tray--advice)
+  (advice-remove 'current-message #'mum-modeline-tray--message-advice))
+
+;;;###autoload
+(define-minor-mode mum-modeline-tray-mode
+  "Mum modeline tray minor mode."
+  :init-value nil
+  :keymap nil
+  :lighter ""
+  :group 'mum-modeline
+  :global t
+  (if mum-modeline-tray-mode
+	  (mum-modeline-tray-enable)
+	(mum-modeline-tray-disable)))
 
 (provide 'mum-modeline)
 ;;; mum-modeline.el ends here
