@@ -55,7 +55,8 @@
   (unless vwe@custom--frame-tool-bar?
 	(tool-bar-mode -1))
   (unless vwe@custom--frame-scroll-bar?
-	(scroll-bar-mode -1)))
+	(scroll-bar-mode -1))
+  (blink-cursor-mode -1))
 
 ;; ***************************************************************************
 ;; config

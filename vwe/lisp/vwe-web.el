@@ -19,19 +19,7 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;; apt install npm
-;; npm install nrm  ;; 更换源
-;; npm install stylelint -g
-;; npm install --save-dev stylelint stylelint-config-standard
-;; npm install stylelint-config-recommended -g
-;; npm install prettier -g
-;; npm install live-server -g  ;; 目录下文件修改，自动加载
-;; npm install typescript -g
-;; npm install eslint -g
-;; npm install tsun -g
-;; npm i -g javascript-typescript-langserver
-;; npm i -g vscode-json-languageserver
-;; apt install tidy ;; html format
+
 ;;; Code:
 ;; ***************************************************************************
 ;; lib
@@ -44,9 +32,8 @@
   :mode
   ("\\.html\\'"
    "\\.html?\\'"
-   "\\.vue\\'")
-  :hook
-  (web-mode . emmet-mode)
+   "\\.vue\\'"
+   "\\.as[cp]x\\'")
   :init
   (setq web-mode-enable-current-element-highlight t
 		web-mode-enable-current-column-highlight t
@@ -75,43 +62,24 @@
 		  company-tooltip-align-annotations 't
 		  company-begin-commands '(self-insert-command))))
 
-;; 根据简单命令快速生成代码
-(use-package emmet-mode
-  :diminish
-  (emmet-mode . nil)
-  :init
-  (setq emmet-move-cursor-between-quotes t
-		emmet-expand-jsx-className? t
-		emmet-self-closing-tag-style " /")
-  :config
-  (add-hook 'emmet-mode-hook
-			(lambda()
-			  (setq emmet-indent-after-insert t
-					emmet-indentation 2))))
-
 ;;; CSS
 (use-package css-mode
   :mode "\\.css\\'"
-  :hook
-  (css-mode . emmet-mode)
   :init
   (setq css-indent-offset 2
 		flycheck-stylelintrc (vwe@lib--path-vwe-etc "web/.stylelintrc" t)
 		flycheck-css-stylelint-executable "stylelint")
   :config
-  (add-hook 'css-mode-hook
-			(lambda()
-			  (add-to-list (make-local-variable 'company-backends)
-						   '(company-css company-files
-										 company-yasnippet
-										 company-capf)))))
+  (add-hook 'css-mode-hook (lambda()
+							 (add-to-list (make-local-variable 'company-backends)
+										  '(company-css company-files
+														company-yasnippet
+														company-capf)))))
 
 ;;; JavaScript
 (use-package js2-mode
   :mode (("\\.js\\'" . js2-mode)
 		 ("\\.json\\'" . javascript-mode))
-  :hook
-  (js2-mode . emmet-mode)
   :defines
   (flycheck-javascript-eslint-executable)
   :init
@@ -124,34 +92,14 @@
 
 ;; 格式化js
 (use-package prettier-js
-  :diminish
-  (prettier-js-mode)
   :hook
   ((js2-mode . prettier-js-mode)
-   (typescript-mode . prettier-js-mode)
    (css-mode . prettier-js-mode)
    (web-mode . prettier-js-mode))
   :config
   (setq prettier-js-command "prettier"
-		prettier-js-args '("--trailing-comma" "all";;"es5"
+		prettier-js-args '("--trailing-comma" "all"
 						   "--bracket-spacing" "false")))
-
-;;; Typescript
-(use-package typescript-mode
-  :config
-  ;; TypeScript REPL
-  (use-package ts-comint))
-
-;; TypeScript交互式开发环境
-(use-package tide
-  :diminish
-  (tide-mode . nil)
-  :hook
-  ((typescript-mode . tide-setup)
-   (typescript-mode . tide-hl-identifier-mode)
-   (before-save-hook . tide-format-before-save))
-  :init
-  (setq tide-completion-enable-autoimport-suggestions t))
 
 ;;; JSON
 (use-package json-mode)

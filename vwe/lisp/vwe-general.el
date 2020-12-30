@@ -31,15 +31,15 @@
   (interactive)
   (let* ((buffer (buffer-name))
 		 (split (list (vwe@lib--face-of-string "------------------------------"
-										:background "DarkRed"
-										  :foreground "white"
-										  :weight 'bold)))
+											   :background "DarkRed"
+											   :foreground "white"
+											   :weight 'bold)))
 		 (non-alength (length(vwe@lib--buffer-non-asterisk-list)))
 		 (buffers))
 	(if (> non-alength 0)
 		(setq buffers (append (vwe@lib--buffer-non-asterisk-list)
-							 split
-							 (vwe@lib--buffer-asterisk-list)))
+							  split
+							  (vwe@lib--buffer-asterisk-list)))
 	  (setq buffers (vwe@lib--buffer-asterisk-list)))
 
 	(setq buffer (completing-read "switch to:" buffers))
@@ -74,29 +74,24 @@ MINI pop frame or minibuffer."
 						   :initial-index 1)))
 	(vwe@buffer--switch-to-minibuffer)))
 
-(with-eval-after-load 'yasnippet
-  (defun vwe@pkg--yas-expand ()
-	"Replace text in yasnippet template."
-	(yas-expand-snippet (buffer-string) (point-min) (point-max))))
-
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
 
 (use-package mum-modeline
- :load-path
- (lambda ()
-   (vwe@lib--path-vwe-site-lisp "mum/mum-modeline"))
- :hook
- (after-init . (lambda ()
-				 (vwe@lib--package-load 'mum-modeline)
-				 (when vwe@custom--modeline-show? (mum-modeline-mode))
-				 (when vwe@custom--modeline-tray-show? (mum-modeline-tray-mode))))
- :init
- (setq mum-modeline--buffer-filter-list vwe@custom--modeline--hide-list
-	   mum-modeline--default-format mode-line-format)
- :config
- (setq-default mode-line-format nil))
+  :load-path
+  (lambda ()
+	(vwe@lib--path-vwe-site-lisp "mum/mum-modeline"))
+  :hook
+  (after-init . (lambda ()
+				  (vwe@lib--package-load 'mum-modeline)
+				  (when vwe@custom--modeline-show? (mum-modeline-mode))
+				  (when vwe@custom--modeline-tray-show? (mum-modeline-tray-mode))))
+  :init
+  (setq mum-modeline--buffer-filter-list vwe@custom--modeline--hide-list
+		mum-modeline--default-format mode-line-format)
+  :config
+  (setq-default mode-line-format nil))
 
 (use-package mum-headerline
   :load-path
@@ -124,15 +119,6 @@ MINI pop frame or minibuffer."
 										regexp-search-ring
 										extended-command-history)
 		savehist-autosave-interval 300))
-
-;; 特定条件还原buffer
-;; (use-package autorevert
-;;   :ensure nil
-;;   :diminish
-;;   :hook
-;;   (after-init . global-auto-revert-mode)
-;;   :config
-;;   (global-auto-revert-mode 1))
 
 (use-package ibuffer
   :ensure nil
@@ -170,13 +156,10 @@ MINI pop frame or minibuffer."
 (use-package htmlize)
 
 (use-package which-key
-  :diminish
-  (which-key-mode . nil)
   :hook
   (after-init . which-key-mode))
 
 (use-package ivy
-  :diminish (ivy-mode . nil)
   :hook
   (after-init . ivy-mode)
   :init
@@ -188,8 +171,6 @@ MINI pop frame or minibuffer."
 		enable-recursive-minibuffers t))
 
 (use-package counsel
-  :diminish
-  (counsel-mode . "")
   :config
   (if (executable-find "rg")
       (setq counsel-grep-base-command
@@ -200,9 +181,8 @@ MINI pop frame or minibuffer."
 (use-package swiper)
 
 (use-package yasnippet
-  :diminish (yas-minor-mode . nil)
   :hook
-  (prog-mode . yas-global-mode)
+  (after-init . yas-global-mode)
   :init
   (setq yas-snippet-dirs (list (vwe@lib--path-vwe-etc "snippets")))
   :config
@@ -214,9 +194,18 @@ MINI pop frame or minibuffer."
   (use-package auto-yasnippet
     :after (yasnippet)))
 
+(use-package autoinsert
+  :ensure nil
+  :hook
+  (after-init . auto-insert-mode)
+  :init
+  (setq auto-insert t
+		auto-insert-query nil
+		auto-insert-directory (vwe@lib--path-vwe-etc "templates"))
+  :config
+  (define-auto-insert "\\.org$" ["default-org.org" (lambda () (when (fboundp 'yas-expand-snippet) (yas-expand-snippet (buffer-string) (point-min) (point-max))))]))
+
 (use-package company
-  :diminish
-  (company-mode . nil)
   :commands
   company-abort
   :hook
@@ -225,12 +214,12 @@ MINI pop frame or minibuffer."
   (company-dabbrev-ignore-case company-dabbrev-downcase)
   :bind
   (:map company-search-map
-   ("C-n" . company-select-next)
-   ("C-p" . company-select-previous)
-   :map company-active-map
-   ("C-p" . company-select-previous)
-   ("C-n" . company-select-next)
-   ("<tab>" . company-complete-common-or-cycle))
+		("C-n" . company-select-next)
+		("C-p" . company-select-previous)
+		:map company-active-map
+		("C-p" . company-select-previous)
+		("C-n" . company-select-next)
+		("<tab>" . company-complete-common-or-cycle))
   :init
   (setq company-tooltip-align-annotations t
         company-tooltip-limit 12
@@ -241,8 +230,6 @@ MINI pop frame or minibuffer."
         company-dabbrev-ignore-case nil
         company-dabbrev-downcase nil
 		company-show-numbers t
-		;; company-global-modes '(not erc-mode message-mode help-mode
-		;; gud-mode eshell-mode shell-mode)
         company-frontends '(company-pseudo-tooltip-frontend
                             company-echo-metadata-frontend)
 		company-backends '((company-files
@@ -275,8 +262,6 @@ MINI pop frame or minibuffer."
 
 ;; 补全显示图标
 (use-package company-box
-  :diminish
-  (company-box-mode)
   :hook
   (company-mode . company-box-mode)
   :init
@@ -288,38 +273,13 @@ MINI pop frame or minibuffer."
 
 ;; 补全弹出框
 (use-package company-posframe
-  :diminish
-  (company-posframe-mode . nil)
   :hook
   (prog-mode . company-posframe-mode)
   :config
   (company-posframe-mode 1))
 
-;; 自动插入内容
-(use-package autoinsert
-  :ensure nil
-  :hook
-  (after-init . auto-insert-mode)
-  (find-file . auto-insert)
-  (emacs-startup . (lambda() (setq auto-insert t)))
-  :init
-  (setq auto-insert nil
-		auto-insert-query nil
-		auto-insert-directory (locate-user-emacs-file
-							   "assets/templates/"))
-  :config
-  (auto-insert-mode t)
-  (define-auto-insert "\\.org$" ["default-org.org" vwe@pkg--yas-expand])
-  (define-auto-insert "\\.py$" ["default_python.py" vwe@pkg--yas-expand])
-  (define-auto-insert "\\.rb$" ["default_ruby.rb" vwe@pkg--yas-expand])
-  (define-auto-insert "\\.html$" ["default-html.html" vwe@pkg--yas-expand])
-  (define-auto-insert "\\.js$" ["default-js.js" vwe@pkg--yas-expand])
-  (define-auto-insert "\\.css$" ["default-css.css" vwe@pkg--yas-expand])
-  (define-auto-insert "\\.scm$" ["default-scheme.scm" vwe@pkg--yas-expand]))
-
 ;; 删除多余的空格
 (use-package hungry-delete
-  :diminish
   :hook
   (after-init . global-hungry-delete-mode)
   :config
@@ -336,7 +296,6 @@ MINI pop frame or minibuffer."
 
 ;; 拖拽行、区域、字
 (use-package drag-stuff
-  :diminish
   :commands drag-stuff-define-keys
   :hook
   (after-init . drag-stuff-global-mode)
@@ -348,7 +307,6 @@ MINI pop frame or minibuffer."
 
 ;; 括号
 (use-package smartparens
-  :diminish (smartparens-mode . "")
   :hook
   (prog-mode . smartparens-global-mode)
   :config
@@ -371,7 +329,7 @@ MINI pop frame or minibuffer."
 (use-package iedit
   :bind
   (:map isearch-mode-map
-   ("C-;" . iedit-mode-from-isearch)))
+		("C-;" . iedit-mode-from-isearch)))
 
 ;; 多个光标
 (use-package multiple-cursors

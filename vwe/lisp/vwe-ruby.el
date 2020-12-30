@@ -20,10 +20,7 @@
 
 ;;; Commentary:
 ;; gem install pry pry-doc
-;; gem install rufo
-;; gem install rubocop
-;; gem install ripper-tags
-;; gem install method_source
+;; gem install rufo rubocop
 ;; gem install solargraph  ;; lsp
 
 ;;; Code:

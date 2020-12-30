@@ -22,10 +22,6 @@
 ;;; Commentary:
 
 ;; pip install mypy pylint flake8 autopep8
-;; pip install 'python-language-server[all]'
-;; pip install rope jedi
-;; pip install importmagic ;; 用来自动引入需要的包
-;; pip install yapf ;; 用来格式化代码
 
 ;;; Code:
 ;; ***************************************************************************
@@ -74,12 +70,7 @@
 	:init
 	(setq conda-anaconda-home (getenv "CONDA_HOME"))
 	:config
-	(conda-env-initialize-interactive-shells))
-
-  ;; 整理美化python代码
-  (use-package yapfify
-	:hook
-	(python-mode . yapf-mode)))
+	(conda-env-initialize-interactive-shells)))
 
 (provide 'vwe-python)
 ;;; vwe-python.el ends here
