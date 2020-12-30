@@ -266,8 +266,20 @@
 ;; headerline and modeline
 ;; ***************************************************************************
 (defcustom vwe@custom--headerline-show?
-  t
+  nil
   "Is show headre-line."
+  :group 'vwe-ui
+  :type 'boolean)
+
+(defcustom vwe@custom--modeline-show?
+  nil
+  "Is show mode-line."
+  :group 'vwe-ui
+  :type 'boolean)
+
+(defcustom vwe@custom--modeline-tray-show?
+  nil
+  "Is show modeline-tray-line."
   :group 'vwe-ui
   :type 'boolean)
 

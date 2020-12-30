@@ -1,6 +1,6 @@
-;;; vwe-layout.el --- Layout Config                         -*- lexical-binding: t; -*-
+;;; vwe-layout.el --- Layout Config       -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2019  Wu Junyu
+;; Copyright (C) 2015  Wu Junyu
 
 ;; Author: Wu Junyu <vistar_w@hotmail.com>
 ;; Keywords:
@@ -61,8 +61,6 @@
 					  (eq (buffer-local-value 'major-mode b) 'vterm-mode))))))
 
 (use-package winum
-  :hook
-  (after-init . winum-mode)
   :bind
   (:map global-map
 		("M-`" . winum-select-window-by-number)

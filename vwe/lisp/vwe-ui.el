@@ -62,11 +62,6 @@
 ;; ***************************************************************************
 (vwe@ui--init)
 
-(use-package display-line-numbers
-  :ensure nil
-  :hook
-  (prog-mode . display-line-numbers-mode))
-
 (use-package hl-line
   :ensure nil
   :hook

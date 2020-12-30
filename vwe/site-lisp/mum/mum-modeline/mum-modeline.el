@@ -805,11 +805,11 @@ DEL is add or delete?"
   (mum-modeline--init-hook)
   (setq-default mode-line-format '(:eval mum-modeline--init)))
 
-(defun mum-modeline--disenable ()
-  "Mode line disenable."
+(defun mum-modeline--disenable (&optional defp)
+  "Mode line disenable or if DEFP is non-nil reset default modeline."
   (interactive)
   (mum-modeline--init-hook)
-  (setq-default mode-line-format mum-modeline--default-format))
+  (setq-default mode-line-format (if defp mum-modeline--default-format nil)))
 
 (defun mum-modeline--re-init ()
   "Reset mode line."

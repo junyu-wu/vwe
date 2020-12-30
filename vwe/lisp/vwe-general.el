@@ -88,16 +88,24 @@ MINI pop frame or minibuffer."
  (lambda ()
    (vwe@lib--path-vwe-site-lisp "mum/mum-modeline"))
  :hook
- (after-init . mum-modeline-mode)
+ (after-init . (lambda ()
+				 (vwe@lib--package-load 'mum-modeline)
+				 (when vwe@custom--modeline-show? (mum-modeline-mode))
+				 (when vwe@custom--modeline-tray-show? (mum-modeline-tray-mode))))
  :init
- (setq mum-modeline--buffer-filter-list vwe@custom--modeline--hide-list))
+ (setq mum-modeline--buffer-filter-list vwe@custom--modeline--hide-list
+	   mum-modeline--default-format mode-line-format)
+ :config
+ (setq-default mode-line-format nil))
 
 (use-package mum-headerline
   :load-path
   (lambda ()
 	(vwe@lib--path-vwe-site-lisp "mum/mum-headerline"))
   :hook
-  (after-init . mum-headerline-mode)
+  (after-init . (lambda ()
+				  (vwe@lib--package-load 'mum-headerline)
+				  (when vwe@custom--headerline-show? (mum-headerline-mode))))
   :init
   (setq mum-headerline--buffer-filter-list vwe@custom--buffer-filter-list))
 
@@ -118,13 +126,13 @@ MINI pop frame or minibuffer."
 		savehist-autosave-interval 300))
 
 ;; 特定条件还原buffer
-(use-package autorevert
-  :ensure nil
-  :diminish
-  :hook
-  (after-init . global-auto-revert-mode)
-  :config
-  (global-auto-revert-mode 1))
+;; (use-package autorevert
+;;   :ensure nil
+;;   :diminish
+;;   :hook
+;;   (after-init . global-auto-revert-mode)
+;;   :config
+;;   (global-auto-revert-mode 1))
 
 (use-package ibuffer
   :ensure nil

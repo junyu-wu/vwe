@@ -179,7 +179,7 @@
 		(mum-headerline--active)
 		(add-hook 'window-configuration-change-hook #'mum-headerline--show-p))
 	(mum-headerline--deactive)
-	(add-hook 'window-configuration-change-hook #'mum-headerline--show-p)))
+	(remove-hook 'window-configuration-change-hook #'mum-headerline--show-p)))
 
 (provide 'mum-headerline)
 ;;; mum-headerline.el ends here

@@ -141,7 +141,6 @@
   (add-hook 'after-init-hook #'show-paren-mode)
   (add-hook 'server-after-make-frame-hook 'vwe@base--deamon-init)
 
-
   (when vwe@custom--frame-max?
 	(add-hook 'window-setup-hook 'toggle-frame-maximized))
 
@@ -156,7 +155,7 @@
 		initial-major-mode                   'text-mode
 
 		column-number-mode                   t
-        line-number-mode                     t
+        line-number-mode                     nil
         kill-whole-line                      t
 		line-move-visual                     nil
         track-eol                            t
