@@ -146,9 +146,9 @@
 	  (if (listp original-title)
 		  (let* ((title-str (car original-title))
 				 (title-face (plist-get (cdr original-title) :face)))
-			(setq title-make (propertize (upcase title-str)
+			(setq title-make (propertize (concat " " (upcase title-str) " ")
 										 'face (if title-face title-face 'mum-key--title-face))))
-		(setq title-make (propertize (upcase original-title) 'face 'mum-key--title-face)))
+		(setq title-make (propertize (concat " " (upcase original-title) " ") 'face 'mum-key--title-face)))
 	  (format "%s%s" title-make other))))
 
 (defun mum-key--make-content-hint-and-keymapping (func-name body)
