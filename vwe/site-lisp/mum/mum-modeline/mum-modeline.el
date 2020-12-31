@@ -27,7 +27,6 @@
 (require 'seq)
 (require 'subr-x)
 
-
 (defgroup mum-modeline nil
   "Mum mode line."
   :prefix "mum-modeline--"

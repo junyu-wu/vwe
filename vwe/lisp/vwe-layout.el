@@ -61,6 +61,8 @@
 					  (eq (buffer-local-value 'major-mode b) 'vterm-mode))))))
 
 (use-package winum
+  :hook
+  (after-init . winum-mode)
   :bind
   (:map global-map
 		("M-`" . winum-select-window-by-number)
@@ -73,7 +75,9 @@
 		("M-6" . winum-select-window-6)
 		("M-7" . winum-select-window-7)
 		("M-8" . winum-select-window-8)
-		("M-9" . winum-select-window-9)))
+		("M-9" . winum-select-window-9))
+  :init
+  (setq winum-auto-setup-mode-line nil))
 
 (provide 'vwe-layout)
 ;;; vwe-layout.el ends here

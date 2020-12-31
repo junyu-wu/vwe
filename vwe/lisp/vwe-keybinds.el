@@ -99,11 +99,18 @@
 					("l" vwe@lsp--run "lsp")
 					("a" org-agenda "agenda")
 					("c" org-capture "capture")
+					("C" mum-key:check "check")
 					("e" esup "esup")
 					("!" winum-mode "win number")
 					("~" mum-mark--paren--paren-pair "paren mark")
 					("(" vwe@base--paren-toggle-style "paren style")
 					("+" vwe@ui--text-scale-reset "+/- text scale"))))
+
+  (mum-key-define check
+				  ("check"
+				   (("v" flycheck-verify-setup "verify checker")
+					("l" flycheck-list-errors "error list")
+					("RET" mum-key:global "global" :footer t))))
 
   (mum-key-define emacs-lisp
 				  ("emacs lisp"

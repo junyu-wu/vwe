@@ -308,13 +308,14 @@ MINI pop frame or minibuffer."
 ;; 括号
 (use-package smartparens
   :hook
-  (prog-mode . smartparens-global-mode)
+  (prog-mode . smartparens-mode)
   :config
   (smartparens-mode t)
   (sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
   (sp-local-pair 'lisp-interaction-mode "'" nil :actions nil)
   (sp-local-pair 'emacs-lisp-mode "`" nil :actions nil)
-  (sp-local-pair 'lisp-interaction-mode "`" nil :actions nil))
+  (sp-local-pair 'lisp-interaction-mode "`" nil :actions nil)
+  (sp-local-pair 'web-mode "<" ">"))
 
 (use-package paren-face)
 
