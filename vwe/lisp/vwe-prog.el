@@ -20,8 +20,6 @@
 
 ;;; Commentary:
 
-;; apt install editorconfig
-
 ;;; Code:
 ;; ***************************************************************************
 ;; lib
@@ -87,18 +85,6 @@ MODE."
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
-;; 显示当前函数等参数列表等
-(use-package eldoc
-  :ensure nil
-  :diminish
-  (eldoc-mode . nil))
-
-;; 定义编码样式的文件格式和一个文本编辑器插件集合
-(use-package editorconfig
-  :diminish
-  (editorconfig-mode)
-  :hook
-  (after-init . editorconfig-mode))
 
 ;; 根据已有代码快速填充当前代码
 (use-package eacl
@@ -118,8 +104,6 @@ MODE."
 	  (add-to-list 'grep-find-ignored-files v))))
 
 (use-package flycheck
-  :diminish
-  (flycheck-mode)
   :hook
   (prog-mode . global-flycheck-mode)
   :init
@@ -145,8 +129,6 @@ MODE."
 	  (setq flycheck-pos-tip-timeout 30))))
 
 (use-package projectile
-  :diminish
-  (projectile-mode . nil)
   :init
   (setq projectile-known-projects-file (vwe@lib--path-cache
 								   "projectile/projectile-bookmarks.eld" t)
@@ -190,7 +172,7 @@ MODE."
   (push '("asm" . ((:command . "nasm")
 				   (:exec . "%c -f elf -o %n %s %e %a")
 				   (:compile-only . "%c -f elf -o %n %s")
-				   (:description . "Assb file with nasm and execute")))
+				   (:description . "assembly file with nasm and execute")))
 		quickrun--language-alist)
   (push '("\\.asm\\'" . "asm") quickrun-file-alist)
   (push '(asm-mode . "asm") quickrun--major-mode-alist)

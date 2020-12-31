@@ -78,7 +78,7 @@
 
 (with-eval-after-load 'mum-key
   (mum-key-define global
-				  ("global"
+				  (("global" :face '((t (:background "DarkOrange" :foreground "white" :weight bold))))
 				   (("g" counsel-etags-grep "grep")
 					("B" ibuffer "ibuffer")
 					("@" vwe@lib--minibuffer-switch "switch minibuffer")
@@ -110,10 +110,10 @@
 				  ("check"
 				   (("v" flycheck-verify-setup "verify checker")
 					("l" flycheck-list-errors "error list")
-					("RET" mum-key:global "global" :footer t))))
+					("RET" mum-key:global "global" :footer t :face '((t (:background "DarkOrange" :foreground "white" :weight bold)))))))
 
   (mum-key-define emacs-lisp
-				  ("emacs lisp"
+				  (("emacs lisp" :face '((t (:background "red" :foreground "white" :weight bold))))
 				   (("b" eval-buffer "eval buffer")
 					("d" eval-defun "eval defun")
 					("r" eval-region "eval region")
@@ -121,7 +121,7 @@
 					("k" describe-key "key")
 					("f" describe-function "function")
 					("v" describe-variable "variable")
-					("RET" mum-key:global "global" :footer t)))
+					("RET" mum-key:global "global" :footer t :face '((t (:background "DarkOrange" :foreground "white" :weight bold))))))
 				  emacs-lisp-mode)
 
   (define-key emacs-lisp-mode-map (kbd "C-c a") 'mum-key:emacs-lisp)
@@ -151,7 +151,7 @@
 					("g" (vwe@org--template "<s" "go :imports '\(\"fmt\"\)")   "golang")
 					("t" (vwe@org--template "<s" "plantuml :file CHANGE.png")  "plantuml")
 					("i" self-insert-command                                   "ins")
-					("DEL" mum-key:org "org" :footer t)
+					("DEL" mum-key:org "org" :footer t :face '((t (:background "magenta" :foreground "white" :weight bold))))
 					("RET" mum-key:global "global" :footer t))))
 
   (mum-key-define org
@@ -176,8 +176,8 @@
 					("s" org-tree-slide-mode "tree slide")
 					("r" vwe@org--reveal-load "reveal load")
 					("v" org-preview-html/preview "preview html")
-					("DEL" mum-key:org-template "org template" :footer t)
-					("RET" mum-key:global "global" :footer t)))
+					("DEL" mum-key:org-template "org template" :footer t :face '((t (:background "magenta" :foreground "white" :weight bold))))
+					("RET" mum-key:global "global" :footer t :face '((t (:background "DarkOrange" :foreground "white" :weight bold))))))
 				  org-mode
 				  "C-M-<return>")
 
@@ -202,7 +202,7 @@
 					("6" markdown-insert-header-atx-6 "atx 6")
 					("7" markdown-insert-header-setext-1 "setext 1")
 					("8" markdown-insert-header-setext-2 "setext 2")
-					("RET" mum-key:global "global" :footer t)))
+					("RET" mum-key:global "global" :footer t :face '((t (:background "DarkOrange" :foreground "white" :weight bold))))))
 				  markdown-mode
 				  "C-M-<return>")
 
@@ -217,7 +217,7 @@
 					("j" elpy-django-runserver "run django")
 					("b" python-shell-send-buffer "send buffer")
 					("r" python-shell-send-region "send region")
-					("RET" mum-key:global "global" :footer t)))
+					("RET" mum-key:global "global" :footer t :face '((t (:background "DarkOrange" :foreground "white" :weight bold))))))
 				  python-mode)
   )
 

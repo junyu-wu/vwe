@@ -59,6 +59,10 @@
   "Default face.")
 
 (defface mum-key--title-face
+  '((t (:background "DarkBlue" :foreground "white" :weight bold)))
+  "Title face.")
+
+(defface mum-key--title-other-face
   '((t (:background "#434C5E" :foreground "white" :weight bold)))
   "Title face.")
 
@@ -134,10 +138,18 @@
   "Frame min length.")
 
 (defun mum-key--make-content-title (title)
-  "Make content TITLE.
-TITLE: [TITLE]"
-  (propertize (format "%s Keymap from [%s]    ｡◕‿◕｡ " (upcase title) major-mode)
-			  'face 'mum-key--title-face))
+  "Make content TITLE and add face."
+  (let* ((original-title title)
+		 (title-make)
+		 (other (propertize (format " [%s]    ｡◕‿◕｡ " major-mode) 'face 'mum-key--title-other-face)))
+	(when original-title
+	  (if (listp original-title)
+		  (let* ((title-str (car original-title))
+				 (title-face (plist-get (cdr original-title) :face)))
+			(setq title-make (propertize (upcase title-str)
+										 'face (if title-face title-face 'mum-key--title-face))))
+		(setq title-make (propertize (upcase original-title) 'face 'mum-key--title-face)))
+	  (format "%s%s" title-make other))))
 
 (defun mum-key--make-content-hint-and-keymapping (func-name body)
   "Make content BODY and define FUNC-NAME keymap."
@@ -154,7 +166,8 @@ TITLE: [TITLE]"
 			   (func-str (format "%s" func))
 			   (hint (car (cddr body-item)))
 			   (hint-str (format "%s" hint))
-			   (label-footer (plist-get (cdddr body-item) :footer)))
+			   (label-footer (plist-get (cdddr body-item) :footer))
+			   (str-face (plist-get (cdddr body-item) :face)))
 		  (unless func
 			(setq func (lambda () (interactive) (message "func is nil"))))
 		  (unless (< (length func-str) mum-key--max-width)
@@ -165,13 +178,18 @@ TITLE: [TITLE]"
 			(define-key keymap (cond ((stringp key) (kbd key)) ((mapp key) key)) func)
 
 			(if label-footer
-				(setq mum-key--footer-list (append mum-key--footer-list (list (list key hint-str)))))
-			(setq func-str (concat (propertize key 'face 'mum-key--key-face)
-								   " : " func-str)
-				  func-str-list (append func-str-list (list func-str))
-				  hint-str (concat (propertize key 'face 'mum-key--key-face)
-								   " : " hint-str)
-				  hint-str-list (append hint-str-list (list hint-str))))))
+				(setq mum-key--footer-list
+					  (append mum-key--footer-list (list (list key (propertize hint-str
+																			   'face (if str-face str-face
+																					   'mum-key--footer-face))))))
+			  (setq func-str (concat (propertize key 'face 'mum-key--key-face)
+									 " : "
+									 (propertize func-str 'face str-face))
+					func-str-list (append func-str-list (list func-str))
+					hint-str (concat (propertize key 'face 'mum-key--key-face)
+									 " : "
+									 (propertize hint-str 'face str-face))
+					hint-str-list (append hint-str-list (list hint-str)))))))
 
 	  (set-keymap-parent keymap mum-key--keymap-base-mapping)
 	  (define-key keymap (kbd mum-key--toggle-hint-key) (lambda () (interactive)
@@ -226,17 +244,17 @@ TITLE: [TITLE]"
 
 (defun mum-key--make-content-footer ()
   "Make content footer."
-  (let* ((custom-str ""))
+  (let* ((custom-str "")
+		 (other (propertize (format "[%s] : quit    [%s] : toggle hint/func    ◕‿-｡ "
+									mum-key--quit-key mum-key--toggle-hint-key)
+							'face 'mum-key--footer-face)))
 	(dotimes (i (length mum-key--footer-list))
 	  (setq custom-str (concat custom-str
-							   "["
-							   (format "%s" (car (nth i mum-key--footer-list)))
-							   "]"
-							   " : "
+							   (propertize (concat "[" (format "%s" (car (nth i mum-key--footer-list))) "]" " : ")
+										   'face 'mum-key--footer-face)
 							   (format "%s" (cadr (nth i mum-key--footer-list)))
-							   "    ")))
-	(propertize (format "%s[%s] : quit    [%s] : toggle hint/func    ◕‿-｡ " custom-str mum-key--quit-key mum-key--toggle-hint-key)
-				'face 'mum-key--footer-face)))
+							   (propertize "    " 'face 'mum-key--footer-face))))
+	(string-trim (format "%s%s" custom-str other))))
 
 (defun mum-key--window-get-top (&optional win)
   "Get Top Window.
@@ -330,7 +348,7 @@ LEADERKEY is leader key."
 		   (setq mum-key--max-width (frame-width))
 		   (mum-key--make-buffer)
 		   (mum-key--insert-content-to-buffer
-			(mum-key--make-content-title ,define-title)
+			(mum-key--make-content-title (quote ,define-title))
 			(mum-key--make-content-to-string
 			 (if funcp
 				 (progn
