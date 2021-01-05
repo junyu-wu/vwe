@@ -80,8 +80,7 @@ MINI pop frame or minibuffer."
 
 (use-package mum-modeline
   :load-path
-  (lambda ()
-	(vwe@lib--path-vwe-site-lisp "mum/mum-modeline"))
+  (lambda () (vwe@lib--path-vwe-site-lisp "mum/mum-modeline"))
   :hook
   (after-init . (lambda ()
 				  (vwe@lib--package-load 'mum-modeline)
@@ -95,8 +94,7 @@ MINI pop frame or minibuffer."
 
 (use-package mum-headerline
   :load-path
-  (lambda ()
-	(vwe@lib--path-vwe-site-lisp "mum/mum-headerline"))
+  (lambda () (vwe@lib--path-vwe-site-lisp "mum/mum-headerline"))
   :hook
   (after-init . (lambda ()
 				  (vwe@lib--package-load 'mum-headerline)
@@ -575,10 +573,15 @@ MINI pop frame or minibuffer."
 
 (use-package mum-key
   :load-path
-  (lambda ()
-	(vwe@lib--path-vwe-site-lisp "mum/mum-key"))
+  (lambda () (vwe@lib--path-vwe-site-lisp "mum/mum-key"))
   :hook
   (after-init . mum-key-mode))
+
+(use-package mum-editor
+  :load-path
+  (lambda () (vwe@lib--path-vwe-site-lisp "mum/mum-editor"))
+  :hook
+  (after-init . mum-editor-mode))
 
 (use-package imenu-list)
 
