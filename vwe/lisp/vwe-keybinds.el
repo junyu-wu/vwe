@@ -102,7 +102,7 @@
 					("C" mum-key:check "check")
 					("e" esup "esup")
 					("!" winum-mode "win number")
-					("~" mum-mark--paren--paren-pair "paren mark")
+					("~" mum-mark-paren--paren-pair "paren mark")
 					("(" vwe@base--paren-toggle-style "paren style")
 					("+" vwe@ui--text-scale-reset "+/- text scale"))))
 
