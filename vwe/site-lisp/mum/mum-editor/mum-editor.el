@@ -53,6 +53,10 @@
   'view
   "Current buffer type.")
 
+(defvar-local mum-editor--idle-time
+  15
+  "Idle time.")
+
 (defvar mum-editor--filter-regexp
   "^*"
   "Filter regexp.")
@@ -72,6 +76,15 @@
 				(mum-editor-view-mode t)))))
 	  (switch-to-buffer file-buffer))))
 
+(defun mum-editor-swtich-buffer (&optional buffer norecord force-same-window)
+  "Switch BUFFER activate view mode.
+NORECORD FORCE-SAME-WINDOW"
+  (interactive)
+  (unless (and buffer (bufferp buffer))
+	(setq buffer (current-buffer)))
+  (with-current-buffer buffer
+	(mum-editor-view-mode t)))
+
 (define-minor-mode mum-editor-view-mode
   "Editor view mode."
   :group 'mum-editor
@@ -90,7 +103,8 @@
 	  (when mum-editor--mode-activate?
 		(setq buffer-read-only nil
 			  mum-editor--mode-current-type 'edit)
-		(mum-editor-view-mode -1))))
+		(mum-editor-view-mode -1)
+		(run-with-idle-timer mum-editor--idle-time t #'mum-editor-swtich-buffer))))
 
 ;;;###autoload
 (define-minor-mode mum-editor-mode
@@ -101,6 +115,7 @@
   (if mum-editor-mode
 	  (progn
 		(advice-add #'find-file :override #'mum-editor--find-file)
+		(advice-add #'switch-to-buffer :after #'mum-editor-swtich-buffer)
 		(setq mum-editor--mode-activate? t))
 	(advice-remove #'find-file #'mum-editor--find-file)
 	(setq mum-editor--mode-activate? nil)))
