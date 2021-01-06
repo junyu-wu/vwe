@@ -84,8 +84,20 @@ MINI pop frame or minibuffer."
   :hook
   (after-init . (lambda ()
 				  (vwe@lib--package-load 'mum-modeline)
-				  (when vwe@custom--modeline-show? (mum-modeline-mode))
-				  (when vwe@custom--modeline-tray-show? (mum-modeline-tray-mode))))
+				  (when vwe@custom--modeline-show? (mum-modeline-mode))))
+  :init
+  (setq mum-modeline--buffer-filter-list vwe@custom--modeline--hide-list
+		mum-modeline--default-format mode-line-format)
+  :config
+  (setq-default mode-line-format nil))
+
+(use-package mum-tray
+  :load-path
+  (lambda () (vwe@lib--path-vwe-site-lisp "mum/mum-tray"))
+  :hook
+  (after-init . (lambda ()
+				  (vwe@lib--package-load 'mum-tray)
+				  (when vwe@custom--tray-show? (mum-tray-mode))))
   :init
   (setq mum-modeline--buffer-filter-list vwe@custom--modeline--hide-list
 		mum-modeline--default-format mode-line-format)

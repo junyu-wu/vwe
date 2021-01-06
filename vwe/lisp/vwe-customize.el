@@ -277,9 +277,9 @@
   :group 'vwe-ui
   :type 'boolean)
 
-(defcustom vwe@custom--modeline-tray-show?
+(defcustom vwe@custom--tray-show?
   nil
-  "Is show modeline-tray-line."
+  "Is show tray."
   :group 'vwe-ui
   :type 'boolean)
 

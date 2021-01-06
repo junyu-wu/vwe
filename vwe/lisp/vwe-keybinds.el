@@ -95,7 +95,7 @@
 					("L" display-line-numbers-mode "line nuber")
 					("H" mum-headerline-mode "header line")
 					("M" mum-modeline-mode "modeline")
-					("T" mum-modeline-tray-mode "tray")
+					("T" mum-tray-mode "tray")
 					("l" vwe@lsp--run "lsp")
 					("a" org-agenda "agenda")
 					("c" org-capture "capture")

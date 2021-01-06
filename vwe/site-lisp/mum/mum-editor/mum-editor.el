@@ -31,7 +31,7 @@
 
 (defvar-local mum-editor-view--keymap
   (let* ((keymap (make-sparse-keymap)))
-	(define-key keymap (kbd "SPC SPC") (lambda () (interactive) (mum-editor-edit-mode t)))
+	(define-key keymap (kbd "SPC") (lambda () (interactive) (mum-editor-edit-mode t)))
 	keymap)
   "Keymap.")
 
@@ -57,6 +57,14 @@
   15
   "Idle time.")
 
+(defvar mum-editor--idle-toggle-mode
+  nil
+  "Idle time.")
+
+(defvar mum-editor--save-toggle-mode
+  nil
+  "Save buffer toggle mode.")
+
 (defvar mum-editor--filter-regexp
   "^*"
   "Filter regexp.")
@@ -76,14 +84,32 @@
 				(mum-editor-view-mode t)))))
 	  (switch-to-buffer file-buffer))))
 
-(defun mum-editor-swtich-buffer (&optional buffer norecord force-same-window)
+(defun mum-editor-view--save-buffer (&optional arg)
+  "Active view mode.
+ARG."
+  (interactive)
+  arg
+  (when mum-editor--save-toggle-mode
+	(mum-editor-view-mode t)))
+
+(defun mum-editor-view--active ()
+  "Active view mode."
+  (interactive)
+  (mum-editor-view-mode t))
+
+(defun mum-editor-view--switch-buffer (&optional buffer &rest _)
   "Switch BUFFER activate view mode.
 NORECORD FORCE-SAME-WINDOW"
   (interactive)
-  (unless (and buffer (bufferp buffer))
-	(setq buffer (current-buffer)))
   (with-current-buffer buffer
-	(mum-editor-view-mode t)))
+	(unless (and (minibufferp buffer) (string-match mum-editor--filter-regexp (buffer-name buffer)))
+	  (mum-editor-view-mode t))))
+
+(defun mum-editor-view--select-window (&rest _)
+  "Select WINDOW activate view mode.
+NORECORD."
+  (with-current-buffer (buffer-name)
+	  (mum-editor-view-mode t)))
 
 (define-minor-mode mum-editor-view-mode
   "Editor view mode."
@@ -93,7 +119,8 @@ NORECORD FORCE-SAME-WINDOW"
 	  (when mum-editor--mode-activate?
 		(setq buffer-read-only t
 			  mum-editor--mode-current-type 'view)
-		(mum-editor-edit-mode -1))))
+		(mum-editor-edit-mode -1)
+		(message "mum-editor-view-mode active"))))
 
 (define-minor-mode mum-editor-edit-mode
   "Editor edit mode."
@@ -104,7 +131,9 @@ NORECORD FORCE-SAME-WINDOW"
 		(setq buffer-read-only nil
 			  mum-editor--mode-current-type 'edit)
 		(mum-editor-view-mode -1)
-		(run-with-idle-timer mum-editor--idle-time t #'mum-editor-swtich-buffer))))
+		(when mum-editor--idle-toggle-mode
+		  (run-with-idle-timer mum-editor--idle-time t #'mum-editor-view--active))
+		(message "mum-editor-edit-mode active"))))
 
 ;;;###autoload
 (define-minor-mode mum-editor-mode
@@ -114,10 +143,15 @@ NORECORD FORCE-SAME-WINDOW"
   :global t
   (if mum-editor-mode
 	  (progn
+		(setq mum-editor--mode-activate? t)
 		(advice-add #'find-file :override #'mum-editor--find-file)
-		(advice-add #'switch-to-buffer :after #'mum-editor-swtich-buffer)
-		(setq mum-editor--mode-activate? t))
+		(advice-add #'save-buffer :after #'mum-editor-view--save-buffer)
+		;; (advice-add #'switch-to-buffer :after #'mum-editor-view--switch-buffer)
+		;; (advice-add #'select-window :after #'mum-editor-view--select-window)
+		)
 	(advice-remove #'find-file #'mum-editor--find-file)
+	(advice-remove #'save-buffer #'mum-editor-view--save-buffer)
+	;; (advice-remove #'switch-to-buffer #'mum-editor-view--switch-buffer)
 	(setq mum-editor--mode-activate? nil)))
 
 (provide 'mum-editor)
