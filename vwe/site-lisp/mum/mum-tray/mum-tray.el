@@ -28,8 +28,12 @@
   '(mum-tray--begin
 	mum-tray--segment-space
 	mum-tray--segment-modified
+	;;mum-tray--segment-space
+	mum-tray--segment-major-mode
 	mum-tray--segment-space
 	mum-tray--segment-location
+	mum-tray--segment-space
+	mum-tray--segment-symbol-count-info
 	mum-tray--segment-space
 	mum-tray--segment-date
 	mum-tray--segment-space
@@ -46,6 +50,11 @@
 
 (defface mum-tray--default-face
   '((t (:foreground "#B0BEC5" :weight bold)))
+  "Default face."
+  :group 'mum-tray)
+
+(defface mum-tray--major-face
+  '((t (:foreground "cyan" :weight bold)))
   "Default face."
   :group 'mum-tray)
 
@@ -124,6 +133,15 @@
   (propertize mum-tray--end-str
 			  'face 'mum-tray--info-face))
 
+(defun mum-tray--segment-major-mode ()
+  "Displays current major mode in mode-line."
+  (propertize
+   (concat " "
+		   (or (and (boundp 'delighted-modes)
+					(cadr (assq major-mode delighted-modes)))
+			   (format-mode-line mode-name)))
+   'face 'mum-tray--major-face))
+
 (defun mum-tray--segment-location ()
   "Location."
   (propertize (format "%s^%s:%s"
@@ -132,18 +150,46 @@
 					  (format-mode-line "%c"))
 			  'face 'mum-tray--default-face))
 
-(defun mum-tray--segment-modified (&optional buffer)
+(defun mum-tray--segment-modified ()
   "BUFFER modification or read-only."
-  (if (not (string-match-p "\\*.*\\*" (buffer-name buffer)))
-	  (progn
-		(let* ((read-only (and buffer-read-only (buffer-file-name buffer)))
-               (modified (buffer-modified-p buffer)))
-          (propertize
-           (if read-only "RO" (if modified "RW" "RW"))
-		   'face `(:inherit
-                   ,(if modified 'mum-tray--error-face
-                      (if read-only 'mum-tray--info-face
-						'mum-tray--warning-face))))))))
+  (if (not (string-match-p "\\*.*\\*" (buffer-name)))
+	  (let* ((read-only (and buffer-read-only (buffer-file-name mum-tray--buffer)))
+			 (modified (buffer-modified-p mum-tray--buffer)))
+		(propertize (if read-only "RO" (if modified "MD" "RW"))
+					'face `(:inherit
+							,(if modified 'mum-tray--error-face
+							   (if read-only 'mum-tray--info-face
+								 'mum-tray--warning-face)))))
+	(propertize "*" 'face 'mum-tray--warning-face)))
+
+(defun mum-tray--segment-symbol-count-info ()
+  "Return Symbol Total And Current Symbol Index."
+  (let* ((symbol (thing-at-point 'symbol))
+		 (cur-bound (bounds-of-thing-at-point 'symbol)))
+	(when (and symbol cur-bound)
+	  (let*((cur (point))
+			(cur-start (car cur-bound))
+			(cur-end (cdr cur-bound))
+			(cur-length (- cur-end cur-start))
+			(total 0)
+			(curindex 0))
+		(save-excursion
+		  (save-restriction
+			(when symbol
+			  (goto-char (point-min))
+			  (setq symbol (concat "\\_<" (regexp-quote symbol) "\\_>"))
+			  (while (re-search-forward symbol nil t)
+				(let* ((bound (bounds-of-thing-at-point 'symbol))
+					   (end (cdr bound))
+					   (start (car bound))
+					   (len (- end start)))
+				  (if (= cur-length len)
+					  (progn
+						(setq total (+ total 1))
+						(if (and (>= cur start) (<= cur end))
+							(setq curindex total))))))
+			  (propertize (format "T%d:C%d" total curindex)
+						  'face 'mum-tray--default-face))))))))
 
 (defun mum-tray--segment-date ()
   "Date."
@@ -195,15 +241,20 @@
 
 (defun mum-tray--message (func &rest args)
   "Message advice around FUNC and ARGS."
-  (if (ignore-errors
-		(cond
-		 ((or (not mum-tray--active-p) inhibit-message) (apply func args))
-		 (t (apply func "%s" (list (mum-tray--buffer-show-message (apply 'format args))))))
-		t)
-	  (if (car args) (apply 'format args) (apply func args))))
+  (cond
+   ((or (not mum-tray--active-p) inhibit-message) (apply func args))
+   (t (if (car args)
+		  (apply func "%s" (list (mum-tray--buffer-show-message (apply 'format args))))
+		(apply func args)))))
 
 (defun mum-tray--current-message (func &rest args)
   "Current message advice around FUNC and ARGS.."
+  (if (car args)
+	  (mum-tray--buffer-show-message (apply 'format args))
+	(apply func args)))
+
+(defun mum-tray--error-message (func &rest args)
+  "Error message advice around FUNC and ARGS.."
   (if (car args)
 	  (mum-tray--buffer-show-message (apply 'format args))
 	(apply func args)))
@@ -225,6 +276,7 @@
   (add-hook 'focus-in-hook 'mum-tray--update-message)
   (advice-add #'message :around #'mum-tray--message)
   (advice-add #'current-message :around #'mum-tray--current-message)
+  (advice-add #'error-message-string :around #'mum-tray--x-of-buffer)
   (advice-add #'beginning-of-buffer :around #'mum-tray--x-of-buffer)
   (advice-add #'end-of-buffer :around #'mum-tray--x-of-buffer))
 
@@ -236,7 +288,8 @@
 		mum-tray--timer nil)
   (remove-hook 'focus-in-hook 'mum-tray--update-message)
   (advice-remove 'message #'mum-tray--current-message)
-  (advice-remove 'current-message #'mum-tray--current-message)
+  (advice-remove 'current-message #'mum-tray--error-message)
+  (advice-remove #'error-message-string #'mum-tray--x-of-buffer)
   (advice-remove #'beginning-of-buffer #'mum-tray--x-of-buffer)
   (advice-remove #'end-of-buffer #'mum-tray--x-of-buffer)
   (force-mode-line-update)

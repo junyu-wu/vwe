@@ -307,7 +307,7 @@ corresponding to the mode line clicked."
       (let* ((read-only (and buffer-read-only (buffer-file-name)))
              (modified (buffer-modified-p)))
         (propertize
-         (if read-only "O" (if modified "W" "R"))
+         (if read-only "RO" (if modified "MD" "RW"))
          'face `(:inherit
                  ,(if modified 'mum-modeline--modified-face
                     (if read-only 'mum-modeline--info-face
