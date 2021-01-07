@@ -593,7 +593,8 @@ MINI pop frame or minibuffer."
   :load-path
   (lambda () (vwe@lib--path-vwe-site-lisp "mum/mum-editor"))
   :hook
-  (after-init . mum-editor-mode))
+  (after-init . (lambda () (vwe@lib--package-load 'mum-editor)
+				  (mum-editor-mode))))
 
 (use-package imenu-list)
 

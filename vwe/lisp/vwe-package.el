@@ -54,7 +54,7 @@ SOURCE-NAME is source name."
   (package-initialize)
   (vwe@lib--package-load 'cl)
   (vwe@lib--package-load 'cl-lib)
-  ;; (vwe@lib--package-load 'seq)
+  (vwe@lib--package-load 'seq)
   (vwe@lib--package-load 'use-package)
   (vwe@lib--package-load 'popup))
 

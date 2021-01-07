@@ -96,11 +96,11 @@
   "Tray last show str.")
 
 (defvar mum-tray--begin-str
-  "➥"
+  "i"
   "Tray last show str.")
 
 (defvar mum-tray--end-str
-  "¡"
+  "↵"
   "Tray last show str.")
 
 (defvar mum-tray--separator
@@ -225,7 +225,7 @@
 (defun mum-tray--buffer-show-message (msg)
   "Make show message with MSG and segments."
   (let* ((seg-str (mum-tray--segments-show-message mum-tray--segments))
-		 (blanks (- (frame-width) (+ (string-width (string-trim seg-str)) (string-width msg))))
+		 (blanks (- (frame-width) (+ (string-width (string-trim seg-str)) (string-width msg)) 2))
 		 (show-msg ""))
 	(if (< blanks 0)
 		(setq show-msg (concat msg "\n" seg-str))

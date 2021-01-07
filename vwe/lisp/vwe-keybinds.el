@@ -96,6 +96,7 @@
 					("H" mum-headerline-mode "header line")
 					("M" mum-modeline-mode "modeline")
 					("T" mum-tray-mode "tray")
+					("E" mum-editor-mode "editor")
 					("l" vwe@lsp--run "lsp")
 					("a" org-agenda "agenda")
 					("c" org-capture "capture")
