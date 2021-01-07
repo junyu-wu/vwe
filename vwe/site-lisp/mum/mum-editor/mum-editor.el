@@ -73,20 +73,10 @@
   "^[*|\s*]"
   "Filter regexp.")
 
-(defun mum-editor--find-file (filename &optional wildcards)
-  "Find FILENAME file or WILDCARDS."
-  (interactive
-   (find-file-read-args "Find file: "
-                        (confirm-nonexistent-file-or-buffer)))
-  (when (file-exists-p filename)
-	(let* ((file-buffer (find-file-noselect filename nil nil wildcards)))
-	  (with-current-buffer file-buffer
-		(if mum-editor--mode-activate?
-			(progn
-			  (if (string-match mum-editor--filter-regexp (buffer-name file-buffer))
-				  (mum-editor-edit-mode t)
-				(mum-editor-view-mode t)))))
-	  (switch-to-buffer file-buffer))))
+(defun mum-editor--find-file (func &rest args)
+  "Find FUNC and ARGS file."
+  (apply func args)
+  (mum-editor-view-mode t))
 
 (defun mum-editor-view--save-buffer (&rest _)
   "Active view mode."
@@ -150,7 +140,7 @@
   "Enable editor mode."
   (interactive)
   (setq mum-editor--mode-activate? t)
-  (advice-add #'find-file :override #'mum-editor--find-file)
+  (advice-add #'find-file :around #'mum-editor--find-file)
   (advice-add #'save-buffer :after #'mum-editor-view--save-buffer)
   (advice-add #'switch-to-buffer :around #'mum-editor-view--switch-buffer)
   (advice-add #'select-window :around #'mum-editor-view--select-window))

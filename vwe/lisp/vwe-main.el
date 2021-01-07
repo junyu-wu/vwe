@@ -22,13 +22,59 @@
 
 ;;; Code:
 
+;;
+;; init before
+;;
 (require 'vwe-lib)
 (require 'vwe-customize)
 (require 'vwe-package)
+
+;;
+;; init emacs
+;;
 (require 'vwe-base)
+(require 'vwe-ui)
+(require 'vwe-theme)
+(require 'vwe-layout)
 (require 'vwe-general)
+
+;;
+;; init edit
+;;
+(require 'vwe-org)
+(require 'vwe-markdown)
+
+;;
+;; init prog and language
+;;
 (require 'vwe-prog)
+
+(require 'vwe-lsp)
+
+(require 'vwe-lisp)
+(require 'vwe-assembly)
+(require 'vwe-clang)
+(require 'vwe-golang)
+(require 'vwe-python)
+(require 'vwe-ruby)
+(require 'vwe-java)
+(require 'vwe-web)
+(require 'vwe-clojure)
+(require 'vwe-csharp)
+(require 'vwe-rust)
+(require 'vwe-bat)
+(require 'vwe-scheme)
+(require 'vwe-ahk)
+(require 'vwe-yaml)
+
+;;
+;; inti misc
+;;
 (require 'vwe-misc)
+
+;;
+;; init keybindings
+;;
 (require 'vwe-keybinds)
 
 (provide 'vwe-main)

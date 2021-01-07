@@ -217,29 +217,5 @@ MODE."
 	(add-to-list (make-local-variable 'company-backends)
 				 '(ejc-company-backend))))
 
-;; ***************************************************************************
-;; load
-;; ***************************************************************************
-(require 'vwe-lsp)
-
-(require 'vwe-org)
-(require 'vwe-markdown)
-
-(require 'vwe-lisp)
-(require 'vwe-assembly)
-(require 'vwe-clang)
-(require 'vwe-golang)
-(require 'vwe-python)
-(require 'vwe-ruby)
-(require 'vwe-java)
-(require 'vwe-web)
-(require 'vwe-clojure)
-(require 'vwe-csharp)
-(require 'vwe-rust)
-(require 'vwe-bat)
-(require 'vwe-scheme)
-(require 'vwe-ahk)
-(require 'vwe-yaml)
-
 (provide 'vwe-prog)
 ;;; vwe-prog.el ends here

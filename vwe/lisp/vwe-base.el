@@ -291,9 +291,5 @@ ON/OFF?"
 
 (vwe@base--init)
 
-(require 'vwe-ui)
-(require 'vwe-theme)
-(require 'vwe-layout)
-
 (provide 'vwe-base)
 ;;; vwe-base.el ends here
