@@ -66,7 +66,7 @@
   "Save buffer toggle mode.")
 
 (defvar mum-editor--filter-regexp
-  "^*"
+  "^[*|\s*]"
   "Filter regexp.")
 
 (defun mum-editor--find-file (filename &optional wildcards)
@@ -97,19 +97,24 @@ ARG."
   (interactive)
   (mum-editor-view-mode t))
 
-(defun mum-editor-view--switch-buffer (&optional buffer &rest _)
-  "Switch BUFFER activate view mode.
-NORECORD FORCE-SAME-WINDOW"
-  (interactive)
-  (with-current-buffer buffer
-	(unless (and (minibufferp buffer) (string-match mum-editor--filter-regexp (buffer-name buffer)))
-	  (mum-editor-view-mode t))))
+(defun mum-editor-view--switch-buffer (func &rest args)
+  "Call FUNC and ARGS to Switch buffer activate view mode."
+  (let* ((from (current-buffer))
+		 (to (get-buffer (car args))))
+	(cond
+	 ((string-match mum-editor--filter-regexp (buffer-name from)) (apply func args))
+	 ((string-match mum-editor--filter-regexp (buffer-name to)) (apply func args))
+	 ((equal from to) (apply func args))
+	 (t (apply func args) (mum-editor-view-mode t)))))
 
-(defun mum-editor-view--select-window (&rest _)
-  "Select WINDOW activate view mode.
-NORECORD."
-  (with-current-buffer (buffer-name)
-	  (mum-editor-view-mode t)))
+(defun mum-editor-view--select-window (func &rest args)
+  "Call FUNC and ARGS select window activate view mode."
+  (let* ((window (apply func args))
+		 (buffer))
+	(when (windowp window)
+	  (setq buffer (window-buffer))
+	  (when (and (bufferp buffer) (not (string-match mum-editor--filter-regexp (buffer-name buffer))))
+		(mum-editor-view-mode t)))))
 
 (define-minor-mode mum-editor-view-mode
   "Editor view mode."
@@ -146,12 +151,12 @@ NORECORD."
 		(setq mum-editor--mode-activate? t)
 		(advice-add #'find-file :override #'mum-editor--find-file)
 		(advice-add #'save-buffer :after #'mum-editor-view--save-buffer)
-		;; (advice-add #'switch-to-buffer :after #'mum-editor-view--switch-buffer)
-		;; (advice-add #'select-window :after #'mum-editor-view--select-window)
-		)
+		(advice-add #'switch-to-buffer :around #'mum-editor-view--switch-buffer)
+		(advice-add #'select-window :around #'mum-editor-view--select-window))
 	(advice-remove #'find-file #'mum-editor--find-file)
 	(advice-remove #'save-buffer #'mum-editor-view--save-buffer)
-	;; (advice-remove #'switch-to-buffer #'mum-editor-view--switch-buffer)
+	(advice-remove #'switch-to-buffer #'mum-editor-view--switch-buffer)
+	(advice-remove #'select-window #'mum-editor-view--select-window)
 	(setq mum-editor--mode-activate? nil)))
 
 (provide 'mum-editor)
