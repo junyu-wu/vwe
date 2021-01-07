@@ -28,11 +28,11 @@
   '(mum-tray--begin
 	mum-tray--segment-space
 	mum-tray--segment-modified
-	;;mum-tray--segment-space
+	mum-tray--segment-space
+	mum-tray--segment-buffer-name
 	mum-tray--segment-major-mode
 	mum-tray--segment-space
 	mum-tray--segment-location
-	mum-tray--segment-space
 	mum-tray--segment-symbol-count-info
 	mum-tray--segment-space
 	mum-tray--segment-date
@@ -55,6 +55,11 @@
 
 (defface mum-tray--major-face
   '((t (:foreground "cyan" :weight bold)))
+  "Default face."
+  :group 'mum-tray)
+
+(defface mum-tray--buffer-name-face
+  '((t (:foreground "SpringGreen" :weight bold)))
   "Default face."
   :group 'mum-tray)
 
@@ -134,13 +139,19 @@
 			  'face 'mum-tray--info-face))
 
 (defun mum-tray--segment-major-mode ()
-  "Displays current major mode in mode-line."
-  (propertize
-   (concat " "
-		   (or (and (boundp 'delighted-modes)
-					(cadr (assq major-mode delighted-modes)))
-			   (format-mode-line mode-name)))
-   'face 'mum-tray--major-face))
+  "Display current major mode."
+  (unless (minibufferp (current-buffer))
+	(propertize
+	 (concat " "
+			 (or (and (boundp 'delighted-modes)
+					  (cadr (assq major-mode delighted-modes)))
+				 (format-mode-line mode-name)))
+	 'face 'mum-tray--major-face)))
+
+(defun mum-tray--segment-buffer-name ()
+  "Display current buffer name."
+  (propertize (format "%s" (buffer-name))
+			  'face 'mum-tray--buffer-name-face))
 
 (defun mum-tray--segment-location ()
   "Location."
@@ -160,7 +171,7 @@
 							,(if modified 'mum-tray--error-face
 							   (if read-only 'mum-tray--info-face
 								 'mum-tray--warning-face)))))
-	(propertize "*" 'face 'mum-tray--warning-face)))
+	(propertize "**" 'face 'mum-tray--warning-face)))
 
 (defun mum-tray--segment-symbol-count-info ()
   "Return Symbol Total And Current Symbol Index."
@@ -188,7 +199,7 @@
 						(setq total (+ total 1))
 						(if (and (>= cur start) (<= cur end))
 							(setq curindex total))))))
-			  (propertize (format "T%d:C%d" total curindex)
+			  (propertize (format " T%d:C%d" total curindex)
 						  'face 'mum-tray--default-face))))))))
 
 (defun mum-tray--segment-date ()
@@ -227,9 +238,9 @@
 
 (defun mum-tray--insert-message ()
   "Insert Minibuf-0 buffer message."
-  (with-current-buffer mum-tray--show-message-buffer-name
-	(erase-buffer)
-	(insert (mum-tray--segments-show-message mum-tray--segments))))
+  (let* ((msg (mum-tray--segments-show-message mum-tray--segments)))
+	(with-current-buffer mum-tray--show-message-buffer-name
+	  (erase-buffer) (insert msg))))
 
 (defun mum-tray--update-message ()
   "Update message."

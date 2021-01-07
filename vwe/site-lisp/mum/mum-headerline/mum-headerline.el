@@ -56,7 +56,7 @@
   "Path face.")
 
 (defconst mum-headerline--buffer-status-list
-  '("*R*" "*W*" "*O*")
+  '("RW" "MD" "RO")
   "Buffer status list.")
 
 (defun mum-headerline--sys-separator ()
@@ -141,12 +141,16 @@
 (defun mum-headerline--active ()
   "Header line active."
   (interactive)
+  (add-hook 'focus-in-hook #'mum-headerline--show-p)
+  (add-hook 'window-configuration-change-hook #'mum-headerline--show-p)
   (unless (vwe@lib--buffer-match-p mum-headerline--buffer-filter-list)
 	(setq-default header-line-format (mum-headerline--make-buffer-info))))
 
 (defun mum-headerline--deactive ()
   "Header line deactive."
   (interactive)
+  (remove-hook 'focus-in-hook #'mum-headerline--show-p)
+  (remove-hook 'window-configuration-change-hook #'mum-headerline--show-p)
   (setq-default header-line-format nil))
 
 (defun mum-headerline--buffer-match-p (regs &optional buffer)
@@ -174,12 +178,7 @@
   :lighter ""
   :group 'mum-headerline
   :global t
-  (if mum-headerline-mode
-	  (progn
-		(mum-headerline--active)
-		(add-hook 'window-configuration-change-hook #'mum-headerline--show-p))
-	(mum-headerline--deactive)
-	(remove-hook 'window-configuration-change-hook #'mum-headerline--show-p)))
+  (if mum-headerline-mode (mum-headerline--active) (mum-headerline--deactive)))
 
 (provide 'mum-headerline)
 ;;; mum-headerline.el ends here

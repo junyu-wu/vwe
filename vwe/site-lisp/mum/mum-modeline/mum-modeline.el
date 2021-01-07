@@ -49,7 +49,7 @@
 	 mum-modeline--segment-space
 	 mum-modeline--segment-modified
 	 mum-modeline--segment-major-mode
-     ;;mum-modeline--segment-buffer-name
+     ;; mum-modeline--segment-buffer-name
 	 mum-modeline--segment-remote-host
      mum-modeline--segment-process
 	 mum-modeline--segment-space

@@ -120,7 +120,7 @@ NORECORD."
 		(setq buffer-read-only t
 			  mum-editor--mode-current-type 'view)
 		(mum-editor-edit-mode -1)
-		(message "mum-editor-view-mode active"))))
+		(message "view mode"))))
 
 (define-minor-mode mum-editor-edit-mode
   "Editor edit mode."
@@ -133,7 +133,7 @@ NORECORD."
 		(mum-editor-view-mode -1)
 		(when mum-editor--idle-toggle-mode
 		  (run-with-idle-timer mum-editor--idle-time t #'mum-editor-view--active))
-		(message "mum-editor-edit-mode active"))))
+		(message "edit mode"))))
 
 ;;;###autoload
 (define-minor-mode mum-editor-mode
