@@ -37,6 +37,12 @@
   "Mum term."
   :group 'mum)
 
+(defcustom mum-term--shell-command
+  nil
+  "Terminal shell command."
+  :group 'mum-term
+  :type 'string)
+
 ;;
 ;; variable
 ;;
@@ -44,10 +50,6 @@
 (defvar mum-term--buffer-name-prefix
   "m-term"
   "Terminal buffer name prefix.")
-
-(defvar mum-term--shell-command
-  nil
-  "Terminal shell command.")
 
 (defvar mum-term--terminal-default-path
   "~/"
@@ -63,7 +65,8 @@
 
 (defconst mum-term--unbinding-key-list
   '("C-z" "C-x" "C-c" "C-h" "C-y" "<ESC>")
-  "Unbind key list.")
+  "Unbinding key list.")
+
 ;;
 ;; util func
 ;;
@@ -122,14 +125,29 @@ If DEDICATED non-nil the buffer is dedicated."
   (term-send-raw-string "\C-m"))
 
 (defun mum-term--send-kill-proc ()
-  "Send return in term mode."
+  "Send kill process in term mode."
   (interactive)
   (term-send-raw-string "\C-c"))
 
 (defun mum-term--send-suspend-proc ()
-  "Send return in term mode."
+  "Send suspend in term mode."
   (interactive)
   (term-send-raw-string "\C-z"))
+
+(defun mum-term--send-clear ()
+  "Send clear in term mode."
+  (interactive)
+  (term-send-raw-string "\C-l"))
+
+(defun mum-term-send-reverse-search-history ()
+  "Search history reverse."
+  (interactive)
+  (term-send-raw-string "\C-r"))
+
+(defun mum-term--send-complete ()
+  "Send complete in term mode."
+  (interactive)
+  (term-send-raw-string "\C-i"))
 
 (defun mum-term--send-quit ()
   "Move forward word in term mode."
@@ -145,6 +163,16 @@ If DEDICATED non-nil the buffer is dedicated."
   "Send paste in term mode."
   (interactive)
   (term-send-raw-string (current-kill 0)))
+
+(defun mum-term--send-move-begin-of-line ()
+  "Move begin of line in term mode."
+  (interactive)
+  (term-send-raw-string "\C-a"))
+
+(defun mum-term--send-move-end-of-line ()
+  "Move end of line in term mode."
+  (interactive)
+  (term-send-raw-string "\C-e"))
 
 (defun mum-term--send-forward-word ()
   "Move forward word in term mode."
@@ -171,24 +199,31 @@ If DEDICATED non-nil the buffer is dedicated."
 	   ((mapp key-str) (setq key key-str)))
 	  (when key (define-key term-raw-map key nil))))
 
-  (define-key term-raw-map (kbd "C-p") #'previous-line)
-  (define-key term-raw-map (kbd "C-n") #'next-line)
   (define-key term-raw-map (kbd "C-s") #'isearch-forward)
   (define-key term-raw-map (kbd "C-r") #'isearch-backward)
   (define-key term-raw-map (kbd "C-r") #'isearch-backward)
-  (define-key term-raw-map (kbd "C-a") #'term-bol)
-  (define-key term-raw-map (kbd "C-e") #'term-send-eof)
+
+  (define-key term-raw-map (kbd "C-a") #'mum-term--send-move-begin-of-line)
+  (define-key term-raw-map (kbd "C-e") #'mum-term--send-move-end-of-line)
+  (define-key term-raw-map (kbd "M-,") #'term-send-raw)
+  (define-key term-raw-map (kbd "M-.") #'completion-at-point)
+  (define-key term-raw-map (kbd "M-p") #'term-send-up)
+  (define-key term-raw-map (kbd "M-n") #'term-send-down)
+  (define-key term-raw-map (kbd "C-c l") #'term-line-mode)
+
   (define-key term-raw-map (kbd "C-m") #'mum-term--send-return)
   (define-key term-raw-map (kbd "C-c C-e") #'mum-term--send-esc)
   (define-key term-raw-map (kbd "C-c C-c") #'mum-term--send-kill-proc)
   (define-key term-raw-map (kbd "C-c C-z") #'mum-term--send-suspend-proc)
+  (define-key term-raw-map (kbd "C-c C-l") #'mum-term--send-clear)
+  (define-key term-raw-map (kbd "C-c C-i") #'mum-term--send-complete)
   (define-key term-raw-map (kbd "C-y") #'mum-term--send-paste)
+  (define-key term-raw-map (kbd "C-c q") #'mum-term--send-quit)
   (define-key term-raw-map (kbd "M-f") #'mum-term--send-forward-word)
   (define-key term-raw-map (kbd "M-b") #'mum-term--send-backward-word)
   (define-key term-raw-map (kbd "M-d") #'mum-term--send-delete-word)
   (define-key term-raw-map (kbd "M-<") #'mum-term--previous-terminal)
-  (define-key term-raw-map (kbd "M->") #'mum-term--next-terminal)
-  (define-key term-raw-map (kbd "C-c q") #'mum-term--send-quit))
+  (define-key term-raw-map (kbd "M->") #'mum-term--next-terminal))
 
 ;;
 ;; terminal
@@ -213,8 +248,7 @@ Switch term to DIRECTION `next' or `previous' buffer."
 	  (dotimes (i (length mum-term--terminal-list))
 		(when (equal cur-buffer (nth i mum-term--terminal-list))
 		  (setq to-buffer (nth (if (>= (1+ i) (length mum-term--terminal-list))
-								   0
-								 (1+ i))
+								   0 (1+ i))
 							   mum-term--terminal-list))
 		  (throw 'break nil))))
 	(mum-term--switch-terminal to-buffer)))
