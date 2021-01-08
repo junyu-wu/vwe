@@ -465,34 +465,6 @@ MINI pop frame or minibuffer."
 
 (use-package sudo-edit)
 
-(use-package term
-  :ensure nil
-  :bind
-  (:map term-mode-map
-		("C-s" . swiper))
-  :config
-  (use-package multi-term
-	:init
-	(setq term-bind-key-alist
-		  '(("C-c C-c" . term-interrupt-subjob)
-			("C-c C-e" . term-send-esc)
-			("M-p" . previous-line)
-			("M-n" . next-line)
-			("C-s" . isearch-forward)
-			("C-r" . isearch-backward)
-			("C-m" . term-send-return)
-			("C-y" . term-paste)
-			("M-f" . term-send-forward-word)
-			("M-b" . term-send-backward-word)
-			("M-o" . term-send-backspace)
-			("C-p" . term-send-up)
-			("C-n" . term-send-down)
-			("M-r" . term-send-reverse-search-history)
-			("M-d" . term-send-delete-word)
-			("M-," . term-send-raw)
-			("M-." . comint-dynamic-complete)
-			("C-s" . swiper)))))
-
 (use-package exec-path-from-shell
   :init
   (setq exec-path-from-shell-check-startup-files nil
@@ -595,6 +567,12 @@ MINI pop frame or minibuffer."
   :hook
   (after-init . (lambda () (vwe@lib--package-load 'mum-editor)
 				  (mum-editor-mode))))
+
+(use-package mum-term
+  :load-path
+  (lambda () (vwe@lib--path-vwe-site-lisp "mum/mum-term"))
+  :hook
+  (after-init . (lambda () (vwe@lib--package-load 'mum-term))))
 
 (use-package imenu-list)
 

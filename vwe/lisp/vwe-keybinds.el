@@ -97,6 +97,7 @@
 					("M" mum-modeline-mode "modeline")
 					("T" mum-tray-mode "tray")
 					("E" mum-editor-mode "editor")
+					("v" mum-terminal "term")
 					("l" vwe@lsp--run "lsp")
 					("a" org-agenda "agenda")
 					("c" org-capture "capture")

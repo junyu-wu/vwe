@@ -25,7 +25,7 @@
 ;;; Code:
 
 (defgroup mum-editor nil
-  "Mum key."
+  "Mum editor."
   :prefix "mum-editor--"
   :group 'mum)
 
