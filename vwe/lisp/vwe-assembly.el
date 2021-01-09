@@ -132,11 +132,5 @@ IGNORED: ignored."
   	(add-to-list 'company-backends 'vwe@asm--company-backend)
 	(add-to-list 'company-backends 'vwe@asm--company-create-completions)))
 
-;; 命令集查看
-(use-package x86-lookup
-  :init
-  (setq x86-lookup-pdf (vwe@lib--path-vwe-etc
-						"assembly/intel_64_and_ia-32_architectures_software_developer_manuals.pdf" t)))
-
 (provide 'vwe-assembly)
 ;;; vwe-assembly.el ends here

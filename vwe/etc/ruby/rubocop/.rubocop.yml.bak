@@ -1,5 +1,0 @@
-AllCops:
-  Exclude:
-    - 'db/**/*'
-    - 'config/**/*'
-    - 'script/**/*'
