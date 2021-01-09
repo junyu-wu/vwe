@@ -61,7 +61,7 @@
 	("M-C-'"                              sp-backward-unwrap-sexp)
 	("M-l"                                string-inflection-lower-camelcase)
 	("M-u"                                string-inflection-upcase)
-	("M-*"                                treemacs)
+	("M-*"                                treemacs-select-window)
 	("M-C-,"                              eacl-complete-multiline)
 	("C-]"                                counsel-etags-find-tag-at-point)
 	("M-RET"                              mum-key:global)
@@ -102,6 +102,9 @@
 					("a" org-agenda "agenda")
 					("c" org-capture "capture")
 					("C" mum-key:check "check")
+					("P" mum-key:project "project")
+					("T" treemacs "treemacs")
+					("#" treemacs-select-window "treemacs window")
 					("e" esup "esup")
 					("!" winum-mode "win number")
 					("~" mum-mark-paren--paren-pair "paren mark")
@@ -110,9 +113,47 @@
 
   (mum-key-define check
 				  ("check"
-				   (("v" flycheck-verify-setup "verify checker")
+				   (("c" flycheck-mode "flycheck mode")
+					("v" flycheck-verify-setup "verify checker")
 					("l" flycheck-list-errors "error list")
 					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
+
+  (mum-key-define project
+				  ("project"
+				   (("p" projectile-mode "projectile mode")
+					("g" projectile-grep "grep")
+					("a" projectile-add-known-project "add project")
+					("o" projectile-switch-open-project "switch open project")
+					("s" projectile-switch-project "switch project")
+					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
+
+  (mum-key-define treemacs
+				  ("treemacs"
+				   (("t" treemacs "treemacs mode")
+					("b" treemacs-bookmark "bookmark")
+					("f" treemacs-find-file "find file")
+					("c" treemacs-create-workspace "create workspace")
+					("s" treemacs-switch-workspace "switch workspace")
+					("r" treemacs-remove-workspace "remove workspace")
+					("W" treemacs-rename-workspace "rename workspace")
+					("P" treemacs-rename-project "rename project name")
+					("e" treemacs-edit-workspaces "edit workspace")
+					("a" treemacs-add-project-to-workspace "add project to workspace")
+					("d" treemacs-remove-project-from-workspace "remove project form workspace")
+					("p" treemacs-copy-path-at-point "copy path at point")
+					("i" treemacs-copy-file "copy file")
+					("u" treemacs-goto-parent-node "goto parent node")
+					("D" treemacs-set-width "set width")
+					("R" treemacs-refresh "refresh")
+					("k" treemacs-delete "delete")
+					("x" treemacs-rename "rename")
+					("w" treemacs-create-file "create file")
+					("l" treemacs-create-dir "create dir")
+					("z" treemacs-copy-file "copy file")
+					("m" treemacs-move-file "move file")
+					("h" treemacs-collapse-parent-node "collapse parent node")
+					("M-RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  treemacs-mode)
 
   (mum-key-define emacs-lisp
 				  (("emacs lisp" :face (:background "red" :foreground "white" :weight bold))
@@ -220,8 +261,7 @@
 					("b" python-shell-send-buffer "send buffer")
 					("r" python-shell-send-region "send region")
 					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
-				  python-mode)
-  )
+				  python-mode))
 
 ;; ***************************************************************************
 ;; config

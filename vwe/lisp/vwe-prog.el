@@ -130,17 +130,14 @@ MODE."
 
 (use-package projectile
   :init
-  (setq projectile-known-projects-file (vwe@lib--path-cache
-								   "projectile/projectile-bookmarks.eld" t)
+  (setq projectile-known-projects-file (vwe@lib--path-cache "projectile/projectile-bookmarks.eld" t)
 		projectile-cache-file (vwe@lib--path-cache "projectile/projectile.cache" t)
 		projectile-completion-system 'ivy
 		projectile-sort-order 'recently-active
 		projectile-indexing-method 'alien
 		projectile-enable-caching t
 		projectile-require-project-root nil
-		projectile-mode-line-function '(lambda ()
-										 (format "P:[%s]"
-												 (projectile-project-name))))
+		projectile-mode-line-function '(lambda () (format "P:[%s]" (projectile-project-name))))
   :bind
   ((:map projectile-mode-map
 		 ("C-c p" . projectile-command-map)))

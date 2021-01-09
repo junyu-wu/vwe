@@ -240,12 +240,8 @@ MINI pop frame or minibuffer."
         company-dabbrev-ignore-case nil
         company-dabbrev-downcase nil
 		company-show-numbers t
-        company-frontends '(company-pseudo-tooltip-frontend
-                            company-echo-metadata-frontend)
-		company-backends '((company-files
-							company-yasnippet
-							company-keywords
-							company-capf)
+        company-frontends '(company-pseudo-tooltip-frontend company-echo-metadata-frontend)
+		company-backends '((company-files company-yasnippet company-keywords company-capf)
 						   (company-abbrev company-dabbrev)))
   :config
   ;; 排序与过滤
@@ -388,8 +384,7 @@ MINI pop frame or minibuffer."
 
 (use-package treemacs
   :config
-  (setq treemacs-collapse-dirs                 (if treemacs-python-executable
-												   3 0)
+  (setq treemacs-collapse-dirs                 (if treemacs-python-executable 3 0)
 		treemacs-deferred-git-apply-delay      0.5
 		treemacs-display-in-side-window        t
 		treemacs-eldoc-display                 t
@@ -406,8 +401,7 @@ MINI pop frame or minibuffer."
 		treemacs-no-png-images                 nil
 		treemacs-no-delete-other-windows       t
 		treemacs-project-follow-cleanup        nil
-		treemacs-persist-file                  (vwe@lib--path-cache
-												"treemacs/treemacs-persisst" t)
+		treemacs-persist-file                  (vwe@lib--path-cache "treemacs/treemacs-persisst" t)
 		treemacs-position                      'left
 		treemacs-recenter-distance             0.1
 		treemacs-recenter-after-file-follow    t
@@ -430,8 +424,7 @@ MINI pop frame or minibuffer."
   (treemacs-follow-mode t)
   (treemacs-filewatch-mode t)
   (treemacs-fringe-indicator-mode t)
-  (pcase (cons (not (null (executable-find "git")))
-			   (not (null treemacs-python-executable)))
+  (pcase (cons (not (null (executable-find "git"))) (not (null treemacs-python-executable)))
 	(`(t . t) (treemacs-git-mode 'deferred))
 	(`(t . _) (treemacs-git-mode 'simple))))
 
@@ -442,7 +435,7 @@ MINI pop frame or minibuffer."
   (browse-kill-ring-mode . nil)
   :bind
   (:map browse-kill-ring-mode-map
-		("m" . browse-kill-ring-insert-move-and-quit))
+		("i" . browse-kill-ring-insert-move-and-quit))
   :init
   (setq browse-kill-ring-highlight-current-entry t
 		browse-kill-ring-highlight-inserted-item 'pulse))
@@ -457,8 +450,7 @@ MINI pop frame or minibuffer."
 		undo-tree-visualizer-diff t
 		undo-tree-enable-undo-in-region nil
 		undo-tree-auto-save-history nil
-		undo-tree-history-directory-alist `(("." . ,(vwe@lib--path-cache
-													 "undotree/hist"))))
+		undo-tree-history-directory-alist `(("." . ,(vwe@lib--path-cache "undotree/hist"))))
   :config
   (dolist (dir undo-tree-history-directory-alist)
 	(push (expand-file-name (cdr dir)) recentf-exclude)))
@@ -565,8 +557,7 @@ MINI pop frame or minibuffer."
   :load-path
   (lambda () (vwe@lib--path-vwe-site-lisp "mum/mum-editor"))
   :hook
-  (after-init . (lambda () (vwe@lib--package-load 'mum-editor)
-				  (mum-editor-mode))))
+  (after-init . (lambda () (vwe@lib--package-load 'mum-editor) (mum-editor-mode))))
 
 (use-package mum-term
   :load-path
