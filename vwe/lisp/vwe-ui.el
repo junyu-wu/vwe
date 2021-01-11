@@ -44,10 +44,9 @@
 				fill-column    80
 				tab-width      4
 				show-trailing-whitespace t)
-  (setq frame-title-format
-		(list (format "%s %%S: %%j " (system-name))
-			  '(buffer-file-name "%f"
-								 (dired-directory dired-directory "%b")))
+  (setq frame-title-format (list (format "%s %%S: %%j " (system-name))
+								 '(buffer-file-name "%f"
+													(dired-directory dired-directory "%b")))
 		icon-title-format frame-title-format)
 
   (unless vwe@custom--frame-menu-bar?

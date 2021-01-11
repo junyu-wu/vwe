@@ -46,6 +46,9 @@
 						:background (face-attribute 'secondary-selection :background)
 						:weight 'ultra-light
 						:foreground nil)
+	(with-eval-after-load 'whitespace
+	  (set-face-attribute 'whitespace-line nil
+						  :foreground nil))
 	(with-eval-after-load 'symbol-overlay
 	  (set-face-attribute 'symbol-overlay-default-face nil
 						  :foreground nil

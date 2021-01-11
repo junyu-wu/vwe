@@ -64,6 +64,7 @@
 	("M-*"                                treemacs-select-window)
 	("M-C-,"                              eacl-complete-multiline)
 	("C-]"                                counsel-etags-find-tag-at-point)
+	("M-C-?"                              youdao-dictionary-search-at-point+)
 	("M-RET"                              mum-key:global)
 	([remap comment-dwim]                 comment-dwim-2)
 	([remap move-beginning-of-line]       mwim-beginning-of-code-or-line)

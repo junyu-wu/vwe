@@ -172,20 +172,13 @@
 
 		indent-tabs-mode                     nil
 		auto-save-default                    nil
-        auto-save-list-file-prefix           (concat (vwe@lib--path-cache
-                                                      "auto-save")
-                                                     "/.saves-")
+        auto-save-list-file-prefix           (concat (vwe@lib--path-cache "auto-save") "/.saves-")
 		make-backup-files                    nil
-		confirm-kill-emacs                   #'(lambda (prompt)
-												 (if vwe@custom--quit-ask?
-													 (y-or-n-p-with-timeout
-                                                      "quit emacs:" 10 "y")
-												   '(nil)))
+		confirm-kill-emacs                   #'(lambda (prompt) (if vwe@custom--quit-ask? (y-or-n-p-with-timeout "quit emacs:" 10 "y") '(nil)))
 
         select-enable-clipboard              t
 
-        save-place-file                      (vwe@lib--path-cache
-                                              "saveplace/places" t)
+        save-place-file                      (vwe@lib--path-cache "saveplace/places" t)
 
         recentf-auto-cleanup                 900
 		recentf-max-menu-item                30
