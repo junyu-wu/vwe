@@ -55,9 +55,9 @@
   "Get system separator."
   (interactive)
   (let* ((split))
-	(if (or vwe@lib--sys-win-p vwe@lib--sys-cygwin-p)
-		(setq split "\\")
-	  (setq split "/"))
+	;; (if (or vwe@lib--sys-win-p vwe@lib--sys-cygwin-p)
+	;; (setq split "\\")
+	(setq split "/");;)
 	split))
 
 (defun vwe@lib--sys-startup-info ()
@@ -275,25 +275,31 @@ NOT-I is include curretn buffer."
 
 (defun vwe@lib--font-set-ascii (&optional font size)
   "Set ascii FONT and SIZE."
-  (unless font
-	(setq font (vwe@lib--font-name)))
-  (unless size
-	(setq size (vwe@lib--font-size)))
-  (when (display-graphic-p)
-	(set-face-attribute 'default
-						nil
-						:font (format "%s:pixelsize=%d" font size))))
+  (condition-case nil
+	  (progn
+		(unless font
+		  (setq font (vwe@lib--font-name)))
+		(unless size
+		  (setq size (vwe@lib--font-size)))
+		(when (display-graphic-p)
+		  (set-face-attribute 'default
+							  nil
+							  :font (format "%s:pixelsize=%d" font size))))
+	(error nil)))
 
 (defun vwe@lib--font-set-non-ascii (&optional font size)
   "Set non ascii FONT and SIZE."
-  (unless font
-	(setq font (vwe@lib--font-name)))
-  (unless size
-	(setq size (vwe@lib--font-size)))
-  (when (display-graphic-p)
-	(dolist (charset '(han cjk-misc bopomofo symbol kana))
-      (set-fontset-font (frame-parameter nil 'font) charset
-						(font-spec :family font :size size)))))
+  (condition-case nil
+	  (progn
+		(unless font
+		  (setq font (vwe@lib--font-name)))
+		(unless size
+		  (setq size (vwe@lib--font-size)))
+		(when (display-graphic-p)
+		  (dolist (charset '(han cjk-misc bopomofo symbol kana))
+			(set-fontset-font (frame-parameter nil 'font) charset
+							  (font-spec :family font :size size)))))
+	(error nil)))
 
 (defun vwe@lib--font-reset (&optional size)
   "Reset font SIZE."

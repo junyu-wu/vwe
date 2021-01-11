@@ -63,9 +63,9 @@
   "Get system separator."
   (interactive)
   (let* ((split))
-	(if (or (eq system-type 'windows-nt) (eq system-type 'cygwin))
-		(setq split "\\")
-	  (setq split "/"))
+	;; (if (or (eq system-type 'windows-nt) (eq system-type 'cygwin))
+	;; 	(setq split "\\")
+	(setq split "/");;)
 	split))
 
 (defun mum-headerline--path-trim (path)

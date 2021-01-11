@@ -26,6 +26,10 @@
 ;; ***************************************************************************
 ;; lib
 ;; ***************************************************************************
+(defvar vwe@theme--current-theme
+  nil
+  "Current theme.")
+
 (defun vwe@theme--load (func &rest args)
   "Advice around `load-theme' with FUNC and ARGS."
   (mapc #'disable-theme custom-enabled-themes)
@@ -34,34 +38,32 @@
 
 (defun vwe@theme--default-face()
   "Set default face."
-  (when (display-graphic-p)
-	(set-face-attribute 'header-line nil
-						:background (face-attribute 'mode-line :background))
-	(set-face-attribute 'region nil
+  (set-face-attribute 'header-line nil
+					  :background (face-attribute 'mode-line :background))
+  (set-face-attribute 'region nil
+					  :background (face-attribute 'cursor :background)
+					  :inverse-video t)
+  (set-face-attribute 'fringe nil
+					  :inherit 'mode-line)
+  (set-face-attribute 'show-paren-match nil
+					  :background (face-attribute 'secondary-selection :background)
+					  :foreground nil)
+  (with-eval-after-load 'whitespace
+	(set-face-attribute 'whitespace-line nil
+						:foreground nil))
+  (with-eval-after-load 'symbol-overlay
+	(set-face-attribute 'symbol-overlay-default-face nil
+						:foreground nil
+						:inherit nil
+						:distant-foreground (face-attribute 'default :foreground)
 						:background (face-attribute 'cursor :background)
-						:inverse-video t)
-	(set-face-attribute 'fringe nil
-						:inherit 'mode-line)
-	(set-face-attribute 'show-paren-match nil
-						:background (face-attribute 'secondary-selection :background)
-						:weight 'ultra-light
-						:foreground nil)
-	(with-eval-after-load 'whitespace
-	  (set-face-attribute 'whitespace-line nil
-						  :foreground nil))
-	(with-eval-after-load 'symbol-overlay
-	  (set-face-attribute 'symbol-overlay-default-face nil
-						  :foreground nil
-						  :inherit nil
-						  :distant-foreground (face-attribute 'default :foreground)
-						  :background (face-attribute 'cursor :background)
-						  :weight 'ultra-light))
-	(with-eval-after-load 'ivy
-	  (set-face-attribute 'ivy-minibuffer-match-face-2 nil
-						  :foreground "SpringGreen"
-						  :underline '(:color "DarkOrange"))
-	  (set-face-attribute 'ivy-current-match nil
-						  :box `(:color "DarkOrange")))))
+						:weight 'ultra-light))
+  (with-eval-after-load 'ivy
+	(set-face-attribute 'ivy-minibuffer-match-face-2 nil
+						:foreground "SpringGreen"
+						:underline '(:color "DarkOrange"))
+	(set-face-attribute 'ivy-current-match nil
+						:box `(:color "DarkOrange"))))
 
 ;; 主题切换
 (defun vwe@theme--toggle (&optional theme)
@@ -71,10 +73,10 @@
     (intern (completing-read "Find custom theme: "
                              (mapcar #'symbol-name
 									 (custom-available-themes))))))
-  (unless theme
-	(setq theme (if (display-graphic-p) vwe@custom--theme-gui vwe@custom--theme-tty)))
-
-  (load-theme theme))
+  (if theme
+	  (setq vwe@theme--current-theme theme)
+	(setq vwe@theme--current-theme (if (display-graphic-p) vwe@custom--theme-gui vwe@custom--theme-tty)))
+  (load-theme vwe@theme--current-theme))
 
 (defun vwe@theme--init ()
   "Theme init."

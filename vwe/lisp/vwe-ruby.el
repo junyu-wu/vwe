@@ -33,9 +33,7 @@
 ;; ***************************************************************************
 (use-package rvm
   :hook
-  (ruby-mode . rvm-activate-corresponding-ruby)
-  :config
-  (rvm-use-default))
+  (ruby-mode . (lambda () (rvm-activate-corresponding-ruby) (rvm-use-default))))
 
 ;; 连接ruby repl
 (use-package inf-ruby
