@@ -48,11 +48,11 @@
   "Error face.")
 
 (defface mum-headerline--file-face
-  '((t (:inherit 'mode-line :weight bold)))
+  '((t (:foreground "white" :weight bold :inverse-video nil)))
   "File face.")
 
 (defface mum-headerline--path-face
-  '((t (:inherit 'mode-line :weight bold)))
+  '((t (:foreground "#B0BEC5" :weight bold)))
   "Path face.")
 
 (defconst mum-headerline--buffer-status-list
