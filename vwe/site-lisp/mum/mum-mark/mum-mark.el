@@ -43,7 +43,7 @@
 ;;
 ;; =============================================================================
 (defface mum-mark--position--face
-  '((t (:inherit 'line-number :inverse-video nil)))
+  '((t (:inherit 'error :inverse-video nil)))
   "Position makr hint face.")
 
 (defmacro mum-mark-position--create-keymap (cmd)

@@ -82,6 +82,45 @@ MODE."
 								  vwe@prog--language-and-mode-alist))))
   (funcall (cdr (assoc mode vwe@prog--language-and-mode-alist))))
 
+(defun vwe@prog--gud-or-gud-go ()
+  "If gdb isn't running; run gdb, else call gud-go."
+  (interactive)
+  (if (and gud-comint-buffer
+           (buffer-name gud-comint-buffer)
+           (get-buffer-process gud-comint-buffer)
+           (with-current-buffer gud-comint-buffer
+			 (eq gud-minor-mode 'gdba)))
+      (gud-call (if gdb-active-process "continue" "run") "")
+    (gdb (gud-query-cmdline 'gdb)))
+  (tool-bar-mode t))
+
+(defun vwe@prog--gud-breakpoint-set-or-remove ()
+  "Set/clear breakpoint."
+  (interactive)
+  (save-excursion
+    (if (eq (car (fringe-bitmaps-at-pos (point))) 'breakpoint)
+        (gud-remove nil)
+      (gud-break nil))))
+
+(defun vwe@prog--gud-proc-kill ()
+  "Kill gdb process."
+  (interactive)
+  (with-current-buffer gud-comint-buffer (comint-skip-input))
+  (kill-process (get-buffer-process gud-comint-buffer)))
+
+(defun vwe@prog--gdb-disable ()
+  "DBD disable."
+  (interactive)
+  (tool-bar-mode -1)
+  (delete-other-windows)
+  (vwe@prog--gud-proc-kill)
+  (cl-loop for buffername in (buffer-list)
+		   collect
+		   (progn
+			 (when (string-match "\\*gud-[a-z A-Z 0-9].*\\'"
+								 (buffer-name buffername))
+			   (kill-buffer buffername)))))
+
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************

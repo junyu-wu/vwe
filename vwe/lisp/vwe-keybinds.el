@@ -104,8 +104,9 @@
 					("C" mum-key:check "check")
 					("P" mum-key:project "project")
 					("T" treemacs "treemacs")
-					("#" treemacs-select-window "treemacs window")
 					("e" esup "esup")
+					("z" customize-group "customize group")
+					("*" treemacs-select-window "treemacs window")
 					("!" winum-mode "win number")
 					("~" mum-mark-paren--paren-pair "paren mark")
 					("(" vwe@base--paren-toggle-style "paren style")
@@ -153,7 +154,7 @@
 					("m" treemacs-move-file "move file")
 					("h" treemacs-collapse-parent-node "collapse parent node")
 					("M-RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
-				  treemacs-mode)
+				  (treemacs-mode))
 
   (mum-key-define emacs-lisp
 				  (("emacs lisp" :face (:background "red" :foreground "white" :weight bold))
@@ -165,7 +166,7 @@
 					("f" describe-function "function")
 					("v" describe-variable "variable")
 					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
-				  emacs-lisp-mode)
+				  (emacs-lisp-mode))
 
   (define-key emacs-lisp-mode-map (kbd "C-c a") 'mum-key:emacs-lisp)
   (mum-key-define org-template
@@ -221,14 +222,14 @@
 					("v" org-preview-html/preview "preview html")
 					("DEL" mum-key:org-template "org template" :footer t :face (:background "magenta" :foreground "white" :weight bold))
 					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
-				  org-mode
+				  (org-mode)
 				  "C-M-<return>")
 
   (mum-key-define markdown
 				  ("markdown"
 				   (("l" markdown-live-preview-mode "live preview mode")
 					("b" markdown-insert-gfm-code-block "code block")
-					("c" markdown-insert-code "code" :color teal)
+					("c" markdown-insert-code "code")
 					("t" markdown-insert-table "table")
 					("l" markdown-insert-link "link")
 					("i" markdown-insert-image "insert image")
@@ -246,8 +247,43 @@
 					("7" markdown-insert-header-setext-1 "setext 1")
 					("8" markdown-insert-header-setext-2 "setext 2")
 					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
-				  markdown-mode
+				  (markdown-mode)
 				  "C-M-<return>")
+
+  (mum-key-define gud
+				  ("GUD"
+				   (("g" gdb "gbd")
+					("x" vwe@prog--gud-or-gud-go "gud go")
+					("d" vwe@prog--gdb-disable "disable gdb")
+					("b" vwe@prog--gud-breakpoint-set-or-remove "breakpoint")
+					("k" vwe@prog--gud-proc-kill "kill gud")
+					("c" gud-cont "continue")
+					("n" gud-next "next")
+					("s" gud-step "step")
+					("u" gud-until "until")
+					("r" gud-run "run")
+					("i" gud-nexti "nexti")
+					("f" gud-finish "finish")
+					("j" gud-jdb-find-source "find source")
+					("t" gud-stepi "stepi")
+					("p" gud-print "print")
+					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
+
+  (mum-key-define clang
+				  ("C/C++"
+				   (("r" rmsbolt-mode "rmsbolt")
+                    ("t" rmsbolt-starter "create run file")
+					("c" rmsbolt-compile "compile")
+					("x" smart-compile "compile")
+					("e" compile-goto-error "goto error")
+					("o" quickrun-compile-only "compile only")
+					("q" quickrun "quickrun")
+					("s" quickrun-shell "run shell")
+					("g" gdb "gdb")
+					("u" mum-key:gud "gud")
+					("p" gdb-restore-windows "restore windows")
+					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  (c-mode c++-mode))
 
   (mum-key-define python
 				  ("python"
@@ -261,7 +297,7 @@
 					("b" python-shell-send-buffer "send buffer")
 					("r" python-shell-send-region "send region")
 					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
-				  python-mode))
+				  (python-mode)))
 
 ;; ***************************************************************************
 ;; config
