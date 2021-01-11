@@ -199,7 +199,7 @@
 											   (lambda (file)
                                                  (file-in-directory-p file package-user-dir)))
 
-        show-paren-style                     'parenthesis)
+        show-paren-style                     'expression)
 
   (define-advice show-paren-function
       (:around (fn) fix-show-paren-function)

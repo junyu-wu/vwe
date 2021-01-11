@@ -186,16 +186,6 @@
   :group 'vwe-ui
   :type 'symbol)
 
-(defcustom vwe@custom--theme-load-before-hook nil
-  "Functions to run before load theme."
-  :group 'vwiss-ui
-  :type 'hook)
-
-(defcustom vwe@custom--theme-load-after-hook nil
-  "Functions to run after load theme."
-  :group 'vwiss-ui
-  :type 'hook)
-
 ;; ***************************************************************************
 ;; frame
 ;; ***************************************************************************
@@ -389,6 +379,22 @@ If nil hide all buffers."
 (defface vwe@custom--face-default
   '((t (:background "#434C5E" :foreground "#B0BEC5" :weight bold)))
   "Default face.")
+
+(defface vwe@custom--face-success
+  '((t (:background nil :foreground "SpringGreen" :weight bold)))
+  "Success face.")
+
+(defface vwe@custom--face-info
+  '((t (:background nil :foreground "DarkOrange" :weight bold)))
+  "Info face.")
+
+(defface vwe@custom--face-warning
+  '((t (:background nil :foreground "yellow" :weight bold)))
+  "Warning face.")
+
+(defface vwe@custom--face-error
+  '((t (:background nil :foreground "DarkRed" :weight bold)))
+  "Error face.")
 
 ;; ***************************************************************************
 ;; lib

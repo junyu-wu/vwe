@@ -26,116 +26,67 @@
 ;; ***************************************************************************
 ;; lib
 ;; ***************************************************************************
-(defun vwe@theme--load (origin-func theme &rest args)
-  "Hook around `load-theme'.
-ORIGIN-FUNC.
-THEME.
-ARGS."
+(defun vwe@theme--load (func &rest args)
+  "Advice around `load-theme' with FUNC and ARGS."
   (mapc #'disable-theme custom-enabled-themes)
-  (run-hook-with-args 'vwe@custom--theme-load-before-hook theme)
-  (apply origin-func theme args)
-  (run-hook-with-args 'vwe@custom--theme-load-after-hook theme))
+  (apply func args)
+  (vwe@theme--default-face))
 
 (defun vwe@theme--default-face()
   "Set default face."
-  (set-face-attribute 'header-line nil
-					  :background "#434C5E")
-  (set-face-attribute 'region nil
-					  :background "#555555")
-  (set-face-attribute 'fringe nil
-					  :background nil
-					  :inherit 'mode-line)
-  (set-face-attribute 'line-number-current-line nil
-					  :background nil
-					  :inherit 'mode-line)
-  (set-face-attribute 'line-number nil
-					  :background nil)
-  (set-face-attribute 'font-lock-string-face nil
-					  :background nil)
-  (set-face-attribute 'font-lock-keyword-face nil
-					  :background nil)
-  (set-face-attribute 'font-lock-constant-face nil
-					  :background nil)
-  (set-face-attribute 'font-lock-warning-face nil
-					  :background nil)
-  (set-face-attribute 'font-lock-function-name-face nil
-					  :box nil
-					  :inherit 'mode-line-inactive)
-  (set-face-attribute 'show-paren-match nil
-					  :foreground nil
-					  :background nil
-					  :box `(:color "red" :line-width 1))
-  (with-eval-after-load 'tab-bar
-	(set-face-attribute 'tab-bar nil
-						:background nil
-						:inherit 'default)
-	(set-face-attribute 'tab-line nil
-						:background nil
-						:inherit 'mode-line))
-  (with-eval-after-load 'symbol-overlay
-	(set-face-attribute 'symbol-overlay-default-face nil
-						:foreground nil
-						:background nil
-						:inherit nil
-						:box nil
-						:underline `(:color "DarkOrange")))
-  (with-eval-after-load 'cus-edit
-    (set-face-attribute 'custom-link nil
-						:foreground nil
-						:inherit 'font-lock-function-name-face))
-  (with-eval-after-load 'hl-line
-    (set-face-attribute 'hl-line nil
-						:foreground nil))
-  (with-eval-after-load 'whitespace
-	(set-face-attribute 'whitespace-line nil
-						:foreground nil))
-  (with-eval-after-load 'ivy
-	(set-face-attribute 'ivy-minibuffer-match-face-2 nil
-						:foreground "green"
-						:underline '(:color "DarkOrange"))
-	(set-face-attribute 'ivy-current-match nil
-						:underline '(:color "DarkOrange"))))
+  (when (display-graphic-p)
+	(set-face-attribute 'header-line nil
+						:background (face-attribute 'mode-line :background))
+	(set-face-attribute 'region nil
+						:background (face-attribute 'cursor :background)
+						:inverse-video t)
+	(set-face-attribute 'fringe nil
+						:inherit 'mode-line)
+	(set-face-attribute 'show-paren-match nil
+						:background (face-attribute 'secondary-selection :background)
+						:weight 'ultra-light
+						:foreground nil)
+	(with-eval-after-load 'symbol-overlay
+	  (set-face-attribute 'symbol-overlay-default-face nil
+						  :foreground nil
+						  :inherit nil
+						  :distant-foreground (face-attribute 'default :foreground)
+						  :background (face-attribute 'cursor :background)
+						  :weight 'ultra-light))
+	(with-eval-after-load 'ivy
+	  (set-face-attribute 'ivy-minibuffer-match-face-2 nil
+						  :foreground "SpringGreen"
+						  :underline '(:color "DarkOrange"))
+	  (set-face-attribute 'ivy-current-match nil
+						  :box `(:color "DarkOrange")))))
 
 ;; 主题切换
 (defun vwe@theme--toggle (&optional theme)
   "Toggle THEME."
-    (interactive
+  (interactive
    (list
     (intern (completing-read "Find custom theme: "
                              (mapcar #'symbol-name
-				     (custom-available-themes))))))
-  (when theme
-		(load-theme theme)
-		(vwe@theme--default-face)))
+									 (custom-available-themes))))))
+  (unless theme
+	(setq theme (if (display-graphic-p) vwe@custom--theme-gui vwe@custom--theme-tty)))
+
+  (load-theme theme))
 
 (defun vwe@theme--init ()
   "Theme init."
   (interactive)
   (setq custom-safe-themes t)
-  (advice-add 'load-theme :around #'vwe@theme--load)
-  (if (display-graphic-p)
-	  (vwe@theme--toggle vwe@custom--theme-gui)
-	(vwe@theme--toggle vwe@custom--theme-tty))
-  (when (display-graphic-p)
-    (vwe@theme--default-face)))
+  (advice-add 'load-theme :around #'vwe@theme--load))
 
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
-(use-package doom-themes
-  :init
-  (setq doom-themes-enable-bold t
-		doom-themes-enable-italic t
-		doom-themes-treemacs-theme "doom-colors")
-  :config
-  (doom-themes-visual-bell-config)
-  (doom-themes-neotree-config)
-  (doom-themes-treemacs-config)
-  (doom-themes-org-config))
-
+(use-package doom-themes)
 (use-package tao-theme)
 
 (vwe@theme--init)
+(vwe@theme--toggle)
 
 (provide 'vwe-theme)
 ;;; vwe-theme.el ends here

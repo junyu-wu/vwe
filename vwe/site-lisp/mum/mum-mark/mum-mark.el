@@ -29,13 +29,21 @@
   :group 'vwiss-mum
   :prefix "mum-mark--")
 
+(defvar mum-mark--mode-keymap
+  (let ((keymap (make-sparse-keymap)))
+	(define-key keymap (kbd "M-f") #'mum-mark-position--forward-word)
+	(define-key keymap (kbd "M-b") #'mum-mark-position--backward-word)
+	(define-key keymap (kbd "M-p") #'mum-mark-line-previous)
+	(define-key keymap (kbd "M-n") #'mum-mark-line-next)
+	keymap)
+  "Move to mark map.")
+
 ;; =============================================================================
 ;; word or symbol
 ;;
 ;; =============================================================================
 (defface mum-mark--position--face
-  '((t
-	 (:background nil :foreground "yellow")))
+  '((t (:inherit 'line-number :inverse-video nil)))
   "Position makr hint face.")
 
 (defmacro mum-mark-position--create-keymap (cmd)
@@ -334,6 +342,13 @@ OBJS."
 	(setq mum-mark-paren--overlay-list nil)))
 
 ;; =============================================================================
+;; show paren
+;;
+;; =============================================================================
+
+
+
+;; =============================================================================
 ;; line
 ;;
 ;; =============================================================================
@@ -376,10 +391,7 @@ OBJS."
 	(if win-pos
 		(define-key keymap (kbd "g") #'mum-mark-line-next-move-to)
 	  (define-key keymap (kbd "g") #'mum-mark-line-previous-move-to))
-	;; (set-transient-map keymap nil;; (lambda () (interactive) t)
-	;; 				   (lambda () (mapc #'delete-overlay ov-list)))
-	(setq mum-mark-line--current-overlay-list ov-list)
-	))
+	(setq mum-mark-line--current-overlay-list ov-list)))
 
 (defun mum-mark-line--overlay-alist (num win-pos)
   "Move lien to NUM with WIN-POS."
@@ -397,14 +409,16 @@ OBJS."
 (defun mum-mark-line-previous ()
   "Line previous."
   (interactive)
-  (mum-mark-line-mode t)
-  (mum-mark-line--show-mark nil))
+  (when mum-mark-mode
+	(mum-mark-line-mode t)
+	(mum-mark-line--show-mark nil)))
 
 (defun mum-mark-line-next ()
   "Line next."
   (interactive)
-  (mum-mark-line-mode t)
-  (mum-mark-line--show-mark t))
+  (when mum-mark-mode
+	(mum-mark-line-mode t)
+	(mum-mark-line--show-mark t)))
 
 (defun mum-mark-line-next-move-to (&optional num)
   "Move to NUM line."
@@ -432,16 +446,19 @@ OBJS."
 	  (mapc #'delete-overlay mum-mark-line--current-overlay-list))
 	(setq mum-mark-line--current-overlay-list nil)))
 
+(defun mum-mark-mode-enable ()
+  "Enable mode.")
+
+(defun mum-mark-mode-disable ()
+  "Disable mode.")
+
 ;;;###autoload
 (define-minor-mode mum-mark-mode
   "Mum mark minor mode."
   :init-value nil
   :group 'mum-mark
-  :global t
-  (define-key global-map (kbd "M-f") #'mum-mark-position--forward-word)
-  (define-key global-map (kbd "M-b") #'mum-mark-position--backward-word)
-  (define-key global-map (kbd "M-p") #'mum-mark-line-previous)
-  (define-key global-map (kbd "M-n") #'mum-mark-line-next))
+  :keymap mum-mark--mode-keymap
+  :global t)
 
 (provide 'mum-mark)
 ;;; mum-mark.el ends here

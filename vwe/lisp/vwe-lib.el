@@ -470,6 +470,28 @@ FILE-P if t make path and file."
 		  (setq mode-line-format nil))))))
 
 ;; ************************************************************************
+;; point
+;; ************************************************************************
+(defun vwe@lib--point-find-line-bol ()
+  "Find current point line begin of line position."
+  (save-excursion
+	(back-to-indentation)
+	(point)))
+
+(defun vwe@lib--point-find-line-eol ()
+  "Find current point end of line position."
+  (save-excursion
+	(end-of-line)
+	(skip-chars-backward " \t" (mum-mark-show-paren--find-line-bol))
+	(point)))
+
+(defun vwe@lib--point-unescaped-p (pos)
+  "Determine whether the paren after POS is unescaped."
+  (save-excursion
+    (goto-char pos)
+    (= (logand (skip-syntax-backward "/\\") 1) 0)))
+
+;; ************************************************************************
 ;; keymap
 ;; ************************************************************************
 (defun vwe@lib--keymap-global-set (key-alist)
