@@ -27,7 +27,8 @@
 ;; lib
 ;; ***************************************************************************
 (defvar vwe@keybind--default-list
-  '(("<f3>"                               split-window-horizontally)
+  '(("<f1>"                               (lambda () (interactive) (find-file (vwe@lib--path-vwe-lisp "vwe-main.el" t))))
+	("<f3>"                               split-window-horizontally)
 	("C-<f3>"                             split-window-vertically)
 	("<f12>"                              toggle-frame-fullscreen)
 	("C-r"                                recentf-open-files)
