@@ -51,6 +51,9 @@
   (with-eval-after-load 'whitespace
 	(set-face-attribute 'whitespace-line nil
 						:foreground nil))
+  (with-eval-after-load 'font-lock
+	(set-face-attribute 'font-lock-comment-face nil
+						:distant-foreground (if (display-graphic-p) nil (face-attribute 'error :foreground))))
   (with-eval-after-load 'symbol-overlay
 	(set-face-attribute 'symbol-overlay-default-face nil
 						:inherit nil

@@ -175,7 +175,6 @@
   "Mum headreline minor mode."
   :init-value nil
   :keymap nil
-  :lighter ""
   :group 'mum-headerline
   :global t
   (if mum-headerline-mode (mum-headerline--active) (mum-headerline--deactive)))

@@ -29,6 +29,7 @@
 (defvar vwe@keybind--default-list
   '(("<f1>"                               (lambda () (interactive) (find-file (vwe@lib--path-vwe-lisp "vwe-main.el" t))))
 	("<f3>"                               split-window-horizontally)
+	("<f5>"                               vwe@theme--init)
 	("C-<f3>"                             split-window-vertically)
 	("<f12>"                              toggle-frame-fullscreen)
 	("C-r"                                recentf-open-files)
@@ -113,7 +114,11 @@
 					("!" winum-mode "win number")
 					("~" mum-mark-paren--paren-pair "paren mark")
 					("(" vwe@base--paren-toggle-style "paren style")
-					("+" vwe@ui--text-scale-reset "+/- text scale"))))
+					("+" vwe@ui--text-scale-reset "+/- text scale")
+					("C-f" (lambda () (interactive)
+							 (vwe@base--init)
+							 (vwe@ui--init)
+							 (vwe@theme--init)) "reinit" :footer t))))
 
   (mum-key-define check
 				  ("check"
