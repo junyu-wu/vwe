@@ -47,9 +47,7 @@
   "Position makr hint face.")
 
 (defmacro mum-mark-position--create-keymap (cmd)
-  "Create keymap.
-MAP.
-CMD."
+  "Create keymap CMD."
   `(dotimes (i 10)
 	 (define-key mum-mark-position--move-to-mark-map
 	   (kbd (concat "" (number-to-string i)))
@@ -69,13 +67,15 @@ CMD before/after move func."
 	(save-mark-and-excursion
 	  (call-interactively cmd)
 	  (dotimes (i 10)
-		(let ((mark-i (make-overlay (1- (point)) (point))))
+		(let ((before-point (point))
+			  (mark-i (make-overlay (1- (point)) (point))))
 		  (call-interactively cmd)
-		  (overlay-put mark-i 'after-string
-					   (propertize (format "%d" (1+ i))
-								   'display '((raise 0.5))
-								   'face 'mum-mark--position--face))
-		  (push mark-i mark-list))))
+		  (when (/= before-point (point))
+			(overlay-put mark-i 'after-string
+						 (propertize (format "%d" (1+ i))
+									 'display '((raise 0.5))
+									 'face 'mum-mark--position--face))
+			(push mark-i mark-list)))))
 	(mum-mark-position--create-keymap cmd)
 	(define-key mum-mark-position--move-to-mark-map
 	  (kbd "q") (lambda ()

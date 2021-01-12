@@ -55,6 +55,7 @@
 	(set-face-attribute 'symbol-overlay-default-face nil
 						:inherit nil
 						:foreground nil
+						:distant-foreground (face-attribute 'default :foreground)
 						:background (face-attribute 'cursor :background)
 						:weight 'ultra-light))
   (with-eval-after-load 'ivy
