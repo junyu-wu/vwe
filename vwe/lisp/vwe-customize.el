@@ -181,7 +181,7 @@
   :type 'symbol)
 
 (defcustom vwe@custom--theme-tty
-  'doom-dracula
+  'doom-ephemeral
   "Default tty theme."
   :group 'vwe-ui
   :type 'symbol)

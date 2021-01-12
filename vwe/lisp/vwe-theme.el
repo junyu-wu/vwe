@@ -34,9 +34,9 @@
   "Advice around `load-theme' with FUNC and ARGS."
   (mapc #'disable-theme custom-enabled-themes)
   (apply func args)
-  (vwe@theme--default-face))
+  (vwe@theme--face-init))
 
-(defun vwe@theme--default-face()
+(defun vwe@theme--face-init()
   "Set default face."
   (set-face-attribute 'header-line nil
 					  :background (face-attribute 'mode-line :background))
@@ -46,16 +46,15 @@
   (set-face-attribute 'fringe nil
 					  :inherit 'mode-line)
   (set-face-attribute 'show-paren-match nil
-					  :background (face-attribute 'secondary-selection :background)
-					  :foreground nil)
+					  :foreground nil
+					  :background (face-attribute 'secondary-selection :background))
   (with-eval-after-load 'whitespace
 	(set-face-attribute 'whitespace-line nil
 						:foreground nil))
   (with-eval-after-load 'symbol-overlay
 	(set-face-attribute 'symbol-overlay-default-face nil
-						:foreground nil
 						:inherit nil
-						:distant-foreground (face-attribute 'default :foreground)
+						:foreground nil
 						:background (face-attribute 'cursor :background)
 						:weight 'ultra-light))
   (with-eval-after-load 'ivy
@@ -73,16 +72,19 @@
     (intern (completing-read "Find custom theme: "
                              (mapcar #'symbol-name
 									 (custom-available-themes))))))
-  (if theme
-	  (setq vwe@theme--current-theme theme)
-	(setq vwe@theme--current-theme (if (display-graphic-p) vwe@custom--theme-gui vwe@custom--theme-tty)))
-  (load-theme vwe@theme--current-theme))
+  (when theme
+	(setq vwe@theme--current-theme theme)
+	(load-theme theme)))
 
 (defun vwe@theme--init ()
   "Theme init."
   (interactive)
   (setq custom-safe-themes t)
-  (advice-add 'load-theme :around #'vwe@theme--load))
+  (advice-add 'load-theme :around #'vwe@theme--load)
+  (if (display-graphic-p)
+	  (setq vwe@theme--current-theme vwe@custom--theme-gui)
+	(setq vwe@theme--current-theme vwe@custom--theme-tty))
+  (load-theme vwe@theme--current-theme))
 
 ;; ***************************************************************************
 ;; config
@@ -91,7 +93,6 @@
 (use-package tao-theme)
 
 (vwe@theme--init)
-(vwe@theme--toggle)
 
 (provide 'vwe-theme)
 ;;; vwe-theme.el ends here
