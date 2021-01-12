@@ -102,13 +102,15 @@
   "Call FUNC and ARGS select window activate view mode."
   (let* ((from (current-buffer))
 		 (to)
+		 (selected (selected-window))
 		 (window (apply func args)))
 	(when (windowp window)
 	  (setq to (window-buffer))
 	  (when (and (bufferp to)
+				 (not (equal selected window))
 				 (not (string-match mum-editor--filter-regexp (buffer-name from)))
 				 (not (string-match mum-editor--filter-regexp (buffer-name to)))
-				 (not (equal from to)))
+				 (not (equal (buffer-name from) (buffer-name to))))
 		(mum-editor-view-mode t)))))
 
 (define-minor-mode mum-editor-view-mode
@@ -119,8 +121,7 @@
 	  (when mum-editor--mode-activate?
 		(setq buffer-read-only t
 			  mum-editor--mode-current-type 'view)
-		(mum-editor-edit-mode -1)
-		(message "view mode"))))
+		(mum-editor-edit-mode -1))))
 
 (define-minor-mode mum-editor-edit-mode
   "Editor edit mode."
@@ -132,8 +133,7 @@
 			  mum-editor--mode-current-type 'edit)
 		(mum-editor-view-mode -1)
 		(when mum-editor--idle-toggle-mode
-		  (setq mum-editor--timer (run-with-idle-timer mum-editor--idle-time t #'mum-editor-view--active)))
-		(message "edit mode"))
+		  (setq mum-editor--timer (run-with-idle-timer mum-editor--idle-time t #'mum-editor-view--active))))
 	(when (timerp mum-editor--timer) (cancel-timer mum-editor--timer))))
 
 (defun mum-editor-enable ()
