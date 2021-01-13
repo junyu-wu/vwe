@@ -91,7 +91,7 @@
 									  "CANCEL(c)")))
   :config
 
-   ;; 代码运行环境
+  ;; 代码运行环境
   (use-package ob-go)
   (use-package ob-rust)
   (use-package ob-mermaid)
@@ -114,13 +114,10 @@
 	(add-to-list 'org-tag-alist '("TOC" . T)))
 
   ;; html方式查看org,通过eww
-  (use-package org-preview-html
-	:diminish
-	(org-preview-html-mode))
+  (use-package org-preview-html)
 
   ;; 只显示org单一节点内容
   (use-package org-tree-slide
-	:diminish
 	:functions
 	(org-display-inline-images
 	 org-remove-inline-images)
@@ -141,8 +138,6 @@
   ;; org缩进
   (use-package org-indent-mode
 	:ensure nil
-	:diminish
-	(org-indent-mode . nil)
 	:hook
 	(org-mode . org-indent-mode))
 
@@ -206,31 +201,27 @@
 								   "* %?\n Entered on: %U\n %i\n %a")
 								  ("a" "Appointment" entry
 								   (file (vwe@lib--path-cache "org/appointment.org" t)
-										 "* %?\n%^T\n** Note:\n\n")))))
+										 "* %?\n%^T\n** Note:\n\n"))))))
+(use-package org-roam
+  :init
+  (setq org-roam-directory (vwe@lib--path-cache "org/roam")
+		org-roam-db-location (expand-file-name "org-roam.db" org-roam-directory)))
 
-  ;; 便签
-  (use-package org-roam
-	:diminish
-	(org-roam "")
-	:init
-	(setq org-roam-directory (vwe@lib--path-cache "org/roam")))
-
-  ;; org文件组织,类似思维导图
-  (use-package org-brain
-	:hook
-	(before-save-hook . org-brain-ensure-ids-in-buffer)
-	:init
-	(setq org-brain-path (vwe@lib--path-cache "org/brain"))
-	:config
-	(setq org-id-track-globally t
-		  org-id-locations-file (vwe@lib--path-cache "org/brain/.org-id-locations" t)
-		  org-brain-visualize-default-choices 'all
-		  org-brain-title-max-length 12
-		  org-brain-include-file-entries nil
-		  org-brain-file-entries-use-title nil)
-	(push '("b" "Brain" plain (function org-brain-goto-end)
-			"* %i%?" :empty-lines 1)
-		  org-capture-templates)))
+(use-package org-brain
+  :hook
+  (before-save-hook . org-brain-ensure-ids-in-buffer)
+  :init
+  (setq org-brain-path (vwe@lib--path-cache "org/brain"))
+  :config
+  (setq org-id-track-globally t
+		org-id-locations-file (vwe@lib--path-cache "org/brain/.org-id-locations" t)
+		org-brain-visualize-default-choices 'all
+		org-brain-title-max-length 12
+		org-brain-include-file-entries nil
+		org-brain-file-entries-use-title nil)
+  (push '("b" "Brain" plain (function org-brain-goto-end)
+		  "* %i%?" :empty-lines 1)
+		org-capture-templates))
 
 (provide 'vwe-org)
 ;;; vwe-org.el ends here

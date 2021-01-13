@@ -116,8 +116,7 @@
 					("E" mum-editor-mode "editor")
 					("v" mum-terminal "term")
 					("l" vwe@lsp--run "lsp")
-					("a" org-agenda "agenda")
-					("c" org-capture "capture")
+					("o" mum-key:org-extend "org extend")
 					("C" mum-key:check "check")
 					("P" mum-key:project "project")
 					("T" treemacs "treemacs")
@@ -218,7 +217,14 @@
 					("t" (vwe@org--template "<s" "plantuml :file CHANGE.png")  "plantuml")
 					("i" self-insert-command                                   "ins")
 					("DEL" mum-key:org "org" :footer t :face (:background "magenta" :foreground "white" :weight bold))
-					("RET" mum-key:global "global" :footer t))))
+					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
+
+  (mum-key-define org-extend
+				  ("org extend"
+				   (("a" org-agenda "agenda")
+					("c" org-capture "capture")
+					("m" org-roam-insert "roam insert")
+					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
   (mum-key-define org
 				  ("org"
