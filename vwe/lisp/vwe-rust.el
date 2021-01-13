@@ -35,15 +35,13 @@
   (setq rust-format-on-save t
 		company-tooltip-align-annotations t)
   :hook
-  (rust-mode-hook . (lambda ()
-					  (setq indent-tabs-mode nil)))
+  (rust-mode-hook . (lambda () (setq indent-tabs-mode nil)))
   :config
   (use-package cargo
 	:hook
 	(rust-mode . cargo-minor-mode)
 	:config
-	(setq compilation-filter-hook
-		  (append compilation-filter-hook '(cargo-process--add-errno-buttons))))
+	(setq compilation-filter-hook (append compilation-filter-hook '(cargo-process--add-errno-buttons))))
 
   ;; 补全代码
   (use-package racer
