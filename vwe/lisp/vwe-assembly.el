@@ -39,98 +39,29 @@
 		  (c-remove-font-lock-face
 		   (car (bounds-of-thing-at-point 'symbol))
 		   (cdr (bounds-of-thing-at-point 'symbol)))
-		  (setq lstr (substring (thing-at-point 'symbol)
-								0
-								(- (length (thing-at-point 'symbol)) 1)))
-		  (setq exist-label-list (cons lstr exist-label-list)))
+		  (setq lstr (substring (thing-at-point 'symbol) 0 (- (length (thing-at-point 'symbol)) 1))
+				exist-label-list (cons lstr exist-label-list)))
 		(regexp-opt exist-label-list 'symbols)))))
-
-(defconst vwe@asm--company-completions
-  nil
-  "Assembly company completions.")
-
-(defun vwe@asm--company-create-completions ()
-  "Create Completions."
-  (interactive)
-  (vwe@lib--package-load 'x86-lookup)
-  (let* ((keyword)
-		 (keyword-list '())
-		 (completions '()))
-	(cl-loop for i in (x86-lookup-ensure-index)
-			 collect
-			 (progn
-			   (setq keyword (car i))
-			   (setq keyword-list (append keyword-list
-										  (list keyword)))
-			   (setq completions
-					 (append completions
-							 (list (propertize keyword
-											   ':initials keyword
-											   ':summary keyword))))))
-	(list completions)))
-
-(defun vwe@asm--annotation (annotation)
-  "Format annotation.
-ANNOTATION: annotation."
-  (format " [%s]" (get-text-property 0 :initials annotation)))
-
-(defun vwe@asm--meta (meta)
-  "Format meta.
-META: meta."
-  (get-text-property 0 :summary meta))
-
-(defun vwe@asm--fuzzy-match (prefix candidate)
-  "Fuzzy match key word.
-PREFIX: preifx.
-CANDIDATE: candidate."
-  (cl-subsetp (string-to-list prefix)
-			  (string-to-list candidate)))
-
-(defun vwe@asm--company-backend (command &optional arg &rest ignored)
-  "Assmbily company backend.
-COMMAND: command.
-ARG: arg.
-IGNORED: ignored."
-  (interactive (list 'interactive))
-  (case command
-	(interactive (company-begin-backend 'vwe@asm--company-backend))
-	(prefix (and (or (eq major-mode 'asm-mode) (eq major-mode 'nasm-mode))
-				 (company-grab-symbol)))
-	(candidates
-	 (remove-if-not
-	  (lambda (c) (vwe@asm--fuzzy-match arg c))
-	  (car vwe@asm--company-completions)))
-	(annotation (vwe@asm--annotation arg))
-	(meta (vwe@asm--meta arg))
-	(no-cache 't)))
 
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
 (use-package nasm-mode
   :load-path
-  (lambda ()
-	(vwe@lib--path-vwe-site-lisp "nasm-mode"))
+  (lambda () (vwe@lib--path-vwe-site-lisp "nasm-mode"))
   :mode
   ("\\.\\(asm\\|s\\|lst\\)$")
   :hook
   ((before-save . delete-trailing-whitespace)
-   (nasm-mode . (lambda()
-				  (font-lock-add-keywords
-				   nil
-				   '(("section\\.[0-9 a-z A-Z \. _ ]+"
-					  .
-					  'nasm-section-name))))))
+   (nasm-mode . (lambda() (font-lock-add-keywords nil '(("section\\.[0-9 a-z A-Z \. _ ]+" . 'nasm-section-name)))))))
+
+(use-package company-asm
+  :load-path
+  (lambda () (vwe@lib--path-vwe-site-lisp "company"))
+  :hook
+  (nasm-mode . (lambda () (vwe@lib--package-load 'company-asm)))
   :config
-  (use-package company-asm
-	:load-path
-	(lambda ()
-	  (vwe@lib--path-vwe-site-lisp "company"))
-	:init
-	(setq vwe@asm--company-completions (vwe@asm--company-create-completions))
-	:config
-  	(add-to-list 'company-backends 'vwe@asm--company-backend)
-	(add-to-list 'company-backends 'vwe@asm--company-create-completions)))
+  (add-to-list 'company-backends 'company-asm--manual-asm-backend))
 
 (provide 'vwe-assembly)
 ;;; vwe-assembly.el ends here

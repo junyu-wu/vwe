@@ -81,6 +81,19 @@
   (vwe@lib--keymap-global-set vwe@keybind--default-list))
 
 (with-eval-after-load 'mum-key
+
+  (mum-key-define common
+				  (("common" :face (:background "DarkOrange" :foreground "white" :weight bold))
+				   (("f" find-file "find file")
+					("o" read-only-mode "read only")
+					("s" save-buffer "save buffer")
+					("w" write-file "save as")
+					("k" vwe@lib--buffer-kill-current "kill buffer")
+					("n" (lambda () (interactive) (vwe@lib--buffer-kill-other (buffer-list) "^*")) "kill ohter")
+					("d" delete-window "del window")
+					("x" save-buffers-kill-terminal "kill emacs")
+					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
+
   (mum-key-define global
 				  (("global" :face (:background "DarkOrange" :foreground "white" :weight bold))
 				   (("g" counsel-etags-grep "grep")
@@ -118,7 +131,8 @@
 					("C-f" (lambda () (interactive)
 							 (vwe@base--init)
 							 (vwe@ui--init)
-							 (vwe@theme--init)) "reinit" :footer t))))
+							 (vwe@theme--init)) "reinit" :footer t)
+					("RET" mum-key:common "common" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
   (mum-key-define check
 				  ("check"
@@ -280,7 +294,7 @@
   (mum-key-define clang
 				  ("C/C++"
 				   (("r" rmsbolt-mode "rmsbolt")
-                    ("t" rmsbolt-starter "create run file")
+					("t" rmsbolt-starter "create run file")
 					("c" rmsbolt-compile "compile")
 					("x" smart-compile "compile")
 					("e" compile-goto-error "goto error")
@@ -293,10 +307,20 @@
 					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (c-mode c++-mode))
 
+  (mum-key-define asm
+				  ("assembly"
+				   (("c" smart-compile "compile")
+					("e" compile-goto-error "goto error")
+					("g" gdb "gdb")
+					("u" mum-key:gud "gud")
+					("p" gdb-restore-windows "restore windows")
+					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  (asm-mode nasm-mode))
+
   (mum-key-define python
 				  ("python"
 				   (("r" run-python "run python")
-                    ("c" conda-env-activate "conda activate")
+					("c" conda-env-activate "conda activate")
 					("d" conda-env-deactivate "conda deactivate")
 					("l" conda-env-list "conda list")
 					("e" elpy-enable "elpy enable")
@@ -305,7 +329,51 @@
 					("b" python-shell-send-buffer "send buffer")
 					("r" python-shell-send-region "send region")
 					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
-				  (python-mode)))
+				  (python-mode))
+
+  (mum-key-define golang
+				  ("golang"
+				   (("r" go-run "go run")
+					("i" go-impl "impl")
+					("a" go-import-add "import add")
+					("m" go-remove-unused-imports "remove imports")
+					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  (go-mode))
+
+  (mum-key-define ruby
+				  ("ruby"
+				   (("a" rvm-activate-corresponding-ruby "rvm activate")
+					("u" rvm-use "rvm use")
+					("i" inf-ruby "irb")
+					("c" inf-ruby-console-auto "lanuch repl")
+					("r" robe-start "start rebo")
+					("s" ruby-switch-to-inf "switch to ibr")
+					("j" ruby-send-region-and-go "region Go")
+					("x" ruby-send-definition "send definition")
+					("X" ruby-send-definition-and-go "definition go")
+					("k" ruby-send-block "send block")
+					("b" ruby-send-buffer "send buffer")
+					("I" inf-ruby-switch-setup "switch setup")
+
+					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  (ruby-mode))
+
+  (mum-key-define web
+				  ("web"
+				   (("r" run-skewer "run skewer")
+					("e" skewer-repl "repl")
+					("e" skewer-eval-last-expression "eval expression")
+					("f" skewer-eval-defun "eval defun")
+					("b" skewer-load-buffer "load buffer")
+	   				("t" skewer-html-eval-tag "html eval tag")
+					("c" skewer-css-eval-current-declaration "css eval declaration")
+					("u" skewer-css-eval-current-rule "css eval rule")
+					("v" skewer-css-eval-buffer "css eval buffer")
+					("l" skewer-css-clear-all "css clear all")
+					("e" js2-mode-toggle-element "show/hide element")
+					("h" js2-mode-toggle-hide-functions "show/hide func")
+					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  (web-mode js2-mode js-mode css-mode)))
 
 ;; ***************************************************************************
 ;; config

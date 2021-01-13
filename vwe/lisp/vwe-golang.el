@@ -64,9 +64,7 @@
 
   (use-package company-go
 	:hook
-	(go-mode . (lambda()
-				 (add-to-list (make-local-variable 'company-backends)
-							  '(company-go)))))
+	(go-mode . (lambda() (add-to-list (make-local-variable 'company-backends) '(company-go)))))
 
   (use-package go-eldoc
 	:hook

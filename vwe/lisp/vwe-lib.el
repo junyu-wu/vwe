@@ -64,11 +64,14 @@
   "Show startup ready time and garbage collections."
   (interactive)
   (format
-   "startup in %s. loaded %d packages and %d garbage collections."
-   (format "%.2f seconds" (float-time
-						   (time-subtract after-init-time before-init-time)))
-   (length package-activated-list)
-   gcs-done))
+   "startup in %s seconds. loaded %s packages and %s garbage collections."
+   (propertize (format "%.2f" (float-time
+							   (time-subtract after-init-time before-init-time)))
+			   'face '((t (:foreground "SpringGreen" :weight bold))))
+   (propertize (format "%s" (length package-activated-list))
+			   'face '((t (:foreground "DarkOrange" :weight bold))))
+   (propertize (format "%s" gcs-done)
+			   'face '((t (:foreground "DarkRed" :weight bold))))))
 
 ;; ************************************************************************
 ;; frame

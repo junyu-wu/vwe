@@ -113,12 +113,17 @@
 
 (defun vwe@base--make-welcome-msg ()
   "Make welcome message."
-  (propertize
-   (format ";; hello %s, welcome vwiss emacs (vwe), let's enjoy hacking ^_^ !!!\n\
-;; %s\n"
-		   (eval 'vwe@custom--user-name)
-		   (vwe@lib--sys-startup-info))
-   'face 'vwe@custom--face-default))
+  (concat
+   ";; hello "
+   (propertize (format "%s" (eval 'vwe@custom--user-name))
+			   'face '((t (:foreground "cyan" :bold t))))
+   ", welcome "
+   (propertize "vwiss emacs (vwe)"
+			   'face '((t (:foreground "white" :background "purple3"))))
+   ", let's enjoy hacking ^_^ !!!\n"
+   ";; "
+   (vwe@lib--sys-startup-info)
+   "\n"))
 
 (defun vwe@base--init ()
   "Base init."

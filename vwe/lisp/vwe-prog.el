@@ -70,7 +70,10 @@
 	("sql"              . sql-mode)
 	("powershell"       . powershell-mode)
 	("tex"              . tex-mode)
-	("latex"            . latex-mode)))
+	("latex"            . latex-mode)
+	("asm"              . asm-mode)
+	("nasm"             . nasm-mode)
+	("hexl"             . hexl-mode)))
 
 (defun vwe@prog--switch-mode (&optional mode)
   "Switch language mode.

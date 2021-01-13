@@ -27,7 +27,7 @@
 (require 'cl-lib)
 (require 'company)
 
-(defconst vwiss/company--manual-asm-completions
+(defconst company-asm--manual-asm-completions
   '(;; Macro Directive
 	#("section" 0 1
 	  (:initials
@@ -1251,24 +1251,24 @@
 
 	))
 
-(defun vwiss/company--annotation (annotation)
+(defun company-asm--annotation (annotation)
   "Format annotation.
 ANNOTATION: annotation."
   (format " [%s]" (get-text-property 0 :initials annotation)))
 
-(defun vwiss/company--meta (meta)
+(defun company-asm--meta (meta)
   "Format meta.
 META: meta."
   (get-text-property 0 :summary meta))
 
-(defun vwiss/company--fuzzy-match (prefix candidate)
+(defun company-asm--fuzzy-match (prefix candidate)
   "Fuzzy match key word.
 PREFIX: preifx.
 CANDIDATE: candidate."
   (cl-subsetp (string-to-list prefix)
               (string-to-list candidate)))
 
-(defun vwiss/company--manual-asm-backend (command &optional arg &rest ignored)
+(defun company-asm--manual-asm-backend (command &optional arg &rest ignored)
   "Assmbily company backend.
 COMMAND: command.
 ARG: arg.
@@ -1276,15 +1276,15 @@ IGNORED: ignored."
   (interactive (list 'interactive))
 
   (case command
-    (interactive (company-begin-backend 'vwiss/company--manual-asm-backend))
+    (interactive (company-begin-backend 'company-asm--manual-asm-backend))
     (prefix (and (or (eq major-mode 'asm-mode) (eq major-mode 'nasm-mode))
 				 (company-grab-symbol)))
     (candidates
 	 (remove-if-not
-      (lambda (c) (vwiss/company--fuzzy-match arg c))
-      vwiss/company--manual-asm-completions))
-    (annotation (vwiss/company--annotation arg))
-    (meta (vwiss/company--meta arg))
+      (lambda (c) (company-asm--fuzzy-match arg c))
+      company-asm--manual-asm-completions))
+    (annotation (company-asm--annotation arg))
+    (meta (company-asm--meta arg))
     (no-cache 't)))
 
 (provide 'company-asm)
