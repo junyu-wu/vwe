@@ -124,6 +124,12 @@ MODE."
 								 (buffer-name buffername))
 			   (kill-buffer buffername)))))
 
+(defun vwe@lsp--run ()
+  "Run lsp deferred."
+  (interactive)
+  (unless (derived-mode-p 'emacs-lisp-mode 'lisp-mode 'asm-mode 'nasm-mode 'sh-mode)
+	(lsp-deferred)))
+
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
@@ -241,6 +247,54 @@ MODE."
   (push ".vscode" counsel-etags-ignore-directories)
   (push ".clang-format" counsel-etags-ignore-filenames)
   (push "*.json" counsel-etags-ignore-filenames))
+
+(use-package lsp-mode
+  :bind
+  (:map lsp-mode-map
+		("C-M-i" . lsp-describe-thing-at-point)
+		([remap xref-find-definitions] . lsp-find-definition)
+		([remap xref-find-references] . lsp-find-references))
+  :init
+  (setq lsp-keymap-prefix "C-c l"
+		lsp-completion-provider :capf
+		lsp-idle-delay 0.500
+		lsp-enable-file-watchers nil
+		lsp-log-io t
+		lsp-modeline-diagnostics-enable nil
+		lsp-keep-workspace-alive nil
+		lsp-eldoc-enable-hover nil
+		lsp-session-file (vwe@lib--path-cache "lsp/.lspsession-v1" t))
+  :config
+  (use-package lsp-ui
+	:after
+	(lsp-mode)
+	:init
+	(setq lsp-ui-doc-enable nil
+		  lsp-ui-doc-use-webkit nil
+		  lsp-ui-doc-delay 0.5
+		  lsp-ui-doc-include-signature t
+		  lsp-ui-doc-position 'at-point
+
+		  lsp-ui-sideline-enable t
+		  lsp-ui-sideline-show-hover nil
+		  lsp-ui-sideline-show-diagnostics t
+		  lsp-ui-sideline-ignore-duplicate t
+
+		  lsp-ui-peek-enable t
+		  lsp-ui-peek-show-directory t
+		  lsp-ui-peek-always-show t
+
+		  lsp-ui-imenu-enable t))
+  (use-package lsp-ivy
+	:after
+	(ivy-mode lsp-mode))
+  (use-package lsp-treemacs
+	:after
+	(treemacs lsp-mode)
+	:config
+	(lsp-treemacs-sync-mode 1)))
+
+(use-package dap-mode)
 
 (use-package magit
   :hook

@@ -49,8 +49,6 @@
 ;;
 (require 'vwe-prog)
 
-(require 'vwe-lsp)
-
 (require 'vwe-lisp)
 (require 'vwe-assembly)
 (require 'vwe-clang)
