@@ -46,7 +46,7 @@
 		lsp-completion-provider :capf
 		lsp-idle-delay 0.500
 		lsp-enable-file-watchers nil
-		lsp-log-io nil
+		lsp-log-io t
 		lsp-modeline-diagnostics-enable nil
 		lsp-keep-workspace-alive nil
 		lsp-eldoc-enable-hover nil

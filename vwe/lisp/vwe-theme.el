@@ -78,23 +78,31 @@
 									 (custom-available-themes))))))
   (when theme
 	(setq vwe@theme--current-theme theme)
-	(load-theme theme)))
+	(load-theme theme t)))
 
 (defun vwe@theme--init ()
   "Theme init."
   (interactive)
-  (setq custom-safe-themes t)
+  ;; (setq custom-safe-themes t)
   (advice-add 'load-theme :around #'vwe@theme--load)
   (if (display-graphic-p)
 	  (setq vwe@theme--current-theme vwe@custom--theme-gui)
 	(setq vwe@theme--current-theme vwe@custom--theme-tty))
-  (load-theme vwe@theme--current-theme))
+  (if  (and vwe@theme--current-theme)
+	  (load-theme vwe@theme--current-theme t)
+	(vwe@theme--face-init)))
 
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
+
 (use-package doom-themes)
-(use-package tao-theme)
+
+(use-package mum-style-theme
+  :load-path
+  (lambda () (vwe@lib--path-vwe-site-lisp "mum/mum-theme"))
+  :init
+  (vwe@lib--package-load 'mum-style-theme))
 
 (vwe@theme--init)
 

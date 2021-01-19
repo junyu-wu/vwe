@@ -1,0 +1,60 @@
+#+html: <p align="center"><img src="./english-teacher.gif" /></p>
+
+当你在阅读英文文档时，English Teacher 可以像英语老师一样给你关心和关爱，手把手给你翻译英文句子。
+
+English Teacher 支持 youdao,bing,baidu,google,tencent 后端, 你也可以自己添加后端。
+
+默认使用 youdao 翻译，如果你需要使用其他翻译后端
+
+#+BEGIN_SRC emacs-lisp
+(setq english-teacher-backend 'baidu) ; 'youdao bing google baidu
+#+END_SRC
+
+** use-package 设置
+
+#+BEGIN_SRC emacs-lisp
+(use-package english-teacher
+  :load-path "english-teacher-path" ;; NOTE: here type english teacher directory
+  :hook ((Info-mode
+          elfeed-show-mode
+          eww-mode
+          Man-mode
+          Woman-Mode) . english-teacher-follow-mode))
+#+END_SRC
+
+** 命令
+- ~english-teacher-choose-backend~ 选择后端。
+- ~english-teacher-next-backend~ 切到下一个后端, 建议绑定一个方便的快捷键，如果一个翻译不准确，可以迅速切换到另一个后端。
+- ~english-teacher-smart-translation~ 智能翻译，当光标处于字符串或者注释里面，会优先翻译字符串或注释，否则就翻译当前句子。
+
+** 自定义后端  
+
+实现 ~english-teacher-translate~ 这个多态方法,
+这个方法接受要翻译的文本，
+返回值的格式为 (cons result origin)
+#+BEGIN_SRC emacs-lisp
+;;;###autoload
+(cl-defmethod english-teacher-translate ((text  t) (backend (eql english-teacher-backend-youdao)))
+  (english-teacher-backend-youdao-request "AUTO" "AUTO" text))
+#+END_SRC
+
+随后添加你的后端到 ~english-teacher-backends-alist~
+#+BEGIN_SRC emacs-lisp
+(add-to-list english-teacher-backends-alist 'your-backend)
+#+END_SRC
+** 用 eldoc 显示翻译结果
+#+BEGIN_SRC emacs-lisp
+(setq english-teacher-show-result-function 'english-teacher-eldoc-show-result-function)
+#+END_SRC
+
+**  自定义显示方式
+#+begin_src emacs-lisp :tangle yes
+;;;###autoload
+(defun english-teacher-eldoc-show-result-function (origin translation)
+  (eldoc-message (format "%s:%s"
+                         (symbol-name english-teacher-backend)
+                         translation)))
+
+(setq english-teacher-show-result-function 'english-teacher-eldoc-show-result-function)
+#+end_src
+

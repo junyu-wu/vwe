@@ -32,6 +32,13 @@
 ;; ************************************************************************
 (use-package youdao-dictionary)
 
+(use-package english-teacher
+  :load-path
+  (lambda () (vwe@lib--path-vwe-site-lisp "english-teacher"))
+  :init
+  (setq english-teacher-show-result-function
+		'english-teacher-eldoc-show-result-function))
+
 (use-package cal-china-x
   :after
   calendar

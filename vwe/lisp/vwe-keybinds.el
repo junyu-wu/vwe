@@ -364,6 +364,15 @@
 					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (ruby-mode))
 
+  (mum-key-define java
+				  ("java"
+				   (("i" vwe@java--init "java lsp init")
+					("o" quickrun-compile-only "compile only")
+					("q" quickrun "quickrun")
+					("s" quickrun-shell "run shell")
+					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  (java-mode))
+
   (mum-key-define web
 				  ("web"
 				   (("r" run-skewer "run skewer")
