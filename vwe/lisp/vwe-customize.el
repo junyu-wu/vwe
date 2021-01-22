@@ -49,49 +49,49 @@
 ;; user
 ;; ***************************************************************************
 (defcustom vwe@custom--user-name
-  "WuJunyu"
+  (getenv "NAME")
   "Set user full name."
   :group 'vwe-user
   :type 'string)
 
 (defcustom vwe@custom--user-mail
-  "vistar_w@hotmail.com"
+  (getenv "EMAIL")
   "Set user email address."
   :group 'vwe-user
   :type 'string)
 
 (defcustom vwe@custom--user-home-path
-  "~"
+  (getenv "HOME")
   "Set user home directory."
   :group 'vwe-user
   :type 'string)
 
 (defcustom vwe@custom--user-workspace-path
-  "~"
+  (getenv "HOME")
   "Workspace."
   :group 'vwe-user
   :type 'string)
 
 (defcustom vwe@custom--user-note-path
-  "~/note"
+  (concat (getenv "HOME") "/note")
   "Note root."
   :group 'vwe-user
   :type 'string)
 
 (defcustom vwe@custom--user-media-path
-  "~/media"
+  (concat (getenv "HOME") "/media")
   "Note root."
   :group 'vwe-user
   :type 'string)
 
 (defcustom vwe@custom--user-mail-path
-  "~/mail"
+  (concat (getenv "HOME") "/mail")
   "Note root."
   :group 'vwe-user
   :type 'string)
 
 (defcustom vwe@custom--user-backup-path
-  "~/backup"
+  (concat (getenv "HOME") "/backup")
   "Note root."
   :group 'vwe-user
   :type 'string)

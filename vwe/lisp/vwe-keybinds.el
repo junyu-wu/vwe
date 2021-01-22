@@ -92,6 +92,11 @@
 					("n" (lambda () (interactive) (vwe@lib--buffer-kill-other (buffer-list) "^*")) "kill ohter")
 					("d" delete-window "del window")
 					("x" save-buffers-kill-terminal "kill emacs")
+					("S" toggle-frame-fullscreen "fullscreen")
+					("F" helpful-function "help func")
+					("V" helpful-variable "help var")
+					("K" helpful-key "help key")
+					("m" (lambda () (interactive) (set-mark (point))) "mark")
 					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
   (mum-key-define global
