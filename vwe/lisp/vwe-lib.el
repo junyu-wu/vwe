@@ -411,9 +411,10 @@ ALL-P replace all buffer?"
   (interactive "sform:\nsto:")
   (vwe@lib--replace from to t))
 
-(defun vwe@lib--path-emacs.d (path)
+(defun vwe@lib--path-emacs.d (&optional path)
   "Get emacs.d sub directory PATH.
 CONFIG is etc/lisp/cache/site-list."
+  (unless path (setq path ""))
   (when (string-prefix-p (vwe@lib--sys-separator) path)
     (setq path (substring path 1)))
   (concat user-emacs-directory path))
@@ -473,6 +474,24 @@ FILE-P if t make path and file."
       (unless (file-exists-p subpath) (vwe@lib--file-make subpath))
     (unless (file-directory-p subpath) (vwe@lib--dir-make subpath)))
   subpath)
+
+(defun vwe@lib--file-delete (path &optional ignores)
+  "Delete PATH file or directory.
+IGNORES is a ignore file of directory list."
+  (cond
+   ((file-regular-p path) (delete-file path))
+   ((file-directory-p path) (cond
+							 ((null ignores) (delete-directory path t t))
+							 (t (let* ((files (directory-files path)))
+								  (dotimes (i (length files))
+									(let* ((file (nth i files))
+										   (full (concat path "/" file)))
+									  (unless (member file ignores)
+										(message "%s" full)
+										(cond
+										 ((or (equal file ".") (equal file "..")) (message "file is . or .."))
+										 ((file-regular-p full) (delete-file full))
+										 ((file-directory-p full) (delete-directory full t t))))))))))))
 
 ;; ************************************************************************
 ;; modeline

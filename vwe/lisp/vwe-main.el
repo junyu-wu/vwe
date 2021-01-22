@@ -31,6 +31,14 @@
 ;;
 ;; init emacs
 ;;
+
+(when (vwe@lib--found-custom-arg "-reset")
+  (progn
+	(condition-case nil
+		(progn
+		  (vwe@lib--file-delete (vwe@lib--path-emacs.d "")))
+	  (error))))
+
 (cond ((vwe@lib--found-custom-arg "-vq") (message "vwe feature not load."))
 	  ((vwe@lib--found-custom-arg "-base") (progn
 											 (require 'vwe-base)

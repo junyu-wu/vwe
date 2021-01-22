@@ -171,6 +171,12 @@
   :group 'vwe-base
   :type 'boolean)
 
+(defcustom vwe@custom--reset-ignore-file-list
+  '("init.el" "early-init.el" "vwe" ".git" ".gitignore" "README.md")
+  "Reset init ignore file list."
+  :group 'vwe-base
+  :type 'list)
+
 ;; ***************************************************************************
 ;; theme
 ;; ***************************************************************************
