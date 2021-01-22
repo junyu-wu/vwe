@@ -134,184 +134,215 @@ MODE."
 ;; config
 ;; ***************************************************************************
 
-;; 根据已有代码快速填充当前代码
-(use-package eacl
-  :config
-  (with-eval-after-load 'grep
-	(dolist (v '("node_modules"
-				 "bower_components"
-				 ".sass_cache"
-				 ".cache"
-				 ".npm"))
-	  (add-to-list 'grep-find-ignored-directories v))
-	(dolist (v '("*.min.js"
-				 "*.bundle.js"
-				 "*.min.css"
-				 "*.json"
-				 "*.log"))
-	  (add-to-list 'grep-find-ignored-files v))))
+;;
+;; `eacl' 根据已有代码快速填充当前代码
+;;
+(vwe@lib--package 'eacl
+				  nil
+				  (with-eval-after-load 'grep
+					(dolist (v '("node_modules"
+								 "bower_components"
+								 ".sass_cache"
+								 ".cache"
+								 ".npm"))
+					  (add-to-list 'grep-find-ignored-directories v))
+					(dolist (v '("*.min.js"
+								 "*.bundle.js"
+								 "*.min.css"
+								 "*.json"
+								 "*.log"))
+					  (add-to-list 'grep-find-ignored-files v))))
 
-(use-package flycheck
-  :hook
-  (prog-mode . global-flycheck-mode)
-  :init
-  (setq flycheck-check-syntax-automatically '(save mode-enabled))
-  :config
-  (if (display-graphic-p)
-	  (progn
-		(use-package flycheck-posframe
-		  :hook
-		  (flycheck-mode . flycheck-posframe-mode)
-		  :config
-		  (add-to-list 'flycheck-posframe-inhibit-functions
-					   #'(lambda () (bound-and-true-p company-backend))))
-		(use-package flycheck-popup-tip
-		  :hook
-		  (flycheck-mode . flycheck-popup-tip-mode)))
-	(use-package flycheck-pos-tip
-	  :defines
-	  (flycheck-pos-tip-timeout)
-	  :hook
-	  (flycheck-mode . flycheck-pos-tip-mode)
-	  :config
-	  (setq flycheck-pos-tip-timeout 30))))
+;;
+;; `flycheck'
+;;
+(vwe@lib--package 'flycheck
+				  (add-hook 'prog-mode-hook #'global-flycheck-mode)
+				  (if (display-graphic-p)
+					  (progn
+						;;
+						;; `flycheck-posframe'
+						;;
+						(vwe@lib--package 'flycheck-posframe
+						  				  (add-hook 'flycheck-mode-hook #'flycheck-posframe-mode)
+						  				  (add-to-list 'flycheck-posframe-inhibit-functions #'(lambda () (bound-and-true-p company-backend))))
+						;;
+						;; `flycheck-popup-tip'
+						;;
+						(vwe@lib--package 'flycheck-popup-tip
+						  				  (add-hook 'flycheck-mode-hook #'flycheck-popup-tip-mode)))
+					;;
+					;; `flycheck-pos-tip'
+					;;
+					(vwe@lib--package 'flycheck-pos-tip
+					  				  (add-hook 'flycheck-mode-hook #'flycheck-pos-tip-mode)
+					  				  (setq flycheck-pos-tip-timeout 30)))
+				  (setq flycheck-check-syntax-automatically '(save mode-enabled)))
 
-(use-package projectile
-  :init
-  (setq projectile-known-projects-file (vwe@lib--path-cache "projectile/projectile-bookmarks.eld" t)
-		projectile-cache-file (vwe@lib--path-cache "projectile/projectile.cache" t)
-		projectile-completion-system 'ivy
-		projectile-sort-order 'recently-active
-		projectile-indexing-method 'alien
-		projectile-enable-caching t
-		projectile-require-project-root nil
-		projectile-mode-line-function '(lambda () (format "P:[%s]" (projectile-project-name))))
-  :bind
-  ((:map projectile-mode-map
-		 ("C-c p" . projectile-command-map)))
-  :config
-  (use-package counsel-projectile
-	:after
-	(projectile)
-	:config
-	(counsel-projectile-mode t))
+;;
+;; `projectile'
+;;
+(vwe@lib--package 'projectile
+				  (setq projectile-known-projects-file (vwe@lib--path-cache "projectile/projectile-bookmarks.eld" t)
+						projectile-cache-file (vwe@lib--path-cache "projectile/projectile.cache" t)
+						projectile-completion-system 'ivy
+						projectile-sort-order 'recently-active
+						projectile-indexing-method 'alien
+						projectile-enable-caching t
+						projectile-require-project-root nil
+						projectile-mode-line-function '(lambda () (format "P:[%s]" (projectile-project-name))))
 
-  (use-package treemacs-projectile
-	:after
-	(treemacs projectile)
-	:ensure t)
+				  (progn
+					(define-key projectile-mode-map (kbd "C-c p") #'projectile-command-map)
+					;;
+					;; `counsel-projectile'
+					;;
+					(vwe@lib--package 'counsel-projectile
+									  nil
+									  (counsel-projectile-mode t)
+									  nil t)
 
-  (use-package find-file-in-project))
+					;;
+					;; `find-file-in-project'
+					;;
+					(vwe@lib--package 'find-file-in-project)))
 
-(use-package smart-compile
-  :config
-  (add-to-list 'smart-compile-alist
-			   '("\\.[Cc]+[Pp]*\\'" . "g++ -O2 -g %f -lm -o %n"))
-  (add-to-list 'smart-compile-alist
-			   '("\\.asm\\'" . "nasm -g -f elf -o %n.o %f"))
-  (add-to-list 'smart-compile-alist
-			   '("\\.s\\'" . "nasm -g -f elf -o %n.o %f")))
+;;
+;; `smart-compile'
+;;
+(vwe@lib--package 'smart-compile
+				  nil
+				  (progn
+					(add-to-list 'smart-compile-alist
+								 '("\\.[Cc]+[Pp]*\\'" . "g++ -O2 -g %f -lm -o %n"))
+					(add-to-list 'smart-compile-alist
+								 '("\\.asm\\'" . "nasm -g -f elf -o %n.o %f"))
+					(add-to-list 'smart-compile-alist
+								 '("\\.s\\'" . "nasm -g -f elf -o %n.o %f"))))
 
-(use-package quickrun
-  :config
-  (push '("asm" . ((:command . "nasm")
-				   (:exec . "%c -f elf -o %n %s %e %a")
-				   (:compile-only . "%c -f elf -o %n %s")
-				   (:description . "assembly file with nasm and execute")))
-		quickrun--language-alist)
-  (push '("\\.asm\\'" . "asm") quickrun-file-alist)
-  (push '(asm-mode . "asm") quickrun--major-mode-alist)
-  (push "asm" quickrun--support-languages))
+;;
+;; `quickrun'
+;;
+(vwe@lib--package 'quickrun
+				  nil
+				  (progn
+					(push '("asm" . ((:command . "nasm")
+									 (:exec . "%c -f elf -o %n %s %e %a")
+									 (:compile-only . "%c -f elf -o %n %s")
+									 (:description . "assembly file with nasm and execute")))
+						  quickrun--language-alist)
+					(push '("\\.asm\\'" . "asm") quickrun-file-alist)
+					(push '(asm-mode . "asm") quickrun--major-mode-alist)
+					(push "asm" quickrun--support-languages)))
 
-(use-package counsel-etags
-  :hook
-  (prog-mode . counsel-mode)
-  :init
-  (setq tags-revert-without-query t
-		large-file-warning-threshold nil
-		counsel-etags-sort-grep-result-p t
-		imenu-create-index-function 'counsel-etags-imenu-default-create-index-function
-		counsel-etags-update-interval 60
-		counsel-etags-update-tags-backend (lambda ()
-											(shell-command
-											 "ctags-universal -e -R")))
-  (add-hook 'prog-mode-hook (lambda ()
-							  (add-hook 'after-save-hook
-										'counsel-etags-virtual-update-tags
-										'append
-										'local)))
-  :config
-  (push "build" counsel-etags-ignore-directories)
-  (push "build_clang" counsel-etags-ignore-directories)
-  (push "TAGS" counsel-etags-ignore-filenames)
-  (push ".vscode" counsel-etags-ignore-directories)
-  (push ".clang-format" counsel-etags-ignore-filenames)
-  (push "*.json" counsel-etags-ignore-filenames))
+;;
+;; `counsel-etags'
+;;
+(vwe@lib--package 'counsel-etags
+				  (add-hook 'prog-mode-hook #'counsel-mode)
+				  (progn
+					(push "build" counsel-etags-ignore-directories)
+					(push "build_clang" counsel-etags-ignore-directories)
+					(push "TAGS" counsel-etags-ignore-filenames)
+					(push ".vscode" counsel-etags-ignore-directories)
+					(push ".clang-format" counsel-etags-ignore-filenames)
+					(push "*.json" counsel-etags-ignore-filenames))
+				  (progn
+					(setq tags-revert-without-query t
+						  large-file-warning-threshold nil
+						  counsel-etags-sort-grep-result-p t
+						  imenu-create-index-function 'counsel-etags-imenu-default-create-index-function
+						  counsel-etags-update-interval 60
+						  counsel-etags-update-tags-backend (lambda ()
+															  (shell-command "ctags-universal -e -R")))
+					(add-hook 'prog-mode-hook (lambda ()
+												(add-hook 'after-save-hook
+														  'counsel-etags-virtual-update-tags
+														  'append
+														  'local)))))
 
-(use-package lsp-mode
-  :bind
-  (:map lsp-mode-map
-		("C-M-i" . lsp-describe-thing-at-point)
-		([remap xref-find-definitions] . lsp-find-definition)
-		([remap xref-find-references] . lsp-find-references))
-  :init
-  (setq lsp-keymap-prefix "C-c l"
-		lsp-completion-provider :capf
-		lsp-idle-delay 0.500
-		lsp-enable-file-watchers nil
-		lsp-log-io t
-		lsp-modeline-diagnostics-enable nil
-		lsp-keep-workspace-alive nil
-		lsp-eldoc-enable-hover nil
-		lsp-session-file (vwe@lib--path-cache "lsp/.lspsession-v1" t))
-  :config
-  (use-package lsp-ui
-	:after
-	(lsp-mode)
-	:init
-	(setq lsp-ui-doc-enable nil
-		  lsp-ui-doc-use-webkit nil
-		  lsp-ui-doc-delay 0.5
-		  lsp-ui-doc-include-signature t
-		  lsp-ui-doc-position 'at-point
+;;
+;; `lsp-mode'
+;;
+(vwe@lib--package 'lsp-mode
+				  nil
+				  (progn
+					(vwe@lib--keymap-set lsp-mode-map
+										 '(("C-M-i" lsp-describe-thing-at-point)
+										   ([remap xref-find-definitions] lsp-find-definition)
+										   ([remap xref-find-references] lsp-find-references)))
+					;;
+					;; `lsp-ui'
+					;;
+					(vwe@lib--package 'lsp-ui
+									  nil
+									  (lsp-ui-mode)
+									  (setq lsp-ui-doc-enable nil
+											lsp-ui-doc-use-webkit nil
+											lsp-ui-doc-delay 0.5
+											lsp-ui-doc-include-signature t
+											lsp-ui-doc-position 'at-point
 
-		  lsp-ui-sideline-enable t
-		  lsp-ui-sideline-show-hover nil
-		  lsp-ui-sideline-show-diagnostics t
-		  lsp-ui-sideline-ignore-duplicate t
+											lsp-ui-sideline-enable t
+											lsp-ui-sideline-show-hover nil
+											lsp-ui-sideline-show-diagnostics t
+											lsp-ui-sideline-ignore-duplicate t
 
-		  lsp-ui-peek-enable t
-		  lsp-ui-peek-show-directory t
-		  lsp-ui-peek-always-show t
+											lsp-ui-peek-enable t
+											lsp-ui-peek-show-directory t
+											lsp-ui-peek-always-show t
 
-		  lsp-ui-imenu-enable t))
-  (use-package lsp-ivy
-	:after
-	(ivy-mode lsp-mode))
-  (use-package lsp-treemacs
-	:after
-	(treemacs lsp-mode)
-	:config
-	(lsp-treemacs-sync-mode 1)))
+											lsp-ui-imenu-enable t)
+									  t)
 
-(use-package dap-mode)
+					;;
+					;; `lsp-ivy'
+					;;
+					(vwe@lib--package 'lsp-ivy)
+					;;
+					;; `lsp-treemacs'
+					;;
+					(vwe@lib--package 'lsp-treemacs
+									  nil
+									  (lsp-treemacs-sync-mode 1)
+									  nil t))
+				  (setq lsp-keymap-prefix "C-c l"
+						lsp-completion-provider :capf
+						lsp-idle-delay 0.500
+						lsp-enable-file-watchers nil
+						lsp-log-io t
+						lsp-modeline-diagnostics-enable nil
+						lsp-keep-workspace-alive nil
+						lsp-eldoc-enable-hover nil
+						lsp-session-file (vwe@lib--path-cache "lsp/.lspsession-v1" t)))
 
-(use-package magit
-  :hook
-  (after-save-hook . magit-after-save-refresh-status))
+;;
+;; `dap-mode'
+;;
+(vwe@lib--package 'dap-mode)
 
-(use-package ejc-sql
-  :config
-  (use-package ejc-company
-	:ensure nil
-	:after
-	ejc-sql-mode
-	:config
-	(add-to-list (make-local-variable 'company-backends)
-				 '(ejc-company-backend))))
+;;
+;; `magit'
+;;
+(vwe@lib--package 'magit
+				  nil
+				  (add-hook 'after-save-hook #'magit-after-save-refresh-status))
+
+;;
+;; `ejc-sql'
+;;
+(vwe@lib--package 'ejc-sql
+				  nil
+				  ;;
+				  ;; `ejc-company'
+				  ;;
+				  (vwe@lib--package 'ejc-company
+									nil
+									(add-to-list (make-local-variable 'company-backends)
+												 '(ejc-company-backend))))
 
 
-(add-to-list 'load-path (expand-file-name "vwe/lisp/languages" user-emacs-directory))
+(push (expand-file-name "vwe/lisp/langs" user-emacs-directory) load-path)
 
 (require 'vwe-lisp)
 (require 'vwe-assembly)

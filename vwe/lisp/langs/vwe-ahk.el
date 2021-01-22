@@ -1,4 +1,4 @@
-;;; vwe-clojure.el --- clojure dev       -*- lexical-binding: t; -*-
+;;; vwe-ahk.el --- Autohotkey dev        -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2020  WuJunyu
 
@@ -24,7 +24,10 @@
 
 ;;; Code:
 
-(use-package cider)
+;;
+;; `ahk-mode'
+;;
+(vwe@lib--package 'ahk-mode)
 
-(provide 'vwe-clojure)
-;;; vwe-clojure.el ends here
+(provide 'vwe-ahk)
+;;; vwe-ahk.el ends here

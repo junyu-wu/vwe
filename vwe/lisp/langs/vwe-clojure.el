@@ -1,9 +1,9 @@
-;;; vwe-bat.el --- Windows Batch-file editing -*- lexical-binding: t; -*-
+;;; vwe-clojure.el --- clojure dev       -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2015  Wu Junyu
+;; Copyright (C) 2020  WuJunyu
 
-;; Author: Wu Junyu <vistar_w@hotmail.com.com>
-;; Keywords: files
+;; Author: WuJunyu <vistar_w@hotmail.com>
+;; Keywords:
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -24,11 +24,10 @@
 
 ;;; Code:
 
-;; Windows批处理文件的编辑
-(use-package bat-mode
-  :config
-  (use-package bmx-mode)
-  (bmx-mode t))
+;;
+;; `cider'
+;;
+(vwe@lib--package 'cider)
 
-(provide 'vwe-bat)
-;;; vwe-bat.el ends here
+(provide 'vwe-clojure)
+;;; vwe-clojure.el ends here

@@ -33,14 +33,18 @@
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
-(use-package modern-cpp-font-lock
-  :hook
-  (c++-mode-hook . modern-c++-font-lock-mode)
-  :config
-  (modern-c++-font-lock-mode t))
 
-;; 查看当前的汇编代码
-(use-package disaster)
+;;
+;; `modern-c++-font-lock'
+;;
+(vwe@lib--package 'modern-cpp-font-lock
+				  (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode)
+				  (modern-c++-font-lock-mode t))
+
+;;
+;; `disaster' 查看当前的汇编代码
+;;
+(vwe@lib--package 'disaster)
 
 (provide 'vwe-clang)
 ;;; vwe-clang.el ends here

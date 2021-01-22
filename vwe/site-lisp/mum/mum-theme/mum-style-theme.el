@@ -340,7 +340,7 @@
 	(when style
       (setq mum-style--type (cdr (assoc style styles))))
 	(mapc #'disable-theme custom-enabled-themes)
-	(load-theme 'mum-style)))
+	(load-theme 'mum-style t)))
 
 ;;;###autoload
 (when (and (boundp 'custom-theme-load-path) load-file-name)

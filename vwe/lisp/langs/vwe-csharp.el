@@ -30,18 +30,20 @@
 
 ;;; Code:
 
-(use-package csharp-mode
-  :mode
-  ("\\.cs\\'" . csharp-mode)
-  :config
-  ;; c#后端
-  (use-package omnisharp
-	:hook
-	(csharp-mode . (lambda ()
-					 (omnisharp-mode)
-					 (add-to-list 'company-backends 'company-omnisharp))))
-	:init
-	(setq omnisharp-server-executable-path "omnisharp"))
+;;
+;; `csharp-mode'
+;;
+(vwe@lib--package 'csharp-mode
+				  (push '("\\.cs\\'" . csharp-mode) auto-mode-alist)
+				  ;;
+				  ;; `omnisharp' c#后端
+				  ;;
+				  (vwe@lib--package 'omnisharp
+									(add-hook 'csharp-mode-hook (lambda ()
+																  (omnisharp-mode)
+																  (add-to-list 'company-backends 'company-omnisharp)))
+									nil
+									(setq omnisharp-server-executable-path "omnisharp")))
 
 (provide 'vwe-csharp)
 ;;; vwe-csharp.el ends here

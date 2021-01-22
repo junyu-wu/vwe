@@ -21,13 +21,12 @@
 ;;; Commentary:
 
 ;;; Code:
-
+(push (expand-file-name "vwe/lisp" user-emacs-directory) load-path)
 ;;
 ;; init before
 ;;
 (require 'vwe-lib)
 (require 'vwe-customize)
-(require 'vwe-package)
 
 ;;
 ;; init emacs

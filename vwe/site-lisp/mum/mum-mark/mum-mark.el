@@ -23,6 +23,7 @@
 ;;
 
 ;;; Code:
+(require 'cl)
 
 (defgroup mum-mark nil
   "Customization group for beacon."
@@ -448,7 +449,6 @@ OBJS."
 ;;;###autoload
 (define-minor-mode mum-mark-mode
   "Mum mark minor mode."
-  :init-value nil
   :group 'mum-mark
   :keymap mum-mark--mode-keymap
   :global t)

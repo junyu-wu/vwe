@@ -31,47 +31,54 @@
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
-(use-package rvm
-  :hook
-  (ruby-mode . (lambda () (rvm-activate-corresponding-ruby) (rvm-use-default))))
 
-;; 连接ruby repl
-(use-package inf-ruby
-  :hook
-  (ruby-mode . inf-ruby-minor-mode))
+;;
+;; `rvm'
+;;
+(vwe@lib--package 'rvm
+				  (add-hook 'ruby-mode-hook (lambda () (rvm-activate-corresponding-ruby) (rvm-use-default))))
 
-;; 自动添加 'end'
-(use-package ruby-electric
-  :hook
-  (ruby-mode . ruby-electric-mode))
+;;
+;; `inf-ruby' 连接ruby repl
+;;
+(vwe@lib--package 'inf-ruby
+				  (add-hook 'ruby-mode-hook #'inf-ruby-minor-mode))
 
-;; 辅助ruby repl加载程序或gem.包括位置与跳转
-(use-package robe
-  :hook
-  (ruby-mode . robe-mode)
-  :config
-  (add-to-list (make-local-variable 'company-backends)
-			   '(company-robe)))
+;;
+;; `ruby-electric' 自动添加 'end'
+;;
+(vwe@lib--package 'ruby-electric
+				  (add-hook 'ruby-mode-hook #'ruby-electric-mode))
 
-;; 代码分析与格式化 flycheck with rubocop
-(use-package rubocop
-  :hook
-  (ruby-mode . rubocop-mode))
+;;
+;; `robe' 辅助ruby repl加载程序或gem.包括位置与跳转
+;;
+(vwe@lib--package 'robe
+				  (add-hook 'ruby-mode-hook #'robe-mode)
+				  (add-to-list (make-local-variable 'company-backends)
+							   '(company-robe)))
 
-;; 自动格式化代码
-(use-package rufo
-  :hook
-  (ruby-mode . rufo-minor-mode)
-  :init
-  (setq rufo-minor-mode-use-bundler t))
+;;
+;; `rubocop' 代码分析与格式化 flycheck with rubocop
+;;
+(vwe@lib--package 'rubocop
+				  (add-hook 'ruby-mode-hook #'rubocop-mode))
 
-;; 后端支持
-(use-package solargraph
-  :load-path
-  (lambda ()
-	(vwe@lib--path-vwe-site-lisp "emacs-solargraph"))
-  :hook
-  (ruby-mode . (lambda() (vwe@lib--package-load 'solargraph))))
+;;
+;; `rufo' 自动格式化代码
+;;
+(vwe@lib--package 'rufo
+				  (add-hook 'ruby-mode-hook #'rufo-minor-mode)
+				  nil
+				  (setq rufo-minor-mode-use-bundler t))
+
+;;
+;; `solargraph' 后端支持
+;;
+(vwe@lib--package 'solargraph
+				  (add-hook 'ruby-mode-hook (lambda() (vwe@lib--package-load 'solargraph)))
+				  nil nil nil
+				  (vwe@lib--path-vwe-site-lisp "emacs-solargraph"))
 
 (provide 'vwe-ruby)
 ;;; vwe-Ruby.el ends here

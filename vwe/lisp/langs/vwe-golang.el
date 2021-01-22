@@ -41,39 +41,42 @@
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
-(use-package go-mode
-  :mode
-  (("\\.go\\'" . go-mode))
-  :bind
-  (:map go-mode-map
-		("M-." . godef-jump))
-  :hook
-  ((before-save . gofmt-before-save))
-  :init
-  (setq go-command (concat (getenv "GOROOT") "/bin/go")
-		gofmt-command (concat (getenv "GOPATH") "/bin/goimports")
-		flycheck-go-gofmt-executable (concat (getenv "GOPATH") "/bin/goimports")
-		flycheck-go-golint-executable (concat (getenv "GOPATH") "/bin/golint")
-		flycheck-go-build-executable (concat (getenv "GOROOT") "/bin/go")
-		flycheck-go-vet-executable (concat (getenv "GOROOT") "/bin/go")
-		flycheck-go-test-executable (concat (getenv "GOROOT") "/bin/go"))
-  :config
-  (with-eval-after-load 'exec-path-from-shell
-	(exec-path-from-shell-copy-envs
-	 '("GOPATH" "GO111MODULE" "GOPROXY")))
 
-  (use-package company-go
-	:hook
-	(go-mode . (lambda() (add-to-list (make-local-variable 'company-backends) '(company-go)))))
+;;
+;; `go-mode'
+;;
+(vwe@lib--package 'go-mode
+				  (push '("\\.go\\'" . go-mode) auto-mode-alist)
+				  (progn
+					(define-key go-mode-map (kbd "M-.") #'godef-jump)
+					(add-hook 'before-save-hook #'gofmt-before-save)
+					(with-eval-after-load 'exec-path-from-shell
+					  (exec-path-from-shell-copy-envs
+					   '("GOPATH" "GO111MODULE" "GOPROXY")))
+					;;
+					;; `company-go'
+					;;
+					(vwe@lib--package 'company-go
+					  				  (add-hook 'go-mode-hook (lambda() (add-to-list (make-local-variable 'company-backends) '(company-go)))))
 
-  (use-package go-eldoc
-	:hook
-	(go-mode . go-eldoc-setup))
+					;;
+					;; `go-eldoc'
+					;;
+					(vwe@lib--package 'go-eldoc
+									  (add-hook 'go-mode-hook #'go-eldoc-setup))
 
-  ;; go代码编辑扩展
-  (use-package go-guru
-	:hook
-	(go-mode . go-guru-hl-identifier-mode)))
+					;;
+					;; `go-guru' go代码编辑扩展
+					;;
+					(vwe@lib--package 'go-guru
+					  				  (add-hook 'go-mode-hook #'go-guru-hl-identifier-mode)))
+				  (setq go-command (concat (getenv "GOROOT") "/bin/go")
+						gofmt-command (concat (getenv "GOPATH") "/bin/goimports")
+						flycheck-go-gofmt-executable (concat (getenv "GOPATH") "/bin/goimports")
+						flycheck-go-golint-executable (concat (getenv "GOPATH") "/bin/golint")
+						flycheck-go-build-executable (concat (getenv "GOROOT") "/bin/go")
+						flycheck-go-vet-executable (concat (getenv "GOROOT") "/bin/go")
+						flycheck-go-test-executable (concat (getenv "GOROOT") "/bin/go")))
 
 (provide 'vwe-golang)
 ;;; vwe-golang.el ends here

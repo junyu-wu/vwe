@@ -36,34 +36,35 @@
 ;; config
 ;; ***************************************************************************
 
-(use-package lsp-java
-  :after
-  lsp-mode
-  :init
-  (setq lsp-java-server-install-dir (vwe@lib--path-cache "lsp/eclipse.jdt.ls")
-		lsp-java-workspace-dir (vwe@lib--path-cache "java/workspce")
-		lsp-java-java-path "java"
-		lsp-java-import-gradle-enabled t
-		lsp-java-import-maven-enabled t
-		lsp-java-maven-download-sources t
-		lsp-java-references-code-lens-enabled t
-		lsp-java-signature-help-enabled t
-		lsp-java-implementations-code-lens-enabled t
-		lsp-java-format-enabled t
-		lsp-java-save-actions-organize-imports t
-		lsp-java-autobuild-enabled t
-		lsp-java-completion-enabled t
-		lsp-java-completion-overwrite nil
-		lsp-java-completion-guess-method-arguments t
-		lsp-java-format-comments-enabled t
-		lsp-java-code-generation-use-blocks t
-		lsp-java-code-generation-generate-comments t
-		lsp-java-code-generation-to-string-limit-elements 0
-		lsp-java-inhibit-message t)
-  :config
-  (use-package dap-java
-	:ensure nil
-	:after lsp-java))
+;;
+;; `lsp-java'
+;;
+(vwe@lib--package 'lsp-java
+				  nil
+				  ;;
+				  ;; `dap-java'
+				  ;;
+				  (vwe@lib--package 'dap-java nil nil nil t)
+				  (setq lsp-java-server-install-dir (vwe@lib--path-cache "lsp/eclipse.jdt.ls")
+						lsp-java-workspace-dir (vwe@lib--path-cache "java/workspce")
+						lsp-java-java-path "java"
+						lsp-java-import-gradle-enabled t
+						lsp-java-import-maven-enabled t
+						lsp-java-maven-download-sources t
+						lsp-java-references-code-lens-enabled t
+						lsp-java-signature-help-enabled t
+						lsp-java-implementations-code-lens-enabled t
+						lsp-java-format-enabled t
+						lsp-java-save-actions-organize-imports t
+						lsp-java-autobuild-enabled t
+						lsp-java-completion-enabled t
+						lsp-java-completion-overwrite nil
+						lsp-java-completion-guess-method-arguments t
+						lsp-java-format-comments-enabled t
+						lsp-java-code-generation-use-blocks t
+						lsp-java-code-generation-generate-comments t
+						lsp-java-code-generation-to-string-limit-elements 0
+						lsp-java-inhibit-message t))
 
 (provide 'vwe-java)
 ;;; vwe-java.el ends here

@@ -325,7 +325,7 @@
 
   (mum-key-define python
 				  ("python"
-				   (("r" run-python "run python")
+				   (("x" run-python "run python")
 					("c" conda-env-activate "conda activate")
 					("d" conda-env-deactivate "conda deactivate")
 					("l" conda-env-list "conda list")
@@ -334,6 +334,7 @@
 					("j" elpy-django-runserver "run django")
 					("b" python-shell-send-buffer "send buffer")
 					("r" python-shell-send-region "send region")
+					("q" vwe@python--kill-python-shell "quit")
 					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (python-mode))
 

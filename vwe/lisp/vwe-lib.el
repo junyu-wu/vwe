@@ -63,15 +63,19 @@
 (defun vwe@lib--sys-startup-info ()
   "Show startup ready time and garbage collections."
   (interactive)
-  (format
-   "startup in %s seconds. loaded %s packages and %s garbage collections."
-   (propertize (format "%.2f" (float-time
-							   (time-subtract after-init-time before-init-time)))
-			   'face '((t (:foreground "SpringGreen" :weight bold))))
-   (propertize (format "%s" (length package-activated-list))
-			   'face '((t (:foreground "DarkOrange" :weight bold))))
-   (propertize (format "%s" gcs-done)
-			   'face '((t (:foreground "DarkRed" :weight bold))))))
+
+  (let* ((spring '((:foreground "SpringGreen" :weight bold)))
+		 (orange '((:foreground "DarkOrange" :weight bold)))
+		 (red '((:foreground "OrangeRed" :weight bold))))
+	(format
+	 "startup in %s seconds. loaded %s packages and %s garbage collections."
+	 (propertize (format "%.2f" (float-time
+								 (time-subtract after-init-time before-init-time)))
+				 'face spring)
+	 (propertize (format "%s" (length package-activated-list))
+				 'face orange)
+	 (propertize (format "%s" gcs-done)
+				 'face red))))
 
 ;; ************************************************************************
 ;; frame
@@ -565,10 +569,29 @@ FILE-P if t make path and file."
 ;; ************************************************************************
 ;; package
 ;; ************************************************************************
-(defmacro vwe@lib--package-install (package)
-  "Install PACKAGE."
+(defmacro vwe@lib--package (pkg &optional pre post final requirep dir ignore)
+  "After load DIR or download PKG package eval PRE POST and FINAL.
+REQUIREP non-nil `require' PKG.
+IGNORE non-nil ignore package."
+  `(condition-case nil
+	   (progn
+		 (unless ,ignore
+		   (if ,dir
+			   (progn
+				 (when (file-directory-p (format "%s" ,dir)) (push ,dir load-path)))
+			 (unless (package-installed-p ,pkg) (package-install ,pkg))))
+		 ,pre
+		 (when ,requirep (require ,pkg))
+		 (with-eval-after-load (format "%s" ,pkg) ,post)
+		 ,final)
+	 (error
+	  (message "pkg %S not found or package inner error" ,pkg))))
+
+(defmacro vwe@lib--package-install (package &optional refreshp)
+  "Install PACKAGE.
+REFRESHP non-nil refresh package contents."
   `(unless (package-installed-p ,package)
-	 (package-refresh-contents)
+	 (when refreshp (package-refresh-contents))
 	 (package-install ,package)))
 
 (defun vwe@lib--package-load (pkg &optional path)

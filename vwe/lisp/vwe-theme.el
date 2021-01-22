@@ -96,13 +96,18 @@
 ;; config
 ;; ***************************************************************************
 
-(use-package doom-themes)
+;;
+;; `doom-themes'
+;;
+(vwe@lib--package 'doom-themes)
 
-(use-package mum-style-theme
-  :load-path
-  (lambda () (vwe@lib--path-vwe-site-lisp "mum/mum-theme"))
-  :init
-  (vwe@lib--package-load 'mum-style-theme))
+;;
+;; `mum-style-theme'
+;;
+(vwe@lib--package 'mum-style-theme
+				  nil nil nil t
+				  (vwe@lib--path-vwe-site-lisp "mum/mum-theme"))
+;;(load-file (vwe@lib--path-vwe-site-lisp "mum/mum-theme/mum-style-theme.el" t))
 
 (vwe@theme--init)
 

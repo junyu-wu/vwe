@@ -71,157 +71,162 @@
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
-(use-package org
-  :ensure nil
-  :hook
-  (org-mode . toggle-truncate-lines)
-  :bind
-  (:map org-mode-map
-		("C-RET" . org-meta-return))
-  :init
-  (setq org-hide-leading-start t
-		org-src-fontify-natively t
-		org-log-done 'time
-		org-image-actual-width '(400)
-		org-todo-keywords '((sequence "TODO(t)"
-									  "DOING(i)"
-									  "WAITING(w)"
-									  "|"
-									  "DONE(d)"
-									  "CANCEL(c)")))
-  :config
 
-  ;; 代码运行环境
-  (use-package ob-go)
-  (use-package ob-rust)
-  (use-package ob-mermaid)
+;;
+;; `org'
+;;
+(vwe@lib--package 'org
+				  (add-hook 'org-mode-hook #'toggle-truncate-lines)
+				  (progn
+					(define-key org-mode-map (kbd "C-RET") #'org-meta-return)
 
-  (org-babel-do-load-languages 'org-babel-load-languages vwe@org--language-alist)
+					;; 代码运行环境
+					(vwe@lib--package 'ob-go)
+					(vwe@lib--package 'ob-rust)
+					(vwe@lib--package 'ob-mermaid)
 
-  ;; 托拽图片
-  (use-package org-download
-	:hook
-	(org-mode-hook . org-download-enable))
+					(org-babel-do-load-languages 'org-babel-load-languages vwe@org--language-alist)
 
-  ;; 快速复制代码块导org
-  (use-package org-rich-yank)
+					;;
+					;; `org-download' 托拽图片
+					;;
+					(vwe@lib--package 'org-download
+					  				  (add-hook 'org-mode-hook #'org-download-enable))
 
-  ;; 刷新目录
-  (use-package toc-org
-	:hook
-	(org-mode . toc-org-mode)
-	:config
-	(add-to-list 'org-tag-alist '("TOC" . T)))
+					;;
+					;; `org-rich-yank' 快速复制代码块导org
+					;;
+					(vwe@lib--package 'org-rich-yank)
 
-  ;; html方式查看org,通过eww
-  (use-package org-preview-html)
+					;;
+					;; `toc-org' 刷新目录
+					;;
+					(vwe@lib--package 'toc-org
+					  				  (add-hook 'org-mode-hook #'toc-org-mode)
+									  (add-to-list 'org-tag-alist '("TOC" . T)))
 
-  ;; 只显示org单一节点内容
-  (use-package org-tree-slide
-	:functions
-	(org-display-inline-images
-	 org-remove-inline-images)
-	:hook
-	((org-tree-slide-play . (lambda ()
-							  (text-scale-increase 4)
-							  (org-display-inline-images)
-							  (read-only-mode 1)))
-	 (org-tree-slide-stop . (lambda ()
-							  (text-scale-increase 0)
-							  (org-remove-inline-images)
-							  (read-only-mode -1))))
-	:init
-	(setq org-tree-slide-skip-outline-level 2)
-	:config
-	(org-tree-slide-simple-profile))
+					;;
+					;; `org-preview-html' html方式查看org,通过eww
+					;;
+					(vwe@lib--package 'org-preview-html)
 
-  ;; org缩进
-  (use-package org-indent-mode
-	:ensure nil
-	:hook
-	(org-mode . org-indent-mode))
+					;;
+					;; `org-tree-slide' 只显示org单一节点内容
+					;;
+					(vwe@lib--package 'org-tree-slide
+					  				  (progn
+										(add-hook 'org-tree-slide-play (lambda ()
+																		 (text-scale-increase 4)
+																		 (org-display-inline-images)
+																		 (read-only-mode 1)))
+										(add-hook 'org-tree-slide-stop (lambda ()
+																		 (text-scale-increase 0)
+																		 (org-remove-inline-images)
+																		 (read-only-mode -1))))
+									  (org-tree-slide-simple-profile)
+									  (setq org-tree-slide-skip-outline-level 2))
 
-  (use-package org-superstar
-	:hook
-	(org-mode . (lambda() (org-superstar-mode 1)))
-	:init
-	(setq org-hidden-keywords '(title)
-		  org-cycle-level-faces nil
-		  ;; org-n-level-faces 7
-		  org-superstar-cycle-headline-bullets nil
-		  org-superstar-first-inlinetask-bullet ?㊕
-		  org-superstar-leading-fallback ?.
-		  org-superstar-headline-bullets-list '("☰" "☱" "☲" "☳"
-												"☴" "☶" "☵" "☷"
-												"☯")))
+					;;
+					;; `org-indent-mode' org缩进
+					;;
+					(vwe@lib--package 'org-indent-mode
+					  				  (add-hook 'org-mode-hook #'org-indent-mode)
+									  nil nil nil nil t)
 
-  ;; 演示文件生成
-  ;; https://github.com/hakimel/reveal.js/
-  ;; npm install reveal.js
-  (use-package ox-reveal
-	:init
-	(defun vwe@pkg--org-ox-reveal-load ()
-	  "Load reveal."
-	  (interactive)
-	  (load-library "ox-reveal"))
-	(setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js"
-		  org-reveal-theme "night"
-		  org-reveal-transition "slide"
-		  org-reveal-init-options "slideNumber:true"
-		  org-reveal-plugins '(classList markdown highlight zoom notes)
-		  org-reveal-title-slide
-		  "<h2>%t</h2>
+					;;
+					;; `org-superstart'
+					;;
+					(vwe@lib--package 'org-superstar
+					  				  (add-hook 'org-mode-hook (lambda() (org-superstar-mode 1)))
+									  nil
+									  (setq org-hidden-keywords '(title)
+											org-cycle-level-faces nil
+											;; org-n-level-faces 7
+											org-superstar-cycle-headline-bullets nil
+											org-superstar-first-inlinetask-bullet ?㊕
+											org-superstar-leading-fallback ?.
+											org-superstar-headline-bullets-list '("☰" "☱" "☲" "☳" "☴" "☶" "☵" "☷" "☯")))
+
+					;;
+					;; `ox-reveal' 演示文件生成 ;; https://github.com/hakimel/reveal.js/
+					;; npm install reveal.js
+					;;
+					(vwe@lib--package 'ox-reveal
+					  				  (defun vwe@pkg--org-ox-reveal-load ()
+										"Load reveal."
+										(interactive)
+										(load-library "ox-reveal"))
+									  nil
+									  (setq org-reveal-root "https://cdn.jsdelivr.net/npm/reveal.js"
+											org-reveal-theme "night"
+											org-reveal-transition "slide"
+											org-reveal-init-options "slideNumber:true"
+											org-reveal-plugins '(classList markdown highlight zoom notes)
+											org-reveal-title-slide
+											"<h2>%t</h2>
          <h3>%s</h3><br>
          <h6 style='text-align:right;color:gray'>%a</h6>
          <h6 style='text-align:right;color:gray'>%d</h6>"))
 
-  (use-package org-agenda
-	:ensure nil
-	:init
-	(setq org-agenda-files (list (vwe@lib--path-cache "org"))))
+					;;
+					;; `org-agenda'
+					;;
+					(vwe@lib--package 'org-agenda
+									  nil
+									  (setq org-agenda-files (list (vwe@lib--path-cache "org")))
+									  nil nil nil t)
 
-  ;; 提醒计时器
-  (use-package org-pomodoro)
+					;;
+					;; `org-pomodoro' 提醒计时器
+					;;
+					(vwe@lib--package 'org-pomodoro)
 
-  ;; 快速笔记
-  (use-package org-capture
-	:ensure nil
-	:defines
-	(default-notes-file)
-	:init
-	(setq default-notes-file (vwe@lib--path-cache "org/notes.org" t)
-		  org-capture-templates '(("t" "Todo" entry
-								   (file+headline (vwe@lib--path-cache "org/task.org" t) "Task")
-								   "* TODO %?\n  %i\n  %a")
-								  ("q" "QuickNote" entry
-								   (file+headline (vwe@lib--path-cache "org/quicknote.org" t) "QuickNote")
-								   "* TODO %?\n  %i\n  %a")
-								  ("j" "Journal" entry
-								   (file+olp+datetree (vwe@lib--path-cache "org/journal.org" t))
-								   "* %?\n Entered on: %U\n %i\n %a")
-								  ("a" "Appointment" entry
-								   (file (vwe@lib--path-cache "org/appointment.org" t)
-										 "* %?\n%^T\n** Note:\n\n"))))))
-(use-package org-roam
-  :init
-  (setq org-roam-directory (vwe@lib--path-cache "org/roam")
-		org-roam-db-location (expand-file-name "org-roam.db" org-roam-directory)))
+					;;
+					;; `org-capture' 快速笔记
+					;;
+					(vwe@lib--package 'org-capture
+									  nil
+									  (setq default-notes-file (vwe@lib--path-cache "org/notes.org" t)
+											org-capture-templates '(("t" "Todo" entry
+																	 (file+headline (vwe@lib--path-cache "org/task.org" t) "Task")
+																	 "* TODO %?\n  %i\n  %a")
+																	("q" "QuickNote" entry
+																	 (file+headline (vwe@lib--path-cache "org/quicknote.org" t) "QuickNote")
+																	 "* TODO %?\n  %i\n  %a")
+																	("j" "Journal" entry
+																	 (file+olp+datetree (vwe@lib--path-cache "org/journal.org" t))
+																	 "* %?\n Entered on: %U\n %i\n %a")
+																	("a" "Appointment" entry
+																	 (file (vwe@lib--path-cache "org/appointment.org" t)
+																		   "* %?\n%^T\n** Note:\n\n"))))
+									  nil nil nil t))
+				  (setq org-hide-leading-start t
+						org-src-fontify-natively t
+						org-log-done 'time
+						org-image-actual-width '(400)
+						org-todo-keywords '((sequence "TODO(t)" "DOING(i)" "WAITING(w)" "|" "DONE(d)" "CANCEL(c)"))))
 
-(use-package org-brain
-  :hook
-  (before-save-hook . org-brain-ensure-ids-in-buffer)
-  :init
-  (setq org-brain-path (vwe@lib--path-cache "org/brain"))
-  :config
-  (setq org-id-track-globally t
-		org-id-locations-file (vwe@lib--path-cache "org/brain/.org-id-locations" t)
-		org-brain-visualize-default-choices 'all
-		org-brain-title-max-length 12
-		org-brain-include-file-entries nil
-		org-brain-file-entries-use-title nil)
-  (push '("b" "Brain" plain (function org-brain-goto-end)
-		  "* %i%?" :empty-lines 1)
-		org-capture-templates))
+;;
+;; `org-roam'
+;;
+(vwe@lib--package 'org-roam
+				  nil nil
+				  (setq org-roam-directory (vwe@lib--path-cache "org/roam")
+						org-roam-db-location (expand-file-name "org-roam.db" org-roam-directory)))
+
+;;
+;; `org-brain'
+;;
+(vwe@lib--package 'org-brain
+				  (add-hook 'before-save-hook #'org-brain-ensure-ids-in-buffer)
+				  (progn
+					(setq org-id-track-globally t
+						  org-id-locations-file (vwe@lib--path-cache "org/brain/.org-id-locations" t)
+						  org-brain-visualize-default-choices 'all
+						  org-brain-title-max-length 12
+						  org-brain-include-file-entries nil
+						  org-brain-file-entries-use-title nil))
+				  (setq org-brain-path (vwe@lib--path-cache "org/brain")))
 
 (provide 'vwe-org)
 ;;; vwe-org.el ends here

@@ -26,6 +26,36 @@
 ;; ***************************************************************************
 ;; lib
 ;; ***************************************************************************
+(defconst vwe@base--pkg-source-list
+  '(("melpa" .       (("melpa". "https://melpa.org/packages/")
+					  ("gnu" . "https://elpa.gnu.org/packages/")
+					  ("org"  . "http://orgmode.org/elpa/")))
+	("china-melpa" . (("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
+					  ("org-cn"   . "http://elpa.emacs-china.org/org/")
+					  ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/"))))
+  "Source Options.")
+
+(defun vwe@base--pkg-source-toggle (source-name)
+  "Toggle Emacs package source.
+SOURCE-NAME is source name."
+  (interactive
+   (list
+    (completing-read "source:"
+					 (mapcar (lambda(item)
+							   (car item)) vwe@base--pkg-source-list))))
+  (let* ((source (cdr (assoc source-name vwe@base--pkg-source-list))))
+	(setq package-archives source)))
+
+(defun vwe@base--package-init ()
+  "Package init."
+  (interactive)
+  (vwe@base--pkg-source-toggle vwe@custom--source)
+  (setq package-enable-at-startup nil)
+  (package-initialize)
+  (vwe@lib--package-load 'cl-lib)
+  (vwe@lib--package-load 'seq)
+  (vwe@lib--package-load 'popup))
+
 (defvar vwe@base--socks-proxy-services
   nil
   "Socks proxy services.")
@@ -35,7 +65,8 @@
   "Make and set `custom-file'."
   (let* ((custom (expand-file-name "custom.el" user-emacs-directory)))
     (unless (file-exists-p custom)
-      (vwe@lib--path-make-config-path (vwe@lib--path-emacs.d "custom.el") t))
+      (vwe@lib--path-make-config-path (vwe@lib--path-emacs.d "custom.el") t)
+      (when package--initialized (package-refresh-contents)))
     (setq custom-file custom)
     (load custom-file)))
 
@@ -61,18 +92,19 @@
   "Frame config."
   (interactive)
   (when (display-graphic-p)
-	(vwe@lib--frame-reset (eval 'vwe@custom--frame-width)
-						  (eval 'vwe@custom--frame-height)
-						  50 50)))
+	(if vwe@custom--frame-max? (toggle-frame-maximized)
+	  (vwe@lib--frame-reset vwe@custom--frame-width vwe@custom--frame-height 50 50))))
 
 (defun vwe@base--font-init ()
   "Font config."
   (interactive)
   (when (display-graphic-p)
-	(vwe@lib--font-set-ascii vwe@custom--font-ascii
-							 vwe@custom--font-ascii-size)
-	(vwe@lib--font-set-non-ascii vwe@custom--font-non-ascii
-								 vwe@custom--font-non-ascii-size)))
+	(when (display-graphic-p)
+		  (set-face-attribute 'default
+							  nil
+							  :font (format "%s:pixelsize=%d" vwe@custom--font-ascii vwe@custom--font-ascii-size)))
+	;; (vwe@lib--font-set-ascii vwe@custom--font-ascii vwe@custom--font-ascii-size)
+	(vwe@lib--font-set-non-ascii vwe@custom--font-non-ascii vwe@custom--font-non-ascii-size)))
 
 (defun vwe@base--server-init ()
   "Server init."
@@ -113,22 +145,25 @@
 
 (defun vwe@base--make-welcome-msg ()
   "Make welcome message."
-  (concat
-   ";; hello "
-   (propertize (format "%s" (eval 'vwe@custom--user-name))
-			   'face '((t (:foreground "cyan" :bold t))))
-   ", welcome "
-   (propertize "vwiss emacs (vwe)"
-			   'face '((t (:foreground "white" :background "purple3"))))
-   ", let's enjoy hacking ^_^ !!!\n"
-   ";; "
-   (vwe@lib--sys-startup-info)
-   "\n"))
+  (let* ((name '((:foreground "cyan" :weight bold)))
+		 (vwe '((:background "DarkViolet" :foreground "white" :weight bold))))
+	(concat
+	 ";; hello "
+	 (propertize (format "%s" (eval 'vwe@custom--user-name))
+				 'face name)
+	 ", welcome "
+	 (propertize "vwiss emacs (vwe)"
+				 'face vwe)
+	 ", let's enjoy hacking ^_^ !!!\n"
+	 ";; "
+	 (vwe@lib--sys-startup-info)
+	 "\n")))
 
 (defun vwe@base--init ()
   "Base init."
   (interactive)
 
+  (vwe@base--package-init)
   (vwe@base--custom-file-init)
   (vwe@base--gc-init)
   (vwe@base--encoding-init)
@@ -144,10 +179,7 @@
   (add-hook 'after-init-hook #'save-place-mode)
   (add-hook 'after-init-hook #'recentf-mode)
   (add-hook 'after-init-hook #'show-paren-mode)
-  (add-hook 'server-after-make-frame-hook 'vwe@base--deamon-init)
-
-  (when vwe@custom--frame-max?
-	(add-hook 'window-setup-hook 'toggle-frame-maximized))
+  (add-hook 'server-after-make-frame-hook #'vwe@base--deamon-init)
 
   (setq inhibit-startup-screen               t
 		ring-bell-function                   'ignore

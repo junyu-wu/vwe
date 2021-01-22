@@ -27,31 +27,38 @@
 
 ;;; Code:
 
-(use-package rust-mode
-  :bind
-  (:map rust-mode-map
-		("TAB" . company-indent-or-complete-common))
-  :init
-  (setq rust-format-on-save t
-		company-tooltip-align-annotations t)
-  :hook
-  (rust-mode-hook . (lambda () (setq indent-tabs-mode nil)))
-  :config
-  (use-package cargo
-	:hook
-	(rust-mode . cargo-minor-mode)
-	:config
-	(setq compilation-filter-hook (append compilation-filter-hook '(cargo-process--add-errno-buttons))))
+;;
+;; `rust-mode'
+;;
+(vwe@lib--package 'rust-mode
+				  (progn
+					(add-hook 'rust-mode-hook (lambda () (setq indent-tabs-mode nil))))
+				  (progn
+					(define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
+					;;
+					;; `cargo'
+					;;
+					(vwe@lib--package 'cargo
+					  				  (add-hook 'rust-mode-hook #'cargo-minor-mode)
+					  				  (setq compilation-filter-hook (append compilation-filter-hook '(cargo-process--add-errno-buttons))))
 
-  ;; 补全代码
-  (use-package racer
-	:hook
-	(rust-mode . racer-mode))
+					;;
+					;; `racer' 补全代码
+					;;
+					(vwe@lib--package 'racer
+					  				  (add-hook 'rust-mode-hook #'racer-mode))
 
-  ;; rust-mode 扩展
-  (use-package rustic)
+					;;
+					;; `rustic' rust-mode 扩展
+					;;
+					(vwe@lib--package 'rustic)
 
-  (use-package rust-playground))
+					;;
+					;; `rust-playground'
+					;;
+					(vwe@lib--package 'rust-playground))
+				  (setq rust-format-on-save t
+						company-tooltip-align-annotations t))
 
 (provide 'vwe-rust)
 ;;; vwe-rust.el ends here

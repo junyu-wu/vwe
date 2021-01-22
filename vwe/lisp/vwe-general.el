@@ -78,494 +78,538 @@ MINI pop frame or minibuffer."
 ;; config
 ;; ***************************************************************************
 
-(use-package mum-modeline
-  :load-path
-  (lambda () (vwe@lib--path-vwe-site-lisp "mum/mum-modeline"))
-  :hook
-  (after-init . (lambda ()
-				  (vwe@lib--package-load 'mum-modeline)
-				  (when vwe@custom--modeline-show? (mum-modeline-mode))))
-  :init
-  (setq mum-modeline--buffer-filter-list vwe@custom--modeline--hide-list
-		mum-modeline--default-format mode-line-format)
-  :config
-  (setq-default mode-line-format nil))
+;;
+;; `mum-modeline'
+;;
+(vwe@lib--package 'mum-modeline
+				  (autoload 'mum-modeline-mode (vwe@lib--path-vwe-site-lisp "mum/mum-modeline/mum-modeline.el" t) "Mum modeline mode" t t)
+				  nil
+				  (progn
+					(setq-default mode-line-format nil)
+					(add-hook 'after-init-hook (lambda () (when vwe@custom--modeline-show? (mum-modeline-mode))))
+					(setq mum-modeline--buffer-filter-list vwe@custom--modeline--hide-list
+						  mum-modeline--default-format mode-line-format))
+				  nil
+				  (vwe@lib--path-vwe-site-lisp "mum/mum-modeline"))
 
-(use-package mum-tray
-  :load-path
-  (lambda () (vwe@lib--path-vwe-site-lisp "mum/mum-tray"))
-  :hook
-  (after-init . (lambda ()
-				  (vwe@lib--package-load 'mum-tray)
-				  (when vwe@custom--tray-show? (mum-tray-mode))))
-  :init
-  (setq mum-modeline--buffer-filter-list vwe@custom--modeline--hide-list
-		mum-modeline--default-format mode-line-format)
-  :config
-  (setq-default mode-line-format nil))
+;;
+;; `mum-tray'
+;;
+(vwe@lib--package 'mum-tray-mode
+				  (autoload 'mum-tray-mode (vwe@lib--path-vwe-site-lisp "mum/mum-tray/mum-tray.el" t) "Mum tray mode" t t)
+				  nil
+				  (add-hook 'after-init-hook (lambda () (when vwe@custom--tray-show? (mum-tray-mode))))
+				  nil
+				  (vwe@lib--path-vwe-site-lisp "mum/mum-tray"))
 
-(use-package mum-headerline
-  :load-path
-  (lambda () (vwe@lib--path-vwe-site-lisp "mum/mum-headerline"))
-  :hook
-  (after-init . (lambda ()
-				  (vwe@lib--package-load 'mum-headerline)
-				  (when vwe@custom--headerline-show? (mum-headerline-mode))))
-  :init
-  (setq mum-headerline--buffer-filter-list vwe@custom--buffer-filter-list))
+;;
+;; `mum-headerline'
+;;
+(vwe@lib--package 'mum-headerline
+				  (autoload 'mum-headerline-mode (vwe@lib--path-vwe-site-lisp "mum/mum-headerline/mum-headerline.el" t) "Mum headerline mode" t t)
+				  nil
+				  (progn
+					(add-hook 'after-init-hook (lambda () (when vwe@custom--headerline-show? (mum-headerline-mode))))
+					(setq mum-headerline--buffer-filter-list vwe@custom--buffer-filter-list))
+				  nil
+				  (vwe@lib--path-vwe-site-lisp "mum/mum-headerline"))
 
-;; 保存buffer历史记录
-(use-package savehist
-  :ensure nil
-  :hook
-  (after-init . savehist-mode)
-  :init
-  (setq enable-recursive-minibuffers t
-		savehist-file (vwe@lib--path-cache "savehist/history" t)
-		history-length 1000
-		savehist-additional-variables '(mark-ring
-										global-mark-ring
-										search-ring
-										regexp-search-ring
-										extended-command-history)
-		savehist-autosave-interval 300))
+;;
+;; `savehist' 保存buffer历史记录
+;;
+(vwe@lib--package 'savehist
+				  (add-hook 'after-init-hook #'savehist-mode)
+				  nil
+				  (setq enable-recursive-minibuffers t
+						savehist-file (vwe@lib--path-cache "savehist/history" t)
+						history-length 1000
+						savehist-additional-variables '(mark-ring
+														global-mark-ring
+														search-ring
+														regexp-search-ring
+														extended-command-history)
+						savehist-autosave-interval 300))
 
-(use-package ibuffer
-  :ensure nil
-  :init
-  (setq ibuffer-expert t
-  		ibuffer-show-empty-filter-groups nil
-  		ibuffer-display-summary nil
-		ibuffer-saved-filter-groups
-  		(quote (("default"
-				 ("Lisp" (or (mode . emacs-lisp-mode) (mode . lisp-mode)))
-				 ("CPP" (or (mode . cperl-mode) (mode . c-mode) (mode . c++-mode) (mode . objc-mode)))
-				 ("Build" (or (mode . cmake-mode)))
-				 ("Java" (or (mode . java-mode) (mode . scala-mode)))
-				 ("Python" (or (mode . python-mode)))
-				 ("Ruby" (or (mode . ruby-mode)))
-				 ("DB" (or (mode . sql-mode)))
-				 ("Golang" (or (mode . go-mode)))
-				 ("Rust" (or (mode . rust-mode) ))
-				 ("Web" (or (mode . web-mode) (mode . js2-mode) (mode . css-mode) (mode . scss-mode) (mode . javascript-mode) (mode . rjsx-mode) (mode . lua-mode) (mode . json-mode)))
-				 ("Assembly" (or (mode . asm-mode) (mode . nasm-mode)))
-				 ("Shell" (or (mode . sh-mode)))
-  				 ("Dired" (or (mode . dired-mode) (mode . sr-mode)))
-  				 ("Erc" (mode . erc-mode))
-  				 ("Edit" (or (name . "^\\*Calendar\\*$") (name . "^diary$") (mode . muse-mode) (mode . org-mode) (mode . org-agenda-mode) (mode . text-mode) (mode . yaml-mode)))
-  				 ("Buffer" (or (name . "^\\*scratch\\*$") (name . "^\\*Messages\\*$")))
-				 ("Email" (or (name . "^\\*mu4e-headers\\*$")))
-  				 ("Mesasge" (or (mode . message-mode) (mode . bbdb-mode) (mode . mail-mode) (mode . gnus-group-mode) (mode . gnus-summary-mode) (mode . gnus-article-mode) (name . "^\\.bbdb$") (name . "^\\.newsrc-dribble")))))))
-  (add-hook 'ibuffer-mode-hook
-  			(lambda ()
-  			  (unless (eq ibuffer-sorting-mode 'filename/process)
-  				(ibuffer-do-sort-by-filename/process))
-  			  (ibuffer-switch-to-saved-filter-groups "default"))))
+;;
+;; ibuffer
+;;
+(vwe@lib--package 'ibuffer
+				  (add-hook 'ibuffer-mode-hook
+  							(lambda ()
+  							  (unless (eq ibuffer-sorting-mode 'filename/process)
+  								(ibuffer-do-sort-by-filename/process))
+  							  (ibuffer-switch-to-saved-filter-groups "default")))
+				  (setq ibuffer-expert t
+  						ibuffer-show-empty-filter-groups nil
+  						ibuffer-display-summary nil
+						ibuffer-saved-filter-groups
+  						(quote (("default"
+								 ("Lisp" (or (mode . emacs-lisp-mode) (mode . lisp-mode)))
+								 ("CPP" (or (mode . cperl-mode) (mode . c-mode) (mode . c++-mode) (mode . objc-mode)))
+								 ("Build" (or (mode . cmake-mode)))
+								 ("Java" (or (mode . java-mode) (mode . scala-mode)))
+								 ("Python" (or (mode . python-mode)))
+								 ("Ruby" (or (mode . ruby-mode)))
+								 ("DB" (or (mode . sql-mode)))
+								 ("Golang" (or (mode . go-mode)))
+								 ("Rust" (or (mode . rust-mode) ))
+								 ("Web" (or (mode . web-mode) (mode . js2-mode) (mode . css-mode) (mode . scss-mode) (mode . javascript-mode) (mode . rjsx-mode) (mode . lua-mode) (mode . json-mode)))
+								 ("Assembly" (or (mode . asm-mode) (mode . nasm-mode)))
+								 ("Shell" (or (mode . sh-mode)))
+  								 ("Dired" (or (mode . dired-mode) (mode . sr-mode)))
+  								 ("Erc" (mode . erc-mode))
+  								 ("Edit" (or (name . "^\\*Calendar\\*$") (name . "^diary$") (mode . muse-mode) (mode . org-mode) (mode . org-agenda-mode) (mode . text-mode) (mode . yaml-mode)))
+  								 ("Buffer" (or (name . "^\\*scratch\\*$") (name . "^\\*Messages\\*$")))
+								 ("Email" (or (name . "^\\*mu4e-headers\\*$")))
+  								 ("Mesasge" (or (mode . message-mode) (mode . bbdb-mode) (mode . mail-mode) (mode . gnus-group-mode) (mode . gnus-summary-mode) (mode . gnus-article-mode) (name . "^\\.bbdb$") (name . "^\\.newsrc-dribble"))))))))
 
-;; buffer文本转换为html
-(use-package htmlize)
+;;
+;; `htmlize' buffer文本转换为html
+;;
+(vwe@lib--package 'htmlize)
 
-(use-package which-key
-  :hook
-  (after-init . which-key-mode))
+;;
+;; `which-key'
+;;
+(vwe@lib--package 'which-key
+				  (add-hook 'after-init-hook #'which-key-mode))
 
-(use-package ivy
-  :hook
-  (after-init . ivy-mode)
-  :init
-  (setq ivy-use-virtual-buffers t
-		ivy-height 10
-		ivy-initial-inputs-alist nil
-		ivy-count-format "%d/%d"
-		ivy-re-builders-alist `((t . ivy--regex-ignore-order))
-		enable-recursive-minibuffers t))
+;;
+;; `ivy'
+;;
+(vwe@lib--package 'ivy
+				  (add-hook 'after-init-hook #'ivy-mode)
+				  nil
+				  (setq ivy-use-virtual-buffers t
+						ivy-height 10
+						ivy-initial-inputs-alist nil
+						ivy-count-format "%d/%d"
+						ivy-re-builders-alist `((t . ivy--regex-ignore-order))
+						enable-recursive-minibuffers t))
 
-(use-package counsel
-  :config
-  (if (executable-find "rg")
-      (setq counsel-grep-base-command
-            "rg -i -M 120 --no-heading --line-number --color never %s %s"
-            counsel-rg-base-command
-            "rg -i -M 120 --no-heading --line-number --color never %s .")))
+;;
+;; `counsel'
+;;
+(vwe@lib--package 'counsel
+				  nil
+				  (if (executable-find "rg")
+					  (setq counsel-grep-base-command
+							"rg -i -M 120 --no-heading --line-number --color never %s %s"
+							counsel-rg-base-command
+							"rg -i -M 120 --no-heading --line-number --color never %s .")))
 
-(use-package swiper)
+;;
+;; `swiper'
+;;
+(vwe@lib--package 'swiper)
 
-(use-package yasnippet
-  :hook
-  (after-init . yas-global-mode)
-  :init
-  (setq yas-snippet-dirs (list (vwe@lib--path-vwe-etc "snippets")))
-  :config
-  (yas-reload-all)
+;;
+;; `yasnippet' include `yasnippet-snippets' `auto-yasnippet'
+;;
+(vwe@lib--package 'yasnippet
+				  (add-hook 'after-init-hook #'yas-global-mode)
+				  (progn
+					(yas-reload-all)
+					;;
+					;; `yasnippet-snippets'
+					;;
+					(vwe@lib--package 'yasnippet-snippets)
+					;;
+					;; `auto-yasnippet'
+					;;
+					(vwe@lib--package 'auto-yasnippet))
+				  (setq yas-snippet-dirs (list (vwe@lib--path-vwe-etc "snippets"))))
 
-  (use-package yasnippet-snippets
-    :after (yasnippet))
+;;
+;; `autoinsert'
+;;
+(vwe@lib--package 'autoinsert
+				  (add-hook 'after-init-hook #'auto-insert-mode)
+				  (define-auto-insert "\\.org$" ["default-org.org" (lambda () (when (fboundp 'yas-expand-snippet) (yas-expand-snippet (buffer-string) (point-min) (point-max))))])
+				  (setq auto-insert t
+						auto-insert-query nil
+						auto-insert-directory (vwe@lib--path-vwe-etc "templates")))
 
-  (use-package auto-yasnippet
-    :after (yasnippet)))
+;;
+;; `company'
+;;
+(vwe@lib--package 'company
+				  (add-hook 'prog-mode-hook #'global-company-mode)
+				  (progn
+					(vwe@lib--keymap-set company-search-map '(("C-n" company-select-next)
+															  ("C-p" company-select-previous)))
+					(vwe@lib--keymap-set company-active-map '(("C-n" company-select-next)
+															  ("C-p" company-select-previous)
+															  ("<tab>" company-complete-common-or-cycle)))
 
-(use-package autoinsert
-  :ensure nil
-  :hook
-  (after-init . auto-insert-mode)
-  :init
-  (setq auto-insert t
-		auto-insert-query nil
-		auto-insert-directory (vwe@lib--path-vwe-etc "templates"))
-  :config
-  (define-auto-insert "\\.org$" ["default-org.org" (lambda () (when (fboundp 'yas-expand-snippet) (yas-expand-snippet (buffer-string) (point-min) (point-max))))]))
+					;;
+					;; `company-prescient'
+					;;
+					(vwe@lib--package 'company-prescient (add-hook 'company-mode-hook #'company-prescient-mode))
+					;;
+					;; `company-quickhelp'
+					;;
+					(vwe@lib--package 'company-quickhelp (add-hook 'company-mode-hook #'company-quickhelp-mode)
+									  nil
+									  (setq company-quickhelp-delay 1.5))
+					;;
+					;; `company-quickhelp-terminal'
+					;;
+					(vwe@lib--package 'company-quickhelp-terminal (add-hook 'company-mode-hook #'company-quickhelp-terminal-mode))
+					;;
+					;; `company-box'
+					;;
+					(vwe@lib--package 'company-box (add-hook 'company-mode-hook #'company-box-mode)
+									  nil
+									  (setq company-box-enable-icon t
+											company-box-backends-colors nil
+											company-box-show-single-candidate t
+											company-box-max-candidates 50
+											company-box-doc-delay 1.5))
+					;;
+					;; `company-posframe'
+					;;
+					(vwe@lib--package 'company-posframe (add-hook 'prog-mode-hook #'company-posframe-mode)))
+				  (setq company-tooltip-align-annotations t
+						company-tooltip-limit 12
+						company-idle-delay 0
+						company-echo-delay (if (display-graphic-p) nil 0)
+						company-minimum-prefix-length 1
+						company-require-match nil
+						company-dabbrev-ignore-case nil
+						company-dabbrev-downcase nil
+						company-show-numbers t
+						company-frontends '(company-pseudo-tooltip-frontend company-echo-metadata-frontend)
+						company-backends '((company-files company-yasnippet company-keywords company-capf)
+										   (company-abbrev company-dabbrev))))
 
-(use-package company
-  :commands
-  company-abort
-  :hook
-  (prog-mode . global-company-mode)
-  :defines
-  (company-dabbrev-ignore-case company-dabbrev-downcase)
-  :bind
-  (:map company-search-map
-		("C-n" . company-select-next)
-		("C-p" . company-select-previous)
-		:map company-active-map
-		("C-p" . company-select-previous)
-		("C-n" . company-select-next)
-		("<tab>" . company-complete-common-or-cycle))
-  :init
-  (setq company-tooltip-align-annotations t
-        company-tooltip-limit 12
-        company-idle-delay 0
-        company-echo-delay (if (display-graphic-p) nil 0)
-        company-minimum-prefix-length 1
-        company-require-match nil
-        company-dabbrev-ignore-case nil
-        company-dabbrev-downcase nil
-		company-show-numbers t
-        company-frontends '(company-pseudo-tooltip-frontend company-echo-metadata-frontend)
-		company-backends '((company-files company-yasnippet company-keywords company-capf)
-						   (company-abbrev company-dabbrev)))
-  :config
-  ;; 排序与过滤
-  (use-package company-prescient
-	:init
-	(company-prescient-mode 1))
+;;
+;; `hungry-delete' 删除多余的空格
+;;
+(vwe@lib--package 'hungry-delete
+				  (add-hook 'after-init-hook #'global-hungry-delete-mode)
+				  (setq-default hungry-delete-chars-to-skip " \t\f\v"))
 
-  ;; 显示文档说明
-  (use-package company-quickhelp
-	:defines company-quickhelp-delay
-	:hook
-	(global-company-mode . company-quickhelp-mode)
-	:bind
-	(:map company-active-map
-          ([remap company-show-doc-buffer] . company-quickhelp-manual-begin))
-	:init
-	(setq company-quickhelp-delay 1.5))
+;;
+;; `expand-region' 快捷选中
+;;
+(vwe@lib--package 'expand-region)
 
-  (use-package company-quickhelp-terminal
-	:after
-	company-quickhelp
-	:config
-	(company-quickhelp-terminal-mode 1)))
+;;
+;; `togo-chg' 跳转到最后一次修改
+;;
+(vwe@lib--package 'goto-chg)
 
-;; 补全显示图标
-(use-package company-box
-  :hook
-  (company-mode . company-box-mode)
-  :init
-  (setq company-box-enable-icon t
-		company-box-backends-colors nil
-		company-box-show-single-candidate t
-		company-box-max-candidates 50
-		company-box-doc-delay 1.5))
+;;
+;; `mwim' 根据代码移动光标
+;;
+(vwe@lib--package 'mwim)
 
-;; 补全弹出框
-(use-package company-posframe
-  :hook
-  (prog-mode . company-posframe-mode)
-  :config
-  (company-posframe-mode 1))
+;;
+;; `drag-stuff' 拖拽行、区域、字
+;;
+(vwe@lib--package 'drag-stuff
+				  (add-hook 'after-init-hook #'drag-stuff-global-mode)
+				  (drag-stuff-define-keys))
 
-;; 删除多余的空格
-(use-package hungry-delete
-  :hook
-  (after-init . global-hungry-delete-mode)
-  :config
-  (setq-default hungry-delete-chars-to-skip " \t\f\v"))
+;;
+;; `goto-line-preview' 预览指定行
+;;
+(vwe@lib--package 'goto-line-preview)
 
-;; 快捷选中
-(use-package expand-region)
+;;
+;; `smartparens'
+;;
+(vwe@lib--package 'smartparens
+				  (add-hook 'prog-mode-hook #'smartparens-mode)
+				  (progn
+					(sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
+					(sp-local-pair 'lisp-interaction-mode "'" nil :actions nil)
+					(sp-local-pair 'emacs-lisp-mode "`" nil :actions nil)
+					(sp-local-pair 'lisp-interaction-mode "`" nil :actions nil)
+					(sp-local-pair 'web-mode "<" ">")))
 
-;; 跳转到最后一次修改
-(use-package goto-chg)
+;;
+;; `paren-face'
+;;
+(vwe@lib--package 'paren-face)
 
-;; 根据代码移动光标
-(use-package mwim)
+;;
+;; `rainbow-delimiters' 彩虹括号
+;;
+(vwe@lib--package 'rainbow-delimiters
+				  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
-;; 拖拽行、区域、字
-(use-package drag-stuff
-  :commands drag-stuff-define-keys
-  :hook
-  (after-init . drag-stuff-global-mode)
-  :config
-  (drag-stuff-define-keys))
+;;
+;; `iedit' 批量编辑
+;;
+(vwe@lib--package 'iedit
+				  (define-key isearch-mode-map	(kbd "C-;") #'iedit-mode-from-isearch))
 
-;; 预览指定行
-(use-package goto-line-preview)
+;;
+;; `multiple-cursors' 多个光标
+;;
+(vwe@lib--package 'multiple-cursors
+				  (setq mc/list-file (vwe@lib--path-cache "mc/.mc-lists.el" t)))
 
-;; 括号
-(use-package smartparens
-  :hook
-  (prog-mode . smartparens-mode)
-  :config
-  (smartparens-mode t)
-  (sp-local-pair 'emacs-lisp-mode "'" nil :actions nil)
-  (sp-local-pair 'lisp-interaction-mode "'" nil :actions nil)
-  (sp-local-pair 'emacs-lisp-mode "`" nil :actions nil)
-  (sp-local-pair 'lisp-interaction-mode "`" nil :actions nil)
-  (sp-local-pair 'web-mode "<" ">"))
+;;
+;; `comment-dwim-2' 注释
+;;
+(vwe@lib--package 'comment-dwim-2)
 
-(use-package paren-face)
+;;
+;; `clean-aindent-mode' 清除未使用的空格
+;;
+(vwe@lib--package 'clean-aindent-mode
+				  (add-hook 'prog-mode-hook #'clean-aindent-mode)
+				  nil
+				  (setq clean-aindent-is-simple-indent t))
 
-;; 彩虹括号
-(use-package rainbow-delimiters
-  :hook
-  (prog-mode . rainbow-delimiters-mode)
-  :config
-  (rainbow-delimiters-mode t))
+;;
+;; `string-inflection' 字符串大小写切换
+;;
+(vwe@lib--package 'string-inflection)
 
-;; 批量编辑
-(use-package iedit
-  :bind
-  (:map isearch-mode-map
-		("C-;" . iedit-mode-from-isearch)))
+;;
+;; `diminish'
+;;
+(vwe@lib--package 'diminish)
 
-;; 多个光标
-(use-package multiple-cursors
-  :init
-  (setq mc/list-file (vwe@lib--path-cache "mc/.mc-lists.el" t)))
+;;
+;; `esup' test startup time
+;;
+(vwe@lib--package 'esup
+				  (setq esup-child-max-depth 0))
 
-;; 注释
-(use-package comment-dwim-2)
+;;
+;; `url-cache'
+;;
+(vwe@lib--package 'url-cache
+				  nil nil
+				  (setq url-cache-directory (vwe@lib--path-cache "url/cache"))
+				  nil nil t)
 
-;; 清除未使用的空格
-(use-package clean-aindent-mode
-  :hook
-  (prog-mode . clean-aindent-mode)
-  :init
-  (setq clean-aindent-is-simple-indent t))
+;;
+;; `format-all'
+;;
+(vwe@lib--package 'format-all
+				  (add-hook 'prog-mode-hook #'format-all-mode))
 
-;; 字符串大小写切换
-(use-package string-inflection)
+;;
+;; `treemacs'
+;;
+(vwe@lib--package 'treemacs
+				  nil
+				  (progn
+					(setq treemacs-collapse-dirs                 (if treemacs-python-executable 3 0)
+						  treemacs-deferred-git-apply-delay      0.5
+						  treemacs-display-in-side-window        t
+						  treemacs-eldoc-display                 t
+						  treemacs-file-event-delay              5000
+						  treemacs-file-follow-delay             0.2
+						  treemacs-follow-after-init             t
+						  treemacs-git-command-pipe              ""
+						  treemacs-goto-tag-strategy             'refetch-index
+						  treemacs-indentation                   2
+						  treemacs-indentation-string            " "
+						  treemacs-is-never-other-window         nil
+						  treemacs-max-git-entries               5000
+						  treemacs-missing-project-action        'ask
+						  treemacs-no-png-images                 nil
+						  treemacs-no-delete-other-windows       t
+						  treemacs-project-follow-cleanup        nil
+						  treemacs-persist-file                  (vwe@lib--path-cache "treemacs/treemacs-persisst" t)
+						  treemacs-position                      'left
+						  treemacs-recenter-distance             0.1
+						  treemacs-recenter-after-file-follow    t
+						  treemacs-recenter-after-tag-follow     nil
+						  treemacs-recenter-after-project-jump   'always
+						  treemacs-recenter-after-project-expand 'on-distance
+						  treemacs-show-cursor                   nil
+						  treemacs-show-hidden-files             t
+						  treemacs-silent-filewatch              nil
+						  treemacs-silent-refresh                nil
+						  treemacs-sorting                       'alphabetic-desc
+						  treemacs-space-between-root-nodes      t
+						  treemacs-tag-follow-cleanup            t
+						  treemacs-tag-follow-delay              1.5
+						  treemacs-width                         25)
 
-(use-package diminish)
+					(treemacs-resize-icons 45)
+					(treemacs-tag-follow-mode t)
+					(treemacs-git-mode t)
+					(treemacs-follow-mode t)
+					(treemacs-filewatch-mode t)
+					(treemacs-fringe-indicator-mode t)
+					(pcase (cons (not (null (executable-find "git"))) (not (null treemacs-python-executable)))
+					  (`(t . t) (treemacs-git-mode 'deferred))
+					  (`(t . _) (treemacs-git-mode 'simple)))))
 
-;; show battery
-(use-package battery
-  :ensure nil)
+;;
+;; `command-log-mode'
+;;
+(vwe@lib--package 'command-log-mode)
 
-;; test startup time
-(use-package esup
-  :init
-  (setq esup-child-max-depth 0))
+;;
+;; `browse-kill-ring'
+;;
+(vwe@lib--package 'browse-kill-ring
+				  nil
+				  (define-key browse-kill-ring-mode-map (kbd "i") #'browse-kill-ring-insert-move-and-quit)
+				  (setq browse-kill-ring-highlight-current-entry t
+						browse-kill-ring-highlight-inserted-item 'pulse))
 
-;; asynchronous processing
-(use-package async)
+;;
+;; `undo-tree'
+;;
+(vwe@lib--package 'undo-tree
+				  (add-hook 'after-init-hook #'global-undo-tree-mode)
+				  (dolist (dir undo-tree-history-directory-alist)
+					(push (expand-file-name (cdr dir)) recentf-exclude))
+				  (setq undo-tree-visualizer-timestamps t
+						undo-tree-visualizer-diff t
+						undo-tree-enable-undo-in-region nil
+						undo-tree-auto-save-history nil
+						undo-tree-history-directory-alist `(("." . ,(vwe@lib--path-cache "undotree/hist")))))
 
-;; URL cache
-(use-package url-cache
-  :ensure nil
-  :init
-  (setq url-cache-directory (vwe@lib--path-cache "url/cache")))
+;;
+;; `sudo-edit'
+;;
+(vwe@lib--package 'sudo-edit)
 
-(use-package format-all
-  :diminish
-  (format-all-mode . nil)
-  :hook
-  (prog-mode . format-all-mode))
+;;
+;; `exec-path-from-shell'
+;;
+(vwe@lib--package 'exec-path-from-shell
+				  nil nil
+				  (setq exec-path-from-shell-check-startup-files nil
+						exec-path-from-shell-variables '("PATH")
+						exec-path-from-shell-arguments nil))
 
-(use-package treemacs
-  :config
-  (setq treemacs-collapse-dirs                 (if treemacs-python-executable 3 0)
-		treemacs-deferred-git-apply-delay      0.5
-		treemacs-display-in-side-window        t
-		treemacs-eldoc-display                 t
-		treemacs-file-event-delay              5000
-		treemacs-file-follow-delay             0.2
-		treemacs-follow-after-init             t
-		treemacs-git-command-pipe              ""
-		treemacs-goto-tag-strategy             'refetch-index
-		treemacs-indentation                   2
-		treemacs-indentation-string            " "
-		treemacs-is-never-other-window         nil
-		treemacs-max-git-entries               5000
-		treemacs-missing-project-action        'ask
-		treemacs-no-png-images                 nil
-		treemacs-no-delete-other-windows       t
-		treemacs-project-follow-cleanup        nil
-		treemacs-persist-file                  (vwe@lib--path-cache "treemacs/treemacs-persisst" t)
-		treemacs-position                      'left
-		treemacs-recenter-distance             0.1
-		treemacs-recenter-after-file-follow    t
-		treemacs-recenter-after-tag-follow     nil
-		treemacs-recenter-after-project-jump   'always
-		treemacs-recenter-after-project-expand 'on-distance
-		treemacs-show-cursor                   nil
-		treemacs-show-hidden-files             t
-		treemacs-silent-filewatch              nil
-		treemacs-silent-refresh                nil
-		treemacs-sorting                       'alphabetic-desc
-		treemacs-space-between-root-nodes      t
-		treemacs-tag-follow-cleanup            t
-		treemacs-tag-follow-delay              1.5
-		treemacs-width                         25)
+;;
+;; `tramp'
+;;
+(vwe@lib--package 'tramp
+				  nil nil
+				  (setq tramp-auto-save-directory (vwe@lib--path-cache "tramp")
+						tramp-persistency-file-name (vwe@lib--path-cache "tramp/tramp" t)
+						tramp-backup-directory-alist (vwe@lib--path-cache "tramp")))
 
-  (treemacs-resize-icons 45)
-  (treemacs-tag-follow-mode t)
-  (treemacs-git-mode t)
-  (treemacs-follow-mode t)
-  (treemacs-filewatch-mode t)
-  (treemacs-fringe-indicator-mode t)
-  (pcase (cons (not (null (executable-find "git"))) (not (null treemacs-python-executable)))
-	(`(t . t) (treemacs-git-mode 'deferred))
-	(`(t . _) (treemacs-git-mode 'simple))))
+;;
+;; `bookmark'
+;;
+(vwe@lib--package 'bookmark
+				  (setq bookmark-annotation-name vwe@custom--user-name
+						bookmark-save-flag 1
+						bookmark-default-file (vwe@lib--path-cache "bookmark/bookmarks" t))
+				  (defadvice bookmark-jump (after bookmark-jump activate)
+					(let ((latest (bookmark-get-bookmark bookmark)))
+					  (setq bookmark-alist (delq latest bookmark-alist))
+					  (add-to-list 'bookmark-alist latest))))
 
-(use-package command-log-mode)
+;;
+;; `dired'
+;;
+(vwe@lib--package 'dired
+				  (setq dired-recursive-deletes 'always
+						dired-recursive-copies 'always
+						dired-dwin-target 1)
+				  (progn
+					(put 'dired-find-alternate-file 'disabled nil)
+					;;
+					;; `diredfl' 丰富dired颜色
+					;;
+					(vwe@lib--package 'diredfl
+									  (diredfl-global-mode 1))
 
-(use-package browse-kill-ring
-  :diminish
-  (browse-kill-ring-mode . nil)
-  :bind
-  (:map browse-kill-ring-mode-map
-		("i" . browse-kill-ring-insert-move-and-quit))
-  :init
-  (setq browse-kill-ring-highlight-current-entry t
-		browse-kill-ring-highlight-inserted-item 'pulse))
+					;;
+					;; `find-by-pinyin-dirred' 拼音搜索
+					;;
+					(vwe@lib--package 'find-by-pinyin-dired)
 
-(use-package undo-tree
-  :diminish
-  (undo-tree-mode . nil)
-  :hook
-  (after-init . global-undo-tree-mode)
-  :init
-  (setq undo-tree-visualizer-timestamps t
-		undo-tree-visualizer-diff t
-		undo-tree-enable-undo-in-region nil
-		undo-tree-auto-save-history nil
-		undo-tree-history-directory-alist `(("." . ,(vwe@lib--path-cache "undotree/hist"))))
-  :config
-  (dolist (dir undo-tree-history-directory-alist)
-	(push (expand-file-name (cdr dir)) recentf-exclude)))
+					;;
+					;; `dired-filter'
+					;;
+					(vwe@lib--package 'dired-filter
+									  (add-hook 'dired-mode-hook #'dired-filter-group-mode)
+									  nil
+									  (setq dired-filter-group-saved-groups
+											(quote
+											 (("default"
+											   ("Lisp" (extension . "el"))
+											   ("C" (extension "c" "cpp" "h" "hpp"))
+											   ("Java" (extension "java" "class"))
+											   ("Python" (extension "py" "pyc"))
+											   ("Ruby" (extension . "rb"))
+											   ("Web" (extension "js" "html" "css"))
+											   ("Json" (extension . "json"))
+											   ("Rust" (extension . "rs"))
+											   ("Shell" (extension . "sh"))
+											   ("Golang" (extension . "go"))
+											   ("Assembly" (extension "asm" "lst" "s"))
+											   ("PDF" (extension . "pdf"))
+											   ("LaTeX" (extension "tex" "bib"))
+											   ("Org" (extension . "org"))
+											   ("Log" (extension . "log"))
+											   ("Profile" (extension "xml" "xsd" "yaml" "yml" "config" "conf"))
+											   ("Markdown" (extension "md" "markdown" "mkd"))
+											   ("Archives" (extension "zip" "rar" "gz" "bz2" "tar"))
+											   ("Media" (extension "mp4" "avi" "wmv" "flv" "mov" "3gp" "rmvb" "mkv" "flvc" "mp3" "aac" "ape"))
+											   ("Picture" (extension "jpg" "jepg" "png" "gif"))))))
+									  t nil nil)
 
-(use-package sudo-edit)
+					;;
+					;; `dired-collapse' 如果目录只有一级或一个文件直接选中
+					;;
+					(vwe@lib--package 'dired-collapse
+									  (add-hook 'dired-mode-hook #'dired-collapse-mode)))
+				  nil nil nil t)
 
-(use-package exec-path-from-shell
-  :init
-  (setq exec-path-from-shell-check-startup-files nil
-		exec-path-from-shell-variables '("PATH")
-		exec-path-from-shell-arguments nil))
+;;
+;; `ediff'
+;;
+(vwe@lib--package 'ediff
+				  (setq ediff-window-setup-function 'ediff-setup-windows-plain
+						ediff-split-window-function 'split-window-horizontally
+						ediff-merge-split-window-function 'split-window-horizontally))
 
-(use-package tramp
-  :ensure nil
-  :init
-  (setq tramp-auto-save-directory (vwe@lib--path-cache "tramp")
-		tramp-persistency-file-name (vwe@lib--path-cache "tramp/tramp" t)
-		tramp-backup-directory-alist (vwe@lib--path-cache "tramp")))
+;;
+;; `diff-hl'
+;;
+(vwe@lib--package 'diff-hl
+				  (progn (add-hook 'prog-mode-hook #'global-diff-hl-mode)
+						 (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)))
 
-(use-package bookmark
-  :ensure nil
-  :init
-  (setq bookmark-annotation-name vwe@custom--user-name
-		bookmark-save-flag 1
-		bookmark-default-file (vwe@lib--path-cache "bookmark/bookmarks" t))
-  :config
-  (defadvice bookmark-jump (after bookmark-jump activate)
-    (let ((latest (bookmark-get-bookmark bookmark)))
-      (setq bookmark-alist (delq latest bookmark-alist))
-      (add-to-list 'bookmark-alist latest))))
+;;
+;; `mum-key'
+;;
+(vwe@lib--package 'mum-key
+				  (add-hook 'after-init-hook #'mum-key-mode)
+				  nil nil t
+				  (vwe@lib--path-vwe-site-lisp "mum/mum-key"))
 
-(use-package dired
-  :ensure nil
-  :init
-  (setq dired-recursive-deletes 'always
-		dired-recursive-copies 'always
-		dired-dwin-target 1)
-  :config
-  (put 'dired-find-alternate-file 'disabled nil)
-  ;; 丰富dired颜色
-  (use-package diredfl
-    :init
-    (diredfl-global-mode 1))
+;;
+;; `mum-editor'
+;;
+(vwe@lib--package 'mum-editor
+				  (progn
+					(autoload 'mum-editor-mode (vwe@lib--path-vwe-site-lisp "mum/mum-editor/mum-editor.el" t) "Mum editor mode." t t)
+					(add-hook 'after-init-hook  #'mum-editor-mode))
+				  nil nil nil
+				  (vwe@lib--path-vwe-site-lisp "mum/mum-editor"))
 
-  ;; 拼音搜索
-  (use-package find-by-pinyin-dired)
+;;
+;; `mum-term'
+;;
+(vwe@lib--package 'mum-term
+				  (autoload 'mum-terminal (vwe@lib--path-vwe-site-lisp "mum/mum-term/mum-term.el" t) "Mum term mode." t t)
+				  nil nil nil
+				  (vwe@lib--path-vwe-site-lisp "mum/mum-term"))
 
-  (use-package dired-filter
-	:hook
-	(dired-mode . dired-filter-group-mode)
-	:init
-	(setq dired-filter-group-saved-groups
-		  (quote
-		   (("default"
-			 ("Lisp" (extension . "el"))
-			 ("C" (extension "c" "cpp" "h" "hpp"))
-			 ("Java" (extension "java" "class"))
-			 ("Python" (extension "py" "pyc"))
-			 ("Ruby" (extension . "rb"))
-			 ("Web" (extension "js" "html" "css"))
-			 ("Json" (extension . "json"))
-			 ("Rust" (extension . "rs"))
-			 ("Shell" (extension . "sh"))
-			 ("Golang" (extension . "go"))
-			 ("Assembly" (extension "asm" "lst" "s"))
-			 ("PDF" (extension . "pdf"))
-			 ("LaTeX" (extension "tex" "bib"))
-			 ("Org" (extension . "org"))
-			 ("Log" (extension . "log"))
-			 ("Profile" (extension "xml" "xsd" "yaml" "yml" "config" "conf"))
-			 ("Markdown" (extension "md" "markdown" "mkd"))
-			 ("Archives" (extension "zip" "rar" "gz" "bz2" "tar"))
-			 ("Media" (extension "mp4" "avi" "wmv" "flv" "mov" "3gp" "rmvb" "mkv" "flvc" "mp3" "aac" "ape"))
-			 ("Picture" (extension "jpg" "jepg" "png" "gif")))))))
-
-  ;; 如果目录只有一级或一个文件直接选中
-  (use-package dired-collapse
-	:hook
-	(dired-mode . dired-collapse-mode)))
-
-(use-package ediff
-  :ensure nil
-  :hook
-  (ediff-quit . winner-undo)
-  :init
-  (setq ediff-window-setup-function 'ediff-setup-windows-plain
-		ediff-split-window-function 'split-window-horizontally
-		ediff-merge-split-window-function 'split-window-horizontally))
-
-(use-package diff-hl
-  :diminish
-  (diff-hl-mode . nil)
-  :hook
-  ((prog-mode . global-diff-hl-mode)
-   (magit-post-refresh-hook . diff-hl-magit-post-refresh)))
-
-(use-package mum-key
-  :load-path
-  (lambda () (vwe@lib--path-vwe-site-lisp "mum/mum-key"))
-  :hook
-  (after-init . mum-key-mode))
-
-(use-package mum-editor
-  :load-path
-  (lambda () (vwe@lib--path-vwe-site-lisp "mum/mum-editor"))
-  :hook
-  (after-init . (lambda () (vwe@lib--package-load 'mum-editor) (mum-editor-mode))))
-
-(use-package mum-term
-  :load-path
-  (lambda () (vwe@lib--path-vwe-site-lisp "mum/mum-term"))
-  :hook
-  (after-init . (lambda () (vwe@lib--package-load 'mum-term))))
-
-(use-package imenu-list)
+;;
+;; `imenu-list'
+;;
+(vwe@lib--package 'imenu-list)
 
 (provide 'vwe-general)
 ;;; vwe-general.el ends here

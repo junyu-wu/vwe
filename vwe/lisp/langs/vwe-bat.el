@@ -1,9 +1,9 @@
-;;; vwe-ahk.el --- Autohotkey dev        -*- lexical-binding: t; -*-
+;;; vwe-bat.el --- Windows Batch-file editing -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2020  WuJunyu
+;; Copyright (C) 2015  Wu Junyu
 
-;; Author: WuJunyu <vistar_w@hotmail.com>
-;; Keywords:
+;; Author: Wu Junyu <vistar_w@hotmail.com.com>
+;; Keywords: files
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -24,7 +24,14 @@
 
 ;;; Code:
 
-(use-package ahk-mode)
+;;
+;; `bat-mode' Windows批处理文件的编辑
+;;
+(vwe@lib--package 'bat-mode
+				  nil
+				  (progn
+					(vwe@lib--package 'bmx-mode)
+					(bmx-mode t)))
 
-(provide 'vwe-ahk)
-;;; vwe-ahk.el ends here
+(provide 'vwe-bat)
+;;; vwe-bat.el ends here

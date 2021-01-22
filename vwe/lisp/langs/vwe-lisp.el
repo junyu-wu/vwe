@@ -30,25 +30,29 @@
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
-(use-package elisp-mode
-  :ensure nil
-  :hook
-  ((emacs-lisp-mode . (lambda ()
-						(add-to-list (make-local-variable 'company-backends)
-									 '(company-elisp)))))
-  :config
-  ;; 高亮elisp符号
-  (use-package highlight-defined
-	:hook
-	(emacs-lisp-mode . highlight-defined-mode)
-	:init
-	(setq highlight-defined-face-use-itself t))
 
-  ;; 根据上下文扩展帮助信息
-  (use-package helpful
-	:bind
-	(([remap describe-key] . helpful-key)
-	 ([remap describe-symbol] . helpful-symbol))))
+;;
+;; `elisp-mode'
+;;
+(vwe@lib--package 'elisp-mode
+				  (add-hook 'emacs-lisp-mode-hook (lambda () (add-to-list (make-local-variable 'company-backends) '(company-elisp))))
+				  nil nil nil nil t)
+
+;;
+;; `highlight-defined' 高亮elisp符号
+;;
+(vwe@lib--package 'highlight-defined
+				  (add-hook 'emacs-lisp-mode-hook #'highlight-defined-mode)
+				  nil
+				  (setq highlight-defined-face-use-itself t))
+
+;;
+;; `helpful' 根据上下文扩展帮助信息
+;;
+(vwe@lib--package 'helpful
+				  nil
+				  (vwe@lib--keymap-set emacs-lisp-mode-map '(([remap describe-key] helpful-key)
+															 ([remap describe-symbol] helpful-symbol))))
 
 (provide 'vwe-lisp)
 ;;; vwe-lisp.el ends here

@@ -55,33 +55,34 @@
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
-(use-package markdown-mode
-  :mode
-  (("\\.md\\'" . gfm-mode))
-  :hook
-  ((markdown-mode . flyspell-mode)
-   (markdown-mode . auto-fill-mode))
-  :bind
-  (:map markdown-mode-map
-		("M-C-k" . vwe@lib--buffer-kill-current))
-  :init
-  (setq markdown-enable-wiki-links t
-		markdown-italic-underscore t
-		markdown-asymmetric-header t
-		markdown-make-gfm-checkboxes-buttons t
-		markdown-gfm-uppercase-checkbox t
-		markdown-fontify-code-blocks-natively t
-		markdown-enable-math t
-		markdown-command "pandoc"
-		markdown-gfm-additional-languages "Mermaid" ;; 画图 https://mermaid-js.github.io/mermaid/
-		markdown-content-type "application/xhtml+xml"
-		markdown-css-paths
-		'("https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css"
-		  "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/github.min.css")
-		markdown-xhtml-header-content "vwe@md--make-html-header")
-  :config
-  ;; 创建目录
-  (use-package markdown-toc))
+
+;;
+;; `markdown-mode'
+;;
+(vwe@lib--package 'markdown-mode
+				  (progn
+					(push '("\\.md\\'" . gfm-mode) auto-mode-alist)
+					(add-hook 'markdown-mode-hook #'auto-fill-mode))
+				  (progn
+					;;
+					;; `markdown-toc'
+					;;
+					(vwe@lib--package 'markdown-toc)
+					(define-key markdown-mode-map (kbd "M-C-k") #'vwe@lib--buffer-kill-current))
+				  (setq markdown-enable-wiki-links t
+						markdown-italic-underscore t
+						markdown-asymmetric-header t
+						markdown-make-gfm-checkboxes-buttons t
+						markdown-gfm-uppercase-checkbox t
+						markdown-fontify-code-blocks-natively t
+						markdown-enable-math t
+						markdown-command "pandoc"
+						markdown-gfm-additional-languages "Mermaid" ;; 画图 https://mermaid-js.github.io/mermaid/
+						markdown-content-type "application/xhtml+xml"
+						markdown-css-paths
+						'("https://cdn.jsdelivr.net/npm/github-markdown-css/github-markdown.min.css"
+						  "https://cdn.jsdelivr.net/gh/highlightjs/cdn-release/build/styles/github.min.css")
+						markdown-xhtml-header-content "vwe@md--make-html-header"))
 
 (provide 'vwe-markdown)
 ;;; vwe-markdown.el ends here

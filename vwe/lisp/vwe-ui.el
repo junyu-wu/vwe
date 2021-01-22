@@ -62,84 +62,70 @@
 ;; ***************************************************************************
 (vwe@ui--init)
 
-(use-package hl-line
-  :ensure nil
-  :hook
-  (after-init . global-hl-line-mode))
+;;
+;; `hl-line'
+;;
+(add-hook 'after-init-hook #'global-hl-line-mode)
 
-(use-package whitespace
-  :ensure nil
-  :diminish
-  (global-whitespace-mode . nil)
-  :hook
-  (after-init . global-whitespace-mode)
-  :init
-  (setq whitespace-line-column nil
-		whitespace-style '(face line lines-tail)))
+;;
+;; `whitespace'
+;;
+(vwe@lib--package 'whitespace
+				  (add-hook 'after-init-hook #'global-whitespace-mode)
+				  nil
+				  (setq whitespace-line-column nil
+						whitespace-style '(lines lines-tail)))
 
-;; 显示缩进样式
-(use-package highlight-indent-guides
-  :diminish
-  (highlight-indent-guides-mode . nil)
-  :hook
-  (prog-mode . highlight-indent-guides-mode)
-  :init
-  (setq highlight-indent-guides-method 'character
-		highlight-indent-guides-character ?\|
-		highlight-indent-guides-responsive 'top)
-  :config
-  (defun vwe@pkg--highlighter-func (level responsive display)
-	(if (> 1 level)
-		nil
-	  (highlight-indent-guides--highlighter-default
-	   level responsive display)))
-  (setq highlight-indent-guides-highlighter-function
-		'vwe@pkg--highlighter-func))
+;;
+;; `highlight-indent-guides' 显示缩进样式
+;;
+(vwe@lib--package 'highlight-indent-guides
+				  (add-hook 'prog-mode-hook #'highlight-indent-guides-mode)
+				  nil
+				  (defun vwe@pkg--highlighter-func (level responsive display)
+					"Highlighter function, whit LEVEL RESPONSIVE and DISPLAY."
+					(if (> 1 level)
+						nil
+					  (highlight-indent-guides--highlighter-default level responsive display)))
+				  (setq highlight-indent-guides-method 'character
+						highlight-indent-guides-character ?\|
+						highlight-indent-guides-responsive 'top
+						highlight-indent-guides-highlighter-function 'vwe@pkg--highlighter-func))
 
-(use-package symbol-overlay
-  :diminish
-  (symbol-overlay-mode . nil)
-  :hook
-  (prog-mode . symbol-overlay-mode)
-  :init
-  (setq symbol-overlay-idle-time 0.1)
-  :config
-  (defun vwe@pkg--symbol-overlay-turn-off (&rest _)
-	"Turn off symbol highlighting."
-	(interactive)
-	(symbol-overlay-mode -1))
-  (defun vwe@pkg--symbol-overlay-turn-on (&rest _)
-	"Turn on symbol highlighting."
-	(interactive)
-	(when (derived-mode-p 'prog-mode)
-	  (symbol-overlay-mode 1)))
+;;
+;; `symbol-overlay'
+;;
+(vwe@lib--package 'symbol-overlay
+				  (add-hook 'prog-mode-hook #'symbol-overlay-mode)
+				  nil
+				  (progn
+					(setq symbol-overlay-idle-time 0.1)
+					(defun vwe@pkg--symbol-overlay-turn-off (&rest _)
+					  "Turn off symbol highlighting."
+					  (interactive)
+					  (symbol-overlay-mode -1))
+					(defun vwe@pkg--symbol-overlay-turn-on (&rest _)
+					  "Turn on symbol highlighting."
+					  (interactive)
+					  (when (derived-mode-p 'prog-mode)
+						(symbol-overlay-mode 1)))
 
-  (advice-add #'set-mark :after #'vwe@pkg--symbol-overlay-turn-off)
-  (advice-add #'deactivate-mark :after #'vwe@pkg--symbol-overlay-turn-on))
+					(advice-add #'set-mark :after #'vwe@pkg--symbol-overlay-turn-off)
+					(advice-add #'deactivate-mark :after #'vwe@pkg--symbol-overlay-turn-on)))
 
-(use-package hl-todo
-  :diminish
-  (hl-todo-mode . nil)
-  :hook
-  (after-init . global-hl-todo-mode)
-  :config
-  (dolist (keyword '("BUG" "DEFECT" "ISSUE"))
-	(cl-pushnew `(,keyword . ,(face-foreground 'error))
-				hl-todo-keyword-faces))
-  (dolist (keyword '("WORKAROUND" "HACK" "TRICK"))
-	(cl-pushnew `(,keyword . ,(face-foreground 'warning))
-				hl-todo-keyword-faces)))
+;;
+;; `mum-mark'
+;;
+(vwe@lib--package 'mum-mark
+				  (progn
+					(autoload 'mum-mark-mode (vwe@lib--path-vwe-site-lisp "mum/mum-mark/mum-mark.el" t) "Mum mark mode" t t)
+					(add-hook 'after-init-hook #'mum-mark-mode))
+				  nil nil nil (vwe@lib--path-vwe-site-lisp "mum/mum-mark"))
 
-(use-package mum-mark
-  :load-path
-  (lambda ()
-	(vwe@lib--path-vwe-site-lisp "mum/mum-mark"))
-  :hook
-  (after-init . mum-mark-mode))
-
-(use-package all-the-icons
-  :init
-  (setq inhibit-compacting-font-caches t))
+;;
+;; `all-the-icons'
+;;
+(vwe@lib--package 'all-the-icons)
 
 (provide 'vwe-ui)
 ;;; vwe-ui.el ends here
