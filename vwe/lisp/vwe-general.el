@@ -164,6 +164,15 @@ MINI pop frame or minibuffer."
   								 ("Mesasge" (or (mode . message-mode) (mode . bbdb-mode) (mode . mail-mode) (mode . gnus-group-mode) (mode . gnus-summary-mode) (mode . gnus-article-mode) (name . "^\\.bbdb$") (name . "^\\.newsrc-dribble"))))))))
 
 ;;
+;; `transient'
+;;
+(vwe@lib--package 'transient
+				  nil nil
+				  (setq transient-history-file (vwe@lib--path-cache "transient/history.el" t)
+						transient-levels-file (vwe@lib--path-cache "transient/levels.el" t)
+						transient-values-file (vwe@lib--path-cache "transient/values.el" t)))
+
+;;
 ;; `htmlize' buffer文本转换为html
 ;;
 (vwe@lib--package 'htmlize)

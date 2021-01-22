@@ -21,9 +21,11 @@
 ;;; Commentary:
 
 ;;; Code:
+
 (push (expand-file-name "vwe/lisp" user-emacs-directory) load-path)
+
 ;;
-;; init before
+;; init before include vwe lib and vwe customize define
 ;;
 (require 'vwe-lib)
 (require 'vwe-customize)
@@ -39,14 +41,17 @@
 		  (vwe@lib--file-delete (vwe@lib--path-emacs.d "") vwe@custom--reset-ignore-file-list))
 	  (error))))
 
-(cond ((vwe@lib--found-custom-arg "-vq") (message "vwe feature not load."))
+(cond ((vwe@lib--found-custom-arg "-vq") (message "vwe feature config ignore load."))
 	  ((vwe@lib--found-custom-arg "-base") (progn
 											 (require 'vwe-base)
 											 (require 'vwe-ui)
 											 (require 'vwe-theme)
 											 (require 'vwe-layout)
-											 (message "vwe base init.")))
+											 (message "vwe base config init.")))
 	  (t (progn
+		   ;;
+		   ;; init ui theme layout and general
+		   ;;
 		   (require 'vwe-base)
 		   (require 'vwe-ui)
 		   (require 'vwe-theme)
@@ -68,7 +73,7 @@
 		   ;; inti misc
 		   ;;
 		   (require 'vwe-misc)
-		   (message "vwe all init."))))
+		   (message "vwe all config init."))))
 
 ;;
 ;; init keybindings
