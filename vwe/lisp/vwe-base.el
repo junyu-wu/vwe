@@ -116,6 +116,14 @@ SOURCE-NAME is source name."
 (defun vwe@base--deamon-init ()
   "Deamon init."
   (interactive)
+  (add-hook 'vwe@custom--deamon-create-frame-after-hook #'vwe@base--package-init)
+  (add-hook 'vwe@custom--deamon-create-frame-after-hook #'vwe@base--custom-file-init)
+  (add-hook 'vwe@custom--deamon-create-frame-after-hook #'vwe@base--gc-init)
+  (add-hook 'vwe@custom--deamon-create-frame-after-hook #'vwe@base--encoding-init)
+  (add-hook 'vwe@custom--deamon-create-frame-after-hook #'vwe@base--frame-init)
+  (add-hook 'vwe@custom--deamon-create-frame-after-hook #'vwe@base--font-init)
+  (add-hook 'vwe@custom--deamon-create-frame-after-hook #'vwe@base--server-init)
+  (add-hook 'vwe@custom--deamon-create-frame-after-hook #'vwe@base--debug-init)
   (run-hooks 'vwe@custom--deamon-create-frame-after-hook))
 
 (defun vwe@base--gc-init ()
@@ -170,8 +178,8 @@ SOURCE-NAME is source name."
   (vwe@base--frame-init)
   (vwe@base--font-init)
   (vwe@base--server-init)
-  (vwe@base--deamon-init)
   (vwe@base--debug-init)
+  (vwe@base--deamon-init)
 
   (add-hook 'emacs-startup-hook #'vwe@lib--sys-startup-info)
   (add-hook 'before-save-hook  #'delete-trailing-whitespace)
