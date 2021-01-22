@@ -31,27 +31,36 @@
 ;;
 ;; init emacs
 ;;
-(require 'vwe-base)
-(require 'vwe-ui)
-(require 'vwe-theme)
-(require 'vwe-layout)
-(require 'vwe-general)
+(cond ((vwe@lib--found-custom-arg "-vq") (message "vwe feature not load."))
+	  ((vwe@lib--found-custom-arg "-base") (progn
+											 (require 'vwe-base)
+											 (require 'vwe-ui)
+											 (require 'vwe-theme)
+											 (require 'vwe-layout)
+											 (message "vwe base init.")))
+	  (t (progn
+		   (require 'vwe-base)
+		   (require 'vwe-ui)
+		   (require 'vwe-theme)
+		   (require 'vwe-layout)
+		   (require 'vwe-general)
 
-;;
-;; init edit
-;;
-(require 'vwe-org)
-(require 'vwe-markdown)
+		   ;;
+		   ;; init edit
+		   ;;
+		   (require 'vwe-org)
+		   (require 'vwe-markdown)
 
-;;
-;; init prog and language
-;;
-(require 'vwe-prog)
+		   ;;
+		   ;; init prog and language
+		   ;;
+		   (require 'vwe-prog)
 
-;;
-;; inti misc
-;;
-(require 'vwe-misc)
+		   ;;
+		   ;; inti misc
+		   ;;
+		   (require 'vwe-misc)
+		   (message "vwe all init."))))
 
 ;;
 ;; init keybindings

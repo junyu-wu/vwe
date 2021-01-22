@@ -116,7 +116,7 @@ SOURCE-NAME is source name."
 (defun vwe@base--deamon-init ()
   "Deamon init."
   (interactive)
-  (add-hook 'vwe@custom--deamon-create-frame-after-hook #'vwe@base--package-init)
+  ;; (add-hook 'vwe@custom--deamon-create-frame-after-hook #'vwe@base--package-init)
   (add-hook 'vwe@custom--deamon-create-frame-after-hook #'vwe@base--custom-file-init)
   (add-hook 'vwe@custom--deamon-create-frame-after-hook #'vwe@base--gc-init)
   (add-hook 'vwe@custom--deamon-create-frame-after-hook #'vwe@base--encoding-init)
@@ -229,11 +229,7 @@ SOURCE-NAME is source name."
 		recentf-max-menu-item                30
 		recentf-max-saved-items              200
 		recentf-save-file                    (vwe@lib--path-cache "recentf/.recentf" t)
-		recentf-exclude                      '("\\.?cache" ".cask" "url"
-                                               "COMMIT_EDITMSG\\'" "bookmarks"
-                                               "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\)$"
-											   "^/tmp/" "^/ssh:" "\\.?ido\\.last$"
-                                               "\\.revive$" "/TAGS$" "^/var/folders/.+$"
+		recentf-exclude                      '("\\.?cache" ".cask" "url" "COMMIT_EDITMSG\\'" "bookmarks" "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\)$" "^/tmp/" "^/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$" "^/var/folders/.+$"
 											   (lambda (file)
                                                  (file-in-directory-p file package-user-dir)))
 

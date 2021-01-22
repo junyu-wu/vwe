@@ -77,6 +77,12 @@
 	 (propertize (format "%s" gcs-done)
 				 'face red))))
 
+(defun vwe@lib--found-custom-arg (arg)
+  "Found custom ARG."
+  (let* ((arg-switch (member arg command-line-args)))
+    (setq command-line-args (delete arg command-line-args))
+    arg-switch))
+
 ;; ************************************************************************
 ;; frame
 ;; ************************************************************************
