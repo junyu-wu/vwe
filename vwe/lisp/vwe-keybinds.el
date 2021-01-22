@@ -81,7 +81,6 @@
   (vwe@lib--keymap-global-set vwe@keybind--default-list))
 
 (with-eval-after-load 'mum-key
-
   (mum-key-define common
 				  (("common" :face (:background "DarkOrange" :foreground "white" :weight bold))
 				   (("f" find-file "find file")
@@ -128,6 +127,7 @@
 					("e" esup "esup")
 					("z" customize-group "customize group")
 					("*" treemacs-select-window "treemacs window")
+					("S" sudo-edit "sudo")
 					("!" winum-mode "win number")
 					("~" mum-mark-paren--paren-pair "paren mark")
 					("(" vwe@base--paren-toggle-style "paren style")
