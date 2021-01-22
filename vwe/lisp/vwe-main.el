@@ -36,7 +36,7 @@
   (progn
 	(condition-case nil
 		(progn
-		  (vwe@lib--file-delete (vwe@lib--path-emacs.d "")))
+		  (vwe@lib--file-delete (vwe@lib--path-emacs.d "") vwe@custom--reset-ignore-file-list))
 	  (error))))
 
 (cond ((vwe@lib--found-custom-arg "-vq") (message "vwe feature not load."))
