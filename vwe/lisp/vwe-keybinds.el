@@ -181,7 +181,16 @@
 					("m" treemacs-move-file "move file")
 					("h" treemacs-collapse-parent-node "collapse parent node")
 					("M-RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
-				  (treemacs-mode))
+				  (treemacs-mode)
+				  "C-M-<return>")
+
+  (mum-key-define term
+				  (("term" :face (:background "red" :foreground "white" :weight bold))
+				   (("c" term-char-mode "char mode")
+					("l" term-line-mode "line mode")
+					("q" mum-term--exit "exit terminal")
+					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  (term-mode))
 
   (mum-key-define emacs-lisp
 				  (("emacs lisp" :face (:background "red" :foreground "white" :weight bold))
@@ -195,7 +204,6 @@
 					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (emacs-lisp-mode))
 
-  (define-key emacs-lisp-mode-map (kbd "C-c a") 'mum-key:emacs-lisp)
   (mum-key-define org-template
 				  ("org template"
 				   (("a" (vwe@org--template "<a")                              "ascii")
@@ -400,7 +408,6 @@
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
-
 (vwe@keybind--init)
 
 (provide 'vwe-keybinds)

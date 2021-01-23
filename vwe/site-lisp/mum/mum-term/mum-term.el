@@ -270,29 +270,38 @@ Switch term to DIRECTION `next' or `previous' buffer."
 
 (defun mum-term--kill-term-buffer ()
   "Kill term buffer."
+  (interactive)
   (when (ignore-errors (get-buffer-process (current-buffer)))
     (set-process-sentinel
 	 (get-buffer-process (current-buffer))
      (lambda (proc change)
 	   (when (string-match "\\(finished\\|exited\\)" change)
-         (kill-buffer (process-buffer proc)))))))
+		 (kill-buffer (process-buffer proc)))))))
 
 (defun mum-term--kill-terminal ()
   "Quit term process."
+  (interactive)
   (when (eq major-mode 'term-mode)
-    (when (term-check-proc (current-buffer)) (term-quit-subjob))
     (let ((killed-buffer (current-buffer)))
+      (when (term-check-proc (current-buffer)) (term-kill-subjob))
 	  (setq mum-term--terminal-list (delq killed-buffer mum-term--terminal-list))
-	  (when (> (length mum-term--terminal-list) 0)
-		(mum-term--switch-terminal (car mum-term--terminal-list))))))
+	  (if (> (length mum-term--terminal-list) 0)
+		  (mum-term--switch-terminal (car mum-term--terminal-list))))))
+
+(defun mum-term--exit ()
+  "Exit."
+  (interactive)
+  (when (eq major-mode 'term-mode)
+	(mum-term--kill-terminal)
+	(kill-buffer)))
 
 (defun mum-term--run-term ()
   "Run Emacs term and Mum term."
-  (add-hook 'term-mode-hook 'mum-term--init-keymap)
+  (add-hook 'term-mode-hook #'mum-term--init-keymap)
   (term-mode)
   (term-char-mode)
   (mum-term--kill-term-buffer)
-  (add-hook 'kill-buffer-hook 'mum-term--kill-terminal))
+  (add-hook 'kill-buffer-hook #'mum-term--kill-terminal))
 
 ;;;###autoload
 (defun mum-terminal ()

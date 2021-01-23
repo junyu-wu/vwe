@@ -131,7 +131,7 @@ MINI pop frame or minibuffer."
 						savehist-autosave-interval 300))
 
 ;;
-;; ibuffer
+;; `ibuffer'
 ;;
 (vwe@lib--package 'ibuffer
 				  (add-hook 'ibuffer-mode-hook

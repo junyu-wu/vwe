@@ -398,7 +398,8 @@ LEADERKEY is leader key."
 		(mum-key--close-buffer))
 	(setq mum-key-mode-p t)
 	(add-hook 'after-change-major-mode-hook 'mum-key--define-keymap-on-change-major-mode)
-	(add-hook 'read-only-mode-hook 'mum-key--define-keymap-on-change-major-mode)))
+	(add-hook 'read-only-mode-hook 'mum-key--define-keymap-on-change-major-mode)
+	(add-hook 'window-configuration-change-hook 'mum-key--define-keymap-on-change-major-mode)))
 
 (provide 'mum-key)
 ;;; mum-key.el ends here

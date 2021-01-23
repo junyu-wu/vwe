@@ -32,8 +32,8 @@
 
 (defvar mum-mark--mode-keymap
   (let ((keymap (make-sparse-keymap)))
-	(define-key keymap (kbd "M-f") #'mum-mark-position--forward-word)
-	(define-key keymap (kbd "M-b") #'mum-mark-position--backward-word)
+	(define-key keymap (kbd "C->") #'mum-mark-position--forward-word)
+	(define-key keymap (kbd "C-<") #'mum-mark-position--backward-word)
 	(define-key keymap (kbd "M-p") #'mum-mark-line-previous)
 	(define-key keymap (kbd "M-n") #'mum-mark-line-next)
 	keymap)
