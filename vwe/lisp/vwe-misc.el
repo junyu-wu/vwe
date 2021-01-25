@@ -73,7 +73,9 @@
 ;; `w3m'
 ;;
 (vwe@lib--package 'w3m
-				  (setq browse-url-browser-function 'w3m)
+				  (progn
+					(add-hook 'eww-mode-hook #'w3m-mode)
+					(setq browse-url-browser-function 'w3m))
 				  (setq browse-url-generic-program "google-chrome"
 						browse-url-browser-function 'browse-url-generic)
 				  (setq w3m-coding-system 'utf-8

@@ -98,12 +98,8 @@ SOURCE-NAME is source name."
 (defun vwe@base--font-init ()
   "Font config."
   (interactive)
-  (when (display-graphic-p)
-	(when (display-graphic-p)
-		  (set-face-attribute 'default
-							  nil
-							  :font (format "%s:pixelsize=%d" vwe@custom--font-ascii vwe@custom--font-ascii-size)))
-	;; (vwe@lib--font-set-ascii vwe@custom--font-ascii vwe@custom--font-ascii-size)
+  (if (display-graphic-p)
+	  (vwe@lib--font-set-ascii vwe@custom--font-ascii vwe@custom--font-ascii-size)
 	(vwe@lib--font-set-non-ascii vwe@custom--font-non-ascii vwe@custom--font-non-ascii-size)))
 
 (defun vwe@base--server-init ()
