@@ -243,6 +243,7 @@
   (mum-key-define org
 				  ("org"
 				   (("l" org-insert-link "+link")
+					("o" org-open-at-point "open browser")
 	  				("a" outline-show-all "show all")
 	  				("e" org-meta-return  "+meta elem")
 					("L" org-store-link "store link")
@@ -403,7 +404,17 @@
 					("e" js2-mode-toggle-element "show/hide element")
 					("h" js2-mode-toggle-hide-functions "show/hide func")
 					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
-				  (web-mode js2-mode js-mode css-mode)))
+				  (web-mode js2-mode js-mode css-mode))
+
+  (mum-key-define w3m
+				  ("w3m"
+				   (("w" w3m "w3m")
+					("h" w3m-gohome "go home")
+					("f" w3m-view-url-with-browse-url "to browse")
+					("u" w3m-browse-url "browse url")
+					("." w3m-next-buffer "next buffer")
+					("," w3m-previous-buffer "prev buffer")))
+				  (w3m-mode)))
 
 ;; ***************************************************************************
 ;; config

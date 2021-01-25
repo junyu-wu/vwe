@@ -73,7 +73,7 @@
 ;; `w3m'
 ;;
 (vwe@lib--package 'w3m
-				  (add-hook 'w3m-mode-hook #'w3m-mode-hook-setup)
+				  (setq browse-url-browser-function 'w3m)
 				  (setq browse-url-generic-program "google-chrome"
 						browse-url-browser-function 'browse-url-generic)
 				  (setq w3m-coding-system 'utf-8
@@ -91,7 +91,6 @@
 						w3m-default-toggle-inline-images t
 						w3m-use-form t
 						w3m-mailto-url-function 'compose-mail
-						browse-url-browser-function 'w3m
 						w3m-default-display-inline-images t
 						w3m-use-tab nil
 						w3m-search-default-engine "google"))
