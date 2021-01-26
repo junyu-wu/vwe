@@ -49,13 +49,13 @@
 ;; user
 ;; ***************************************************************************
 (defcustom vwe@custom--user-name
-  (getenv "NAME")
+  (if (getenv "NAME") (getenv "NAME") "")
   "Set user full name."
   :group 'vwe-user
   :type 'string)
 
 (defcustom vwe@custom--user-mail
-  (getenv "EMAIL")
+  (if (getenv "EMAIL") (getenv "EMAIL") "")
   "Set user email address."
   :group 'vwe-user
   :type 'string)

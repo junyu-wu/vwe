@@ -36,7 +36,7 @@
 	("C-'"                                imenu-list-smart-toggle)
 	("C-s"                                swiper)
 	("C-x C-b"                            ibuffer)
-	("C-x C-f"                            counsel-find-file)
+	("C-x C-f"                            find-file)
 	("C-;"                                iedit-mode)
 	("C-M-;"                              iedit-rectangle-mode)
 	("C-="                                er/expand-region)
