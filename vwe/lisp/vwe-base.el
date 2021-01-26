@@ -142,9 +142,9 @@ SOURCE-NAME is source name."
 
 (defun vwe@base--debug-init ()
   "Debug init."
-  (when (eval 'vwe@custom--debug?)
+  (when vwe@custom--debug?
 	(setq debug-on-error t
-		  max-lisp-eval-depth (eval 'vwe@custom--debug-max-lisp-eval-depth))
+		  max-lisp-eval-depth vwe@custom--debug-max-lisp-eval-depth)
 	(toggle-debug-on-error)))
 
 (defun vwe@base--make-welcome-msg ()
@@ -153,7 +153,7 @@ SOURCE-NAME is source name."
 		 (vwe '((:background "DarkViolet" :foreground "white" :weight bold))))
 	(concat
 	 ";; hello "
-	 (propertize (format "%s" (eval 'vwe@custom--user-name))
+	 (propertize (format "%s" vwe@custom--user-name)
 				 'face name)
 	 ", welcome "
 	 (propertize "vwiss emacs (vwe)"
@@ -190,8 +190,8 @@ SOURCE-NAME is source name."
 		yes-or-no-p                          'y-or-n-p
 		locale-coding-system                 'utf-8
 		default-process-coding-system        '(utf-8 . utf-8)
-		user-full-name                       (eval 'vwe@custom--user-name)
-		user-mail-address                    (eval 'vwe@custom--user-mail)
+		user-full-name                       vwe@custom--user-name
+		user-mail-address                    vwe@custom--user-mail
 		initial-scratch-message              (vwe@base--make-welcome-msg)
 		initial-major-mode                   'text-mode
 
@@ -215,7 +215,7 @@ SOURCE-NAME is source name."
 		auto-save-default                    nil
         auto-save-list-file-prefix           (concat (vwe@lib--path-cache "auto-save") "/.saves-")
 		make-backup-files                    nil
-		confirm-kill-emacs                   #'(lambda (prompt) (if vwe@custom--quit-ask? (y-or-n-p-with-timeout "quit emacs:" 10 "y") '(nil)))
+		confirm-kill-emacs                   (lambda (prompt) (if vwe@custom--quit-ask? (y-or-n-p-with-timeout "quit emacs:" 10 "y") '(nil)))
 
         select-enable-clipboard              t
 
