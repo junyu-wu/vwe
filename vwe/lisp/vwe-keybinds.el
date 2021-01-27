@@ -416,8 +416,17 @@
 					("f" w3m-view-url-with-browse-url "to browse")
 					("u" w3m-browse-url "browse url")
 					("." w3m-next-buffer "next buffer")
-					("," w3m-previous-buffer "prev buffer")))
-				  (w3m-mode)))
+					("," w3m-previous-buffer "prev buffer")
+					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  (w3m-mode))
+
+  (mum-key-define eww
+				  ("eww"
+				   (("f" eww-browse-with-external-browser "external browser")
+					("s" eww-view-source "view source")
+					("r" eww-reload "reload")
+					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  (eww-mode)))
 
 ;; ***************************************************************************
 ;; config
