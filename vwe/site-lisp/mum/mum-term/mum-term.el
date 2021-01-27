@@ -52,7 +52,7 @@
   "Terminal buffer name prefix.")
 
 (defvar mum-term--terminal-default-path
-  "~/"
+  (getenv "HOME")
   "Terminal default directory.")
 
 (defvar mum-term--terminal-list
@@ -87,9 +87,7 @@ If DEDICATED non-nil the buffer is dedicated."
 (defun mum-term--get-shell-command ()
   "Get shell command."
   (let ((command))
-	(cond ((or (eq system-type 'windows-nt)
-			   (eq system-type 'cygwin))
-		   (setq command mum-term--shell-command))
+	(cond ((or (eq system-type 'windows-nt) (eq system-type 'cygwin)) (setq command mum-term--shell-command))
 		  ((getenv "SHELL") (setq command (getenv "SHELL")))
 		  ((getenv "ESHELL") (setq command (getenv "ESHELL")))
 		  (t (setq command "/usr/bin/sh")))
@@ -307,19 +305,21 @@ Switch term to DIRECTION `next' or `previous' buffer."
 (defun mum-terminal ()
   "Run mum term."
   (interactive)
-  (let* ((buffer (mum-term--make-terminal))
-		 (dir (or default-directory mum-term--terminal-default-path)))
-	(when (bufferp buffer)
-	  (setq mum-term--terminal-list (append mum-term--terminal-list (list buffer)))
-	  (set-buffer buffer)
-	  (mum-term--run-term)
-	  (with-current-buffer buffer (setq show-trailing-whitespace nil))
-	  (switch-to-buffer buffer)
-	  (when (and (featurep 'tramp) (tramp-tramp-file-p dir))
-		(with-parsed-tramp-file-name dir path
-		  (let ((method (cadr (assoc `tramp-login-program (assoc path-method tramp-methods)))))
-			(term-send-raw-string (concat method " " (when path-user (concat path-user "@")) path-host "\C-m"))
-			(term-send-raw-string (concat "cd '" path-localname "'\C-m"))))))))
+  (if (or (eq system-type 'windows-nt) (eq system-type 'cygwin))
+	  (eshell)
+	(let* ((buffer (mum-term--make-terminal))
+		   (dir (or default-directory mum-term--terminal-default-path)))
+	  (when (bufferp buffer)
+		(setq mum-term--terminal-list (append mum-term--terminal-list (list buffer)))
+		(set-buffer buffer)
+		(mum-term--run-term)
+		(with-current-buffer buffer (setq show-trailing-whitespace nil))
+		(switch-to-buffer buffer)
+		(when (and (featurep 'tramp) (tramp-tramp-file-p dir))
+		  (with-parsed-tramp-file-name dir path
+			(let ((method (cadr (assoc `tramp-login-program (assoc path-method tramp-methods)))))
+			  (term-send-raw-string (concat method " " (when path-user (concat path-user "@")) path-host "\C-m"))
+			  (term-send-raw-string (concat "cd '" path-localname "'\C-m")))))))))
 
 (provide 'mum-term)
 ;;; mum-term.el ends here
