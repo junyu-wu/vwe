@@ -67,6 +67,7 @@
 	("M-C-,"                              eacl-complete-multiline)
 	("C-]"                                counsel-etags-find-tag-at-point)
 	("M-C-?"                              youdao-dictionary-search-at-point+)
+	("s-s"                                toggle-frame-maximized)
 	("M-RET"                              mum-key:global)
 
 	([remap comment-dwim]                 comment-dwim-2)
@@ -91,7 +92,8 @@
 					("n" (lambda () (interactive) (vwe@lib--buffer-kill-other (buffer-list) "^*")) "kill ohter")
 					("d" delete-window "del window")
 					("x" save-buffers-kill-terminal "kill emacs")
-					("S" toggle-frame-fullscreen "fullscreen")
+					("," toggle-frame-maximized "maximized")
+					("." toggle-frame-fullscreen "fullscreen")
 					("F" helpful-function "help func")
 					("V" helpful-variable "help var")
 					("K" helpful-key "help key")
