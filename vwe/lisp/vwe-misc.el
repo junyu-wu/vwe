@@ -77,29 +77,7 @@
 ;;
 ;; `w3m'
 ;;
-(vwe@lib--package 'w3m
-				  (progn
-					(setq browse-url-browser-function 'w3m))
-				  (setq browse-url-generic-program "google-chrome"
-						browse-url-browser-function 'browse-url-generic)
-				  (setq w3m-coding-system 'utf-8
-						w3m-file-coding-system 'utf-8
-						w3m-file-name-coding-system 'utf-8
-						w3m-output-coding-system 'utf-8
-						w3m-input-coding-system 'utf-8
-						w3m-terminal-coding-system 'utf-8
-						w3m-imagick-convert-program nil
-						w3m-use-cookies t
-						w3m-cookie-accept-bad-cookies t
-						w3m-command-arguments '("-F" "-cookie")
-						w3m-home-page "google.com"
-						w3m-default-display-inline-image t
-						w3m-default-toggle-inline-images t
-						w3m-use-form t
-						w3m-mailto-url-function 'compose-mail
-						w3m-default-display-inline-images t
-						w3m-use-tab nil
-						w3m-search-default-engine "google"))
+(vwe@lib--package 'w3m)
 
 ;;
 ;; `wget'

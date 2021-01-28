@@ -394,7 +394,9 @@
 
   (mum-key-define web
 				  ("web"
-				   (("r" run-skewer "run skewer")
+				   (("r" (lambda () (interactive) (vwe@web--open-to-brower nil)) "open to brower")
+					("w" mum-key:eww "eww")
+					("s" run-skewer "run skewer")
 					("e" skewer-repl "repl")
 					("e" skewer-eval-last-expression "eval expression")
 					("f" skewer-eval-defun "eval defun")
@@ -425,6 +427,7 @@
 				   (("f" eww-browse-with-external-browser "external browser")
 					("s" eww-view-source "view source")
 					("r" eww-reload "reload")
+					("o" eww-open-file "open file")
 					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (eww-mode)))
 

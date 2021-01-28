@@ -234,7 +234,7 @@ MINI pop frame or minibuffer."
 ;;
 (vwe@lib--package 'autoinsert
 				  (add-hook 'after-init-hook #'auto-insert-mode)
-				  (define-auto-insert "\\.org$" ["default-org.org" (lambda () (when (fboundp 'yas-expand-snippet) (yas-expand-snippet (buffer-string) (point-min) (point-max))))])
+				  (define-auto-insert "\\.org$" ["default-reveal-org.org" (lambda () (when (fboundp 'yas-expand-snippet) (yas-expand-snippet (buffer-string) (point-min) (point-max))))])
 				  (setq auto-insert t
 						auto-insert-query nil
 						auto-insert-directory (vwe@lib--path-vwe-etc "templates")))

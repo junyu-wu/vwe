@@ -32,6 +32,14 @@
 ;; ***************************************************************************
 ;; lib
 ;; ***************************************************************************
+(defun vwe@web--open-to-brower (url &rest _)
+  "Open URL to brower."
+  (interactive
+   (find-file-read-args "Find file: "
+                        (confirm-nonexistent-file-or-buffer)))
+
+  (unless url (setq url (buffer-file-name)))
+  (funcall browse-url-secondary-browser-function url))
 
 ;; ***************************************************************************
 ;; config
@@ -88,7 +96,7 @@
 ;;
 (vwe@lib--package 'web-mode
 				  (progn
-					(push '("\\.html\\'" "\\.html?\\'" "\\.vue\\'" "\\.as[cp]x\\'" web-mode) auto-mode-alist))
+					(push '("\\.html\\'" . web-mode) auto-mode-alist))
 				  ;;
 				  ;; `company-web'
 				  ;;

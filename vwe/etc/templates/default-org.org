@@ -3,7 +3,7 @@
 #+CATEGORY:${1:[Default]}
 #+TAGS:${2:[Note]}
 #+TITLE: ${3:`(file-name-sans-extension (file-name-nondirectory (buffer-file-name)))`}
-#+SUBTITLE:${4:by}
+#+SUBTITLE:${4:[by]}
 #+AUTHOR:${5:`(user-full-name)`}
 #+DATE:${6:`(format-time-string "%Y-%m-%d")`}
 #+EMAIL:${7:`(format "%s" vwe@custom--user-mail)`}
