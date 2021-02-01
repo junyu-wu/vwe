@@ -92,6 +92,8 @@
 					("n" (lambda () (interactive) (vwe@lib--buffer-kill-other (buffer-list) "^*")) "kill ohter")
 					("d" delete-window "del window")
 					("x" save-buffers-kill-terminal "kill emacs")
+					("p" mum-proxy--enable "proxy enable")
+					("P" mum-proxy--enable-global "proxy global enable")
 					("," toggle-frame-maximized "maximized")
 					("." toggle-frame-fullscreen "fullscreen")
 					("F" helpful-function "help func")
