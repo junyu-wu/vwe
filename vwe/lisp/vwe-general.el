@@ -616,6 +616,16 @@ MINI pop frame or minibuffer."
 				  (vwe@lib--path-vwe-site-lisp "mum/mum-term"))
 
 ;;
+;; `mum-proxy'
+;;
+(vwe@lib--package 'mum-proxy
+				  (progn
+					(autoload 'mum-proxy--enable (vwe@lib--path-vwe-site-lisp "mum/mum-proxy/mum-proxy.el" t) "Mum proxy mode." t t)
+					(autoload 'mum-proxy--enable-global (vwe@lib--path-vwe-site-lisp "mum/mum-proxy/mum-proxy.el" t) "Mum global proxy mode." t t))
+				  nil nil nil
+				  (vwe@lib--path-vwe-site-lisp "mum/mum-proxy"))
+
+;;
 ;; `imenu-list'
 ;;
 (vwe@lib--package 'imenu-list)

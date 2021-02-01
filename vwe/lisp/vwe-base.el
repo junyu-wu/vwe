@@ -257,60 +257,6 @@ SOURCE-NAME is source name."
 				   ("mixed" . mixed))))
     (setq show-paren-style (cdr (assoc style styles)))))
 
-(defun vwe@base--proxy-status ()
-  "Show HTTP/HTTPS proxy."
-  (interactive)
-  (let* ((http-msg "http/https no proxy.")
-		 (socks-msg "socks no proxy."))
-	(when url-proxy-services
-	  (setq http-msg (format "http proxy: %s." vwe@custom--proxy-http)))
-	(when vwe@base--socks-proxy-services
-	  (setq socks-msg (format "socks/%d proxy: %s."
-							  vwe@custom--proxy-socks-version
-							  vwe@custom--proxy-socks)))
-	(message "%s %s" http-msg socks-msg)))
-
-(defun vwe@base--proxy-http (&optional on/off?)
-  "Enable or disable http/https proxy.
-ON/OFF switch."
-  (interactive)
-  (if on/off?
-	  (progn
-		(setq url-proxy-services `(("http" . ,vwe@custom--proxy-http)
-								   ("https" . ,vwe@custom--proxy-http)
-								   ("no_proxy" . "^\\(localhost\\|192.168.*\\|10.*\\)"))))
-	(setq url-proxy-services nil)))
-
-(defun vwe@base--proxy-http-toggle ()
-  "Toggle http/https proxy."
-  (interactive)
-  (if url-proxy-services
-	  (vwe@base--proxy-http nil)
-	(vwe@base--proxy-http t)))
-
-(defun vwe@base--proxy-socks (&optional on/off?)
-  "Enable or disable socks proxy.
-ON/OFF?"
-  (interactive)
-  (if (and on/off? (vwe@lib--package-load 'socks))
-	  (progn
-		(let* ((server:port (split-string (format "%s" vwe@custom--proxy-socks) ":"))
-			   (server (car server:port))
-			   (port (nth 1 server:port)))
-		  (setq url-gateway-method 'socks
-				socks-noproxy '("localhost")
-				socks-server '("Default server" server port)
-				vwe@base--socks-proxy-services socks-server)))
-	(setq url-gateway-method 'native
-		  socks-noproxy nil)))
-
-(defun vwe@base--proxy-socks-toggle ()
-  "Toggle http/https proxy."
-  (interactive)
-  (if vwe@base--socks-proxy-services
-	  (vwe@base--proxy-socks)
-	(vwe@base--proxy-socks t)))
-
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
