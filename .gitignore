@@ -26,6 +26,7 @@ eshell/
 transient/
 tutorial/
 auto-save-list/*
+eclipse.jdt.ls/
 url/
 annaconda-mode/*
 skewer-cache/

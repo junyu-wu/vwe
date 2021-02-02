@@ -20,13 +20,8 @@
 
 ;;; Commentary:
 
-;; omnisharp-roslyn
-;; sudo apt install apt-transport-https dirmngr gnupg ca-certificates
-;; sudo apt-key adv --keyserver hkp://keyserver.ubuntu.com:80 --recv-keys 3FA7E0328081BFF6A14DA29AA6A19B38D3D831EF
-;; echo "deb https://download.mono-project.com/repo/debian stable-stretch main" | sudo tee /etc/apt/sources.list.d/mono-official-stable.list
-;; sudo apt update
-;; apt install mono-devel mono-complete mono-dbg mono-xsp4 ca-certificates-mono mono-xsp
-;; apt install referenceassemblies-pcl
+;; mono git clone https://github.com/mono/mono.git
+;; apt-get install autoconf libtool automake build-essential gettext cmake python
 
 ;;; Code:
 
@@ -41,9 +36,7 @@
 				  (vwe@lib--package 'omnisharp
 									(add-hook 'csharp-mode-hook (lambda ()
 																  (omnisharp-mode)
-																  (add-to-list 'company-backends 'company-omnisharp)))
-									nil
-									(setq omnisharp-server-executable-path "omnisharp")))
+																  (add-to-list 'company-backends 'company-omnisharp)))))
 
 (provide 'vwe-csharp)
 ;;; vwe-csharp.el ends here
