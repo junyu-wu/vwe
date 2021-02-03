@@ -40,11 +40,6 @@
 ;; `lsp-java'
 ;;
 (vwe@lib--package 'lsp-java
-				  nil
-				  ;;
-				  ;; `dap-java'
-				  ;;
-				  (vwe@lib--package 'dap-java nil nil nil t)
 				  (setq lsp-java-server-install-dir (vwe@lib--path-cache "lsp/eclipse.jdt.ls")
 						lsp-java-workspace-dir (vwe@lib--path-cache "java/workspce")
 						lsp-java-java-path "java"
@@ -64,7 +59,11 @@
 						lsp-java-code-generation-use-blocks t
 						lsp-java-code-generation-generate-comments t
 						lsp-java-code-generation-to-string-limit-elements 0
-						lsp-java-inhibit-message t))
+						lsp-java-inhibit-message t)
+				  ;;
+				  ;; `dap-java'
+				  ;;
+				  (vwe@lib--package 'dap-java nil nil nil t))
 
 (provide 'vwe-java)
 ;;; vwe-java.el ends here
