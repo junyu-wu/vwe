@@ -186,7 +186,7 @@
 					;;
 					(vwe@lib--package 'org-capture
 									  nil
-									  (setq default-notes-file (vwe@lib--path-cache "org/notes.org" t)
+									  (setq org-default-notes-file (vwe@lib--path-cache "org/notes.org" t)
 											org-capture-templates '(("t" "Todo" entry
 																	 (file+headline (vwe@lib--path-cache "org/task.org" t) "Task")
 																	 "* TODO %?\n  %i\n  %a")

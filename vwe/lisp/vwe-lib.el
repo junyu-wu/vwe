@@ -460,11 +460,11 @@ FILE-P is file?"
   "Get emacs.d/.cache/.
 SUBPATH config sub path.
 FILE-P is file?"
-  (when file-p t)
+  ;; (when file-p t)
   (when (string-prefix-p (vwe@lib--sys-separator) subpath)
 	(setq subpath (substring subpath 1)))
   (let* ((path (concat (vwe@lib--path-emacs.d ".cache/") subpath)))
-	(vwe@lib--path-make-config-path (file-name-directory path))
+	(vwe@lib--path-make-config-path path file-p)
 	path))
 
 (defun vwe@lib--path-make-config-path (subpath &optional file-p)
