@@ -229,6 +229,8 @@ SOURCE-NAME is source name."
 											   (lambda (file)
                                                  (file-in-directory-p file package-user-dir)))
 
+		completion-ignore-case               t
+
         show-paren-style                     'expression)
 
   (define-advice show-paren-function
