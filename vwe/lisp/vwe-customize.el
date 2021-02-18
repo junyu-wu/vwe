@@ -247,13 +247,13 @@
   :type 'integer)
 
 (defcustom vwe@custom--font-non-ascii
-  "Source Han Sans SC"
+  "Source Han Sans"
   "Default font."
   :group 'vwe-ui
   :type 'string)
 
 (defcustom vwe@custom--font-non-ascii-size
-  14
+  16
   "Default font size."
   :group 'vwe-ui
   :type 'integer)

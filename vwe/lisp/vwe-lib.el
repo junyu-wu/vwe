@@ -322,6 +322,20 @@ NOT-I is include curretn buffer."
   (vwe@lib--font-set-ascii nil size)
   (vwe@lib--font-set-non-ascii nil size))
 
+(defun vwe@lib--font-reset-ascii (&optional size)
+  "Reset font SIZE."
+  (interactive
+   (let* ((size (read-number (format "size %s:" (vwe@lib--font-size)))))
+	 (list size)))
+  (vwe@lib--font-set-ascii nil size))
+
+(defun vwe@lib--font-reset-non-ascii (&optional size)
+  "Reset font SIZE."
+  (interactive
+   (let* ((size (read-number (format "size %s:" (vwe@lib--font-size)))))
+	 (list size)))
+  (vwe@lib--font-set-non-ascii nil size))
+
 ;; ************************************************************************
 ;; file
 ;; ************************************************************************
