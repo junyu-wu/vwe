@@ -68,6 +68,11 @@
   (interactive)
   (vwe@lib--package-load 'ox-reveal))
 
+(defun vwe@org--reveal-insert-split ()
+  "Insert split."
+  (interactive)
+  (insert (format "#+REVEAL: split:t")))
+
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************

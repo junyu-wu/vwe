@@ -234,6 +234,7 @@
 					("S" (lambda () (interactive) (vwe@org--template "<s" "shell"))                      "shell")
 					("g" (lambda () (interactive) (vwe@org--template "<s" "go :imports '\(\"fmt\"\)"))   "golang")
 					("t" (lambda () (interactive) (vwe@org--template "<s" "plantuml :file CHANGE.png"))  "plantuml")
+					("R" vwe@org--reveal-insert-split                                                    "reveal split")
 					("DEL" mum-key:org "org" :footer t :face (:background "magenta" :foreground "white" :weight bold))
 					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
