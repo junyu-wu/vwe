@@ -26,53 +26,6 @@
 ;; ***************************************************************************
 ;; lib
 ;; ***************************************************************************
-(defun vwe@buffer--switch-to-minibuffer ()
-  "Minibuffer show switch buffer list."
-  (interactive)
-  (let* ((buffer (buffer-name))
-		 (split (list (vwe@lib--face-of-string "------------------------------"
-											   :background "DarkRed"
-											   :foreground "white"
-											   :weight 'bold)))
-		 (non-alength (length(vwe@lib--buffer-non-asterisk-list)))
-		 (buffers))
-	(if (> non-alength 0)
-		(setq buffers (append (vwe@lib--buffer-non-asterisk-list)
-							  split
-							  (vwe@lib--buffer-asterisk-list)))
-	  (setq buffers (vwe@lib--buffer-asterisk-list)))
-
-	(setq buffer (completing-read "switch to:" buffers))
-
-	(unless (equal buffer split)
-	  (switch-to-buffer buffer))))
-
-(defun vwe@buffer--switch-to (&optional mini?)
-  "Switch buffer to ....
-MINI pop frame or minibuffer."
-  (interactive)
-  (if (and (not (vwe@lib--buffer-match-p vwe@custom--buffer-filter-list))
-		   (display-graphic-p)
-		   (not mini?))
-	  (progn
-		(define-key popup-menu-keymap (kbd "n") 'popup-next)
-		(define-key popup-menu-keymap (kbd "p") 'popup-previous)
-		(define-key popup-menu-keymap (kbd ".") 'popup-page-next)
-		(define-key popup-menu-keymap (kbd ",") 'popup-page-previous)
-		(define-key popup-menu-keymap (kbd "s") 'popup-isearch)
-		(define-key popup-menu-keymap (kbd "q") 'keyboard-quit)
-		(define-key popup-menu-keymap (kbd "f") 'popup-open)
-		(define-key popup-menu-keymap (kbd "b") 'popup-close)
-		(define-key popup-menu-keymap (kbd "<tab>") 'popup-close)
-		(define-key popup-menu-keymap (kbd "<return>") 'popup-select)
-		(define-key popup-menu-keymap (kbd "m") (lambda () (interactive)
-												  (vwe@buffer--switch-to-minibuffer)
-												  (keyboard-quit)))
-		(switch-to-buffer (popup-cascade-menu
-						   (cons (cons "* buffer list *" (vwe@lib--buffer-asterisk-list))
-								 (vwe@lib--buffer-non-asterisk-list))
-						   :initial-index 1)))
-	(vwe@buffer--switch-to-minibuffer)))
 
 ;; ***************************************************************************
 ;; config
@@ -626,6 +579,16 @@ MINI pop frame or minibuffer."
 					(autoload 'mum-proxy--enable-global (vwe@lib--path-vwe-site-lisp "mum/mum-proxy/mum-proxy.el" t) "Mum global proxy mode." t t))
 				  nil nil nil
 				  (vwe@lib--path-vwe-site-lisp "mum/mum-proxy"))
+
+;;
+;; `mum-layout'
+;;
+(vwe@lib--package 'mum-layout
+				  (progn
+					(autoload 'mum-layout--enable (vwe@lib--path-vwe-site-lisp "mum/mum-layout/mum-layout.el" t) "Mum global layout mode." t t)
+					(mum-layout--enable))
+				  nil nil nil
+				  (vwe@lib--path-vwe-site-lisp "mum/mum-layout"))
 
 ;;
 ;; `imenu-list'
