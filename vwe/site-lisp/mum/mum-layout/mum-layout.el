@@ -61,6 +61,49 @@
   nil
   "Track of the currently selected window.")
 
+(defun mum-layout--text-scale-increase ()
+  "Text scale increase."
+  (interactive)
+  (text-scale-increase 1))
+
+(defun mum-layout--text-scale-decrease ()
+  "Text scale decrease."
+  (interactive)
+  (text-scale-increase -1))
+
+(defun mum-layout--text-scale-adjust ()
+  "Text scale adjust."
+  (interactive)
+  (text-scale-increase 0))
+
+(defun mum-layout--window-height-enlarge (&optional delta)
+  "Window height enlarge DELTA."
+  (interactive)
+  (unless delta (setq delta 1))
+  (condition-case nil (enlarge-window delta)
+	(error (set-frame-height (selected-frame) (+ (frame-height (selected-frame)) delta)))))
+
+(defun mum-layout--window-height-shrink (&optional delta)
+  "Window height shrink DELTA."
+  (interactive)
+  (unless delta (setq delta 1))
+  (condition-case nil (shrink-window delta)
+	(error (set-frame-height (selected-frame) (- (frame-height (selected-frame)) delta)))))
+
+(defun mum-layout--window-width-enlarge (&optional delta)
+  "Window width enlarge DELTA."
+  (interactive)
+  (unless delta (setq delta 1))
+  (condition-case nil (enlarge-window delta t)
+	(error (set-frame-width (selected-frame) (+ (frame-width (selected-frame)) delta)))))
+
+(defun mum-layout--window-width-shrink (&optional delta)
+  "Window width shrink DELTA."
+  (interactive)
+  (unless delta (setq delta 1))
+  (condition-case nil (shrink-window delta t)
+	(error (set-frame-width (selected-frame) (- (frame-width (selected-frame)) delta)))))
+
 (defun mum-layout--window-zoom-size-callback ()
   "Window zoom size callback."
   (cond ((> (frame-pixel-width) 1280) '(0.75 . 0.75))

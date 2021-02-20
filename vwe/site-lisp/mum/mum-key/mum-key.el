@@ -164,19 +164,24 @@
 			   (key (car body-item))
 			   (func (cadr body-item))
 			   (func-str (format "%s" func))
+			   (func-keep func-str)
 			   (hint (car (cddr body-item)))
 			   (hint-str (format "%s" hint))
 			   (label-footer (plist-get (cdddr body-item) :footer))
-			   (str-face (plist-get (cdddr body-item) :face)))
+			   (str-face (plist-get (cdddr body-item) :face))
+			   (circle (plist-get (cdddr body-item) :circle)))
 		  (unless func
 			(setq func (lambda () (interactive) (message "func is nil"))))
+		  (when circle
+			(setq func (lambda () (interactive)
+						 (funcall (intern func-keep))
+						 (funcall (intern (format "%s" func-name))))))
 		  (unless (< (length func-str) mum-key--max-width)
 			(setq func-str (concat (substring func-str 0 (* 2 (/ mum-key--max-width 3))) "...")))
 		  (unless hint
 			(setq hint-str func-str))
 		  (when (symbolp (quote func))
 			(define-key keymap (cond ((stringp key) (kbd key)) ((mapp key) key)) func)
-
 			(if label-footer
 				(setq mum-key--footer-list
 					  (append mum-key--footer-list (list (list key (propertize hint-str
@@ -343,9 +348,9 @@ LEADERKEY is leader key."
 		(when (and mode-list (listp mode-list))
 		  (dotimes (i (length mode-list))
 			(if (plist-member mum-key--keymap-mode-func-alist (nth i mode-list))
-			(progn (plist-put mum-key--keymap-mode-func-alist (nth i mode-list) `(,func-name ,leaderkey)))
-		  (setq mum-key--keymap-mode-func-alist (append mum-key--keymap-mode-func-alist
-														`(,(nth i mode-list) (,func-name ,leaderkey)))))
+				(progn (plist-put mum-key--keymap-mode-func-alist (nth i mode-list) `(,func-name ,leaderkey)))
+			  (setq mum-key--keymap-mode-func-alist (append mum-key--keymap-mode-func-alist
+															`(,(nth i mode-list) (,func-name ,leaderkey)))))
 			)
 		  )
 		;; (if (plist-member mum-key--keymap-mode-func-alist mode)
