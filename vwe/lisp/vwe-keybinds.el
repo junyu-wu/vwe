@@ -125,7 +125,7 @@
 					("f" format-all-buffer "format code")
 					("p" vwe@prog--switch-mode "switch mode")
 					("n" switch-to-next-buffer "next buffer ")
-					("N" display-line-numbers-mode "line nuber")
+					("N" display-line-numbers-mode "line number")
 					("H" mum-headerline-mode "header line")
 					("M" mum-modeline-mode "modeline")
 					("T" mum-tray-mode "tray")
@@ -155,7 +155,8 @@
 
   (mum-key-define layout
 				  (("window" :face (:background "DarkOrange" :foreground "white" :weight bold))
-				   (("2" split-window-vertically "split vertically")
+				   (("z" mum-layout-zoom-mode "zoom mode")
+					("2" split-window-vertically "split vertically")
 					("3" split-window-horizontally "split horizontally")
 					("e" mum-layout--window-height-enlarge "win height+" :circle t)
 					("s" mum-layout--window-height-shrink "win height-" :circle t)

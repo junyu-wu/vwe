@@ -318,12 +318,7 @@ OBJS."
 				  (interactive)
 				  (mapc (lambda (ov) (mapc #'delete-overlay ov)) ovs)
 				  (mum-mark-paren-mode -1)))
-	(setq mum-mark-paren--overlay-list ovs)
-	;; (set-transient-map mum-mark-paren--move-to-mark-map
-	;; 				   nil;;(lambda () t)
-	;; 				   (lambda()
-	;; 					 (mapc (lambda (ov) (mapc #'delete-overlay ov)) ovs)))
-	))
+	(setq mum-mark-paren--overlay-list ovs)))
 
 ;;;###autoload
 (defun mum-mark-paren--paren-pair ()
@@ -430,15 +425,122 @@ OBJS."
 	(forward-line (* num -1)))
   (mum-mark-line-previous))
 
+(defun mum-mark-line--enable ()
+  "Enable.")
+
+(defun mum-mark-line--disable ()
+  "Disable."
+  (when mum-mark-line--current-overlay-list
+	(mapc #'delete-overlay mum-mark-line--current-overlay-list))
+  (setq mum-mark-line--current-overlay-list nil))
+
 (define-minor-mode mum-mark-line-mode
   "Mark line mode."
   :group 'mum-mark
   :keymap mum-mark-line--map
   (if mum-mark-line-mode
-	  t
-	(when mum-mark-line--current-overlay-list
-	  (mapc #'delete-overlay mum-mark-line--current-overlay-list))
-	(setq mum-mark-line--current-overlay-list nil)))
+	  (mum-mark-line--enable)))
+
+;;
+;; line preview
+;;
+
+(defvar mum-mark-line--origin-window
+  nil
+  "Origin window.")
+
+(defvar mum-mark-line--origin-window-line
+  nil
+  "Origin window line.")
+
+(defvar mum-mark-line--origin-window-point
+  nil
+  "Origin window point.")
+
+(defvar mum-mark-line--preview-goto-line
+  nil
+  "Preveiw goto line.")
+
+(defvar mum-mark-line--preview-keymap
+  (let ((keymap (make-sparse-keymap)))
+	(define-key keymap (kbd "q") #'mum-mark-line--preview-recovery)
+	(define-key keymap (kbd "g") #'mum-mark-line--preview-goto-line)
+	keymap)
+  "Preview temp keymap.")
+
+(defun mum-mark-line--preview ()
+  "Preview goto LINE."
+  (interactive)
+  (save-selected-window
+	(let* ((input-num-str (thing-at-point 'line)))
+	  (when input-num-str
+		(setq mum-mark-line--preview-goto-line (string-to-number input-num-str)))
+	  (when (and mum-mark-line--origin-window mum-mark-line--preview-goto-line)
+		(select-window mum-mark-line--origin-window)
+		(unless (zerop mum-mark-line--preview-goto-line)
+		  (goto-char (point-min))
+		  (forward-line (1- mum-mark-line--preview-goto-line)))
+		(set-transient-map mum-mark-line--preview-keymap nil  #'mum-mark-line--preview-recovery)))
+	(message "preview line %s" mum-mark-line--preview-goto-line)))
+
+(defun mum-mark-line--preview-goto-line (&optional line)
+  "Preview goto LINE."
+  (interactive)
+  (setq mum-mark-line--preview-goto-line (if line line (read-number "preview line:")))
+  (mum-mark-line--bulid-preview-origin-snapshot)
+  (mum-mark-line--preview))
+
+(defun mum-mark-line--preview-dynamic-goto-line ()
+  "Preview goto line."
+  (interactive)
+  (mum-mark-line--bulid-preview-origin-snapshot)
+  (unwind-protect
+	  (setq mum-mark-line--preview-goto-line (read-number "preview line:"))
+	(set-window-point mum-mark-line--origin-window mum-mark-line--origin-window-point)))
+
+(defun mum-mark-line--bulid-preview-origin-snapshot ()
+  "Preview goto line."
+  (interactive)
+  (let* ((window (selected-window))
+		 (line-num (line-number-at-pos))
+		 (cur-point (point)))
+	(setq mum-mark-line--origin-window window
+		  mum-mark-line--origin-window-line line-num
+		  mum-mark-line--origin-window-point cur-point))
+  (message "build exec finished %S" mum-mark-line--origin-window))
+
+(defun mum-mark-line--preview-recovery ()
+  "Preview recovery."
+  (interactive)
+  ;; (select-window mum-mark-line--origin-window)
+  ;; (when (and mum-mark-line--origin-window (numberp mum-mark-line--origin-window-point))
+  ;; 	(set-window-point mum-mark-line--origin-window mum-mark-line--origin-window-point)
+  ;; 	(setq ;;mum-mark-line--origin-window nil
+  ;; 	 mum-mark-line--origin-window-line nil
+  ;; 	 mum-mark-line--origin-window-point nil))
+  )
+
+(defun mum-mark-line--preview-minibuffer-setup ()
+  "Locally set up preview hooks for this minibuffer command."
+  (when (memq this-command '(mum-mark-line--preview-dynamic-goto-line))
+    (add-hook 'post-command-hook #'mum-mark-line--preview nil t)))
+
+(defun mum-mark-line--preview-enable ()
+  "Enable."
+  (define-key mum-mark-line--map (kbd "M-* r") #'mum-mark-line--preview-goto-line)
+  (define-key mum-mark-line--map (kbd "M-* d") #'mum-mark-line--preview-dynamic-goto-line)
+  (add-hook 'minibuffer-setup-hook 'mum-mark-line--preview-minibuffer-setup))
+
+(defun mum-mark-line--preview-disable ()
+  "Disable.")
+
+(define-minor-mode mum-mark-line-preview-mode
+  "Mark line mode."
+  :group 'mum-mark
+  :keymap mum-mark-line--map
+  :global t
+  (if mum-mark-line-preview-mode
+	  (mum-mark-line--preview-enable)))
 
 ;; =============================================================================
 ;; point
@@ -455,10 +557,6 @@ OBJS."
 (defface mum-mark--point--face
   '((t (:foreground "red" :weight bold)))
   "Posit mark face.")
-
-(defvar-local mum-mark--point-last-mark-points
-  nil
-  "Last mark point.")
 
 (defvar-local mum-mark--point-last-mark-points-overlay
   nil
@@ -481,13 +579,8 @@ OBJS."
 (defun mum-mark--point-mark ()
   "Mark current point."
   (interactive)
-  (let* ((point (point))
-		 (begin (1- point))
-		 (end point)
-		 (overlay (make-overlay begin end)))
-
-	(setq mum-mark--point-last-mark-points point
-		  mum-mark--point-last-mark-points-overlay overlay)
+  (let* ((overlay (make-overlay (1- (point)) (point))))
+	(setq mum-mark--point-last-mark-points-overlay overlay)
 	(overlay-put overlay 'after-string
 				 (propertize (format "[M]")
 							 'display '((raise 0.5) (height 0.8))
@@ -496,16 +589,16 @@ OBJS."
 (defun mum-mark--point-goto-mark ()
   "Got mark list first point."
   (interactive)
-  (let* ((point mum-mark--point-last-mark-points))
+  (let* ((goto-point (overlay-end mum-mark--point-last-mark-points-overlay)))
 	(condition-case nil
 		(progn
-		  (goto-char point))
+		  (when (numberp goto-point)
+			(goto-char goto-point)))
 	  (error nil))))
 
 (defun mum-mark--point-clear-mark ()
   "Clear mark."
   (interactive)
-  (setq mum-mark--point-last-mark-points nil)
   (delete-overlay mum-mark--point-last-mark-points-overlay))
 
 (define-minor-mode mum-mark-point-mode
@@ -519,6 +612,7 @@ OBJS."
 ;;
 (defun mum-mark-mode-enable ()
   "Enable mode."
+  (mum-mark-line-preview-mode 1)
   (mum-mark-point-mode 1))
 
 (defun mum-mark-mode-disable ()

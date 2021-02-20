@@ -277,11 +277,6 @@
 				  (drag-stuff-define-keys))
 
 ;;
-;; `goto-line-preview' 预览指定行
-;;
-(vwe@lib--package 'goto-line-preview)
-
-;;
 ;; `smartparens'
 ;;
 (vwe@lib--package 'smartparens
