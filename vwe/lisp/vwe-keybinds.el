@@ -64,7 +64,6 @@
 	("M-C-'"                              sp-backward-unwrap-sexp)
 	("M-l"                                string-inflection-lower-camelcase)
 	("M-u"                                string-inflection-upcase)
-	("M-*"                                treemacs-select-window)
 	("M-C-,"                              eacl-complete-multiline)
 	("C-]"                                counsel-etags-find-tag-at-point)
 	("M-C-?"                              youdao-dictionary-search-at-point+)

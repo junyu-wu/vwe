@@ -440,8 +440,86 @@ OBJS."
 	  (mapc #'delete-overlay mum-mark-line--current-overlay-list))
 	(setq mum-mark-line--current-overlay-list nil)))
 
+;; =============================================================================
+;; point
+;;
+;; =============================================================================
+(defvar mum-mark--point-keymap
+  (let* ((keymap (make-sparse-keymap)))
+	(define-key keymap (kbd "M-* m") #'mum-mark--point-mark)
+	(define-key keymap (kbd "M-* g") #'mum-mark--point-goto-mark)
+	(define-key keymap (kbd "M-* c") #'mum-mark--point-clear-mark)
+	keymap)
+  "Last mark point.")
+
+(defface mum-mark--point--face
+  '((t (:foreground "red" :weight bold)))
+  "Posit mark face.")
+
+(defvar-local mum-mark--point-last-mark-points
+  nil
+  "Last mark point.")
+
+(defvar-local mum-mark--point-last-mark-points-overlay
+  nil
+  "Last mark point overlay.")
+
+(defun mum-mark--point-line-indent (&optional goto)
+  "Get current point or GOTO point line indentation."
+  (interactive)
+  (unless goto (setq goto (point)))
+  (let* ((ind-pos (save-excursion (goto-char goto) (back-to-indentation) (point))))
+	ind-pos))
+
+(defun mum-mark--point-line-eol (&optional goto)
+  "Get current point or GOTO point line eol."
+  (interactive)
+  (unless goto (setq goto (point)))
+  (let* ((eol-pos (save-excursion (goto-char goto) (end-of-line) (skip-chars-backward " \t" (mum-mark--point-line-indent)) (point))))
+	eol-pos))
+
+(defun mum-mark--point-mark ()
+  "Mark current point."
+  (interactive)
+  (let* ((point (point))
+		 (begin (1- point))
+		 (end point)
+		 (overlay (make-overlay begin end)))
+
+	(setq mum-mark--point-last-mark-points point
+		  mum-mark--point-last-mark-points-overlay overlay)
+	(overlay-put overlay 'after-string
+				 (propertize (format "[M]")
+							 'display '((raise 0.5) (height 0.8))
+							 'face 'mum-mark--point--face))))
+
+(defun mum-mark--point-goto-mark ()
+  "Got mark list first point."
+  (interactive)
+  (let* ((point mum-mark--point-last-mark-points))
+	(condition-case nil
+		(progn
+		  (goto-char point))
+	  (error nil))))
+
+(defun mum-mark--point-clear-mark ()
+  "Clear mark."
+  (interactive)
+  (setq mum-mark--point-last-mark-points nil)
+  (delete-overlay mum-mark--point-last-mark-points-overlay))
+
+(define-minor-mode mum-mark-point-mode
+  "Point mode."
+  :group 'mum-mark
+  :global t
+  :keymap mum-mark--point-keymap)
+
+;;
+;; mode
+;;
 (defun mum-mark-mode-enable ()
-  "Enable mode.")
+  "Enable mode."
+  (mum-mark-point-mode 1))
 
 (defun mum-mark-mode-disable ()
   "Disable mode.")
@@ -451,7 +529,10 @@ OBJS."
   "Mum mark minor mode."
   :group 'mum-mark
   :keymap mum-mark--mode-keymap
-  :global t)
+  :global t
+  (if mum-mark-mode
+	  (mum-mark-mode-enable)
+	(mum-mark-mode-disable)))
 
 (provide 'mum-mark)
 ;;; mum-mark.el ends here
