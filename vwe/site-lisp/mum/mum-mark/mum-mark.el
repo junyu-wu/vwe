@@ -444,7 +444,6 @@ OBJS."
 ;;
 ;; line preview
 ;;
-
 (defvar mum-mark-line--origin-window
   nil
   "Origin window.")
@@ -469,7 +468,7 @@ OBJS."
   "Preview temp keymap.")
 
 (defun mum-mark-line--preview ()
-  "Preview goto LINE."
+  "Preview goto line."
   (interactive)
   (save-selected-window
 	(let* ((input-num-str (thing-at-point 'line)))
@@ -491,7 +490,7 @@ OBJS."
   (mum-mark-line--preview))
 
 (defun mum-mark-line--preview-dynamic-goto-line ()
-  "Preview goto line."
+  "Preview dynamic goto line."
   (interactive)
   (mum-mark-line--bulid-preview-origin-snapshot)
   (unwind-protect
@@ -512,35 +511,33 @@ OBJS."
 (defun mum-mark-line--preview-recovery ()
   "Preview recovery."
   (interactive)
-  ;; (select-window mum-mark-line--origin-window)
-  ;; (when (and mum-mark-line--origin-window (numberp mum-mark-line--origin-window-point))
-  ;; 	(set-window-point mum-mark-line--origin-window mum-mark-line--origin-window-point)
-  ;; 	(setq ;;mum-mark-line--origin-window nil
-  ;; 	 mum-mark-line--origin-window-line nil
-  ;; 	 mum-mark-line--origin-window-point nil))
-  )
+  (select-window mum-mark-line--origin-window)
+  (when (and mum-mark-line--origin-window (numberp mum-mark-line--origin-window-point))
+	(set-window-point mum-mark-line--origin-window mum-mark-line--origin-window-point)))
 
-(defun mum-mark-line--preview-minibuffer-setup ()
-  "Locally set up preview hooks for this minibuffer command."
+(defun mum-mark-line--preview-cmd-config ()
+  "Preview hook for minibuffer command."
   (when (memq this-command '(mum-mark-line--preview-dynamic-goto-line))
     (add-hook 'post-command-hook #'mum-mark-line--preview nil t)))
 
 (defun mum-mark-line--preview-enable ()
-  "Enable."
+  "Enable preview."
   (define-key mum-mark-line--map (kbd "M-* r") #'mum-mark-line--preview-goto-line)
   (define-key mum-mark-line--map (kbd "M-* d") #'mum-mark-line--preview-dynamic-goto-line)
-  (add-hook 'minibuffer-setup-hook 'mum-mark-line--preview-minibuffer-setup))
+  (add-hook 'minibuffer-setup-hook 'mum-mark-line--preview-cmd-config))
 
 (defun mum-mark-line--preview-disable ()
-  "Disable.")
+  "Disable preview."
+  (remove-hook 'minibuffer-setup-hook 'mum-mark-line--preview-cmd-config))
 
 (define-minor-mode mum-mark-line-preview-mode
-  "Mark line mode."
+  "Mark line preview mode."
   :group 'mum-mark
   :keymap mum-mark-line--map
   :global t
   (if mum-mark-line-preview-mode
-	  (mum-mark-line--preview-enable)))
+	  (mum-mark-line--preview-enable)
+	(mum-mark-line--preview-disable)))
 
 ;; =============================================================================
 ;; point

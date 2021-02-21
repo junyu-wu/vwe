@@ -308,6 +308,30 @@ HORIZONTAL horizontal or vertical."
 	keymap)
   "Switch buffer keymap.")
 
+(defface mum-layout--default-face
+  '((t (:inherit 'default :weight bold)))
+  "Default face.")
+
+(defface mum-layout--info-face
+  '((t (:foreground "DarkOrange" :weight bold)))
+  "Info face.")
+
+(defface mum-layout--success-face
+  '((t (:foreground "SpringGreen" :weight bold)))
+  "Success face.")
+
+(defface mum-layout--warning-face
+  '((t (:foreground "yellow" :weight bold)))
+  "Warning face.")
+
+(defface mum-layout--error-face
+  '((t (:foreground "DarkRed" :weight bold)))
+  "Error face.")
+
+(defface mum-layout--button-face
+  '((t (:foreground "SkyBlue" :weight bold)))
+  "Button face.")
+
 (defvar mum-layout--switch-side-show-status
   'buffer
   "Switch side buffer show content `buffer' or `temp' buffer.")
@@ -320,14 +344,55 @@ HORIZONTAL horizontal or vertical."
    ((equal mum-layout--switch-side-show-status 'temp) (setq mum-layout--switch-side-show-status 'buffer) (mum-layout--display-switch-side-buffer t))
    (t (setq mum-layout--switch-side-show-status 'temp) (mum-layout--display-switch-side-buffer))))
 
+(defun mum-layout--build-switch-buffer-headerline ()
+  "Build switch buffer headerline."
+  (let* ((allbuf (length (buffer-list)))
+		 (buflen (length (mum-layout--get-buffer-list)))
+		 (tmpbuflen (length (mum-layout--get-buffer-list t)))
+		 (hidebuflen (- allbuf buflen tmpbuflen))
+		 (split (propertize (format " | ") 'face 'mum-layout--default-face)))
+	(concat
+	 (propertize (format "Mum switch buffer:")
+				 'face 'mum-layout--success-face)
+	 split
+	 (propertize (format "total " )
+				 'face 'mum-layout--default-face)
+	 (propertize (format "%d" allbuf)
+				 'face 'mum-layout--success-face)
+	 split
+	 (propertize (format "buffer ")
+				 'face 'mum-layout--default-face)
+	 (propertize (format "%d" buflen)
+				 'face 'mum-layout--info-face)
+	 split
+	 (propertize (format "* buffer ")
+				 'face 'mum-layout--default-face)
+	 (propertize (format "%d" tmpbuflen)
+				 'face 'mum-layout--warning-face)
+	 split
+	 (propertize (format "hide buffer ")
+				 'face 'mum-layout--default-face)
+	 (propertize (format "%d" hidebuflen)
+				 'face 'mum-layout--button-face)
+	 split
+	 (propertize (format "buffer/*buffer ")
+				 'face 'mum-layout--default-face)
+	 (propertize (format "[TAB]")
+				 'face 'mum-layout--info-face)
+	 (propertize (format " quit ")
+				 'face 'mum-layout--default-face)
+	 (propertize (format "[q]")
+				 'face 'mum-layout--info-face))))
+
 (defun mum-layout--display-switch-side-buffer (&optional tmp?)
   "Make switch buffer cmd buffer.
 TMP is tmp buffer."
   (let* ((buffer (if (get-buffer mum-layout--switch-side-buffer-name) (get-buffer mum-layout--switch-side-buffer-name) (get-buffer-create mum-layout--switch-side-buffer-name)))
-		 (buffer-length (length (mum-layout--get-buffer-list)))
-		 (tmpbuf-length (length (mum-layout--get-buffer-list t)))
-		 (headerline (format "buffer total %d | buffer is %d | tmp buffer is %d"
-							 (length (buffer-list)) buffer-length tmpbuf-length))
+		 ;; (buffer-length (length (mum-layout--get-buffer-list)))
+		 ;; (tmpbuf-length (length (mum-layout--get-buffer-list t)))
+		 ;; (headerline (concat (format "buffer total %d | buffer %d | tmp buffer %d | hide buffer %d"
+		 ;; (length (buffer-list)) buffer-length tmpbuf-length (- (length (buffer-list)) buffer-length tmpbuf-length))))
+		 (headerline (mum-layout--build-switch-buffer-headerline))
 		 (bufname-list (if tmp?
 						   (mapcar #'buffer-name (mum-layout--get-buffer-list t))
 						 (mapcar #'buffer-name (mum-layout--get-buffer-list))))
@@ -384,8 +449,7 @@ SELF is include curretn buffer."
 	(mum-layout--buffer-list-filter "^[^\s*]" self?)))
 
 (defun mum-layout--switch-buffer-enable ()
-  "Enable mode."
-  )
+  "Enable mode.")
 
 (defun mum-layout--switch-buffer-disable ()
   "Disable mode."
