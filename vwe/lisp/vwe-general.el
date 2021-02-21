@@ -260,11 +260,6 @@
 (vwe@lib--package 'expand-region)
 
 ;;
-;; `togo-chg' 跳转到最后一次修改
-;;
-(vwe@lib--package 'goto-chg)
-
-;;
 ;; `mwim' 根据代码移动光标
 ;;
 (vwe@lib--package 'mwim)
