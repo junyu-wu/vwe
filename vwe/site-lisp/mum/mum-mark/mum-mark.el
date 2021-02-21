@@ -552,7 +552,7 @@ OBJS."
   "Last mark point.")
 
 (defface mum-mark--point--face
-  '((t (:foreground "red" :weight bold)))
+  '((t (:inherit 'error :weight bold)))
   "Posit mark face.")
 
 (defvar-local mum-mark--point-last-mark-points-overlay
