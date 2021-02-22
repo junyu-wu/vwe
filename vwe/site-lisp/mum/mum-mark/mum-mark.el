@@ -588,9 +588,7 @@ OBJS."
   (interactive)
   (let* ((goto-point (overlay-end mum-mark--point-last-mark-points-overlay)))
 	(condition-case nil
-		(progn
-		  (when (numberp goto-point)
-			(goto-char goto-point)))
+		(progn (when (numberp goto-point) (goto-char goto-point)))
 	  (error nil))))
 
 (defun mum-mark--point-clear-mark ()
@@ -648,12 +646,14 @@ OBJS."
   (let* ((found-point (point))
 		 (undo-len (if buffer-undo-list (length buffer-undo-list) 0))
 		 (match-index 0))
-	(dotimes (i undo-len)
+	(catch 'break
+	  (dotimes (i undo-len)
 	  (let* ((undo-elem (nth i buffer-undo-list))
 			 (pos (mum-mark-change--get-undo-list-element-point undo-elem)))
 	  (when pos
 		(setq match-index (1+ match-index))
-		(when (= step match-index) (setq found-point pos)))))
+		(when (= step match-index) (setq found-point pos)
+			  (throw 'break nil))))))
 	found-point))
 
 ;;;###autoload

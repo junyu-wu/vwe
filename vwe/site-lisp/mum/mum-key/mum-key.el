@@ -104,7 +104,7 @@
 
 (defvar mum-key--keymap-base-mapping
   (let* ((keymap (make-sparse-keymap)))
-	(define-key keymap (kbd mum-key--quit-key) 'mum-key--close-buffer)
+	(define-key keymap (kbd mum-key--quit-key) #'mum-key--close-buffer)
 	(define-key keymap (kbd mum-key--toggle-hint-key) 'nil)
 	keymap)
   "Key mapping.")
@@ -202,7 +202,6 @@
 															  (funcall (intern (format "%s" func-name)))
 															(funcall (intern (format "%s" func-name)) t))))
 	  (setq mum-key--keymap-mapping keymap)
-
 	  (plist-put content :mapping keymap)
 	  (plist-put content :func func-str-list)
 	  (plist-put content :hint hint-str-list)
@@ -353,10 +352,6 @@ LEADERKEY is leader key."
 															`(,(nth i mode-list) (,func-name ,leaderkey)))))
 			)
 		  )
-		;; (if (plist-member mum-key--keymap-mode-func-alist mode)
-		;; 	(progn (plist-put mum-key--keymap-mode-func-alist mode `(,func-name ,leaderkey)))
-		;;   (setq mum-key--keymap-mode-func-alist (append mum-key--keymap-mode-func-alist
-		;; 												`(,mode (,func-name ,leaderkey)))))
 		`(defun ,func-name (&optional funcp)
 		   (interactive)
 		   (setq mum-key--max-width (frame-width))
