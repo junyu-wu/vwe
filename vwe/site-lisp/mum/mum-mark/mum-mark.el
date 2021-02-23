@@ -346,6 +346,11 @@ OBJS."
 	keymap)
   "Move to mark map.")
 
+(defvar mum-mark-line--preview-map
+  (let ((keymap (make-sparse-keymap)))
+	keymap)
+  "Move to mark map.")
+
 (defvar mum-mark-line--current-overlay-list
   nil
   "Current overlay list.")
@@ -522,8 +527,8 @@ OBJS."
 
 (defun mum-mark-line--preview-enable ()
   "Enable preview."
-  (define-key mum-mark-line--map (kbd "M-* r") #'mum-mark-line--preview-goto-line)
-  (define-key mum-mark-line--map (kbd "M-* d") #'mum-mark-line--preview-dynamic-goto-line)
+  (define-key mum-mark-line--preview-map (kbd "M-* r") #'mum-mark-line--preview-goto-line)
+  (define-key mum-mark-line--preview-map (kbd "M-* d") #'mum-mark-line--preview-dynamic-goto-line)
   (add-hook 'minibuffer-setup-hook 'mum-mark-line--preview-cmd-config))
 
 (defun mum-mark-line--preview-disable ()
@@ -533,7 +538,7 @@ OBJS."
 (define-minor-mode mum-mark-line-preview-mode
   "Mark line preview mode."
   :group 'mum-mark
-  :keymap mum-mark-line--map
+  :keymap mum-mark-line--preview-map
   :global t
   (if mum-mark-line-preview-mode
 	  (mum-mark-line--preview-enable)
