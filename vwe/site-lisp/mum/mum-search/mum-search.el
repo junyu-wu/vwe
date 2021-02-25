@@ -20,9 +20,13 @@
 
 ;;; Commentary:
 
-;;
+;; ripgrep
 
 ;;; Code:
+(require 'cl-lib)
+(require 'subr-x)
+(require 'grep)
+
 (defgroup mum-search nil
   "Mum search."
   :prefix "mum-look-for--"
@@ -45,6 +49,12 @@
   "Result mode hook."
   :group 'mum-search
   :type 'list)
+
+(defcustom mum-search--flash-line-delay
+  .3
+  "Flash line delay."
+  :type 'number
+  :group 'mum-search)
 
 (defface mum-search--default-face
   '((t (:inherit 'default :weight bold)))
@@ -90,6 +100,10 @@
   '((t (:foreground "SkyBlue" :weight bold)))
   "Button face.")
 
+(defface mum-search--flash-line-face
+  '((t (:inherit highlight)))
+  "Flash the current line.")
+
 (defvar mum-search--current-search-info
   '()
   "Current search info.")
@@ -103,12 +117,24 @@
   "Buffer name.")
 
 (defvar mum-search--default-parameters
-  "--column --color=always -H"
+  "--column --color=always --smart-case --max-columns=300"
   "Search command default parameters.")
 
 (defvar mum-search--result-total
   0
   "Result total.")
+
+(defvar mum-search--regexp-file
+  "^[/\\~].*\\|^[a-z]:.*"
+  "Regexp to match filename.")
+
+(defvar mum-search--regexp-empty-line
+  "\n\n"
+  "Regexp to match empty line.")
+
+(defvar mum-search--prefix-key
+  "-e"
+  "Keyword prefix parameter.")
 
 (defvar mum-search--keymap
   (let ((keymap (make-sparse-keymap)))
@@ -120,6 +146,8 @@
 	(define-key keymap (kbd "q") #'mum-search--kill-result-buffer)
 	(define-key keymap (kbd "n") #'next-file)
 	(define-key keymap (kbd "p") #'previous-line)
+	(define-key keymap (kbd "RET") #'mum-search--find-file)
+	(define-key keymap (kbd "M-RET") #'mum-search--find-file-after-back)
 	keymap)
   "Search result mode keymap.")
 
@@ -185,10 +213,12 @@ TYPE `word' `symbol' `point' `region' `input'."
 
 (defun mum-search--build-command (keyword directory parameters command &optional regexp)
   "Build search COMMAND based on KEYWORD DIRECTORY PARAMETERS and REGEXP."
-  (let* ((prefix-key (if regexp "-e" "-w"))
+  (let* ((prefix-key mum-search--prefix-key)
 		 (split " ")
 		 (cmd mum-search--command))
-	(setq cmd (concat command split prefix-key split keyword split (or parameters mum-search--default-parameters) split directory))
+	(setq cmd (concat command split (or parameters mum-search--default-parameters) split prefix-key split keyword split directory))
+	(when (memq system-type '(cygwin windows-nt ms-dos))
+      (setq cmd (encode-coding-string cmd locale-coding-system)))
 	cmd))
 
 (defun mum-search--build-result-buffer-headerline (keyword directory result)
@@ -219,15 +249,10 @@ TYPE `word' `symbol' `point' `region' `input'."
 	  (setq finish (point))
 	  (when (< (point) cursor)
         (setq cursor (copy-marker cursor))
-        ;; Delete files that throw "error parsing glob" error when search.
         (while (re-search-forward "/.*:\\s-error\\s-parsing\\s-glob\\s-.*" cursor 1) (replace-match "" t t))
-
-        ;; Highlight filename.
         (goto-char finish)
         (while (re-search-forward "^\033\\[[0]*m\033\\[35m\\(.*?\\)\033\\[[0]*m$" cursor 1)
 		  (replace-match (concat (propertize (match-string 1) 'face nil 'font-lock-face 'mum-search--file-face)) t t))
-
-        ;; Highlight rg matches and delete marking sequences.
         (goto-char finish)
         (while (re-search-forward "\033\\[[0]*m\033\\[[3]*1m\033\\[[3]*1m\\(.*?\\)\033\\[[0]*m" cursor 1)
 		  (replace-match (propertize (match-string 1) 'face nil 'font-lock-face 'mum-search--keyword-face) t t)
@@ -236,13 +261,81 @@ TYPE `word' `symbol' `point' `region' `input'."
 		  (setq-local header-line-format (mum-search--build-result-buffer-headerline (plist-get mum-search--current-search-info :keyword)
 																					 (plist-get mum-search--current-search-info :directory)
 																					 (plist-get mum-search--current-search-info :result))))
-        ;; Delete all remaining escape sequences
         (goto-char finish)
-        (while (re-search-forward "\033\\[[0-9;]*[0mK]" cursor 1) (replace-match "" t t))))
-    ))
+        (while (re-search-forward "\033\\[[0-9;]*[0mK]" cursor 1) (replace-match "" t t))))))
 
-(defun mum-search--result-counts ()
-  "Result counts.")
+(defun mum-search--match-result-file ()
+  "Match result file."
+  (save-excursion
+    (search-backward-regexp mum-search--regexp-file nil t)
+    (string-remove-suffix "\n" (thing-at-point 'line))))
+
+(defun mum-search--match-result-line ()
+  "Match result line."
+  (beginning-of-line)
+  (string-to-number (thing-at-point 'symbol)))
+
+(defun mum-search--match-result-column ()
+  "Match result column."
+  (search-forward ":")
+  (string-to-number (thing-at-point 'symbol)))
+
+(defun mum-search--match-result-buffer (path)
+  "Match result buffer with PATH."
+  (catch 'find-match
+    (dolist (buffer (buffer-list))
+      (when (string-equal (buffer-file-name buffer) path)
+        (throw 'find-match buffer)))
+    nil))
+
+(defun mum-search--goto-column (column)
+  "Goto line COLUMN."
+  (let ((scan-column 0)
+        (first-char-point (point)))
+    (while (> column scan-column)
+      (forward-char 1)
+      (setq scan-column (string-bytes (buffer-substring first-char-point (point)))))
+    (backward-char 1)))
+
+(defun mum-search--goto-point (line column)
+  "Goto find buffer LINE and COLUMN."
+  (forward-line line)
+  (beginning-of-line)
+  (mum-search--goto-column column))
+
+(defun mum-search--flash-line ()
+  "Flash line."
+  (let ((pulse-iterations 1)
+        (pulse-delay mum-search--flash-line-delay))
+    (pulse-momentary-highlight-one-line (point) 'mum-search--flash-line-face)))
+
+(defun mum-search--find-file (&optional refind)
+  "Find result file with REFIND."
+  (interactive)
+  (let* ((file (mum-search--match-result-file))
+		 (line (mum-search--match-result-line))
+		 (column (mum-search--match-result-column)))
+	(save-excursion
+	  (let ((inhibit-message t))
+		(mum-search--goto-column column)
+		(other-window 1)
+		(when file
+		  (find-file file)
+		  (cond (t (mum-search--goto-point line column))))
+		(mum-search--flash-line)))
+	(when refind
+	  (let* ((buffer (get-buffer mum-search--result-buffer-name))
+			 (window (get-buffer-window buffer)))
+		(if buffer
+			(select-window window)
+		  (split-window)
+		  (other-window 1)
+		  (switch-to-buffer buffer))))))
+
+(defun mum-search--find-file-after-back ()
+  "Find file after back to result buffer."
+  (interactive)
+  (mum-search--find-file t))
 
 (defun mum-search--engine (&optional keyword directory parameters command)
   "Execute COMMAND to Search KEYWORD in DIRECTORY with PARAMETERS."
@@ -261,15 +354,20 @@ TYPE `word' `symbol' `point' `region' `input'."
 		(pop-to-buffer buffer)
 		(goto-char (point-min))))))
 
+(defun mum-search--rg ()
+  "Rg search."
+  (interactive)
+  (mum-search--engine))
+
 (defun mum-search--process-setup-function (&rest _args)
   "Process setup function format input message."
   ;; `compilation-exit-message-function' (lambda (_process-status exit-status msg) (cons msg exit-status))
-
   (let* ((buffer (get-buffer mum-search--result-buffer-name)))
 	(set (make-local-variable 'compilation-exit-message-function)
 		 (lambda (_process-status exit-status msg)
 		   (when (eq _process-status 'exit)
-			 (cond ((and (zerop exit-status) (buffer-modified-p)) (setq msg (format "(keyword '%s' matched %s)" (plist-get mum-search--current-search-info :keyword) mum-search--result-total)))))
+			 (cond ((and (zerop exit-status) (buffer-modified-p))
+					(setq msg (format "(keyword '%s' matched %s)" (plist-get mum-search--current-search-info :keyword) mum-search--result-total)))))
 		   (cons msg exit-status)))))
 
 (defun mum-search--highlight-result ()
@@ -314,7 +412,3 @@ TYPE `word' `symbol' `point' `region' `input'."
 
 (provide 'mum-search)
 ;;; mum-search.el ends here
-
-;; (mum-search--build-command "engine" default-directory '() mum-search--command)
-;; (mum-search--build-result-buffer-headerline mum-search--command "engine" default-directory)
-;; (mum-search--engine "engine")

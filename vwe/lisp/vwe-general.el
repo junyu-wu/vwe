@@ -581,6 +581,15 @@
 				  (vwe@lib--path-vwe-site-lisp "mum/mum-layout"))
 
 ;;
+;; `mum-search'
+;;
+(vwe@lib--package 'mum-search
+				  (progn
+					(autoload 'mum-search--rg (vwe@lib--path-vwe-site-lisp "mum/mum-search/mum-search.el" t) "Mum global search mode." t t))
+				  nil nil nil
+				  (vwe@lib--path-vwe-site-lisp "mum/mum-search"))
+
+;;
 ;; `imenu-list'
 ;;
 (vwe@lib--package 'imenu-list)
