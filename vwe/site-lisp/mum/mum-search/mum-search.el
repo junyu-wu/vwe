@@ -51,7 +51,7 @@
   :type 'list)
 
 (defcustom mum-search--flash-line-delay
-  .3
+  1
   "Flash line delay."
   :type 'number
   :group 'mum-search)
@@ -173,8 +173,14 @@ TYPE `word' `symbol' `point' `region' `input'."
 	 ((region-active-p) (setq key (buffer-substring-no-properties (region-beginning) (region-end))))
 	 (t (setq key (read-string (format "keyword%s:" (cond (symbol (format "[%s]" symbol))
 														  (word  (format "[%s]" word))
-														  (t (format "[%s]" (if (equal (string-to-char char) 10) (format " ") char)))))))))
+														  (t (format "[%s]" (if (equal (string-to-char char) 10)
+																				(format " ") char))))) nil nil word nil))))
 	key))
+
+(defun mum-search--read-directory (&optional directory)
+  "Read DIRECTORY."
+  (interactive)
+  (or directory (read-file-name "select dir:") default-directory))
 
 (defun mum-search--make-result-buffer ()
   "Make search result buffer."
@@ -223,20 +229,26 @@ TYPE `word' `symbol' `point' `region' `input'."
 
 (defun mum-search--build-result-buffer-headerline (keyword directory result)
   "KEYWORD DIRECTORY and RESULT build result buffer headerline."
-  (concat (propertize (format "mum serch :")
+  (concat (propertize (format "mum serch: ")
 					  'face 'mum-search--success-face)
-		  (propertize (format "keyword |")
+		  (propertize (format "[keyword | '")
 					  'face 'mum-search--success-face)
-		  (propertize (format " %s " keyword)
+		  (propertize (format "%s" keyword)
 					  'face 'mum-search--info-face)
-		  (propertize (format "dir |")
+		  (propertize (format "'] ")
 					  'face 'mum-search--success-face)
-		  (propertize (format " %s " directory)
+		  (propertize (format "[dir | '")
+					  'face 'mum-search--success-face)
+		  (propertize (format "%s" directory)
 					  'face 'mum-search--info-face)
-		  (propertize (format "result |")
+		  (propertize (format "'] ")
 					  'face 'mum-search--success-face)
-		  (propertize (format " %s " result)
-					  'face 'mum-search--warning-face)))
+		  (propertize (format "[result | '")
+					  'face 'mum-search--success-face)
+		  (propertize (format "%s" result)
+					  'face 'mum-search--warning-face)
+		  (propertize (format "'] ")
+					  'face 'mum-search--success-face)))
 
 (defun mum-search--result-filter ()
   "Filter."
@@ -299,7 +311,8 @@ TYPE `word' `symbol' `point' `region' `input'."
 
 (defun mum-search--goto-point (line column)
   "Goto find buffer LINE and COLUMN."
-  (forward-line line)
+  (goto-char (point-min))
+  (forward-line (1- line))
   (beginning-of-line)
   (mum-search--goto-column column))
 
@@ -339,8 +352,8 @@ TYPE `word' `symbol' `point' `region' `input'."
 
 (defun mum-search--engine (&optional keyword directory parameters command)
   "Execute COMMAND to Search KEYWORD in DIRECTORY with PARAMETERS."
-  (let* ((key (or keyword (mum-search--read-keyword)))
-		 (dir (or directory default-directory))
+  (let* ((dir (or directory (mum-search--read-directory)))
+		 (key (or keyword (mum-search--read-keyword)))
 		 (cmd (or command mum-search--command))
 		 (cmd-str (mum-search--build-command key dir parameters cmd))
 		 (buffer (mum-search--make-result-buffer)))
