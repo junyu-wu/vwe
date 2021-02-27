@@ -28,7 +28,7 @@
 ;; ***************************************************************************
 (defvar vwe@keybind--default-list
   '(("<f1>"                               (lambda () (interactive) (find-file (vwe@lib--path-vwe-lisp "vwe-main.el" t))))
-	("<f2>"                               mum-layout-zoom-mode)
+	("<f2>"                               vwe-layout-zoom-mode)
 	("<f3>"                               split-window-horizontally)
 	("C-<f3>"                             split-window-vertically)
 	("<f4>"                               vwe@theme--init)
@@ -51,7 +51,7 @@
 	("M-C-y"                              vwe@lib--window-kill-current)
 	("M-C-o"                              vwe@lib--window-maximize)
 	("M-C-r"                              browse-kill-ring)
-	("M-\""                               mum-layout--switch-buffer)
+	("M-\""                               vwe-layout--switch-buffer)
 	("C-@"                                vwe@lib--minibuffer-switch)
 	("C-c C-f"                            format-all-buffer)
 	("C-M-["                              mc/edit-beginnings-of-lines)
@@ -69,15 +69,15 @@
 	("M-C-?"                              youdao-dictionary-search-at-point+)
 	("s-s"                                toggle-frame-maximized)
 	("M-&"                                (lambda () (interactive) (if (bound-and-true-p hs-minor-mode) (hs-toggle-hiding) (hs-minor-mode t) (hs-toggle-hiding))))
-	("C-1"                                mum-layout--windmove-up)
-	("C-2"                                mum-layout--windmove-down)
-	("C-3"                                mum-layout--windmove-left)
-	("C-4"                                mum-layout--windmove-right)
-	("C-7"                                mum-layout--swap-up-buffer)
-	("C-8"                                mum-layout--swap-down-buffer)
-	("C-9"                                mum-layout--swap-left-buffer)
-	("C-0"                                mum-layout--swap-right-buffer)
-	("M-RET"                              mum-key:global)
+	("C-1"                                vwe-layout--windmove-up)
+	("C-2"                                vwe-layout--windmove-down)
+	("C-3"                                vwe-layout--windmove-left)
+	("C-4"                                vwe-layout--windmove-right)
+	("C-7"                                vwe-layout--swap-up-buffer)
+	("C-8"                                vwe-layout--swap-down-buffer)
+	("C-9"                                vwe-layout--swap-left-buffer)
+	("C-0"                                vwe-layout--swap-right-buffer)
+	("M-RET"                              vwe-key:global)
 
 	([remap comment-dwim]                 comment-dwim-2)
 	([remap move-beginning-of-line]       mwim-beginning-of-code-or-line)
@@ -90,8 +90,8 @@
   (interactive)
   (vwe@lib--keymap-global-set vwe@keybind--default-list))
 
-(with-eval-after-load 'mum-key
-  (mum-key-define common
+(with-eval-after-load 'vwe-key
+  (vwe-key-define common
 				  (("common" :face (:background "DarkOrange" :foreground "white" :weight bold))
 				   (("f" find-file "find file")
 					("o" read-only-mode "read only")
@@ -101,17 +101,17 @@
 					("n" (lambda () (interactive) (vwe@lib--buffer-kill-other (buffer-list) "^*")) "kill ohter")
 					("d" delete-window "del window")
 					("x" save-buffers-kill-terminal "kill emacs")
-					("p" mum-proxy--enable "proxy enable")
-					("P" mum-proxy--enable-global "proxy global enable")
+					("p" vwe-proxy--enable "proxy enable")
+					("P" vwe-proxy--enable-global "proxy global enable")
 					("," toggle-frame-maximized "maximized")
 					("." toggle-frame-fullscreen "fullscreen")
 					("F" helpful-function "help func")
 					("V" helpful-variable "help var")
 					("K" helpful-key "help key")
 					("m" (lambda () (interactive) (set-mark (point))) "mark")
-					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
-  (mum-key-define global
+  (vwe-key-define global
 				  (("global" :face (:background "DarkOrange" :foreground "white" :weight bold))
 				   (("g" counsel-etags-grep "grep")
 					("B" ibuffer "ibuffer")
@@ -120,31 +120,31 @@
 					("d" dired "dired")
 					("s" swiper-thing-at-point "thing at point")
 					("R" vwe@lib--replace "replace")
-					("r" mum-search--rg "search")
+					("r" vwe-search--rg "search")
 					("x" vwe@lib--frame-reset "reset frame")
 					("t" vwe@theme--toggle "toggle theme")
 					("f" format-all-buffer "format code")
 					("p" vwe@prog--switch-mode "switch mode")
 					("n" switch-to-next-buffer "next buffer ")
 					("N" display-line-numbers-mode "line number")
-					("H" mum-headerline-mode "header line")
-					("M" mum-modeline-mode "modeline")
-					("T" mum-tray-mode "tray")
-					("E" mum-editor-mode "editor")
-					("v" mum-terminal "term")
+					("H" vwe-headerline-mode "header line")
+					("M" vwe-modeline-mode "modeline")
+					("T" vwe-tray-mode "tray")
+					("E" vwe-editor-mode "editor")
+					("v" vwe-terminal "term")
 					("l" vwe@lsp--run "lsp")
-					("L" mum-key:layout "layout")
-					("o" mum-key:org-extend "org extend")
-					("C" mum-key:check "check")
-					("P" mum-key:project "project")
+					("L" vwe-key:layout "layout")
+					("o" vwe-key:org-extend "org extend")
+					("C" vwe-key:check "check")
+					("P" vwe-key:project "project")
 					("T" treemacs "treemacs")
 					("e" esup "esup")
 					("z" customize-group "customize group")
-					("=" mum-layout--zoom-type-toggle "toggle zoom")
+					("=" vwe-layout--zoom-type-toggle "toggle zoom")
 					("*" treemacs-select-window "treemacs window")
 					("S" sudo-edit "sudo")
 					("!" winum-mode "win number")
-					("~" mum-mark-paren--paren-pair "paren mark")
+					("~" vwe-mark-paren--paren-pair "paren mark")
 					("(" vwe@base--paren-toggle-style "paren style")
 					("-" vwe@lib--font-reset "font reset")
 					("$" youdao-dictionary-search-at-point+ "translate")
@@ -153,48 +153,48 @@
 							 (vwe@base--init)
 							 (vwe@ui--init)
 							 (vwe@theme--init)) "reinit" :footer t)
-					("RET" mum-key:common "common" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
+					("RET" vwe-key:common "common" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
-  (mum-key-define layout
+  (vwe-key-define layout
 				  (("window" :face (:background "DarkOrange" :foreground "white" :weight bold))
-				   (("z" mum-layout-zoom-mode "zoom mode")
+				   (("z" vwe-layout-zoom-mode "zoom mode")
 					("2" split-window-vertically "split vertically")
 					("3" split-window-horizontally "split horizontally")
-					("e" mum-layout--window-height-enlarge "win height+" :circle t)
-					("s" mum-layout--window-height-shrink "win height-" :circle t)
-					("E" mum-layout--window-width-enlarge "win width+" :circle t)
-					("S" mum-layout--window-width-shrink "win width-" :circle t)
+					("e" vwe-layout--window-height-enlarge "win height+" :circle t)
+					("s" vwe-layout--window-height-shrink "win height-" :circle t)
+					("E" vwe-layout--window-width-enlarge "win width+" :circle t)
+					("S" vwe-layout--window-width-shrink "win width-" :circle t)
 					("b" balance-windows "win balance")
-					("u" mum-layout--windmove-up "win move up" :circle t)
-					("d" mum-layout--windmove-down "win move down" :circle t)
-					("l" mum-layout--windmove-left "win move left" :circle t)
-					("r" mum-layout--windmove-right "win move right" :circle t)
-					("U" mum-layout--swap-up-buffer "swap up buffer" :circle t)
-					("D" mum-layout--swap-down-buffer "swap down buffer" :circle t)
-					("L" mum-layout--swap-left-buffer "swap left buffer" :circle t)
-					("R" mum-layout--swap-right-buffer "swap right buffer" :circle t)
-					("+" mum-layout--text-scale-increase "text scale +" :circle t)
-					("-" mum-layout--text-scale-decrease "text scale -" :circle t)
-					("=" mum-layout--text-scale-adjust "text scale adjust" :circle t)
-					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
+					("u" vwe-layout--windmove-up "win move up" :circle t)
+					("d" vwe-layout--windmove-down "win move down" :circle t)
+					("l" vwe-layout--windmove-left "win move left" :circle t)
+					("r" vwe-layout--windmove-right "win move right" :circle t)
+					("U" vwe-layout--swap-up-buffer "swap up buffer" :circle t)
+					("D" vwe-layout--swap-down-buffer "swap down buffer" :circle t)
+					("L" vwe-layout--swap-left-buffer "swap left buffer" :circle t)
+					("R" vwe-layout--swap-right-buffer "swap right buffer" :circle t)
+					("+" vwe-layout--text-scale-increase "text scale +" :circle t)
+					("-" vwe-layout--text-scale-decrease "text scale -" :circle t)
+					("=" vwe-layout--text-scale-adjust "text scale adjust" :circle t)
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
-  (mum-key-define check
+  (vwe-key-define check
 				  ("check"
 				   (("c" flycheck-mode "flycheck mode")
 					("v" flycheck-verify-setup "verify checker")
 					("l" flycheck-list-errors "error list")
-					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
-  (mum-key-define project
+  (vwe-key-define project
 				  ("project"
 				   (("p" projectile-mode "projectile mode")
 					("g" projectile-grep "grep")
 					("a" projectile-add-known-project "add project")
 					("o" projectile-switch-open-project "switch open project")
 					("s" projectile-switch-project "switch project")
-					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
-  (mum-key-define treemacs
+  (vwe-key-define treemacs
 				  ("treemacs"
 				   (("t" treemacs "treemacs mode")
 					("b" treemacs-bookmark "bookmark")
@@ -219,19 +219,19 @@
 					("z" treemacs-copy-file "copy file")
 					("m" treemacs-move-file "move file")
 					("h" treemacs-collapse-parent-node "collapse parent node")
-					("M-RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+					("M-RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (treemacs-mode)
 				  "C-M-<return>")
 
-  (mum-key-define term
+  (vwe-key-define term
 				  (("term" :face (:background "red" :foreground "white" :weight bold))
 				   (("c" term-char-mode "char mode")
 					("l" term-line-mode "line mode")
-					("q" mum-term--exit "exit terminal")
-					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+					("q" vwe-term--exit "exit terminal")
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (term-mode))
 
-  (mum-key-define emacs-lisp
+  (vwe-key-define emacs-lisp
 				  (("emacs lisp" :face (:background "red" :foreground "white" :weight bold))
 				   (("b" eval-buffer "eval buffer")
 					("d" eval-defun "eval defun")
@@ -240,10 +240,10 @@
 					("k" describe-key "key")
 					("f" describe-function "function")
 					("v" describe-variable "variable")
-					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (emacs-lisp-mode))
 
-  (mum-key-define org-template
+  (vwe-key-define org-template
 				  ("org template"
 				   (("a" (lambda () (interactive) (vwe@org--template "<a"))                              "ascii")
 					("c" (lambda () (interactive) (vwe@org--template "<c"))                              "center")
@@ -269,17 +269,17 @@
 					("g" (lambda () (interactive) (vwe@org--template "<s" "go :imports '\(\"fmt\"\)"))   "golang")
 					("t" (lambda () (interactive) (vwe@org--template "<s" "plantuml :file CHANGE.png"))  "plantuml")
 					("R" vwe@org--reveal-insert-split                                                    "reveal split")
-					("DEL" mum-key:org "org" :footer t :face (:background "magenta" :foreground "white" :weight bold))
-					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
+					("DEL" vwe-key:org "org" :footer t :face (:background "magenta" :foreground "white" :weight bold))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
-  (mum-key-define org-extend
+  (vwe-key-define org-extend
 				  ("org extend"
 				   (("a" org-agenda "agenda")
 					("c" org-capture "capture")
 					("m" org-roam-insert "roam insert")
-					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
-  (mum-key-define org
+  (vwe-key-define org
 				  ("org"
 				   (("l" org-insert-link "+link")
 					("o" org-open-at-point "open browser")
@@ -305,12 +305,12 @@
 					("s" org-tree-slide-mode "tree slide")
 					("r" vwe@org--reveal-load "reveal load")
 					("v" org-preview-html/preview "preview html")
-					("DEL" mum-key:org-template "org template" :footer t :face (:background "magenta" :foreground "white" :weight bold))
-					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+					("DEL" vwe-key:org-template "org template" :footer t :face (:background "magenta" :foreground "white" :weight bold))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (org-mode)
 				  "C-M-<return>")
 
-  (mum-key-define markdown
+  (vwe-key-define markdown
 				  ("markdown"
 				   (("l" markdown-live-preview-mode "live preview mode")
 					("b" markdown-insert-gfm-code-block "code block")
@@ -331,11 +331,11 @@
 					("6" markdown-insert-header-atx-6 "atx 6")
 					("7" markdown-insert-header-setext-1 "setext 1")
 					("8" markdown-insert-header-setext-2 "setext 2")
-					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (markdown-mode)
 				  "C-M-<return>")
 
-  (mum-key-define gud
+  (vwe-key-define gud
 				  ("GUD"
 				   (("g" gdb "gbd")
 					("x" vwe@prog--gud-or-gud-go "gud go")
@@ -352,9 +352,9 @@
 					("j" gud-jdb-find-source "find source")
 					("t" gud-stepi "stepi")
 					("p" gud-print "print")
-					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
-  (mum-key-define clang
+  (vwe-key-define clang
 				  ("C/C++"
 				   (("r" rmsbolt-mode "rmsbolt")
 					("t" rmsbolt-starter "create run file")
@@ -365,22 +365,22 @@
 					("q" quickrun "quickrun")
 					("s" quickrun-shell "run shell")
 					("g" gdb "gdb")
-					("u" mum-key:gud "gud")
+					("u" vwe-key:gud "gud")
 					("p" gdb-restore-windows "restore windows")
-					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (c-mode c++-mode))
 
-  (mum-key-define asm
+  (vwe-key-define asm
 				  ("assembly"
 				   (("c" smart-compile "compile")
 					("e" compile-goto-error "goto error")
 					("g" gdb "gdb")
-					("u" mum-key:gud "gud")
+					("u" vwe-key:gud "gud")
 					("p" gdb-restore-windows "restore windows")
-					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (asm-mode nasm-mode))
 
-  (mum-key-define python
+  (vwe-key-define python
 				  ("python"
 				   (("x" run-python "run python")
 					("c" conda-env-activate "conda activate")
@@ -392,19 +392,19 @@
 					("b" python-shell-send-buffer "send buffer")
 					("r" python-shell-send-region "send region")
 					("q" vwe@python--kill-python-shell "quit")
-					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (python-mode))
 
-  (mum-key-define golang
+  (vwe-key-define golang
 				  ("golang"
 				   (("r" go-run "go run")
 					("i" go-impl "impl")
 					("a" go-import-add "import add")
 					("m" go-remove-unused-imports "remove imports")
-					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (go-mode))
 
-  (mum-key-define ruby
+  (vwe-key-define ruby
 				  ("ruby"
 				   (("a" rvm-activate-corresponding-ruby "rvm activate")
 					("u" rvm-use "rvm use")
@@ -419,22 +419,22 @@
 					("b" ruby-send-buffer "send buffer")
 					("I" inf-ruby-switch-setup "switch setup")
 
-					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (ruby-mode))
 
-  (mum-key-define java
+  (vwe-key-define java
 				  ("java"
 				   (("i" vwe@java--init "java lsp init")
 					("o" quickrun-compile-only "compile only")
 					("q" quickrun "quickrun")
 					("s" quickrun-shell "run shell")
-					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (java-mode))
 
-  (mum-key-define web
+  (vwe-key-define web
 				  ("web"
 				   (("r" (lambda () (interactive) (vwe@web--open-to-brower nil)) "open to brower")
-					("w" mum-key:eww "eww")
+					("w" vwe-key:eww "eww")
 					("s" run-skewer "run skewer")
 					("e" skewer-repl "repl")
 					("e" skewer-eval-last-expression "eval expression")
@@ -447,10 +447,10 @@
 					("l" skewer-css-clear-all "css clear all")
 					("e" js2-mode-toggle-element "show/hide element")
 					("h" js2-mode-toggle-hide-functions "show/hide func")
-					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (web-mode js2-mode js-mode css-mode))
 
-  (mum-key-define w3m
+  (vwe-key-define w3m
 				  ("w3m"
 				   (("w" w3m "w3m")
 					("h" w3m-gohome "go home")
@@ -458,16 +458,16 @@
 					("u" w3m-browse-url "browse url")
 					("." w3m-next-buffer "next buffer")
 					("," w3m-previous-buffer "prev buffer")
-					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (w3m-mode))
 
-  (mum-key-define eww
+  (vwe-key-define eww
 				  ("eww"
 				   (("f" eww-browse-with-external-browser "external browser")
 					("s" eww-view-source "view source")
 					("r" eww-reload "reload")
 					("o" eww-open-file "open file")
-					("RET" mum-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (eww-mode)))
 
 ;; ***************************************************************************

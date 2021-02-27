@@ -1,4 +1,4 @@
-;;; mum-tags.el ---  Mum tags            -*- lexical-binding: t; -*-
+;;; vwe-tags.el ---  Vwe tags            -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021  WuJunyu
 
@@ -23,12 +23,12 @@
 ;;
 
 ;;; Code:
-(defgroup mum-tags nil
+(defgroup vwe-tags nil
   "Customization group for beacon."
-  :group 'vwiss-mum
-  :prefix "mum-tags--")
+  :group 'vwiss-vwe
+  :prefix "vwe-tags--")
 
-(defvar mum-tags--keymap
+(defvar vwe-tags--keymap
   (let ((keymap (make-sparse-keymap)))
 	keymap)
   "Move to mark map.")
@@ -36,21 +36,21 @@
 ;;
 ;; mode
 ;;
-(defun mum-tags-mode-enable ()
+(defun vwe-tags-mode-enable ()
   "Enable mode.")
 
-(defun mum-tags-mode-disable ()
+(defun vwe-tags-mode-disable ()
   "Disable mode.")
 
 ;;;###autoload
-(define-minor-mode mum-tags-mode
-  "Mum tags minor mode."
-  :group 'mum-tags
-  :keymap mum-tags--mode-keymap
+(define-minor-mode vwe-tags-mode
+  "Vwe tags minor mode."
+  :group 'vwe-tags
+  :keymap vwe-tags--mode-keymap
   :global t
-  (if mum-tags-mode
-	  (mum-tags-mode-enable)
-	(mum-tags-mode-disable)))
+  (if vwe-tags-mode
+	  (vwe-tags-mode-enable)
+	(vwe-tags-mode-disable)))
 
-(provide 'mum-tags)
-;;; mum-tags.el ends here
+(provide 'vwe-tags)
+;;; vwe-tags.el ends here

@@ -114,13 +114,13 @@
 					(advice-add #'deactivate-mark :after #'vwe@pkg--symbol-overlay-turn-on)))
 
 ;;
-;; `mum-mark'
+;; `vwe-mark'
 ;;
-(vwe@lib--package 'mum-mark
+(vwe@lib--package 'vwe-mark
 				  (progn
-					(autoload 'mum-mark-mode (vwe@lib--path-vwe-site-lisp "mum/mum-mark/mum-mark.el" t) "Mum mark mode" t t)
-					(add-hook 'after-init-hook #'mum-mark-mode))
-				  nil nil nil (vwe@lib--path-vwe-site-lisp "mum/mum-mark"))
+					(autoload 'vwe-mark-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-mark/vwe-mark.el" t) "Vwe mark mode" t t)
+					(add-hook 'after-init-hook #'vwe-mark-mode))
+				  nil nil nil (vwe@lib--path-vwe-site-lisp "vwe/vwe-mark"))
 
 ;;
 ;; `all-the-icons'

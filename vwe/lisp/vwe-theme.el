@@ -102,12 +102,12 @@
 (vwe@lib--package 'doom-themes)
 
 ;;
-;; `mum-style-theme'
+;; `vwe-style-theme'
 ;;
-(vwe@lib--package 'mum-style-theme
+(vwe@lib--package 'vwe-style-theme
 				  nil nil nil t
-				  (vwe@lib--path-vwe-site-lisp "mum/mum-theme"))
-;;(load-file (vwe@lib--path-vwe-site-lisp "mum/mum-theme/mum-style-theme.el" t))
+				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-theme"))
+;;(load-file (vwe@lib--path-vwe-site-lisp "vwe/vwe-theme/vwe-style-theme.el" t))
 
 (vwe@theme--init)
 

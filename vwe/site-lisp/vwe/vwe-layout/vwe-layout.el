@@ -1,4 +1,4 @@
-;;; mum-layout.el ---  Mum layout              -*- lexical-binding: t; -*-
+;;; vwe-layout.el ---  Vwe layout              -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2021  WuJunyu
 
@@ -24,96 +24,96 @@
 
 ;;; Code:
 
-(defgroup mum-layout nil
+(defgroup vwe-layout nil
   "Window layout."
   :group 'windows)
 
 ;;
 ;; zoom
 ;;
-(defcustom mum-layout--zoom-size
-  #'mum-layout--window-zoom-size-callback
+(defcustom vwe-layout--zoom-size
+  #'vwe-layout--window-zoom-size-callback
   "Zoom size."
   :type 'list
-  :group 'mum-layout)
+  :group 'vwe-layout)
 
-(defcustom mum-layout--zoom-ignored-major-modes nil
+(defcustom vwe-layout--zoom-ignored-major-modes nil
   "List of ignored major modes."
   :type 'symbol
-  :group 'mum-layout)
+  :group 'vwe-layout)
 
-(defcustom mum-layout--zoom-ignored-buffer-names nil
+(defcustom vwe-layout--zoom-ignored-buffer-names nil
   "List of ignored buffer names."
   :type 'string
-  :group 'mum-layout)
+  :group 'vwe-layout)
 
-(defcustom mum-layout--zoom-ignored-buffer-name-regexps nil
+(defcustom vwe-layout--zoom-ignored-buffer-name-regexps nil
   "List of ignored buffer name regexps."
   :type 'regexp
-  :group 'mum-layout)
+  :group 'vwe-layout)
 
-(defcustom mum-layout--zoom-ignore-predicates nil
+(defcustom vwe-layout--zoom-ignore-predicates nil
   "List of additional predicates that allow to ignore windows."
   :type 'function
-  :group 'mum-layout)
+  :group 'vwe-layout)
 
-(defvar mum-layout--last-window
+(defvar vwe-layout--last-window
   nil
   "Track of the currently selected window.")
 
-(defvar mum-layout--zoom-balance-p
+(defvar vwe-layout--zoom-balance-p
   nil
   "Windows `ratio' or `balance'.")
 
-(defun mum-layout--text-scale-increase ()
+(defun vwe-layout--text-scale-increase ()
   "Text scale increase."
   (interactive)
   (text-scale-increase 1))
 
-(defun mum-layout--text-scale-decrease ()
+(defun vwe-layout--text-scale-decrease ()
   "Text scale decrease."
   (interactive)
   (text-scale-increase -1))
 
-(defun mum-layout--text-scale-adjust ()
+(defun vwe-layout--text-scale-adjust ()
   "Text scale adjust."
   (interactive)
   (text-scale-increase 0))
 
-(defun mum-layout--window-height-enlarge (&optional delta)
+(defun vwe-layout--window-height-enlarge (&optional delta)
   "Window height enlarge DELTA."
   (interactive)
   (unless delta (setq delta 1))
   (condition-case nil (enlarge-window delta)
 	(error (set-frame-height (selected-frame) (+ (frame-height (selected-frame)) delta)))))
 
-(defun mum-layout--window-height-shrink (&optional delta)
+(defun vwe-layout--window-height-shrink (&optional delta)
   "Window height shrink DELTA."
   (interactive)
   (unless delta (setq delta 1))
   (condition-case nil (shrink-window delta)
 	(error (set-frame-height (selected-frame) (- (frame-height (selected-frame)) delta)))))
 
-(defun mum-layout--window-width-enlarge (&optional delta)
+(defun vwe-layout--window-width-enlarge (&optional delta)
   "Window width enlarge DELTA."
   (interactive)
   (unless delta (setq delta 1))
   (condition-case nil (enlarge-window delta t)
 	(error (set-frame-width (selected-frame) (+ (frame-width (selected-frame)) delta)))))
 
-(defun mum-layout--window-width-shrink (&optional delta)
+(defun vwe-layout--window-width-shrink (&optional delta)
   "Window width shrink DELTA."
   (interactive)
   (unless delta (setq delta 1))
   (condition-case nil (shrink-window delta t)
 	(error (set-frame-width (selected-frame) (- (frame-width (selected-frame)) delta)))))
 
-(defun mum-layout--window-zoom-size-callback ()
+(defun vwe-layout--window-zoom-size-callback ()
   "Window zoom size callback."
   (cond ((> (frame-pixel-width) 1280) '(0.75 . 0.75))
         (t                            '(0.5 . 0.5))))
 
-(defun mum-layout--get-windows-info-to-string ()
+(defun vwe-layout--get-windows-info-to-string ()
   "Get window info string in frame."
   (format "%s" (list (default-value 'track-mouse)
                      (mapcar (lambda (window) (list window
@@ -121,56 +121,56 @@
                                                     (window-total-height)))
                              (window-list)))))
 
-(defun mum-layout--zoom-window-ignored-p ()
+(defun vwe-layout--zoom-window-ignored-p ()
   "Check whether the selected window will be ignored or not."
   (or
    (frame-root-window-p (selected-window))
    (window-minibuffer-p)
-   (member major-mode mum-layout--zoom-ignored-major-modes)
-   (member (buffer-name) mum-layout--zoom-ignored-buffer-names)
+   (member major-mode vwe-layout--zoom-ignored-major-modes)
+   (member (buffer-name) vwe-layout--zoom-ignored-buffer-names)
    (catch 'ignored
-     (dolist (regex mum-layout--zoom-ignored-buffer-name-regexps)
+     (dolist (regex vwe-layout--zoom-ignored-buffer-name-regexps)
        (when (string-match regex (buffer-name))
          (throw 'ignored t))))
    (catch 'ignored
-     (dolist (predicate mum-layout--zoom-ignore-predicates)
+     (dolist (predicate vwe-layout--zoom-ignore-predicates)
        (when (funcall predicate)
          (throw 'ignored t))))))
 
-(defun mum-layout--windows-zoom (&optional ignored)
+(defun vwe-layout--windows-zoom (&optional ignored)
   "Redisplay windows zoom.
 Argument IGNORED is ignored."
-  (let* ((windows-info (mum-layout--get-windows-info-to-string)))
-	(unless (equal (frame-parameter nil 'mum-layout--zoom-parameter) windows-info)
-	  (set-frame-parameter nil 'mum-layout--zoom-parameter windows-info)
-	  (with-selected-window (if (or (equal (selected-window) mum-layout--last-window)
+  (let* ((windows-info (vwe-layout--get-windows-info-to-string)))
+	(unless (equal (frame-parameter nil 'vwe-layout--zoom-parameter) windows-info)
+	  (set-frame-parameter nil 'vwe-layout--zoom-parameter windows-info)
+	  (with-selected-window (if (or (equal (selected-window) vwe-layout--last-window)
 									(window-minibuffer-p)
 									(default-value 'track-mouse))
-								mum-layout--last-window
+								vwe-layout--last-window
 							  (selected-window))
-		(setq mum-layout--last-window (selected-window))
-		(mum-layout--windows-zoom-redisplay)))))
+		(setq vwe-layout--last-window (selected-window))
+		(vwe-layout--windows-zoom-redisplay)))))
 
-(defun mum-layout--windows-zoom-redisplay ()
+(defun vwe-layout--windows-zoom-redisplay ()
   "Resize windows zoom."
-  (let* ((mum-layout-zoom-mode nil)
+  (let* ((vwe-layout-zoom-mode nil)
 		 (window-configuration-change-hook nil)
 		 (window-combination-resize t)
 		 (window-resize-pixelwise t))
 	(balance-windows)
-	(unless mum-layout--zoom-balance-p
-	  (unless (mum-layout--zoom-window-ignored-p)
-		(progn (mum-layout--windows-zoom-resize) (mum-layout--windows-zoom-resize t))
+	(unless vwe-layout--zoom-balance-p
+	  (unless (vwe-layout--zoom-window-ignored-p)
+		(progn (vwe-layout--windows-zoom-resize) (vwe-layout--windows-zoom-resize t))
 		(unless (derived-mode-p 'image-mode)
           (scroll-right (window-hscroll))
 		  (when (and truncate-lines
 					 (> (current-column) (- (window-body-width) hscroll-margin)))
 			(scroll-left (- (current-column) (/ (window-body-width) 2)))))))))
 
-(defun mum-layout--windows-zoom-resize (&optional horizontal?)
+(defun vwe-layout--windows-zoom-resize (&optional horizontal?)
   "Resize windows.
 HORIZONTAL horizontal or vertical."
-  (let* ((size (if (funcall mum-layout--zoom-size) (funcall mum-layout--zoom-size) mum-layout--zoom-size))
+  (let* ((size (if (funcall vwe-layout--zoom-size) (funcall vwe-layout--zoom-size) vwe-layout--zoom-size))
 		 (custom-size (if horizontal? (car size) (cdr size)))
 		 (frame-size (if horizontal? (frame-width) (frame-height)))
 		 (win-size (if (floatp custom-size)
@@ -182,17 +182,17 @@ HORIZONTAL horizontal or vertical."
 		 (delta (window-resizable nil (max (- win-ratio win-size) 0) horizontal?)))
 	(window-resize nil delta horizontal?)))
 
-(defun mum-layout--zoom-type-toggle ()
+(defun vwe-layout--zoom-type-toggle ()
   "Toggle zoom type."
   (interactive)
-  (if mum-layout--zoom-balance-p
-	  (setq mum-layout--zoom-balance-p nil)
-	(setq mum-layout--zoom-balance-p t))
-  (mum-layout--windows-zoom))
+  (if vwe-layout--zoom-balance-p
+	  (setq vwe-layout--zoom-balance-p nil)
+	(setq vwe-layout--zoom-balance-p t))
+  (vwe-layout--windows-zoom))
 
-(defun mum-layout--zoom-enable ()
+(defun vwe-layout--zoom-enable ()
   "Enable mode."
-  (add-function :after pre-redisplay-function #'mum-layout--windows-zoom)
+  (add-function :after pre-redisplay-function #'vwe-layout--windows-zoom)
   ;; disable mouse resizing
   (advice-add #'mouse-drag-mode-line :override #'ignore)
   (advice-add #'mouse-drag-vertical-line :override #'ignore)
@@ -200,11 +200,11 @@ HORIZONTAL horizontal or vertical."
   ;; update the layout once loaded
   (dolist (frame (frame-list))
     (with-selected-frame frame
-      (mum-layout--windows-zoom))))
+      (vwe-layout--windows-zoom))))
 
-(defun mum-layout--zoom-disable ()
+(defun vwe-layout--zoom-disable ()
   "Disable mode."
-  (remove-function pre-redisplay-function #'mum-layout--windows-zoom)
+  (remove-function pre-redisplay-function #'vwe-layout--windows-zoom)
   (advice-remove #'mouse-drag-mode-line #'ignore)
   (advice-remove #'mouse-drag-vertical-line #'ignore)
   (advice-remove #'mouse-drag-header-line #'ignore)
@@ -212,34 +212,34 @@ HORIZONTAL horizontal or vertical."
     (balance-windows frame)))
 
 ;;;###autoload
-(define-minor-mode mum-layout-zoom-mode
+(define-minor-mode vwe-layout-zoom-mode
   "Zoom Mode."
   :global t
-  (if mum-layout-zoom-mode
-	  (mum-layout--zoom-enable)
-    (mum-layout--zoom-disable)))
+  (if vwe-layout-zoom-mode
+	  (vwe-layout--zoom-enable)
+    (vwe-layout--zoom-disable)))
 ;;
 ;; move
 ;;
-(defun mum-layout--windmove-up()
+(defun vwe-layout--windmove-up()
   "Selected current up window."
   (interactive)
   (condition-case nil (windmove-up)
     (error (condition-case nil (windmove-down) (error)))))
 
-(defun mum-layout--windmove-down()
+(defun vwe-layout--windmove-down()
   "Selected current down window."
   (interactive)
   (condition-case nil (windmove-down)
     (error (condition-case nil (windmove-up) (error)))))
 
-(defun mum-layout--windmove-right()
+(defun vwe-layout--windmove-right()
   "Selected current right window."
   (interactive)
   (condition-case nil (windmove-right)
     (error (condition-case nil (windmove-left) (error)))))
 
-(defun mum-layout--windmove-left()
+(defun vwe-layout--windmove-left()
   "Selected current left window."
   (interactive)
   (condition-case nil (windmove-left)
@@ -248,56 +248,56 @@ HORIZONTAL horizontal or vertical."
 ;;
 ;; buffer swap
 ;;
-(defun mum-layout--swap-up-buffer ()
+(defun vwe-layout--swap-up-buffer ()
   "Swap current and up buffer."
   (interactive)
   (let ((current-window (selected-window))
 		(current-buffer (buffer-name))
 		(swaped-window)
 		(swaped-buffer))
-	(mum-layout--windmove-up)
+	(vwe-layout--windmove-up)
 	(setq swaped-window (selected-window)
 		  swaped-buffer (buffer-name))
 	(when (and (not (string= swaped-buffer current-buffer)))
 	  (set-window-buffer swaped-window current-buffer)
 	  (set-window-buffer current-window swaped-buffer))))
 
-(defun mum-layout--swap-down-buffer ()
+(defun vwe-layout--swap-down-buffer ()
   "Swap current and down buffer."
   (interactive)
   (let ((current-window (selected-window))
 		(current-buffer (buffer-name))
 		(swaped-window)
 		(swaped-buffer))
-	(mum-layout--windmove-down)
+	(vwe-layout--windmove-down)
 	(setq swaped-window (selected-window)
 		  swaped-buffer (buffer-name))
 	(when (and (not (string= swaped-buffer current-buffer)))
 	  (set-window-buffer swaped-window current-buffer)
 	  (set-window-buffer current-window swaped-buffer))))
 
-(defun mum-layout--swap-right-buffer ()
+(defun vwe-layout--swap-right-buffer ()
   "Swap current and right buffer."
   (interactive)
   (let ((current-window (selected-window))
 		(current-buffer (buffer-name))
 		(swaped-window nil)
 		(swaped-buffer nil))
-	(mum-layout--windmove-right)
+	(vwe-layout--windmove-right)
 	(setq swaped-window (selected-window)
 		  swaped-buffer (buffer-name))
 	(when (and (not (string= swaped-buffer current-buffer)))
 	  (set-window-buffer swaped-window current-buffer)
 	  (set-window-buffer current-window swaped-buffer))))
 
-(defun mum-layout--swap-left-buffer()
+(defun vwe-layout--swap-left-buffer()
   "Swap current and right buffer."
   (interactive)
   (let ((current-window (selected-window))
 		(current-buffer (buffer-name))
 		(swaped-window nil)
 		(swaped-buffer nil))
-	(mum-layout--windmove-left)
+	(vwe-layout--windmove-left)
 	(setq swaped-window (selected-window)
 		  swaped-buffer (buffer-name))
 	(when (and (not (string= swaped-buffer current-buffer)))
@@ -307,109 +307,109 @@ HORIZONTAL horizontal or vertical."
 ;;
 ;; buffer switch
 ;;
-(defvar mum-layout--switch-side-buffer-name
-  "*mum-layout:switch-side-tmp-buffer*"
+(defvar vwe-layout--switch-side-buffer-name
+  "*vwe-layout:switch-side-tmp-buffer*"
   "Switch side buffer name.")
 
-(defvar mum-layout--switch-buffer-keymap
+(defvar vwe-layout--switch-buffer-keymap
   (let* ((keymap (make-sparse-keymap)))
-	(define-key keymap (kbd "q") #'mum-layout--kill-switch-side-buffer)
+	(define-key keymap (kbd "q") #'vwe-layout--kill-switch-side-buffer)
 	(define-key keymap (kbd "n") #'next-line)
 	(define-key keymap (kbd "p") #'previous-line)
 	(define-key keymap (kbd "s") (lambda () (interactive) (if (fboundp 'swiper) (swiper) (isearch-forward))))
-	(define-key keymap (kbd "TAB") #'mum-layout--switch-buffer)
+	(define-key keymap (kbd "TAB") #'vwe-layout--switch-buffer)
 	keymap)
   "Switch buffer keymap.")
 
-(defface mum-layout--default-face
+(defface vwe-layout--default-face
   '((t (:inherit 'default :weight bold)))
   "Default face.")
 
-(defface mum-layout--info-face
+(defface vwe-layout--info-face
   '((t (:foreground "DarkOrange" :weight bold)))
   "Info face.")
 
-(defface mum-layout--success-face
+(defface vwe-layout--success-face
   '((t (:foreground "SpringGreen" :weight bold)))
   "Success face.")
 
-(defface mum-layout--warning-face
+(defface vwe-layout--warning-face
   '((t (:foreground "yellow" :weight bold)))
   "Warning face.")
 
-(defface mum-layout--error-face
+(defface vwe-layout--error-face
   '((t (:foreground "DarkRed" :weight bold)))
   "Error face.")
 
-(defface mum-layout--button-face
+(defface vwe-layout--button-face
   '((t (:foreground "SkyBlue" :weight bold)))
   "Button face.")
 
-(defvar mum-layout--switch-side-show-status
+(defvar vwe-layout--switch-side-show-status
   'buffer
   "Switch side buffer show content `buffer' or `temp' buffer.")
 
-(defun mum-layout--switch-buffer ()
+(defun vwe-layout--switch-buffer ()
   "Switch buffer."
   (interactive)
   (cond
-   ((equal mum-layout--switch-side-show-status 'buffer) (setq mum-layout--switch-side-show-status 'temp) (mum-layout--display-switch-side-buffer))
-   ((equal mum-layout--switch-side-show-status 'temp) (setq mum-layout--switch-side-show-status 'buffer) (mum-layout--display-switch-side-buffer t))
-   (t (setq mum-layout--switch-side-show-status 'temp) (mum-layout--display-switch-side-buffer))))
+   ((equal vwe-layout--switch-side-show-status 'buffer) (setq vwe-layout--switch-side-show-status 'temp) (vwe-layout--display-switch-side-buffer))
+   ((equal vwe-layout--switch-side-show-status 'temp) (setq vwe-layout--switch-side-show-status 'buffer) (vwe-layout--display-switch-side-buffer t))
+   (t (setq vwe-layout--switch-side-show-status 'temp) (vwe-layout--display-switch-side-buffer))))
 
-(defun mum-layout--build-switch-buffer-headerline ()
+(defun vwe-layout--build-switch-buffer-headerline ()
   "Build switch buffer headerline."
   (let* ((allbuf (length (buffer-list)))
-		 (buflen (length (mum-layout--get-buffer-list)))
-		 (tmpbuflen (length (mum-layout--get-buffer-list t)))
+		 (buflen (length (vwe-layout--get-buffer-list)))
+		 (tmpbuflen (length (vwe-layout--get-buffer-list t)))
 		 (hidebuflen (- allbuf buflen tmpbuflen))
-		 (split (propertize (format " | ") 'face 'mum-layout--default-face)))
+		 (split (propertize (format " | ") 'face 'vwe-layout--default-face)))
 	(concat
-	 (propertize (format "Mum switch buffer:")
-				 'face 'mum-layout--success-face)
+	 (propertize (format "Vwe switch buffer:")
+				 'face 'vwe-layout--success-face)
 	 split
 	 (propertize (format "total " )
-				 'face 'mum-layout--default-face)
+				 'face 'vwe-layout--default-face)
 	 (propertize (format "%d" allbuf)
-				 'face 'mum-layout--success-face)
+				 'face 'vwe-layout--success-face)
 	 split
 	 (propertize (format "buffer ")
-				 'face 'mum-layout--default-face)
+				 'face 'vwe-layout--default-face)
 	 (propertize (format "%d" buflen)
-				 'face 'mum-layout--info-face)
+				 'face 'vwe-layout--info-face)
 	 split
 	 (propertize (format "* buffer ")
-				 'face 'mum-layout--default-face)
+				 'face 'vwe-layout--default-face)
 	 (propertize (format "%d" tmpbuflen)
-				 'face 'mum-layout--warning-face)
+				 'face 'vwe-layout--warning-face)
 	 split
 	 (propertize (format "hide buffer ")
-				 'face 'mum-layout--default-face)
+				 'face 'vwe-layout--default-face)
 	 (propertize (format "%d" hidebuflen)
-				 'face 'mum-layout--button-face)
+				 'face 'vwe-layout--button-face)
 	 split
 	 (propertize (format "buffer/*buffer ")
-				 'face 'mum-layout--default-face)
+				 'face 'vwe-layout--default-face)
 	 (propertize (format "[TAB]")
-				 'face 'mum-layout--info-face)
+				 'face 'vwe-layout--info-face)
 	 (propertize (format " quit ")
-				 'face 'mum-layout--default-face)
+				 'face 'vwe-layout--default-face)
 	 (propertize (format "[q]")
-				 'face 'mum-layout--info-face))))
+				 'face 'vwe-layout--info-face))))
 
-(defun mum-layout--display-switch-side-buffer (&optional tmp?)
+(defun vwe-layout--display-switch-side-buffer (&optional tmp?)
   "Make switch buffer cmd buffer.
 TMP is tmp buffer."
-  (let* ((buffer (if (get-buffer mum-layout--switch-side-buffer-name) (get-buffer mum-layout--switch-side-buffer-name) (get-buffer-create mum-layout--switch-side-buffer-name)))
-		 ;; (buffer-length (length (mum-layout--get-buffer-list)))
-		 ;; (tmpbuf-length (length (mum-layout--get-buffer-list t)))
+  (let* ((buffer (if (get-buffer vwe-layout--switch-side-buffer-name) (get-buffer vwe-layout--switch-side-buffer-name) (get-buffer-create vwe-layout--switch-side-buffer-name)))
+		 ;; (buffer-length (length (vwe-layout--get-buffer-list)))
+		 ;; (tmpbuf-length (length (vwe-layout--get-buffer-list t)))
 		 ;; (headerline (concat (format "buffer total %d | buffer %d | tmp buffer %d | hide buffer %d"
 		 ;; (length (buffer-list)) buffer-length tmpbuf-length (- (length (buffer-list)) buffer-length tmpbuf-length))))
-		 (headerline (mum-layout--build-switch-buffer-headerline))
+		 (headerline (vwe-layout--build-switch-buffer-headerline))
 		 (bufname-list (if tmp?
-						   (mapcar #'buffer-name (mum-layout--get-buffer-list t))
-						 (mapcar #'buffer-name (mum-layout--get-buffer-list))))
-		 (alist '((window-width . mum-key--max-width)
+						   (mapcar #'buffer-name (vwe-layout--get-buffer-list t))
+						 (mapcar #'buffer-name (vwe-layout--get-buffer-list))))
+		 (alist '((window-width . vwe-key--max-width)
 				  (window-height . fit-window-to-buffer)
 				  (direction . 'down)
 				  (slot . 0))))
@@ -421,79 +421,79 @@ TMP is tmp buffer."
 					word-wrap nil
 					show-trailing-whitespace nil
 					header-line-format headerline)
-		(mum-layout--switch-buffer-mode 1)
+		(vwe-layout--switch-buffer-mode 1)
 		(dotimes (i (length bufname-list))
 		  (insert-button (concat  "[" (nth i bufname-list) "]" (unless (= (1+ i) (length bufname-list)) "\n"))
 						 'action (lambda(_)
-								   (mum-layout--kill-switch-side-buffer)
+								   (vwe-layout--kill-switch-side-buffer)
 								   (switch-to-buffer (nth i bufname-list)))
 						 'follow-link t))
 		(goto-char (point-min))
 		(read-only-mode t))
 	  (select-window (display-buffer-in-side-window buffer alist)))))
 
-(defun mum-layout--kill-switch-side-buffer ()
+(defun vwe-layout--kill-switch-side-buffer ()
   "Kill side buffer."
   (interactive)
-  (let* ((buffer (get-buffer mum-layout--switch-side-buffer-name)))
+  (let* ((buffer (get-buffer vwe-layout--switch-side-buffer-name)))
 	(when buffer
 	  (delete-windows-on buffer)
 	  (kill-buffer buffer)
-	  (setq mum-layout--switch-side-show-status 'buffer))))
+	  (setq vwe-layout--switch-side-show-status 'buffer))))
 
-(defun mum-layout--buffer-list-filter (regexp &optional self?)
+(defun vwe-layout--buffer-list-filter (regexp &optional self?)
   "Find buffer list of REGEXP.
 SELF is include curretn buffer."
   (seq-filter 'bufferp
 			  (mapcar
 			   (lambda (item)
-				 (if (and (string-match regexp (buffer-name item)) (not (equal mum-layout--switch-side-buffer-name (buffer-name item))))
+				 (if (and (string-match regexp (buffer-name item)) (not (equal vwe-layout--switch-side-buffer-name (buffer-name item))))
 					 (if self?
 						 item
 					   (unless (equal item (current-buffer)) item))))
 			   (buffer-list))))
 
-(defun mum-layout--get-buffer-list (&optional tmp? self?)
+(defun vwe-layout--get-buffer-list (&optional tmp? self?)
   "Get buffer list.
 TMP is asterisk buffers.
 SELF is include curretn buffer."
   (if tmp?
-	  (mum-layout--buffer-list-filter "^*" self?)
-	(mum-layout--buffer-list-filter "^[^\s*]" self?)))
+	  (vwe-layout--buffer-list-filter "^*" self?)
+	(vwe-layout--buffer-list-filter "^[^\s*]" self?)))
 
-(defun mum-layout--switch-buffer-enable ()
+(defun vwe-layout--switch-buffer-enable ()
   "Enable mode.")
 
-(defun mum-layout--switch-buffer-disable ()
+(defun vwe-layout--switch-buffer-disable ()
   "Disable mode."
-  (mum-layout--kill-switch-side-buffer))
+  (vwe-layout--kill-switch-side-buffer))
 
 ;;;###autoload
-(define-minor-mode mum-layout--switch-buffer-mode
+(define-minor-mode vwe-layout--switch-buffer-mode
   "Mode."
-  :keymap mum-layout--switch-buffer-keymap
-  (if mum-layout--switch-buffer-mode
-	  (mum-layout--switch-buffer-enable)
-    (mum-layout--switch-buffer-disable)))
+  :keymap vwe-layout--switch-buffer-keymap
+  (if vwe-layout--switch-buffer-mode
+	  (vwe-layout--switch-buffer-enable)
+    (vwe-layout--switch-buffer-disable)))
 
 ;;
 ;; mode
 ;;
-(defun mum-layout--enable ()
+(defun vwe-layout--enable ()
   "Enable mode."
-  (mum-layout-zoom-mode t))
+  (vwe-layout-zoom-mode t))
 
-(defun mum-layout--disable ()
+(defun vwe-layout--disable ()
   "Disable mode."
-  (mum-layout-zoom-mode -1))
+  (vwe-layout-zoom-mode -1))
 
 ;;;###autoload
-(define-minor-mode mum-layout-mode
-  "Mum layout mode."
+(define-minor-mode vwe-layout-mode
+  "Vwe layout mode."
   :global t
-  (if mum-layout-mode
-	  (mum-layout--enable)
-    (mum-layout--disable)))
+  (if vwe-layout-mode
+	  (vwe-layout--enable)
+    (vwe-layout--disable)))
 
-(provide 'mum-layout)
-;;; mum-layout.el ends here
+(provide 'vwe-layout)
+;;; vwe-layout.el ends here

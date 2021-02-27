@@ -32,40 +32,40 @@
 ;; ***************************************************************************
 
 ;;
-;; `mum-modeline'
+;; `vwe-modeline'
 ;;
-(vwe@lib--package 'mum-modeline
-				  (autoload 'mum-modeline-mode (vwe@lib--path-vwe-site-lisp "mum/mum-modeline/mum-modeline.el" t) "Mum modeline mode" t t)
+(vwe@lib--package 'vwe-modeline
+				  (autoload 'vwe-modeline-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-modeline/vwe-modeline.el" t) "Vwe modeline mode" t t)
 				  nil
 				  (progn
 					(setq-default mode-line-format nil)
-					(add-hook 'after-init-hook (lambda () (when vwe@custom--modeline-show? (mum-modeline-mode))))
-					(setq mum-modeline--buffer-filter-list vwe@custom--modeline--hide-list
-						  mum-modeline--default-format mode-line-format))
+					(add-hook 'after-init-hook (lambda () (when vwe@custom--modeline-show? (vwe-modeline-mode))))
+					(setq vwe-modeline--buffer-filter-list vwe@custom--modeline--hide-list
+						  vwe-modeline--default-format mode-line-format))
 				  nil
-				  (vwe@lib--path-vwe-site-lisp "mum/mum-modeline"))
+				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-modeline"))
 
 ;;
-;; `mum-tray'
+;; `vwe-tray'
 ;;
-(vwe@lib--package 'mum-tray-mode
-				  (autoload 'mum-tray-mode (vwe@lib--path-vwe-site-lisp "mum/mum-tray/mum-tray.el" t) "Mum tray mode" t t)
+(vwe@lib--package 'vwe-tray-mode
+				  (autoload 'vwe-tray-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-tray/vwe-tray.el" t) "Vwe tray mode" t t)
 				  nil
-				  (add-hook 'after-init-hook (lambda () (when vwe@custom--tray-show? (mum-tray-mode))))
+				  (add-hook 'after-init-hook (lambda () (when vwe@custom--tray-show? (vwe-tray-mode))))
 				  nil
-				  (vwe@lib--path-vwe-site-lisp "mum/mum-tray"))
+				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-tray"))
 
 ;;
-;; `mum-headerline'
+;; `vwe-headerline'
 ;;
-(vwe@lib--package 'mum-headerline
-				  (autoload 'mum-headerline-mode (vwe@lib--path-vwe-site-lisp "mum/mum-headerline/mum-headerline.el" t) "Mum headerline mode" t t)
+(vwe@lib--package 'vwe-headerline
+				  (autoload 'vwe-headerline-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-headerline/vwe-headerline.el" t) "Vwe headerline mode" t t)
 				  nil
 				  (progn
-					(add-hook 'after-init-hook (lambda () (when vwe@custom--headerline-show? (mum-headerline-mode))))
-					(setq mum-headerline--buffer-filter-list vwe@custom--buffer-filter-list))
+					(add-hook 'after-init-hook (lambda () (when vwe@custom--headerline-show? (vwe-headerline-mode))))
+					(setq vwe-headerline--buffer-filter-list vwe@custom--buffer-filter-list))
 				  nil
-				  (vwe@lib--path-vwe-site-lisp "mum/mum-headerline"))
+				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-headerline"))
 
 ;;
 ;; `savehist' 保存buffer历史记录
@@ -238,7 +238,7 @@
 						company-tooltip-limit 12
 						company-idle-delay 0
 						company-echo-delay (if (display-graphic-p) nil 0)
-						company-minimum-prefix-length 1
+						company-minivwe-prefix-length 1
 						company-require-match nil
 						company-dabbrev-ignore-case nil
 						company-dabbrev-downcase nil
@@ -535,59 +535,69 @@
 						 (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)))
 
 ;;
-;; `mum-key'
+;; `vwe-key'
 ;;
-(vwe@lib--package 'mum-key
-				  (add-hook 'after-init-hook #'mum-key-mode)
+(vwe@lib--package 'vwe-key
+				  (add-hook 'after-init-hook #'vwe-key-mode)
 				  nil nil t
-				  (vwe@lib--path-vwe-site-lisp "mum/mum-key"))
+				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-key"))
 
 ;;
-;; `mum-editor'
+;; `vwe-editor'
 ;;
-(vwe@lib--package 'mum-editor
+(vwe@lib--package 'vwe-editor
 				  (progn
-					(autoload 'mum-editor-mode (vwe@lib--path-vwe-site-lisp "mum/mum-editor/mum-editor.el" t) "Mum editor mode." t t)
-					(add-hook 'after-init-hook  #'mum-editor-mode))
+					(autoload 'vwe-editor-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-editor/vwe-editor.el" t) "Vwe editor mode." t t)
+					(add-hook 'after-init-hook  #'vwe-editor-mode))
 				  nil nil nil
-				  (vwe@lib--path-vwe-site-lisp "mum/mum-editor"))
+				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-editor"))
 
 ;;
-;; `mum-term'
+;; `vwe-term'
 ;;
-(vwe@lib--package 'mum-term
-				  (autoload 'mum-terminal (vwe@lib--path-vwe-site-lisp "mum/mum-term/mum-term.el" t) "Mum term mode." t t)
+(vwe@lib--package 'vwe-term
+				  (autoload 'vwe-terminal (vwe@lib--path-vwe-site-lisp "vwe/vwe-term/vwe-term.el" t) "Vwe term mode." t t)
 				  nil nil nil
-				  (vwe@lib--path-vwe-site-lisp "mum/mum-term"))
+				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-term"))
 
 ;;
-;; `mum-proxy'
+;; `vwe-proxy'
 ;;
-(vwe@lib--package 'mum-proxy
+(vwe@lib--package 'vwe-proxy
 				  (progn
-					(autoload 'mum-proxy--enable (vwe@lib--path-vwe-site-lisp "mum/mum-proxy/mum-proxy.el" t) "Mum proxy mode." t t)
-					(autoload 'mum-proxy--enable-global (vwe@lib--path-vwe-site-lisp "mum/mum-proxy/mum-proxy.el" t) "Mum global proxy mode." t t))
+					(autoload 'vwe-proxy--enable (vwe@lib--path-vwe-site-lisp "vwe/vwe-proxy/vwe-proxy.el" t) "Vwe proxy mode." t t)
+					(autoload 'vwe-proxy--enable-global (vwe@lib--path-vwe-site-lisp "vwe/vwe-proxy/vwe-proxy.el" t) "Vwe global proxy mode." t t))
 				  nil nil nil
-				  (vwe@lib--path-vwe-site-lisp "mum/mum-proxy"))
+				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-proxy"))
 
 ;;
-;; `mum-layout'
+;; `vwe-layout'
 ;;
-(vwe@lib--package 'mum-layout
+(vwe@lib--package 'vwe-layout
 				  (progn
-					(autoload 'mum-layout--enable (vwe@lib--path-vwe-site-lisp "mum/mum-layout/mum-layout.el" t) "Mum global layout mode." t t)
-					(mum-layout--enable))
+					(autoload 'vwe-layout--enable (vwe@lib--path-vwe-site-lisp "vwe/vwe-layout/vwe-layout.el" t) "Vwe global layout mode." t t)
+					(vwe-layout--enable))
 				  nil nil nil
-				  (vwe@lib--path-vwe-site-lisp "mum/mum-layout"))
+				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-layout"))
 
 ;;
-;; `mum-search'
+;; `vwe-search'
 ;;
-(vwe@lib--package 'mum-search
+(vwe@lib--package 'vwe-search
 				  (progn
-					(autoload 'mum-search--rg (vwe@lib--path-vwe-site-lisp "mum/mum-search/mum-search.el" t) "Mum global search mode." t t))
+					(autoload 'vwe-search--rg (vwe@lib--path-vwe-site-lisp "vwe/vwe-search/vwe-search.el" t) "Vwe global search mode." t t))
 				  nil nil nil
-				  (vwe@lib--path-vwe-site-lisp "mum/mum-search"))
+				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-search"))
+
+;;
+;; `vwe-move'
+;;
+(vwe@lib--package 'vwe-move
+				  (progn
+					(autoload 'vwe-move-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-move/vwe-move.el" t) "Vwe move mode." t t)
+					(vwe-move-mode t))
+				  nil nil nil
+				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-move"))
 
 ;;
 ;; `imenu-list'

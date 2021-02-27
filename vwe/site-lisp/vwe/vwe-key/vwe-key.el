@@ -1,4 +1,4 @@
-;;; mum-key.el ---     Mum key           -*- lexical-binding: t; -*-
+;;; vwe-key.el ---     Vwe key           -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2020  WuJunyu
 
@@ -25,133 +25,133 @@
 
 ;;; Code:
 
-(defgroup mum-key nil
-  "Mum key."
-  :prefix "mum-key--"
-  :group 'mum)
+(defgroup vwe-key nil
+  "Vwe key."
+  :prefix "vwe-key--"
+  :group 'vwe)
 
-(defcustom mum-key--buffer-hook
+(defcustom vwe-key--buffer-hook
   '()
-  "Hook run when mum-key buffer is initialized."
-  :group 'mum-key
+  "Hook run when vwe-key buffer is initialized."
+  :group 'vwe-key
   :type 'hook)
 
-(defcustom mum-key--leader-key
+(defcustom vwe-key--leader-key
   "M-RET"
   "Keymap quit key."
-  :group 'mum-key
+  :group 'vwe-key
   :type 'hook)
 
-(defcustom mum-key--quit-key
+(defcustom vwe-key--quit-key
   "q"
   "Keymap quit key."
-  :group 'mum-key
+  :group 'vwe-key
   :type 'hook)
 
-(defcustom mum-key--toggle-hint-key
+(defcustom vwe-key--toggle-hint-key
   "SPC"
   "Keymap toggle hint key."
-  :group 'mum-key
+  :group 'vwe-key
   :type 'hook)
 
-(defface mum-key--default-face
+(defface vwe-key--default-face
   '((t (:foreground "#B0BEC5" :weight bold)))
   "Default face.")
 
-(defface mum-key--title-face
+(defface vwe-key--title-face
   '((t (:background "DarkBlue" :foreground "white" :weight bold)))
   "Title face.")
 
-(defface mum-key--title-other-face
+(defface vwe-key--title-other-face
   '((t (:background "#434C5E" :foreground "white" :weight bold)))
   "Title face.")
 
-(defface mum-key--key-face
+(defface vwe-key--key-face
   '((t (:foreground "SpringGreen" :weight bold)))
   "Key face.")
 
-(defface mum-key--hint-face
+(defface vwe-key--hint-face
   '((t (:background "DarkOrange" :foreground "white" :weight bold)))
   "Hint face.")
 
-(defface mum-key--footer-face
+(defface vwe-key--footer-face
   '((t (:background "#434C5E" :foreground "#B0BEC5" :weight bold)))
   "Footer face.")
 
-(defface mum-key--keymapping-hint-face
+(defface vwe-key--keymapping-hint-face
   '((t (:background "DarkOrange" :foreground "white" :weight bold)))
   "Keymapping hint face.")
 
-(defvar mum-key-mode-p
+(defvar vwe-key-mode-p
   nil
   "Mode.")
 
-(defvar mum-key--buffer-name
-  "*mum-key*"
+(defvar vwe-key--buffer-name
+  "*vwe-key*"
   "Keymap buffer name.")
 
-(defvar mum-key--string-title-separator
+(defvar vwe-key--string-title-separator
   "▬"
   "Title and body separator.")
 
-(defvar mum-key--string-footer-separator
+(defvar vwe-key--string-footer-separator
   "▬"
   "Footer and body separator.")
 
-(defvar mum-key--buffer-handle
+(defvar vwe-key--buffer-handle
   nil
   "Hold keymap buffer.")
 
-(defvar mum-key--keymap-base-mapping
+(defvar vwe-key--keymap-base-mapping
   (let* ((keymap (make-sparse-keymap)))
-	(define-key keymap (kbd mum-key--quit-key) #'mum-key--close-buffer)
-	(define-key keymap (kbd mum-key--toggle-hint-key) 'nil)
+	(define-key keymap (kbd vwe-key--quit-key) #'vwe-key--close-buffer)
+	(define-key keymap (kbd vwe-key--toggle-hint-key) 'nil)
 	keymap)
   "Key mapping.")
 
-(defvar mum-key--keymap-mapping
+(defvar vwe-key--keymap-mapping
   nil
   "Key mapping.")
 
-(defvar mum-key--keymap-mode-func-alist
+(defvar vwe-key--keymap-mode-func-alist
   '()
   "Mode and func alist.")
 
-(defvar mum-key--show-hint-p
+(defvar vwe-key--show-hint-p
   nil
   "If non-nil Show keymapping hint, is t show func name.")
 
-(defvar mum-key--footer-list
+(defvar vwe-key--footer-list
   nil
   "Footer list.")
 
-(defvar mum-key--line-max-length
+(defvar vwe-key--line-max-length
   (frame-width)
   "Line max length.")
 
-(defvar mum-key--max-width
+(defvar vwe-key--max-width
   (frame-width)
   "Max width.")
 
-(defvar mum-key--frame-min-length
+(defvar vwe-key--frame-min-length
   0
   "Frame min length.")
 
-(defun mum-key--make-content-title (title)
+(defun vwe-key--make-content-title (title)
   "Make content TITLE and add face."
   (let* ((original-title title)
 		 (title-make)
-		 (other (propertize (format " [%s]    ｡◕‿◕｡ " major-mode) 'face 'mum-key--title-other-face)))
+		 (other (propertize (format " [%s]    ｡◕‿◕｡ " major-mode) 'face 'vwe-key--title-other-face)))
 	(when original-title
 	  (if (listp original-title)
 		  (let* ((title-str (car original-title))
 				 (title-face (plist-get (cdr original-title) :face)))
 			(setq title-make (propertize (concat " " (upcase title-str) " ")
-										 'face (if title-face title-face 'mum-key--title-face))))
-		(setq title-make (propertize (concat " " (upcase original-title) " ") 'face 'mum-key--title-face)))
+										 'face (if title-face title-face 'vwe-key--title-face))))
+		(setq title-make (propertize (concat " " (upcase original-title) " ") 'face 'vwe-key--title-face)))
 	  (format "%s%s" title-make other))))
 
-(defun mum-key--make-content-hint-and-keymapping (func-name body)
+(defun vwe-key--make-content-hint-and-keymapping (func-name body)
   "Make content BODY and define FUNC-NAME keymap."
   (when (listp body)
 	(let* ((keymap (make-sparse-keymap))
@@ -176,38 +176,38 @@
 			(setq func (lambda () (interactive)
 						 (funcall (intern func-keep))
 						 (funcall (intern (format "%s" func-name))))))
-		  (unless (< (length func-str) mum-key--max-width)
-			(setq func-str (concat (substring func-str 0 (* 2 (/ mum-key--max-width 3))) "...")))
+		  (unless (< (length func-str) vwe-key--max-width)
+			(setq func-str (concat (substring func-str 0 (* 2 (/ vwe-key--max-width 3))) "...")))
 		  (unless hint
 			(setq hint-str func-str))
 		  (when (symbolp (quote func))
 			(define-key keymap (cond ((stringp key) (kbd key)) ((mapp key) key)) func)
 			(if label-footer
-				(setq mum-key--footer-list
-					  (append mum-key--footer-list (list (list key (propertize hint-str
+				(setq vwe-key--footer-list
+					  (append vwe-key--footer-list (list (list key (propertize hint-str
 																			   'face (if str-face str-face
-																					   'mum-key--footer-face))))))
-			  (setq func-str (concat (propertize key 'face 'mum-key--key-face)
+																					   'vwe-key--footer-face))))))
+			  (setq func-str (concat (propertize key 'face 'vwe-key--key-face)
 									 " : "
 									 (propertize func-str 'face str-face))
 					func-str-list (append func-str-list (list func-str))
-					hint-str (concat (propertize key 'face 'mum-key--key-face)
+					hint-str (concat (propertize key 'face 'vwe-key--key-face)
 									 " : "
 									 (propertize hint-str 'face str-face))
 					hint-str-list (append hint-str-list (list hint-str)))))))
 
-	  (set-keymap-parent keymap mum-key--keymap-base-mapping)
-	  (define-key keymap (kbd mum-key--toggle-hint-key) (lambda () (interactive)
-														  (if mum-key--show-hint-p
+	  (set-keymap-parent keymap vwe-key--keymap-base-mapping)
+	  (define-key keymap (kbd vwe-key--toggle-hint-key) (lambda () (interactive)
+														  (if vwe-key--show-hint-p
 															  (funcall (intern (format "%s" func-name)))
 															(funcall (intern (format "%s" func-name)) t))))
-	  (setq mum-key--keymap-mapping keymap)
+	  (setq vwe-key--keymap-mapping keymap)
 	  (plist-put content :mapping keymap)
 	  (plist-put content :func func-str-list)
 	  (plist-put content :hint hint-str-list)
 	  content)))
 
-(defun mum-key--count-column-max (column)
+(defun vwe-key--count-column-max (column)
   "Count COLUMN max length."
   (when (listp column)
 	(let* ((max-length 0))
@@ -216,29 +216,29 @@
 		  (setq max-length (length (nth i column)))))
 	  max-length)))
 
-(defun mum-key--loop-str (str num)
+(defun vwe-key--loop-str (str num)
   "Loop STR NUM."
   (let* ((tostr))
 	(dotimes (_ num)
 	  (setq tostr (concat tostr str)))
 	tostr))
 
-(defun mum-key--make-content-to-string (doc-list)
+(defun vwe-key--make-content-to-string (doc-list)
   "Make and format buffer show contentnnnn with DOC-LIST."
   (when (listp doc-list)
 	(let* ((doc-str "")
-		   (column-max (+ (mum-key--count-column-max doc-list) 4))
-		   (column-number (if (< mum-key--max-width column-max) 1 (/ mum-key--max-width column-max))))
+		   (column-max (+ (vwe-key--count-column-max doc-list) 4))
+		   (column-number (if (< vwe-key--max-width column-max) 1 (/ vwe-key--max-width column-max))))
 
-	  (setq mum-key--frame-min-length column-max
-			mum-key--line-max-length (* column-number column-max))
+	  (setq vwe-key--frame-min-length column-max
+			vwe-key--line-max-length (* column-number column-max))
 
 	  (dotimes (i (length doc-list))
-		(let* ((str (if (nth i doc-list) (concat (nth i doc-list) (mum-key--loop-str " " 4)) " "))
+		(let* ((str (if (nth i doc-list) (concat (nth i doc-list) (vwe-key--loop-str " " 4)) " "))
 			   (str-length (length str)))
 
 		  (when (< str-length column-max)
-			(setq str (concat str (mum-key--loop-str " " (- column-max str-length)))))
+			(setq str (concat str (vwe-key--loop-str " " (- column-max str-length)))))
 
 		  (setq doc-str (concat doc-str
 								(if (eq (% (1+ i) column-number) 0)
@@ -246,21 +246,21 @@
 								  str)))))
 	  doc-str)))
 
-(defun mum-key--make-content-footer ()
+(defun vwe-key--make-content-footer ()
   "Make content footer."
   (let* ((custom-str "")
 		 (other (propertize (format "[%s] : quit    [%s] : toggle hint/func    ◕‿-｡ "
-									mum-key--quit-key mum-key--toggle-hint-key)
-							'face 'mum-key--footer-face)))
-	(dotimes (i (length mum-key--footer-list))
+									vwe-key--quit-key vwe-key--toggle-hint-key)
+							'face 'vwe-key--footer-face)))
+	(dotimes (i (length vwe-key--footer-list))
 	  (setq custom-str (concat custom-str
-							   (propertize (concat "[" (format "%s" (car (nth i mum-key--footer-list))) "]" " : ")
-										   'face 'mum-key--footer-face)
-							   (format "%s" (cadr (nth i mum-key--footer-list)))
-							   (propertize "    " 'face 'mum-key--footer-face))))
+							   (propertize (concat "[" (format "%s" (car (nth i vwe-key--footer-list))) "]" " : ")
+										   'face 'vwe-key--footer-face)
+							   (format "%s" (cadr (nth i vwe-key--footer-list)))
+							   (propertize "    " 'face 'vwe-key--footer-face))))
 	(string-trim (format "%s%s" custom-str other))))
 
-(defun mum-key--window-get-top (&optional win)
+(defun vwe-key--window-get-top (&optional win)
   "Get Top Window.
 WIN is Window."
   (interactive)
@@ -268,14 +268,14 @@ WIN is Window."
 	(setq win (selected-window)))
   (if (windowp win)
 	  (if (window-parent win)
-		  (mum-key--window-get-top (window-parent win))
+		  (vwe-key--window-get-top (window-parent win))
 		(window-parent (window-child win)))))
 
-(defun mum-key--make-buffer ()
+(defun vwe-key--make-buffer ()
   "Make show keymap buffer."
-  (unless (buffer-live-p mum-key--buffer-handle)
-    (setq mum-key--buffer-handle (get-buffer-create mum-key--buffer-name))
-    (with-current-buffer mum-key--buffer-handle
+  (unless (buffer-live-p vwe-key--buffer-handle)
+    (setq vwe-key--buffer-handle (get-buffer-create vwe-key--buffer-name))
+    (with-current-buffer vwe-key--buffer-handle
 	  (let (message-log-max)
         (toggle-truncate-lines 1)
         (message ""))
@@ -284,55 +284,55 @@ WIN is Window."
 				  mode-line-format nil
 				  word-wrap nil
 				  show-trailing-whitespace nil)
-	  (run-hooks 'mum-key--buffer-hook)))
-  mum-key--buffer-handle)
+	  (run-hooks 'vwe-key--buffer-hook)))
+  vwe-key--buffer-handle)
 
-(defun mum-key--insert-content-to-buffer (title body)
+(defun vwe-key--insert-content-to-buffer (title body)
   "Insert TITLE and BODY to buffer."
-  (with-current-buffer mum-key--buffer-handle
+  (with-current-buffer vwe-key--buffer-handle
 	(erase-buffer)
 	(insert (concat "\n"
 					(format "%s" title) "\n"
-					(propertize (mum-key--loop-str mum-key--string-title-separator mum-key--line-max-length)
-								'face 'mum-key--default-face) "\n"
+					(propertize (vwe-key--loop-str vwe-key--string-title-separator vwe-key--line-max-length)
+								'face 'vwe-key--default-face) "\n"
 					(format "%s" body) "\n"
-					(propertize (mum-key--loop-str mum-key--string-footer-separator mum-key--line-max-length)
-								'face 'mum-key--default-face) "\n"
-					(mum-key--make-content-footer)))
+					(propertize (vwe-key--loop-str vwe-key--string-footer-separator vwe-key--line-max-length)
+								'face 'vwe-key--default-face) "\n"
+					(vwe-key--make-content-footer)))
 	(goto-char (point-min))))
 
-(defun mum-key--hide-buffer ()
+(defun vwe-key--hide-buffer ()
   "Hide buffer."
-  (when (buffer-live-p mum-key--buffer-handle)
-    (quit-windows-on mum-key--buffer-handle)))
+  (when (buffer-live-p vwe-key--buffer-handle)
+    (quit-windows-on vwe-key--buffer-handle)))
 
-(defun mum-key--close-buffer ()
+(defun vwe-key--close-buffer ()
   "Close key buffer side window."
   (interactive)
-  (when mum-key--buffer-handle
-	(delete-windows-on mum-key--buffer-handle)
-	(kill-buffer mum-key--buffer-handle)
-	(setq mum-key--buffer-handle nil
-		  mum-key--keymap-mapping nil
-		  mum-key--footer-list nil
-		  mum-key--line-max-length (frame-width)
-		  mum-key--max-width (frame-width))))
+  (when vwe-key--buffer-handle
+	(delete-windows-on vwe-key--buffer-handle)
+	(kill-buffer vwe-key--buffer-handle)
+	(setq vwe-key--buffer-handle nil
+		  vwe-key--keymap-mapping nil
+		  vwe-key--footer-list nil
+		  vwe-key--line-max-length (frame-width)
+		  vwe-key--max-width (frame-width))))
 
-(defun mum-key--show-keymap-buffer ()
+(defun vwe-key--show-keymap-buffer ()
   "Show keymap buffer."
-  (let* ((alist '((window-width . mum-key--max-width)
+  (let* ((alist '((window-width . vwe-key--max-width)
 				  (window-height . fit-window-to-buffer)
 				  (direction . 'down)
 				  (slot . 0))))
 
-	(when mum-key--buffer-handle
-	  (with-current-buffer mum-key--buffer-handle
+	(when vwe-key--buffer-handle
+	  (with-current-buffer vwe-key--buffer-handle
 		(setq-local buffer-read-only nil)
-		(set-transient-map mum-key--keymap-mapping nil 'mum-key--close-buffer))
-	  (display-buffer-in-side-window mum-key--buffer-handle alist))))
+		(set-transient-map vwe-key--keymap-mapping nil 'vwe-key--close-buffer))
+	  (display-buffer-in-side-window vwe-key--buffer-handle alist))))
 
 ;;;###autoload
-(defmacro mum-key-define (name define &optional mode leaderkey)
+(defmacro vwe-key-define (name define &optional mode leaderkey)
   "Define MODE keymap with NAME and DEFINE.
 LEADERKEY is leader key."
   (let* ((name-symbol `,name)
@@ -340,66 +340,66 @@ LEADERKEY is leader key."
 		 (mode-list `,mode))
 	(unless (null name-symbol)
 	  (let* ((name-str (format "%s" name-symbol))
-			 (func-name-str (concat "mum-key:" name-str))
+			 (func-name-str (concat "vwe-key:" name-str))
 			 (func-name (intern func-name-str))
 			 (define-title (car define-list))
 			 (define-body (cadr define-list)))
 		(when (and mode-list (listp mode-list))
 		  (dotimes (i (length mode-list))
-			(if (plist-member mum-key--keymap-mode-func-alist (nth i mode-list))
-				(progn (plist-put mum-key--keymap-mode-func-alist (nth i mode-list) `(,func-name ,leaderkey)))
-			  (setq mum-key--keymap-mode-func-alist (append mum-key--keymap-mode-func-alist
+			(if (plist-member vwe-key--keymap-mode-func-alist (nth i mode-list))
+				(progn (plist-put vwe-key--keymap-mode-func-alist (nth i mode-list) `(,func-name ,leaderkey)))
+			  (setq vwe-key--keymap-mode-func-alist (append vwe-key--keymap-mode-func-alist
 															`(,(nth i mode-list) (,func-name ,leaderkey)))))
 			)
 		  )
 		`(defun ,func-name (&optional funcp)
 		   (interactive)
-		   (setq mum-key--max-width (frame-width))
-		   (mum-key--make-buffer)
-		   (mum-key--insert-content-to-buffer
-			(mum-key--make-content-title (quote ,define-title))
-			(mum-key--make-content-to-string
+		   (setq vwe-key--max-width (frame-width))
+		   (vwe-key--make-buffer)
+		   (vwe-key--insert-content-to-buffer
+			(vwe-key--make-content-title (quote ,define-title))
+			(vwe-key--make-content-to-string
 			 (if funcp
 				 (progn
-				   (setq mum-key--show-hint-p t)
+				   (setq vwe-key--show-hint-p t)
 				   (plist-get
-					(mum-key--make-content-hint-and-keymapping ,func-name-str (quote ,define-body))
+					(vwe-key--make-content-hint-and-keymapping ,func-name-str (quote ,define-body))
 					:func))
-			   (setq mum-key--show-hint-p nil)
+			   (setq vwe-key--show-hint-p nil)
 			   (plist-get
-				(mum-key--make-content-hint-and-keymapping ,func-name-str (quote ,define-body))
+				(vwe-key--make-content-hint-and-keymapping ,func-name-str (quote ,define-body))
 				:hint))))
-		   (setq mum-key--keymap-mapping
+		   (setq vwe-key--keymap-mapping
 				 (plist-get
-				  (mum-key--make-content-hint-and-keymapping ,func-name-str (quote ,define-body))
+				  (vwe-key--make-content-hint-and-keymapping ,func-name-str (quote ,define-body))
 				  :mapping))
-		   (if (< mum-key--max-width mum-key--frame-min-length)
+		   (if (< vwe-key--max-width vwe-key--frame-min-length)
 			   (message "sorry,the frame is too small to display the message.")
-			 (mum-key--show-keymap-buffer)))))))
+			 (vwe-key--show-keymap-buffer)))))))
 
 ;;;###autoload
-(defun mum-key--define-keymap-on-change-major-mode ()
+(defun vwe-key--define-keymap-on-change-major-mode ()
   "Define keymap on change major mode."
-  (when mum-key--keymap-mode-func-alist
-	(let* ((mode-func (plist-get mum-key--keymap-mode-func-alist major-mode))
-		   (key (if (cadr mode-func) (cadr mode-func) mum-key--leader-key)))
+  (when vwe-key--keymap-mode-func-alist
+	(let* ((mode-func (plist-get vwe-key--keymap-mode-func-alist major-mode))
+		   (key (if (cadr mode-func) (cadr mode-func) vwe-key--leader-key)))
 	  (when mode-func
 		(define-key (current-local-map) (kbd key) (car mode-func))))))
 
 ;;;###autoload
-(define-minor-mode mum-key-mode
-  "Mum Key minor mode."
+(define-minor-mode vwe-key-mode
+  "Vwe Key minor mode."
   :init-value nil
-  :group 'mum-key
+  :group 'vwe-key
   :global t
-  (if mum-key-mode-p
+  (if vwe-key-mode-p
 	  (progn
-		(setq mum-key-mode-p nil)
-		(mum-key--close-buffer))
-	(setq mum-key-mode-p t)
-	(add-hook 'after-change-major-mode-hook 'mum-key--define-keymap-on-change-major-mode)
-	(add-hook 'read-only-mode-hook 'mum-key--define-keymap-on-change-major-mode)
-	(add-hook 'window-configuration-change-hook 'mum-key--define-keymap-on-change-major-mode)))
+		(setq vwe-key-mode-p nil)
+		(vwe-key--close-buffer))
+	(setq vwe-key-mode-p t)
+	(add-hook 'after-change-major-mode-hook 'vwe-key--define-keymap-on-change-major-mode)
+	(add-hook 'read-only-mode-hook 'vwe-key--define-keymap-on-change-major-mode)
+	(add-hook 'window-configuration-change-hook 'vwe-key--define-keymap-on-change-major-mode)))
 
-(provide 'mum-key)
-;;; mum-key.el ends here
+(provide 'vwe-key)
+;;; vwe-key.el ends here

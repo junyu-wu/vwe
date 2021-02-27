@@ -525,7 +525,7 @@ IGNORES is a ignore file of directory list."
   "Find current point end of line position."
   (save-excursion
 	(end-of-line)
-	(skip-chars-backward " \t" (mum-mark-show-paren--find-line-bol))
+	(skip-chars-backward " \t" (vwe@lib--point-find-line-bol))
 	(point)))
 
 (defun vwe@lib--point-unescaped-p (pos)

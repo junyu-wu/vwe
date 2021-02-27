@@ -1,4 +1,4 @@
-;;; mum-modeline--.el --- Mu mode line     -*- lexical-binding: t; -*-
+;;; vwe-modeline--.el --- Mu mode line     -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2015  Wu Junyu
 
@@ -27,73 +27,73 @@
 (require 'seq)
 (require 'subr-x)
 
-(defgroup mum-modeline nil
-  "Mum mode line."
-  :prefix "mum-modeline--"
+(defgroup vwe-modeline nil
+  "Vwe mode line."
+  :prefix "vwe-modeline--"
   :group 'mode-line)
 
-(defvar mum-modeline-mode-p
+(defvar vwe-modeline-mode-p
   nil
   "Mode.")
 
-(defcustom mum-modeline--buffer-filter-list
+(defcustom vwe-modeline--buffer-filter-list
   nil
   "Buffer filter list."
-  :group 'mum-modeline
+  :group 'vwe-modeline
   :type 'string)
 
-(defcustom mum-modeline--segments
-  '((mum-modeline--segment-active-label
-	 mum-modeline--segment-space
-	 mum-modeline--segment-winnum
-	 mum-modeline--segment-space
-	 mum-modeline--segment-modified
-	 mum-modeline--segment-major-mode
-     mum-modeline--segment-buffer-name
-	 mum-modeline--segment-remote-host
-     mum-modeline--segment-process
-	 mum-modeline--segment-vc
-	 mum-modeline--segment-space
-	 mum-modeline--segment-vc-diff
-	 mum-modeline--segment-space
-	 mum-modeline--segment-location
-	 mum-modeline--segment-space
-	 mum-modeline--segment-symbol-count-info
-	 mum-modeline--segment-space
-	 mum-modeline--segment-buffer-counter)
-    (mum-modeline--segment-space
-	 mum-modeline--segment-conda-env
-	 mum-modeline--segment-ruby-env
-	 mum-modeline--segment-space
-	 mum-modeline--segment-lsp
-	 mum-modeline--segment-space
-	 mum-modeline--segment-flycheck
-	 mum-modeline--segment-space
-     mum-modeline--segment-input-method
-	 mum-modeline--segment-indent-tab
-	 mum-modeline--segment-separator
-	 mum-modeline--segment-indent-spc
-	 mum-modeline--segment-space
-     mum-modeline--segment-eol
-	 mum-modeline--segment-separator
-     mum-modeline--segment-encoding
-     mum-modeline--segment-misc-info
-	 mum-modeline--segment-space
-	 mum-modeline--segment-time
-	 mum-modeline--segment-space
-	 mum-modeline--segment-end-label))
-  "Mum modeline default segments."
+(defcustom vwe-modeline--segments
+  '((vwe-modeline--segment-active-label
+	 vwe-modeline--segment-space
+	 vwe-modeline--segment-winnum
+	 vwe-modeline--segment-space
+	 vwe-modeline--segment-modified
+	 vwe-modeline--segment-major-mode
+     vwe-modeline--segment-buffer-name
+	 vwe-modeline--segment-remote-host
+     vwe-modeline--segment-process
+	 vwe-modeline--segment-vc
+	 vwe-modeline--segment-space
+	 vwe-modeline--segment-vc-diff
+	 vwe-modeline--segment-space
+	 vwe-modeline--segment-location
+	 vwe-modeline--segment-space
+	 vwe-modeline--segment-symbol-count-info
+	 vwe-modeline--segment-space
+	 vwe-modeline--segment-buffer-counter)
+    (vwe-modeline--segment-space
+	 vwe-modeline--segment-conda-env
+	 vwe-modeline--segment-ruby-env
+	 vwe-modeline--segment-space
+	 vwe-modeline--segment-lsp
+	 vwe-modeline--segment-space
+	 vwe-modeline--segment-flycheck
+	 vwe-modeline--segment-space
+     vwe-modeline--segment-input-method
+	 vwe-modeline--segment-indent-tab
+	 vwe-modeline--segment-separator
+	 vwe-modeline--segment-indent-spc
+	 vwe-modeline--segment-space
+     vwe-modeline--segment-eol
+	 vwe-modeline--segment-separator
+     vwe-modeline--segment-encoding
+     vwe-modeline--segment-misc-info
+	 vwe-modeline--segment-space
+	 vwe-modeline--segment-time
+	 vwe-modeline--segment-space
+	 vwe-modeline--segment-end-label))
+  "Vwe modeline default segments."
   :type '(list (repeat :tag "left" function)
                (repeat :tag "right" function))
-  :group 'mum-modeline)
+  :group 'vwe-modeline)
 
-(defcustom mum-modeline--separator
+(defcustom vwe-modeline--separator
   "^"
   "Separator."
   :type 'string
-  :group 'mum-modeline)
+  :group 'vwe-modeline)
 
-(defcustom mum-modeline--indent-alist
+(defcustom vwe-modeline--indent-alist
   '((apache-mode apache-indent-level)
     (awk-mode c-basic-offset)
     (bpftrace-mode c-basic-offset)
@@ -196,65 +196,65 @@
     (yaml-mode yaml-indent-offset))
   "Indent alist."
   :type '(alist :key-type symbol :value-type sexp)
-  :group 'mum-modeline)
+  :group 'vwe-modeline)
 
-(defface mum-modeline--space-face
+(defface vwe-modeline--space-face
   '((t (:inherit 'default)))
   "Space face.")
 
-(defface mum-modeline--default-face
+(defface vwe-modeline--default-face
   '((t (:foreground "#B0BEC5"
 					:weight bold)))
   "Default face.")
 
-(defface mum-modeline--major-mode-face
+(defface vwe-modeline--major-mode-face
   '((t (:foreground "cyan"
 					:weight bold)))
   "Default face.")
 
-(defface mum-modeline--label-face
+(defface vwe-modeline--label-face
   '((t (:background "DarkOrange")))
   "Default face.")
 
-(defface mum-modeline--misc-face
+(defface vwe-modeline--misc-face
   '((t (:inherit 'shadow)))
   "Misc face.")
 
-(defface mum-modeline--modified-face
+(defface vwe-modeline--modified-face
   '((t (:foreground "red")))
   "Face for the 'modified' indicator symbol in the mode-line.")
 
-(defface mum-modeline--info-face
+(defface vwe-modeline--info-face
   '((t (:foreground "DarkOrange")))
   "Face for generic status indicators in the mode-line.")
 
-(defface mum-modeline--success-face
+(defface vwe-modeline--success-face
   '((t (:inherit 'success)))
   "Face used for success status indicators in the mode-line.")
 
-(defface mum-modeline--warning-face
+(defface vwe-modeline--warning-face
   '((t (:inherit 'warning)))
   "Face for warning status indicators in the mode-line.")
 
-(defface mum-modeline--error-face
+(defface vwe-modeline--error-face
   '((t (:foreground "DarkRed")))
   "Face for error status indicators in the mode-line.")
 
-(defface mum-modeline--mouse-face
+(defface vwe-modeline--mouse-face
   '((t (:foreground "LightSeaGreen")))
   "Face for error status indicators in the mode-line.")
 
-(defvar mum-modeline--default-format
+(defvar vwe-modeline--default-format
   mode-line-format
   "Store default `mode-line-format' value.")
 
-(defvar mum-modeline--init
+(defvar vwe-modeline--init
   '((:eval
-     (mum-modeline--format (car mum-modeline--segments)
-						   (cadr mum-modeline--segments))))
-  "Mum modeline init.")
+     (vwe-modeline--format (car vwe-modeline--segments)
+						   (cadr vwe-modeline--segments))))
+  "Vwe modeline init.")
 
-(defvar mum-modeline--segment-encoding-map
+(defvar vwe-modeline--segment-encoding-map
   (let ((map (make-sparse-keymap)))
     (define-key map [mode-line mouse-1]
 	  (lambda (e)
@@ -271,7 +271,7 @@
     (purecopy map))
   "Local keymap for coding-system part.")
 
-(defun mum-modeline--make-mouse-map (mouse function)
+(defun vwe-modeline--make-mouse-map (mouse function)
   "Return a keymap with single entry for mouse key MOUSE on the mode line.
 MOUSE is defined to run function FUNCTION with no args in the buffer
 corresponding to the mode line clicked."
@@ -279,34 +279,34 @@ corresponding to the mode line clicked."
     (define-key map (vector 'mode-line mouse) function)
     map))
 
-(defun mum-modeline--segment-space ()
+(defun vwe-modeline--segment-space ()
   "Space."
   " ")
 
-(defun mum-modeline--segment-active-label ()
+(defun vwe-modeline--segment-active-label ()
   "Active label."
-  (when (mum-modeline--active?)
-	(propertize "✔" 'face 'mum-modeline--label-face)))
+  (when (vwe-modeline--active?)
+	(propertize "✔" 'face 'vwe-modeline--label-face)))
 
-(defun mum-modeline--segment-end-label ()
+(defun vwe-modeline--segment-end-label ()
   "Active label."
-  (when (mum-modeline--active?)
+  (when (vwe-modeline--active?)
 	(propertize "✘"
-				'face 'mum-modeline--default-face
-				'help-echo (format "disable mum modeline")
-				'mouse-face 'mum-modeline--mouse-face
-				'local-map (purecopy (mum-modeline--make-mouse-map
+				'face 'vwe-modeline--default-face
+				'help-echo (format "disable vwe modeline")
+				'mouse-face 'vwe-modeline--mouse-face
+				'local-map (purecopy (vwe-modeline--make-mouse-map
 									  'mouse-1
 									  (lambda (event)
 										(interactive "e")
 										(with-selected-window (posn-window (event-start event))
-										  (mum-modeline-disable))))))))
+										  (vwe-modeline-disable))))))))
 
-(defun  mum-modeline--segment-separator ()
+(defun  vwe-modeline--segment-separator ()
   "Space."
-  (propertize mum-modeline--separator 'face 'mum-modeline--default-face))
+  (propertize vwe-modeline--separator 'face 'vwe-modeline--default-face))
 
-(defun mum-modeline--segment-modified ()
+(defun vwe-modeline--segment-modified ()
   "Displays a color-coded buffer modification/read-only indicator in the mode-line."
   (if (not (string-match-p "\\*.*\\*" (buffer-name)))
       (let* ((read-only (and buffer-read-only (buffer-file-name)))
@@ -314,32 +314,32 @@ corresponding to the mode line clicked."
         (propertize
          (if read-only "RO" (if modified "MD" "RW"))
          'face `(:inherit
-                 ,(if modified 'mum-modeline--modified-face
-                    (if read-only 'mum-modeline--info-face
-                      'mum-modeline--warning-face)))
+                 ,(if modified 'vwe-modeline--modified-face
+                    (if read-only 'vwe-modeline--info-face
+                      'vwe-modeline--warning-face)))
          'help-echo (format
                      "Buffer is %s and %smodified\nmouse-1: Toggle read-only status."
                      (if read-only "read-only" "writable")
                      (if modified "" "not "))
-         'local-map (purecopy (mum-modeline--make-mouse-map
+         'local-map (purecopy (vwe-modeline--make-mouse-map
                                'mouse-1
                                (lambda (event)
                                  (interactive "e")
                                  (with-selected-window (posn-window (event-start event))
                                    (read-only-mode 'toggle)))))
-         'mouse-face 'mum-modeline--mouse-face))))
+         'mouse-face 'vwe-modeline--mouse-face))))
 
-(defun mum-modeline--segment-buffer-name ()
+(defun vwe-modeline--segment-buffer-name ()
   "Displays the name of the current buffer in the mode-line."
-  (propertize " %b" 'face 'mum-modeline--default-face))
+  (propertize " %b" 'face 'vwe-modeline--default-face))
 
-(defun mum-modeline--segment-location ()
+(defun vwe-modeline--segment-location ()
   "Display the current cursor location."
   `(,(propertize (format "L%s:C%s^P%s"
 						 (format-mode-line "%l")
 						 (format-mode-line "%c")
 						 (format-mode-line "%p"))
-				 'face 'mum-modeline--default-face)
+				 'face 'vwe-modeline--default-face)
 	,(if (region-active-p)
 		 (propertize (format "[M+%s]"
 							 (apply #'+ (mapcar
@@ -347,9 +347,9 @@ corresponding to the mode line clicked."
 										   (- (cdr pos)
 											  (car pos)))
 										 (region-bounds))))
-					 'font-lock-face 'mum-modeline--info-face))))
+					 'font-lock-face 'vwe-modeline--info-face))))
 
-(defun mum-modeline--segment-make-flycheck-info ()
+(defun vwe-modeline--segment-make-flycheck-info ()
   "Make checker info."
   (when (boundp 'flycheck-current-errors)
 	(let ((info 0) (warning 0) (error 0))
@@ -362,24 +362,24 @@ corresponding to the mode line clicked."
 			(flycheck-count-errors flycheck-current-errors))
 	  `((info . ,info) (warning . ,warning) (error . ,error)))))
 
-(defun mum-modeline--segment-flycheck-text (&optional status)
+(defun vwe-modeline--segment-flycheck-text (&optional status)
   "Checker text via STATUS."
   (let* ((text))
-	(let-alist (mum-modeline--segment-make-flycheck-info)
+	(let-alist (vwe-modeline--segment-make-flycheck-info)
 	  (setq text (format "%s%s%s%s%s"
 						 (propertize (concat "I" (number-to-string .info))
-									 'face 'mum-modeline--info-face)
-						 (mum-modeline--segment-separator)
+									 'face 'vwe-modeline--info-face)
+						 (vwe-modeline--segment-separator)
 						 (propertize (concat "W" (number-to-string .warning))
-									 'face 'mum-modeline--warning-face)
-						 (mum-modeline--segment-separator)
+									 'face 'vwe-modeline--warning-face)
+						 (vwe-modeline--segment-separator)
 						 (propertize (concat "E" (number-to-string .error))
-									 'face 'mum-modeline--error-face))))
+									 'face 'vwe-modeline--error-face))))
 	(propertize text
 				'help-echo (concat "mouse-1: Show all errors\nmouse-3: Next error"
 								   (if (featurep 'mwheel)
 									   "\nwheel-up/wheel-down: Previous/next error"))
-				'mouse-face 'mum-modeline--mouse-face
+				'mouse-face 'vwe-modeline--mouse-face
 				'local-map (let ((map (make-sparse-keymap)))
 							 (define-key map [mode-line mouse-1] #'flycheck-list-errors)
 							 (define-key map [mode-line mouse-3] #'flycheck-next-error)
@@ -396,37 +396,37 @@ corresponding to the mode line clicked."
 									 (flycheck-next-error 1))))
 							   map)))))
 
-(defun mum-modeline--segment-flycheck ()
+(defun vwe-modeline--segment-flycheck ()
   "Checker."
   (when (bound-and-true-p flycheck-mode)
-	(mum-modeline--segment-flycheck-text)))
+	(vwe-modeline--segment-flycheck-text)))
 
-(defun mum-modeline--segment-vc ()
+(defun vwe-modeline--segment-vc ()
   "Display color-coded version control information in the mode-line."
   (propertize (format "%s" (format-mode-line '(vc-mode vc-mode)))
-			  'face 'mum-modeline--default-face))
+			  'face 'vwe-modeline--default-face))
 
-(defun mum-modeline--segment-vc-diff ()
+(defun vwe-modeline--segment-vc-diff ()
   "Display vc diff."
   (let* ((status (vc-state (buffer-name))))
 	(when (not (equal status 'up-to-date))
 	  (propertize (format "D:%s" (if status status "?"))
-				  'face 'mum-modeline--info-face
+				  'face 'vwe-modeline--info-face
 				  'help-echo (format "diff: %s" status)
 				  'local-map (purecopy
-							  (mum-modeline--make-mouse-map 'mouse-1 (lambda ()
+							  (vwe-modeline--make-mouse-map 'mouse-1 (lambda ()
 																	   (interactive)
 																	   (magit-diff-dwim))))
-				  'mouse-face 'mum-modeline--mouse-face))))
+				  'mouse-face 'vwe-modeline--mouse-face))))
 
-(defun mum-modeline--segment-remote-host ()
+(defun vwe-modeline--segment-remote-host ()
   "Hostname for remote buffers."
   (when default-directory
 	(when-let ((host (file-remote-p default-directory 'host)))
 	  (propertize (concat "R:" (system-name) "@" host)
-				  'face 'mum-modeline--default-face))))
+				  'face 'vwe-modeline--default-face))))
 
-(defun mum-modeline--segment-symbol-count-info ()
+(defun vwe-modeline--segment-symbol-count-info ()
   "Return Symbol Total And Current Symbol Index."
   (let* ((symbol (thing-at-point 'symbol))
 		 (cur-bound (bounds-of-thing-at-point 'symbol)))
@@ -453,31 +453,31 @@ corresponding to the mode line clicked."
 						(if (and (>= cur start) (<= cur end))
 							(setq curindex total))))))
 			  (propertize (format "T%d:C%d" total curindex)
-						  'face 'mum-modeline--default-face
+						  'face 'vwe-modeline--default-face
 						  'help-echo (format "total %d\ncurrent %d" total curindex)
-						  'mouse-face 'mum-modeline--mouse-face))))))))
+						  'mouse-face 'vwe-modeline--mouse-face))))))))
 
-(defun mum-modeline--segment-indent-tab ()
+(defun vwe-modeline--segment-indent-tab ()
   "Displays the indentation information."
   (propertize (format "T%s" tab-width)
-			  'face 'mum-modeline--default-face
+			  'face 'vwe-modeline--default-face
 			  'help-echo (format "tab width %s" tab-width)
-			  'mouse-face 'mum-modeline--mouse-face))
+			  'mouse-face 'vwe-modeline--mouse-face))
 
-(defun mum-modeline--segment-indent-spc ()
+(defun vwe-modeline--segment-indent-spc ()
   "Display the indentation information."
   (let ((spc)
 		(indent
          (seq-find (lambda (var)
                      (and var (boundp var) (symbol-value var)))
-				   (cdr (assoc major-mode mum-modeline--indent-alist)) nil)))
+				   (cdr (assoc major-mode vwe-modeline--indent-alist)) nil)))
 	(if indent (setq spc (symbol-value indent)) (setq spc tab-width))
 	(propertize (format "S%s" spc)
-				'face 'mum-modeline--default-face
+				'face 'vwe-modeline--default-face
 				'help-echo (format "indent offset %s" spc)
-				'mouse-face 'mum-modeline--mouse-face)))
+				'mouse-face 'vwe-modeline--mouse-face)))
 
-(defun mum-modeline--segment-eol ()
+(defun vwe-modeline--segment-eol ()
   "Display the EOL style of the current buffer in the mode-line."
   (let* ((eol (coding-system-eol-type buffer-file-coding-system))
 		 (mnemonic (pcase eol
@@ -492,10 +492,10 @@ corresponding to the mode line clicked."
 				 (_ "undecided"))))
 	(propertize
 	 mnemonic
-	 'face 'mum-modeline--default-face
+	 'face 'vwe-modeline--default-face
 	 'help-echo (format "eol: %s\nmouse-1: cycle" desc)
 	 'local-map (purecopy
-				 (mum-modeline--make-mouse-map
+				 (vwe-modeline--make-mouse-map
 				  'mouse-1
 				  (lambda (event)
 					(interactive "e")
@@ -503,9 +503,9 @@ corresponding to the mode line clicked."
 					  (let ((eol (coding-system-eol-type buffer-file-coding-system)))
 						(set-buffer-file-coding-system
 						 (cond ((eq eol 0) 'dos) ((eq eol 1) 'mac) (t 'unix))))))))
-	 'mouse-face 'mum-modeline--mouse-face)))
+	 'mouse-face 'vwe-modeline--mouse-face)))
 
-(defun mum-modeline--segment-encoding ()
+(defun vwe-modeline--segment-encoding ()
   "Display encoding of the buffer in mode-line."
   (let* ((sys (coding-system-plist buffer-file-coding-system))
 		 (encoding))
@@ -515,20 +515,20 @@ corresponding to the mode line clicked."
 		   (setq encoding (upcase (symbol-name (plist-get sys :name))))))
 	(propertize
 	 encoding
-	 'face 'mum-modeline--default-face
+	 'face 'vwe-modeline--default-face
 	 'help-echo (format "encoding: %s" encoding)
 	 'local-map (purecopy
-				 (mum-modeline--make-mouse-map
+				 (vwe-modeline--make-mouse-map
 				  'mouse-1 'revert-buffer-with-coding-system))
-	 'mouse-face 'mum-modeline--mouse-face)))
+	 'mouse-face 'vwe-modeline--mouse-face)))
 
-(defun mum-modeline--segment-misc-info ()
+(defun vwe-modeline--segment-misc-info ()
   "Displays the current value of `mode-line-misc-info' in the mode-line."
-  (let ((misc-info (string-trim (format-mode-line mode-line-misc-info 'mum-modeline--misc-face))))
+  (let ((misc-info (string-trim (format-mode-line mode-line-misc-info 'vwe-modeline--misc-face))))
 	(unless (string= misc-info "")
 	  (concat " " misc-info))))
 
-(defun mum-modeline--segment-input-method ()
+(defun vwe-modeline--segment-input-method ()
   "Displays the input-method of the buffer in the mode-line."
   `(""
 	(current-input-method
@@ -537,36 +537,36 @@ corresponding to the mode line clicked."
 							 "Current input method: %s\nmouse-1: Describe current input method"
 							 current-input-method)
 				  local-map ,(purecopy
-							  (mum-modeline--make-mouse-map
+							  (vwe-modeline--make-mouse-map
 							   'mouse-1
 							   (lambda (e)
 								 (interactive "e")
 								 (with-selected-window (posn-window (event-start e))
 								   (describe-current-input-method)))))
-				  mouse-face 'mum-modeline--mouse-face))))
+				  mouse-face 'vwe-modeline--mouse-face))))
 
-(defun mum-modeline--segment-minor-modes ()
+(defun vwe-modeline--segment-minor-modes ()
   "Displays current minor modes in mode-line."
   (replace-regexp-in-string "%" "%%%%"
 							(format-mode-line minor-mode-alist)
 							t t))
 
-(defun mum-modeline--segment-process ()
+(defun vwe-modeline--segment-process ()
   "Displays current `mode-line-process' in the mode-line."
   (when mode-line-process
 	(propertize (string-trim (format-mode-line mode-line-process))
-				'face 'mum-modeline--default-face)))
+				'face 'vwe-modeline--default-face)))
 
-(defun mum-modeline--segment-major-mode ()
+(defun vwe-modeline--segment-major-mode ()
   "Displays current major mode in mode-line."
   (propertize
    (concat " "
 		   (or (and (boundp 'delighted-modes)
 					(cadr (assq major-mode delighted-modes)))
 			   (format-mode-line mode-name)))
-   'face 'mum-modeline--major-mode-face))
+   'face 'vwe-modeline--major-mode-face))
 
-(defun mum-modeline--buffer-list (regexp &optional not-i)
+(defun vwe-modeline--buffer-list (regexp &optional not-i)
   "Find buffer list of REGEXP.
 NOT-I is include curretn buffer."
   (if regexp
@@ -583,22 +583,22 @@ NOT-I is include curretn buffer."
 					 (buffer-list))))
 	(buffer-list)))
 
-(defun mum-modeline--segment-buffer-counter ()
+(defun vwe-modeline--segment-buffer-counter ()
   "Displays current open buffer total."
-  (let* ((buffer (length (mum-modeline--buffer-list "^[^\s*]" t)))
-		 (tmp-buffer (length (mum-modeline--buffer-list "^*" t))))
+  (let* ((buffer (length (vwe-modeline--buffer-list "^[^\s*]" t)))
+		 (tmp-buffer (length (vwe-modeline--buffer-list "^*" t))))
 	(propertize (format "B%d^T%d" buffer tmp-buffer)
-				'face 'mum-modeline--default-face
+				'face 'vwe-modeline--default-face
 				'help-echo (format "open buffer %d temp buffer %d" buffer tmp-buffer))))
 
-(defun mum-modeline--segment-time ()
+(defun vwe-modeline--segment-time ()
   "Display current data and time."
   (propertize (format-time-string "%y-%m-%d %H:%M %a")
-			  'face 'mum-modeline--default-face
+			  'face 'vwe-modeline--default-face
 			  'help-echo (format "current time zone %s" (current-time-zone))
-			  'mouse-face 'mum-modeline--mouse-face))
+			  'mouse-face 'vwe-modeline--mouse-face))
 
-(defun mum-modeline--lsp-state ()
+(defun vwe-modeline--lsp-state ()
   "Update lsp state."
   (let* ((workspaces (lsp-workspaces)))
 	(if workspaces
@@ -607,12 +607,12 @@ NOT-I is include curretn buffer."
 				 (mapcar (lambda (w) (format "[%s]" (lsp--workspace-print w)))
 						 workspaces))))))
 
-(defun mum-modeline--segment-lsp ()
+(defun vwe-modeline--segment-lsp ()
   "Display lsp status."
-  (let ((lsp-info (when (bound-and-true-p lsp-mode) (mum-modeline--lsp-state))))
+  (let ((lsp-info (when (bound-and-true-p lsp-mode) (vwe-modeline--lsp-state))))
     (when lsp-info
 	  (propertize lsp-info
-				  'face 'mum-modeline--default-face
+				  'face 'vwe-modeline--default-face
 				  'help-echo (format "%s" (if lsp-info
 											  (concat "LSP Connected "
 													  lsp-info
@@ -621,7 +621,7 @@ NOT-I is include curretn buffer."
 													  "mouse-2: Quit server"
 													  "mouse-3: Reconnect to server")
 											"LSP Disconnected\nmouse-1: Reload to start server"))
-				  'mouse-face 'mum-modeline--mouse-face
+				  'mouse-face 'vwe-modeline--mouse-face
 				  'local-map (let ((map (make-sparse-keymap)))
 							   (if lsp-info
 								   (progn
@@ -640,36 +640,36 @@ NOT-I is include curretn buffer."
 									   (ignore-errors (revert-buffer t t))))))
 							   map)))))
 
-(defun mum-modeline--segment-debug ()
+(defun vwe-modeline--segment-debug ()
   "Display debug."
   ;; TODO
   )
 
-(defun mum-modeline--segment-repl ()
+(defun vwe-modeline--segment-repl ()
   "Display repl."
   ;; TODO
   )
 
-(defun mum-modeline--segment-conda-env ()
+(defun vwe-modeline--segment-conda-env ()
   "Display current python anaconda env."
   (when (eq major-mode 'python-mode)
 	(let* ((conda-env (if conda-env-current-name
 						  conda-env-current-name "non env")))
 	  (when conda-env
 		(propertize (format "C^[%s]" conda-env)
-					'face 'mum-modeline--default-face
+					'face 'vwe-modeline--default-face
 					'help-echo (format "anaconda env %s" conda-env)
-					'mouse-face 'mum-modeline--mouse-face)))))
+					'mouse-face 'vwe-modeline--mouse-face)))))
 
-(defun mum-modeline--segment-ruby-env ()
+(defun vwe-modeline--segment-ruby-env ()
   "Display current ruby and gem env."
   (when (and (eq major-mode 'ruby-mode) (fboundp 'rvm--current-ruby) (rvm-working-p))
 	(propertize (format "R^[v:%s|g:%s]" rvm-current-ruby rvm--current-gemset)
-				'face 'mum-modeline--default-face
+				'face 'vwe-modeline--default-face
 				'help-echo (format "Ruby version %s gem %s" rvm-current-ruby rvm--current-gemset)
-		  		'mouse-face 'mum-modeline--mouse-face)))
+		  		'mouse-face 'vwe-modeline--mouse-face)))
 
-(defun mum-modeline--segment-winnum ()
+(defun vwe-modeline--segment-winnum ()
   "Display current windows number in mode-line."
   (let ((num (cond
 			  ((bound-and-true-p ace-window-display-mode)
@@ -691,115 +691,115 @@ NOT-I is include curretn buffer."
                              (window-list)))
                          (visible-frame-list)))))
         (propertize (format "%s" num)
-                    'face 'mum-modeline--info-face)
+                    'face 'vwe-modeline--info-face)
 	  (propertize (format "-")
-				  'face 'mum-modeline--info-face
+				  'face 'vwe-modeline--info-face
 				  'help-echo (format "only window")))))
 
-(defun mum-modeline--format (left-segments right-segments)
+(defun vwe-modeline--format (left-segments right-segments)
   "Make modeline string of `window-width' length.
 Containing LEFT-SEGMENTS and RIGHT-SEGMENTS."
-  (let* ((left (mum-modeline--format-segments left-segments))
-		 (right (mum-modeline--format-segments right-segments))
+  (let* ((left (vwe-modeline--format-segments left-segments))
+		 (right (vwe-modeline--format-segments right-segments))
 		 (reserve (length right)))
 	(concat left (propertize " " 'display `((space :align-to (- right ,reserve)))) right)))
 
-(defun mum-modeline--format-segments (segments)
+(defun vwe-modeline--format-segments (segments)
   "Make modeline string from SEGMENTS."
   (format-mode-line (mapcar (lambda (segment) `(:eval (,segment)))
 							segments)))
 
-(defun mum-modeline--get-current-window (&optional frame)
+(defun vwe-modeline--get-current-window (&optional frame)
   "Get the current window from FRAME."
   (if (and (fboundp 'frame-parent) (frame-parent frame))
 	  (frame-selected-window (frame-parent frame))
     (frame-selected-window frame)))
 
-(defvar mum-modeline--current-window
-  (mum-modeline--get-current-window)
+(defvar vwe-modeline--current-window
+  (vwe-modeline--get-current-window)
   "Current window.")
 
-(defun mum-modeline--active? ()
+(defun vwe-modeline--active? ()
   "Whether is an active window."
-  (and mum-modeline--current-window
-	   (eq (mum-modeline--get-current-window) mum-modeline--current-window)))
+  (and vwe-modeline--current-window
+	   (eq (vwe-modeline--get-current-window) vwe-modeline--current-window)))
 
-(defun mum-modeline--set-selected-window (&rest _)
-  "Set `mum-modeline--current-window' appropriately."
-  (when-let ((win (mum-modeline--get-current-window)))
+(defun vwe-modeline--set-selected-window (&rest _)
+  "Set `vwe-modeline--current-window' appropriately."
+  (when-let ((win (vwe-modeline--get-current-window)))
     (unless (or (minibuffer-window-active-p win)
                 (and (bound-and-true-p lv-wnd) (eq lv-wnd win)))
-	  (setq mum-modeline--current-window win))))
+	  (setq vwe-modeline--current-window win))))
 
-(defun mum-modeline--unset-selected-window ()
-  "Unset `mum-modeline--current-window' appropriately."
-  (setq mum-modeline--current-window nil))
+(defun vwe-modeline--unset-selected-window ()
+  "Unset `vwe-modeline--current-window' appropriately."
+  (setq vwe-modeline--current-window nil))
 
-(defun mum-modeline--init-hook (&optional del?)
+(defun vwe-modeline--init-hook (&optional del?)
   "Init add hook.
 DEL is add or delete?"
   (if del?
 	  (progn
-		(remove-hook 'flycheck-status-changed-functions #'mum-modeline--segment-flycheck-text)
-		(remove-hook 'flycheck-mode-hook #'mum-modeline--segment-flycheck-text)
+		(remove-hook 'flycheck-status-changed-functions #'vwe-modeline--segment-flycheck-text)
+		(remove-hook 'flycheck-mode-hook #'vwe-modeline--segment-flycheck-text)
 
-		(remove-hook 'lsp-before-initialize-hook #'mum-modeline--lsp-state)
-		(remove-hook 'lsp-after-initialize-hook #'mum-modeline--lsp-state)
-		(remove-hook 'lsp-after-uninitialized-functions #'mum-modeline--lsp-state)
-		(remove-hook 'lsp-before-open-hook #'mum-modeline--lsp-state)
-		(remove-hook 'lsp-after-open-hook #'mum-modeline--lsp-state))
+		(remove-hook 'lsp-before-initialize-hook #'vwe-modeline--lsp-state)
+		(remove-hook 'lsp-after-initialize-hook #'vwe-modeline--lsp-state)
+		(remove-hook 'lsp-after-uninitialized-functions #'vwe-modeline--lsp-state)
+		(remove-hook 'lsp-before-open-hook #'vwe-modeline--lsp-state)
+		(remove-hook 'lsp-after-open-hook #'vwe-modeline--lsp-state))
 
-	(add-hook 'window-configuration-change-hook #'mum-modeline--set-selected-window)
-	(add-hook 'buffer-list-update-hook #'mum-modeline--set-selected-window)
-	(add-hook 'after-make-frame-functions #'mum-modeline--set-selected-window)
-	(add-hook 'delete-frame-functions #'mum-modeline--set-selected-window)
-	(add-hook 'exwm-workspace-switch-hook #'mum-modeline--set-selected-window)
-	(advice-add #'handle-switch-frame :after #'mum-modeline--set-selected-window)
+	(add-hook 'window-configuration-change-hook #'vwe-modeline--set-selected-window)
+	(add-hook 'buffer-list-update-hook #'vwe-modeline--set-selected-window)
+	(add-hook 'after-make-frame-functions #'vwe-modeline--set-selected-window)
+	(add-hook 'delete-frame-functions #'vwe-modeline--set-selected-window)
+	(add-hook 'exwm-workspace-switch-hook #'vwe-modeline--set-selected-window)
+	(advice-add #'handle-switch-frame :after #'vwe-modeline--set-selected-window)
 	(with-no-warnings
 	  (if (boundp 'after-focus-change-function)
 		  (progn
-			(defun mum-modeline--refresh-frame ()
-			  (setq mum-modeline--current-window nil)
+			(defun vwe-modeline--refresh-frame ()
+			  (setq vwe-modeline--current-window nil)
 			  (cl-loop for frame in (frame-list)
 					   if (eq (frame-focus-state frame) t)
-					   return (setq mum-modeline--current-window
-									(mum-modeline--get-current-window frame)))
+					   return (setq vwe-modeline--current-window
+									(vwe-modeline--get-current-window frame)))
 			  (force-mode-line-update))
-			(add-function :after after-focus-change-function #'mum-modeline--refresh-frame))
+			(add-function :after after-focus-change-function #'vwe-modeline--refresh-frame))
 		(progn
-		  (add-hook 'focus-in-hook #'mum-modeline--set-selected-window)
-		  (add-hook 'focus-out-hook #'mum-modeline--unset-selected-window))))
+		  (add-hook 'focus-in-hook #'vwe-modeline--set-selected-window)
+		  (add-hook 'focus-out-hook #'vwe-modeline--unset-selected-window))))
 
-	(add-hook 'flycheck-status-changed-functions #'mum-modeline--segment-flycheck-text)
-	(add-hook 'flycheck-mode-hook #'mum-modeline--segment-flycheck-text)
+	(add-hook 'flycheck-status-changed-functions #'vwe-modeline--segment-flycheck-text)
+	(add-hook 'flycheck-mode-hook #'vwe-modeline--segment-flycheck-text)
 
-	(add-hook 'lsp-before-initialize-hook #'mum-modeline--lsp-state)
-	(add-hook 'lsp-after-initialize-hook #'mum-modeline--lsp-state)
-	(add-hook 'lsp-after-uninitialized-functions #'mum-modeline--lsp-state)
-	(add-hook 'lsp-before-open-hook #'mum-modeline--lsp-state)
-	(add-hook 'lsp-after-open-hook #'mum-modeline--lsp-state)
+	(add-hook 'lsp-before-initialize-hook #'vwe-modeline--lsp-state)
+	(add-hook 'lsp-after-initialize-hook #'vwe-modeline--lsp-state)
+	(add-hook 'lsp-after-uninitialized-functions #'vwe-modeline--lsp-state)
+	(add-hook 'lsp-before-open-hook #'vwe-modeline--lsp-state)
+	(add-hook 'lsp-after-open-hook #'vwe-modeline--lsp-state)
 
 	(advice-add #'winum--install-mode-line :override #'ignore)
 	(advice-add #'winum--clear-mode-line :override #'ignore)))
 
-(defun mum-modeline-enable ()
+(defun vwe-modeline-enable ()
   "Mode line enable."
   (interactive)
-  (mum-modeline--init-hook)
-  (setq-default mode-line-format '(:eval mum-modeline--init)))
+  (vwe-modeline--init-hook)
+  (setq-default mode-line-format '(:eval vwe-modeline--init)))
 
-(defun mum-modeline-disable (&optional defp)
+(defun vwe-modeline-disable (&optional defp)
   "Mode line disenable or if DEFP is non-nil reset default modeline."
   (interactive)
-  (mum-modeline--init-hook)
-  (setq-default mode-line-format (if defp mum-modeline--default-format nil)))
+  (vwe-modeline--init-hook)
+  (setq-default mode-line-format (if defp vwe-modeline--default-format nil)))
 
-(defun mum-modeline-re-init ()
+(defun vwe-modeline-re-init ()
   "Reset mode line."
   (interactive)
-  (mum-modeline-enable))
+  (vwe-modeline-enable))
 
-(defun mum-modeline-buffer-hide (&optional filter buffer)
+(defun vwe-modeline-buffer-hide (&optional filter buffer)
   "Hide current window BUFFER(buffer name) modeline of FILTER(buffer name list)."
   (interactive)
   (unless filter (setq filter (mapcar (lambda(buf) (buffer-name buf)) (buffer-list))))
@@ -810,35 +810,35 @@ DEL is add or delete?"
 		(when (equal (nth i filter) buffer)
 		  (setq mode-line-format nil))))))
 
-(defun mum-modeline--hide ()
+(defun vwe-modeline--hide ()
   "Hide buffer mode line."
-  (if mum-modeline--buffer-filter-list
-	  (mum-modeline-buffer-hide mum-modeline--buffer-filter-list)
-	(mum-modeline-buffer-hide)))
+  (if vwe-modeline--buffer-filter-list
+	  (vwe-modeline-buffer-hide vwe-modeline--buffer-filter-list)
+	(vwe-modeline-buffer-hide)))
 
 ;;;###autoload
-(defun mum-modeline-buffer-show-modeline ()
+(defun vwe-modeline-buffer-show-modeline ()
   "Show modeline in current buffer."
   (interactive)
-  (mum-modeline--init-hook)
-  (setq mode-line-format '(:eval mum-modeline--init)))
+  (vwe-modeline--init-hook)
+  (setq mode-line-format '(:eval vwe-modeline--init)))
 
 ;;;###autoload
-(define-minor-mode mum-modeline-mode
-  "Mum modeline minor mode."
+(define-minor-mode vwe-modeline-mode
+  "Vwe modeline minor mode."
   :init-value nil
   :keymap nil
   :lighter ""
-  :group 'mum-modeline
+  :group 'vwe-modeline
   :global t
-  (if mum-modeline-mode
+  (if vwe-modeline-mode
 	  (progn
-		(mum-modeline-enable)
-		(add-hook 'emacs-startup-hook 'mum-modeline--hide)
-		(add-hook 'window-configuration-change-hook 'mum-modeline--hide))
-	(mum-modeline-disable)
-	(remove-hook 'emacs-startup-hook 'mum-modeline--hide)
-	(remove-hook 'window-configuration-change-hook 'mum-modeline--hide)))
+		(vwe-modeline-enable)
+		(add-hook 'emacs-startup-hook 'vwe-modeline--hide)
+		(add-hook 'window-configuration-change-hook 'vwe-modeline--hide))
+	(vwe-modeline-disable)
+	(remove-hook 'emacs-startup-hook 'vwe-modeline--hide)
+	(remove-hook 'window-configuration-change-hook 'vwe-modeline--hide)))
 
-(provide 'mum-modeline)
-;;; mum-modeline.el ends here
+(provide 'vwe-modeline)
+;;; vwe-modeline.el ends here

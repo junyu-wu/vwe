@@ -1,4 +1,4 @@
-;;; mum-headerline.el --- Header line mode      -*- lexical-binding: t; -*-
+;;; vwe-headerline.el --- Header line mode      -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2020  Wu Junyu
 
@@ -24,42 +24,42 @@
 
 ;;; Code:
 
-(defgroup mum-headerline nil
-  "Mum mode line."
-  :prefix "mum-headerline--"
+(defgroup vwe-headerline nil
+  "Vwe mode line."
+  :prefix "vwe-headerline--"
   :group 'header-line)
 
-(defcustom mum-headerline--buffer-filter-list
+(defcustom vwe-headerline--buffer-filter-list
   nil
   "Buffer filter list."
-  :group 'mum-headerline
+  :group 'vwe-headerline
   :type 'string)
 
-(defface mum-headerline--info-face
+(defface vwe-headerline--info-face
   '((t (:background "DarkGreen" :foreground "white" :weight bold)))
   "Info face.")
 
-(defface mum-headerline--warning-face
+(defface vwe-headerline--warning-face
   '((t (:background "DarkOrange" :foreground "white" :weight bold)))
   "Warning face.")
 
-(defface mum-headerline--error-face
+(defface vwe-headerline--error-face
   '((t (:background "DarkRed" :foreground "white" :weight bold)))
   "Error face.")
 
-(defface mum-headerline--file-face
+(defface vwe-headerline--file-face
   '((t (:foreground "white" :weight bold :inverse-video nil)))
   "File face.")
 
-(defface mum-headerline--path-face
+(defface vwe-headerline--path-face
   '((t (:foreground "#B0BEC5" :weight bold)))
   "Path face.")
 
-(defconst mum-headerline--buffer-status-list
+(defconst vwe-headerline--buffer-status-list
   '("RW" "MD" "RO")
   "Buffer status list.")
 
-(defun mum-headerline--sys-separator ()
+(defun vwe-headerline--sys-separator ()
   "Get system separator."
   (interactive)
   (let* ((split))
@@ -68,27 +68,27 @@
 	(setq split "/");;)
 	split))
 
-(defun mum-headerline--path-trim (path)
+(defun vwe-headerline--path-trim (path)
   "Trim PATH."
-  (when (equal (substring path 0 1) (mum-headerline--sys-separator))
+  (when (equal (substring path 0 1) (vwe-headerline--sys-separator))
 	(setq path (substring path 1)))
-  (when (equal (substring path (1- (length path))) (mum-headerline--sys-separator))
+  (when (equal (substring path (1- (length path))) (vwe-headerline--sys-separator))
 	(setq path (substring path 0 (1- (length path)))))
   path)
 
-(defun mum-headerline--buffer-status ()
+(defun vwe-headerline--buffer-status ()
   "Buffer status."
   (let* ((modified  (and buffer-file-name (buffer-modified-p)))
 		 (read-only buffer-read-only))
 	(cond
-	 (modified (propertize (format "[%s]" (cadr mum-headerline--buffer-status-list))
-						   'face 'mum-headerline--error-face))
-	 (read-only (propertize (format "[%s]" (caddr mum-headerline--buffer-status-list))
-							'face 'mum-headerline--warning-face))
-	 (t (propertize (format "[%s]" (car mum-headerline--buffer-status-list))
-					'face 'mum-headerline--info-face)))))
+	 (modified (propertize (format "[%s]" (cadr vwe-headerline--buffer-status-list))
+						   'face 'vwe-headerline--error-face))
+	 (read-only (propertize (format "[%s]" (caddr vwe-headerline--buffer-status-list))
+							'face 'vwe-headerline--warning-face))
+	 (t (propertize (format "[%s]" (car vwe-headerline--buffer-status-list))
+					'face 'vwe-headerline--info-face)))))
 
-(defun mum-headerline--make-buffer-path ()
+(defun vwe-headerline--make-buffer-path ()
   "Make buffer path header-line."
   (let* ((file-name (buffer-file-name))
 		 (path (if file-name file-name (buffer-name)))
@@ -100,60 +100,60 @@
 		 (drop-str "[...]")
 		 (width (window-body-width)))
 	(when (< width hl-length)
-	  (let* ((dir-list (split-string (mum-headerline--path-trim dir) (mum-headerline--sys-separator)))
+	  (let* ((dir-list (split-string (vwe-headerline--path-trim dir) (vwe-headerline--sys-separator)))
 			 (dir-list-length (length dir-list)))
-		(setq dir (concat (mum-headerline--sys-separator)
+		(setq dir (concat (vwe-headerline--sys-separator)
 						  (car dir-list)
-						  (mum-headerline--sys-separator)
+						  (vwe-headerline--sys-separator)
 						  drop-str
-						  (mum-headerline--sys-separator)
+						  (vwe-headerline--sys-separator)
 						  (car (reverse dir-list))
-						  (mum-headerline--sys-separator)))))
+						  (vwe-headerline--sys-separator)))))
 	(setq path (concat (propertize dir
-								   'face 'mum-headerline--path-face)
+								   'face 'vwe-headerline--path-face)
 					   (propertize file
-								   'face 'mum-headerline--file-face)))
+								   'face 'vwe-headerline--file-face)))
 	path))
 
-(defun mum-headerline--make-buffer-branch ()
+(defun vwe-headerline--make-buffer-branch ()
   "Make buffer branch header-line."
   (propertize (if vc-mode
 				  (let* ((backend (vc-backend buffer-file-name)))
 					(substring-no-properties vc-mode
 											 (+ (if (eq backend 'Hg) 2 3) 2)))
 				"*non-vcs*")
-			  'face 'mum-headerline--path-face))
+			  'face 'vwe-headerline--path-face))
 
-(defun mum-headerline--make-buffer-major ()
+(defun vwe-headerline--make-buffer-major ()
   "Make buffer major mode header-line."
   (propertize (format "%s" (cdr (assoc 'major-mode (buffer-local-variables (current-buffer)))))
-			  'face 'mum-headerline--path-face))
+			  'face 'vwe-headerline--path-face))
 
-(defun mum-headerline--make-buffer-info ()
+(defun vwe-headerline--make-buffer-info ()
   "Make buffer info header-line."
-  (list (mum-headerline--buffer-status)
-		(mum-headerline--make-buffer-path)
+  (list (vwe-headerline--buffer-status)
+		(vwe-headerline--make-buffer-path)
 		" "
-		(mum-headerline--make-buffer-branch)
+		(vwe-headerline--make-buffer-branch)
 		" "
-		(mum-headerline--make-buffer-major)))
+		(vwe-headerline--make-buffer-major)))
 
-(defun mum-headerline--active ()
+(defun vwe-headerline--active ()
   "Header line active."
   (interactive)
-  (add-hook 'focus-in-hook #'mum-headerline--show-p)
-  (add-hook 'window-configuration-change-hook #'mum-headerline--show-p)
-  (unless (vwe@lib--buffer-match-p mum-headerline--buffer-filter-list)
-	(setq-default header-line-format (mum-headerline--make-buffer-info))))
+  (add-hook 'focus-in-hook #'vwe-headerline--show-p)
+  (add-hook 'window-configuration-change-hook #'vwe-headerline--show-p)
+  (unless (vwe@lib--buffer-match-p vwe-headerline--buffer-filter-list)
+	(setq-default header-line-format (vwe-headerline--make-buffer-info))))
 
-(defun mum-headerline--deactive ()
+(defun vwe-headerline--deactive ()
   "Header line deactive."
   (interactive)
-  (remove-hook 'focus-in-hook #'mum-headerline--show-p)
-  (remove-hook 'window-configuration-change-hook #'mum-headerline--show-p)
+  (remove-hook 'focus-in-hook #'vwe-headerline--show-p)
+  (remove-hook 'window-configuration-change-hook #'vwe-headerline--show-p)
   (setq-default header-line-format nil))
 
-(defun mum-headerline--buffer-match-p (regs &optional buffer)
+(defun vwe-headerline--buffer-match-p (regs &optional buffer)
   "Is BUFFER name match in REGS?"
   (unless buffer (setq buffer (buffer-name)))
   (when regs
@@ -165,19 +165,19 @@
 						 (when (string-match (nth i regs) buffer)
 						   (throw 'break t)))))))))
 
-(defun mum-headerline--show-p ()
+(defun vwe-headerline--show-p ()
   "Header line is show."
-  (when mum-headerline-mode
-	(unless (mum-headerline--buffer-match-p mum-headerline--buffer-filter-list)
-	  (setq header-line-format (mum-headerline--make-buffer-info)))))
+  (when vwe-headerline-mode
+	(unless (vwe-headerline--buffer-match-p vwe-headerline--buffer-filter-list)
+	  (setq header-line-format (vwe-headerline--make-buffer-info)))))
 
-(define-minor-mode mum-headerline-mode
-  "Mum headreline minor mode."
+(define-minor-mode vwe-headerline-mode
+  "Vwe headreline minor mode."
   :init-value nil
   :keymap nil
-  :group 'mum-headerline
+  :group 'vwe-headerline
   :global t
-  (if mum-headerline-mode (mum-headerline--active) (mum-headerline--deactive)))
+  (if vwe-headerline-mode (vwe-headerline--active) (vwe-headerline--deactive)))
 
-(provide 'mum-headerline)
-;;; mum-headerline.el ends here
+(provide 'vwe-headerline)
+;;; vwe-headerline.el ends here
