@@ -265,13 +265,6 @@
 (vwe@lib--package 'mwim)
 
 ;;
-;; `drag-stuff' 拖拽行、区域、字
-;;
-(vwe@lib--package 'drag-stuff
-				  (add-hook 'after-init-hook #'drag-stuff-global-mode)
-				  (drag-stuff-define-keys))
-
-;;
 ;; `smartparens'
 ;;
 (vwe@lib--package 'smartparens
