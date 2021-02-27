@@ -253,8 +253,8 @@ MODE."
 						  counsel-etags-sort-grep-result-p t
 						  imenu-create-index-function 'counsel-etags-imenu-default-create-index-function
 						  counsel-etags-update-interval 60
-						  counsel-etags-update-tags-backend (lambda ()
-															  (shell-command "ctags-universal -e -R")))
+						  counsel-etags-update-tags-backend (lambda () (shell-command "ectags -e -R"))
+						  )
 					(add-hook 'prog-mode-hook (lambda ()
 												(add-hook 'after-save-hook
 														  'counsel-etags-virtual-update-tags

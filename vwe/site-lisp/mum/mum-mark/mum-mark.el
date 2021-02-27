@@ -484,7 +484,7 @@ OBJS."
 		(unless (zerop mum-mark-line--preview-goto-line)
 		  (goto-char (point-min))
 		  (forward-line (1- mum-mark-line--preview-goto-line)))
-		(set-transient-map mum-mark-line--preview-keymap nil  #'mum-mark-line--preview-recovery)))
+		(set-transient-map mum-mark-line--preview-keymap nil #'mum-mark-line--preview-recovery)))
 	(message "preview line %s" mum-mark-line--preview-goto-line)))
 
 (defun mum-mark-line--preview-goto-line (&optional line)
@@ -610,8 +610,24 @@ OBJS."
 ;;
 ;; change point
 ;;
+(defvar mum-mark-change--skip-step
+  8
+  "Skip step.")
+
+(defvar-local mum-mark-change--current-step
+  1
+  "Skip step.")
+
 (defvar mum-mark-change--keymap
   (let ((keymap (make-sparse-keymap)))
+	keymap)
+  "Chage keymap.")
+
+(defvar mum-mark-change--skip-step-keymap
+  (let ((keymap (make-sparse-keymap)))
+	(define-key keymap (kbd "C-,") (lambda () (interactive)
+									 (setq mum-mark-change--current-step (1+ mum-mark-change--current-step))
+									 (mum-mark-change--goto-last mum-mark-change--current-step)))
 	keymap)
   "Chage keymap.")
 
@@ -648,35 +664,43 @@ OBJS."
 
 (defun mum-mark-change--find-change-point (step)
   "Find last STEP change point."
-  (let* ((found-point (point))
+  (let* ((found-point -1)
 		 (undo-len (if buffer-undo-list (length buffer-undo-list) 0))
 		 (match-index 0))
 	(catch 'break
 	  (dotimes (i undo-len)
-	  (let* ((undo-elem (nth i buffer-undo-list))
-			 (pos (mum-mark-change--get-undo-list-element-point undo-elem)))
-	  (when pos
-		(setq match-index (1+ match-index))
-		(when (= step match-index) (setq found-point pos)
-			  (throw 'break nil))))))
+		(let* ((undo-elem (nth i buffer-undo-list))
+			   (pos (mum-mark-change--get-undo-list-element-point undo-elem)))
+		  (when  pos
+			(setq match-index (1+ match-index))
+			(when (= step match-index) (setq found-point pos) (message "last change: %s" mum-mark-change--current-step) (throw 'break found-point))))))
 	found-point))
 
 ;;;###autoload
 (defun mum-mark-change--goto-last (&optional step)
   "Goto last or STEP change."
   (interactive)
-  (let* ((undo-status (and buffer-undo-list (not (eq buffer-undo-list t)))))
+  (let* ((undo-status (and buffer-undo-list (not (eq buffer-undo-list t))))
+		 (found-point 0))
 	(if undo-status
 		(progn
-		  (let* ((found-point)
-				 (undo-step (or step 1)))
+		  (let* ((undo-step (or step 1)))
 			(setq found-point (mum-mark-change--find-change-point undo-step))
-			(when (> found-point 0) (goto-char found-point))))
-	  (message "Buffer has not been changed or undo is disabled"))))
+			(if (> found-point 0) (goto-char found-point) (message "none or last change"))))
+	  (message "Buffer has not been changed or undo is disabled"))
+	found-point))
+
+(defun mum-mark-change--goto-last-cycle ()
+  "Goto last change."
+  (interactive)
+  (let* ((pos (mum-mark-change--goto-last mum-mark-change--current-step)))
+	(when pos
+	  (set-transient-map mum-mark-change--skip-step-keymap t (lambda () (setq mum-mark-change--current-step 1))))))
 
 (defun mum-mark-change--enable ()
   "Enable change."
-  (define-key mum-mark-change--keymap (kbd "C-,") #'mum-mark-change--goto-last))
+  (define-key mum-mark-change--keymap (kbd "C-,") #'mum-mark-change--goto-last)
+  (define-key mum-mark-change--keymap (kbd "C-.") #'mum-mark-change--goto-last-cycle))
 
 (defun mum-mark-change--disable ()
   "Disable change.")

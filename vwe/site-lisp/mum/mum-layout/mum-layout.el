@@ -61,6 +61,10 @@
   nil
   "Track of the currently selected window.")
 
+(defvar mum-layout--zoom-balance-p
+  nil
+  "Windows `ratio' or `balance'.")
+
 (defun mum-layout--text-scale-increase ()
   "Text scale increase."
   (interactive)
@@ -154,13 +158,14 @@ Argument IGNORED is ignored."
 		 (window-combination-resize t)
 		 (window-resize-pixelwise t))
 	(balance-windows)
-    (unless (mum-layout--zoom-window-ignored-p)
-      (progn (mum-layout--windows-zoom-resize) (mum-layout--windows-zoom-resize t))
-      (unless (derived-mode-p 'image-mode)
-        (scroll-right (window-hscroll))
-		(when (and truncate-lines
-				   (> (current-column) (- (window-body-width) hscroll-margin)))
-		  (scroll-left (- (current-column) (/ (window-body-width) 2))))))))
+	(unless mum-layout--zoom-balance-p
+	  (unless (mum-layout--zoom-window-ignored-p)
+		(progn (mum-layout--windows-zoom-resize) (mum-layout--windows-zoom-resize t))
+		(unless (derived-mode-p 'image-mode)
+          (scroll-right (window-hscroll))
+		  (when (and truncate-lines
+					 (> (current-column) (- (window-body-width) hscroll-margin)))
+			(scroll-left (- (current-column) (/ (window-body-width) 2)))))))))
 
 (defun mum-layout--windows-zoom-resize (&optional horizontal?)
   "Resize windows.
@@ -176,6 +181,14 @@ HORIZONTAL horizontal or vertical."
 		 (win-ratio (if (floatp custom-size) (round (* custom-size frame-size)) custom-size))
 		 (delta (window-resizable nil (max (- win-ratio win-size) 0) horizontal?)))
 	(window-resize nil delta horizontal?)))
+
+(defun mum-layout--zoom-type-toggle ()
+  "Toggle zoom type."
+  (interactive)
+  (if mum-layout--zoom-balance-p
+	  (setq mum-layout--zoom-balance-p nil)
+	(setq mum-layout--zoom-balance-p t))
+  (mum-layout--windows-zoom))
 
 (defun mum-layout--zoom-enable ()
   "Enable mode."
