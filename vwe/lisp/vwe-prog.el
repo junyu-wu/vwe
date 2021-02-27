@@ -241,25 +241,16 @@ MODE."
 (vwe@lib--package 'counsel-etags
 				  (add-hook 'prog-mode-hook #'counsel-mode)
 				  (progn
-					(push "build" counsel-etags-ignore-directories)
-					(push "build_clang" counsel-etags-ignore-directories)
-					(push "TAGS" counsel-etags-ignore-filenames)
-					(push ".vscode" counsel-etags-ignore-directories)
-					(push ".clang-format" counsel-etags-ignore-filenames)
-					(push "*.json" counsel-etags-ignore-filenames))
+					(append '("build" "build_clang" ".vscode") counsel-etags-ignore-directories)
+					(append '("TAGS" "tags" ".clang-format") counsel-etags-ignore-filenames))
 				  (progn
 					(setq tags-revert-without-query t
 						  large-file-warning-threshold nil
 						  counsel-etags-sort-grep-result-p t
 						  imenu-create-index-function 'counsel-etags-imenu-default-create-index-function
 						  counsel-etags-update-interval 60
-						  counsel-etags-update-tags-backend (lambda () (shell-command "ectags -e -R"))
-						  )
-					(add-hook 'prog-mode-hook (lambda ()
-												(add-hook 'after-save-hook
-														  'counsel-etags-virtual-update-tags
-														  'append
-														  'local)))))
+						  counsel-etags-update-tags-backend (lambda () (shell-command vwe@custom--tags-command)))
+					(add-hook 'prog-mode-hook (lambda () (add-hook 'after-save-hook 'counsel-etags-virtual-update-tags 'append 'local)))))
 
 ;;
 ;; `lsp-mode'
@@ -267,10 +258,9 @@ MODE."
 (vwe@lib--package 'lsp-mode
 				  nil
 				  (progn
-					(vwe@lib--keymap-set lsp-mode-map
-										 '(("C-M-i" lsp-describe-thing-at-point)
-										   ([remap xref-find-definitions] lsp-find-definition)
-										   ([remap xref-find-references] lsp-find-references)))
+					(vwe@lib--keymap-set lsp-mode-map '(("C-M-i" lsp-describe-thing-at-point)
+														([remap xref-find-definitions] lsp-find-definition)
+														([remap xref-find-references] lsp-find-references)))
 					;;
 					;; `lsp-ui'
 					;;
@@ -302,10 +292,7 @@ MODE."
 					;;
 					;; `lsp-treemacs'
 					;;
-					(vwe@lib--package 'lsp-treemacs
-									  nil
-									  (lsp-treemacs-sync-mode 1)
-									  nil t))
+					(vwe@lib--package 'lsp-treemacs nil (lsp-treemacs-sync-mode 1) nil t))
 				  (setq lsp-keymap-prefix "C-c l"
 						lsp-completion-provider :capf
 						lsp-idle-delay 0.500
@@ -324,9 +311,7 @@ MODE."
 ;;
 ;; `magit'
 ;;
-(vwe@lib--package 'magit
-				  nil
-				  (add-hook 'after-save-hook #'magit-after-save-refresh-status))
+(vwe@lib--package 'magit nil (add-hook 'after-save-hook #'magit-after-save-refresh-status))
 
 ;;
 ;; `ejc-sql'
@@ -336,10 +321,8 @@ MODE."
 				  ;;
 				  ;; `ejc-company'
 				  ;;
-				  (vwe@lib--package 'ejc-company
-									nil
-									(add-to-list (make-local-variable 'company-backends)
-												 '(ejc-company-backend))))
+				  (vwe@lib--package 'ejc-company nil
+									(add-to-list (make-local-variable 'company-backends) '(ejc-company-backend))))
 
 
 (push (expand-file-name "vwe/lisp/langs" user-emacs-directory) load-path)
