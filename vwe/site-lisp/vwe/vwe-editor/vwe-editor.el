@@ -32,6 +32,8 @@
 (defvar-local vwe-editor-view--keymap
   (let* ((keymap (make-sparse-keymap)))
 	(define-key keymap (kbd "SPC") (lambda () (interactive) (vwe-editor-edit-mode t)))
+	(define-key keymap (kbd "p") #'previous-line)
+	(define-key keymap (kbd "n") #'next-line)
 	keymap)
   "Keymap.")
 

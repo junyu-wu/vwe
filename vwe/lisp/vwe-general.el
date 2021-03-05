@@ -593,6 +593,15 @@
 				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-move"))
 
 ;;
+;; `vwe-move'
+;;
+(vwe@lib--package 'vwe-edit
+				  (progn
+					(autoload 'vwe-edit-region--mark-edit (vwe@lib--path-vwe-site-lisp "vwe/vwe-edit/vwe-edit.el" t) "Vwe edit mode." t t))
+				  nil nil nil
+				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-edit"))
+
+;;
 ;; `imenu-list'
 ;;
 (vwe@lib--package 'imenu-list)

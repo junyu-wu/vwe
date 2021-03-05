@@ -40,19 +40,31 @@
   "M-RET"
   "Keymap quit key."
   :group 'vwe-key
-  :type 'hook)
+  :type 'string)
 
 (defcustom vwe-key--quit-key
   "q"
   "Keymap quit key."
   :group 'vwe-key
-  :type 'hook)
+  :type 'string)
 
 (defcustom vwe-key--toggle-hint-key
   "SPC"
   "Keymap toggle hint key."
   :group 'vwe-key
-  :type 'hook)
+  :type 'string)
+
+(defcustom vwe-key--search-cmd-key
+  "C-s"
+  "Keymap toggle hint key."
+  :group 'vwe-key
+  :type 'string)
+
+(defcustom vwe-key--toggle-minibuffer-key
+  "M-RET"
+  "Toggle minibuffer key."
+  :group 'vwe-key
+  :type 'string)
 
 (defface vwe-key--default-face
   '((t (:foreground "#B0BEC5" :weight bold)))
@@ -151,6 +163,38 @@
 		(setq title-make (propertize (concat " " (upcase original-title) " ") 'face 'vwe-key--title-face)))
 	  (format "%s%s" title-make other))))
 
+(defun vwe-key--make-minibuffer-function-name-by-func-name (func-name)
+  "Make minibuffer function name by FUNC-NAME."
+  (format "%s-minibufer" func-name))
+
+(defun vwe-key--make-content-hint-and-keymapping-for-minibuffer (func-name body)
+  "Make content BODY and define FUNC-NAME keymap for minibuffer."
+  (when (listp body)
+	(let* ((body-length (length body))
+		   (minibuf-condition-list '()))
+	  (dotimes (i body-length)
+		(let* ((body-item (nth i body))
+			   (func (cadr body-item))
+			   (func-str (format "%s" func))
+			   (hint (car (cddr body-item)))
+			   (hint-str (format "%s" hint)))
+		  (unless func (setq func (lambda () (interactive) (message "func is nil"))))
+		  (unless hint (setq hint-str func-str))
+
+		  (when (symbolp (quote func))
+			(setq hint-str (concat (propertize (concat hint-str " ["))
+								   (propertize func-str 'face 'vwe-key--key-face)
+								   (propertize "]"))
+				  minibuf-condition-list (append minibuf-condition-list (list (list hint-str func)))))))
+
+	  (setq minibuf-condition-list (cons (list (concat (propertize "toggle to leader key [")
+													   (propertize (format "%s" func-name)
+																   'face 'vwe-key--key-face)
+													   (propertize "]"))
+											   (intern (format "%s" func-name)))
+										 minibuf-condition-list))
+	  minibuf-condition-list)))
+
 (defun vwe-key--make-content-hint-and-keymapping (func-name body)
   "Make content BODY and define FUNC-NAME keymap."
   (when (listp body)
@@ -197,6 +241,7 @@
 					hint-str-list (append hint-str-list (list hint-str)))))))
 
 	  (set-keymap-parent keymap vwe-key--keymap-base-mapping)
+	  (define-key keymap (kbd vwe-key--toggle-minibuffer-key) (intern (vwe-key--make-minibuffer-function-name-by-func-name func-name)))
 	  (define-key keymap (kbd vwe-key--toggle-hint-key) (lambda () (interactive)
 														  (if vwe-key--show-hint-p
 															  (funcall (intern (format "%s" func-name)))
@@ -274,11 +319,11 @@ WIN is Window."
 (defun vwe-key--make-buffer ()
   "Make show keymap buffer."
   (unless (buffer-live-p vwe-key--buffer-handle)
-    (setq vwe-key--buffer-handle (get-buffer-create vwe-key--buffer-name))
-    (with-current-buffer vwe-key--buffer-handle
+	(setq vwe-key--buffer-handle (get-buffer-create vwe-key--buffer-name))
+	(with-current-buffer vwe-key--buffer-handle
 	  (let (message-log-max)
-        (toggle-truncate-lines 1)
-        (message ""))
+		(toggle-truncate-lines 1)
+		(message ""))
 	  (setq-local cursor-type nil
 				  cursor-in-non-selected-windows nil
 				  mode-line-format nil
@@ -304,7 +349,7 @@ WIN is Window."
 (defun vwe-key--hide-buffer ()
   "Hide buffer."
   (when (buffer-live-p vwe-key--buffer-handle)
-    (quit-windows-on vwe-key--buffer-handle)))
+	(quit-windows-on vwe-key--buffer-handle)))
 
 (defun vwe-key--close-buffer ()
   "Close key buffer side window."
@@ -342,16 +387,26 @@ LEADERKEY is leader key."
 	  (let* ((name-str (format "%s" name-symbol))
 			 (func-name-str (concat "vwe-key:" name-str))
 			 (func-name (intern func-name-str))
+			 (minibuf-func-name (intern (vwe-key--make-minibuffer-function-name-by-func-name func-name-str)))
 			 (define-title (car define-list))
 			 (define-body (cadr define-list)))
+
+		(eval `(defun ,minibuf-func-name (&optional func)
+				 (interactive
+				  (list
+				   (completing-read (format "func call (%s):" ,func-name-str)
+									(mapcar (lambda (x) (car x))
+											(vwe-key--make-content-hint-and-keymapping-for-minibuffer ,func-name-str (quote ,define-body))))))
+				 (unless func (setq func (intern ,func-name-str)))
+				 (let* ((func-list (vwe-key--make-content-hint-and-keymapping-for-minibuffer ,func-name-str (quote ,define-body))))
+				   (call-interactively (cadr (assoc func func-list))))))
+
 		(when (and mode-list (listp mode-list))
 		  (dotimes (i (length mode-list))
 			(if (plist-member vwe-key--keymap-mode-func-alist (nth i mode-list))
 				(progn (plist-put vwe-key--keymap-mode-func-alist (nth i mode-list) `(,func-name ,leaderkey)))
 			  (setq vwe-key--keymap-mode-func-alist (append vwe-key--keymap-mode-func-alist
-															`(,(nth i mode-list) (,func-name ,leaderkey)))))
-			)
-		  )
+															`(,(nth i mode-list) (,func-name ,leaderkey)))))))
 		`(defun ,func-name (&optional funcp)
 		   (interactive)
 		   (setq vwe-key--max-width (frame-width))
@@ -374,7 +429,7 @@ LEADERKEY is leader key."
 				  (vwe-key--make-content-hint-and-keymapping ,func-name-str (quote ,define-body))
 				  :mapping))
 		   (if (< vwe-key--max-width vwe-key--frame-min-length)
-			   (message "sorry,the frame is too small to display the message.")
+			   (message "sorry,the frame is too small.")
 			 (vwe-key--show-keymap-buffer)))))))
 
 ;;;###autoload

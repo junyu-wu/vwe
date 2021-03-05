@@ -1,0 +1,345 @@
+;;; vwe-edit.el --- vwe edit                         -*- lexical-binding: t; -*-
+
+;; Copyright (C) 2021  WuJunyu
+
+;; Author: WuJunyu <vistar_w@hotmail.com>
+;; Keywords:
+
+;; This program is free software; you can redistribute it and/or modify
+;; it under the terms of the GNU General Public License as published by
+;; the Free Software Foundation, either version 3 of the License, or
+;; (at your option) any later version.
+
+;; This program is distributed in the hope that it will be useful,
+;; but WITHOUT ANY WARRANTY; without even the implied warranty of
+;; MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+;; GNU General Public License for more details.
+
+;; You should have received a copy of the GNU General Public License
+;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
+
+;;; Commentary:
+
+;;
+
+;;; Code:
+(require 'cl-lib)
+
+(defgroup vwe-edit-region nil
+  "Customization group for beacon."
+  :group 'vwiss-vwe
+  :prefix "vwe-edit-region--")
+
+(defvar vwe-edit-region--keymap
+  (let ((keymap (make-sparse-keymap)))
+	keymap)
+  "Region map.")
+
+(defvar vwe-edit-region--edit-keymap
+  (let ((keymap (make-sparse-keymap)))
+	(define-key keymap (kbd "C-g") (lambda () (interactive) (vwe-edit-region-edit-mode -1) (keyboard-quit)))
+	keymap)
+  "Region edit map.")
+
+(defface vwe-edit-region--marker-cursor-face
+  '((t (:foreground "red")))
+  "Region marker face.")
+
+(defface vwe-edit-region--marker-overlay-face
+  '((t (:background "DeepSkyBlue")))
+  "Region marker face.")
+
+(defvar vwe-edit-region--marker-cursor
+  "|"
+  "Region mark char.")
+
+(defvar vwe-edit-region--marker-empty-line-fill
+  nil
+  "Empty line fill.")
+
+(defvar vwe-edit-region--marker-region-overlays
+  nil
+  "Marker overlay list.")
+
+(defvar vwe-edit-region--marker-cursor-overlays
+  nil
+  "Marker overlay list.")
+
+(defvar vwe-edit-region--this-command
+  nil
+  "This command.")
+
+(defvar vwe-edit-region--marker-cursor-id
+  0
+  "Marker cursor id.")
+
+(defvar vwe-edit-region--command-executed
+  nil
+  "Command executed.")
+
+(defvar vwe-edit-region--support-command
+  '(self-insert-command
+	quoted-insert
+	previous-line
+	next-line
+	newline
+	newline-and-indent
+	forward-char
+	forward-word
+	backward-char
+	backward-word
+	upcase-word
+	downcase-word
+	capitalize-word
+	forward-list
+	backward-list
+	yank
+	yank-pop
+	kill-word
+	kill-line
+	backward-kill-word
+	delete-char
+	delete-forward-char
+	delete-backward-char
+	org-delete-backward-char
+	end-of-line
+	set-mark-command
+	exchange-point-and-mark
+	move-end-of-line
+	beginning-of-line
+	move-beginning-of-line
+	back-to-indentation)
+  "Support command.")
+
+(defun vwe-edit-region--make-marker-cursor-id ()
+  "Make marker cursor id."
+  (cl-incf vwe-edit-region--marker-cursor-id))
+
+(defun vwe-edit-region--line-number-at-point (&optional point)
+  "Get current POINT line number."
+  (let* ((pos (or point (point)))
+		 (line (line-number-at-pos)))
+	(save-excursion
+	  (goto-char pos)
+	  (setq line (line-number-at-pos)))
+	line))
+
+(defun vwe-edit-region--bol-at-point-p (&optional point)
+  "POINT is begin of line."
+  (let ((pos (or point (point))))
+	(save-excursion
+	  (goto-char pos)
+	  (= (line-beginning-position) pos))))
+
+(defun vwe-edit-region--eol-at-point-p (&optional point)
+  "POINT is end of line."
+  (let ((pos (or point (point))))
+	(save-excursion
+	  (goto-char pos)
+	  (= (line-end-position) pos))))
+
+(defun vwe-edit-region--column-at-point (&optional point)
+  "Get POINT column."
+  (let ((pos (or point (point))))
+	(save-excursion
+	  (goto-char pos)
+	  (current-column))))
+
+(defun vwe-edit-region--point-at-column (&optional column)
+  "Get COLUMN point."
+  (let ((col (or column (current-column))))
+	(save-excursion
+	  (goto-char (line-end-position))
+	  (when (< (current-column) col) (setq col (current-column)))
+	  (move-to-column col)
+	  (point))))
+
+(defun vwe-edit-region--empty-line-at-point-p (&optional point)
+  "POINT is empty line."
+  (let ((pos (or point (point))))
+	(save-excursion
+	  (goto-char pos)
+	  (and (vwe-edit-region--bol-at-point-p) (vwe-edit-region--eol-at-point-p)))))
+
+(defun vwe-edit-region--empty-line-at-line-p (&optional line)
+  "LINE is empty line."
+  (let ((line-num (or line (line-number-at-pos))))
+	(save-excursion
+	  (goto-char (point-min))
+	  (forward-line (1- line-num))
+	  (and (vwe-edit-region--bol-at-point-p) (vwe-edit-region--eol-at-point-p)))))
+
+(defun vwe-edit-region--marker-overlay-region (begin end &optional end-cursorp)
+  "Make overlay region at BEGIN point column END point column and END-CURSORP point."
+  (let* ((begin-line (vwe-edit-region--line-number-at-point begin))
+		 (end-line (vwe-edit-region--line-number-at-point end))
+		 (begin-column (vwe-edit-region--column-at-point begin))
+		 (end-column (vwe-edit-region--column-at-point end))
+		 (to-leftp (if (< begin-column end-column) t nil))
+		 (to-downp (if (< begin-line end-line) t nil)))
+	(save-excursion
+	  (goto-char begin)
+	  (dotimes (_ (1+ (abs (- end-line begin-line))))
+		(let* ((start) (end) (overlay))
+		  (if to-leftp
+			  (setq start (vwe-edit-region--point-at-column begin-column)
+					end (vwe-edit-region--point-at-column end-column))
+			(setq start (vwe-edit-region--point-at-column end-column)
+				  end (vwe-edit-region--point-at-column begin-column)))
+		  (setq overlay (make-overlay start end))
+		  (if end-cursorp ;; cursor to mark line end point
+			  (vwe-edit-region--marker-overlay-cursor end)
+			(vwe-edit-region--marker-overlay-cursor start))
+		  (overlay-put overlay 'face 'vwe-edit-region--marker-overlay-face)
+		  (setq vwe-edit-region--marker-region-overlays (cons overlay vwe-edit-region--marker-region-overlays))
+		  (if to-downp (forward-line 1) (forward-line -1)))))))
+
+(defun vwe-edit-region--remove-marker-region-overlays ()
+  "Remove marker overlays."
+  (when vwe-edit-region--marker-region-overlays
+	(mapc #'delete-overlay vwe-edit-region--marker-region-overlays)
+	(setq vwe-edit-region--marker-region-overlays nil)
+	(vwe-edit-region--remove-marker-cursor-overlays)))
+
+(defun vwe-edit-region--marker-overlay-cursor (&optional point mcid)
+  "Make overlay region at POINT and set MCID."
+  (let* ((start-pos (or point (point)))
+		 (end-pos (if (vwe-edit-region--eol-at-point-p) start-pos (1+ start-pos)))
+		 (overlay)
+		 (id (or mcid (vwe-edit-region--make-marker-cursor-id))))
+	(if mcid
+		(progn
+		  ;; (vwe-edit-region--remove-marker-cursor-overlays mcid)
+		  (setq overlay (vwe-edit-region--find-cursor-overlay-by-id id))
+		  (move-overlay overlay start-pos end-pos))
+	  (setq overlay (make-overlay start-pos end-pos))
+	  (overlay-put overlay 'vwe-mcid id)
+	  (overlay-put overlay 'type 'vwe-mc)
+	  (overlay-put overlay 'before-string (propertize vwe-edit-region--marker-cursor 'face 'vwe-edit-region--marker-cursor-face))
+	  (setq vwe-edit-region--marker-cursor-overlays (cons overlay vwe-edit-region--marker-cursor-overlays)))))
+
+(defun vwe-edit-region--find-cursor-overlay-by-id (id)
+  "Find cursor overlay by ID."
+  (when vwe-edit-region--marker-cursor-overlays
+	(save-excursion
+	  (let ((overlay))
+		(dotimes (i (length vwe-edit-region--marker-cursor-overlays))
+		  (when (eq (overlay-get (nth i vwe-edit-region--marker-cursor-overlays) 'vwe-mcid) id)
+			(setq overlay (nth i vwe-edit-region--marker-cursor-overlays))))
+		overlay))))
+
+(defun vwe-edit-region--remove-marker-cursor-overlays (&optional mcid)
+  "Remove marker MCID or all cursor overlays."
+  (when vwe-edit-region--marker-cursor-overlays
+	(if mcid
+		(delete-overlay (vwe-edit-region--find-cursor-overlay-by-id mcid))
+	  (mapc #'delete-overlay vwe-edit-region--marker-cursor-overlays))
+	(setq vwe-edit-region--marker-cursor-overlays nil)))
+
+;;;###autoload
+(defun vwe-edit-region--mark-edit ()
+  "Edit START point and END pioint region."
+  (interactive)
+  (when (and mark-active (/= (point) (mark)))
+	(let* ((start-pos (mark))
+		   (end-pos (point)))
+	  (deactivate-mark)
+	  (vwe-edit-region--marker-overlay-region start-pos end-pos)
+	  (goto-char start-pos)
+	  (vwe-edit-region-edit-mode 1))))
+
+(defun vwe-edit-region--marker-overlay-cursor-p (overlay)
+  "Marker OVERLAY cursor."
+  (eq (overlay-get overlay 'type) 'vwe-mc))
+
+(defun vwe-edit-region--marker-overlay-cursor-total ()
+  "Current buffer marker overlay cursor total."
+  (1+ (cl-count-if 'vwe-edit-region--marker-overlay-cursor-p (overlays-in (point-min) (point-max)))))
+
+(defun vwe-edit-region--execute-command (cmd)
+  "Run CMD, simulating the parts of the command loop for cursors."
+  (setq this-command cmd)
+  ;; (run-hooks 'pre-command-hook)
+  (unless (eq this-command 'ignore) (call-interactively cmd))
+  ;; (run-hooks 'post-command-hook)
+  ;; (when deactivate-mark (deactivate-mark))
+  (message "command %s executed" cmd)
+  (point))
+
+(defun vwe-edit-region--execute-command-for-cursor (cmd cursor)
+  "Run CMD, simulating the parts of the command loop for CURSOR."
+  (let* ((mcid (overlay-get cursor 'vwe-mcid))
+		 (start (overlay-start cursor)))
+	(goto-char start)
+	(ignore-errors
+	  (vwe-edit-region--marker-overlay-cursor (vwe-edit-region--execute-command cmd) mcid))))
+
+(defun vwe-edit-region--execute-command-for-all-cursors (cmd)
+  "Run CMD, simulating the parts of the command loop for all cursors."
+  (dotimes (i (length vwe-edit-region--marker-cursor-overlays))
+	(vwe-edit-region--execute-command-for-cursor cmd (nth i vwe-edit-region--marker-cursor-overlays))))
+
+(defun vwe-edit-region--store-original-command ()
+  "Store original command."
+  (let ((cmd (or (command-remapping this-original-command) this-original-command)))
+    (setq vwe-edit-region--this-command (and (not (eq cmd 'god-mode-self-insert)) cmd))))
+
+(defun vwe-edit-region--execute-original-command ()
+  "Edit mode run command."
+  (if (eq 1 (vwe-edit-region--marker-overlay-cursor-total))
+	  (vwe-edit-region-edit-mode -1)
+	(when this-original-command
+	  (let* ((cmd (or vwe-edit-region--this-command
+					  (command-remapping this-original-command)
+					  this-original-command)))
+		(when (functionp cmd)
+		  (if (or (not (symbolp cmd)) (string-prefix-p "(" (symbol-name cmd)))
+			  (vwe-edit-region--execute-command-for-all-cursors cmd)
+			(setq cmd (intern (symbol-name cmd)))
+			(when (memq cmd vwe-edit-region--support-command)
+			  (vwe-edit-region--execute-command-for-all-cursors cmd))))))))
+
+;;
+;; mode
+;;
+(defun vwe-edit-region-edit-mode-enable ()
+  "Enable mode."
+  (add-hook 'pre-command-hook 'vwe-edit-region--store-original-command t t)
+  (add-hook 'post-command-hook 'vwe-edit-region--execute-original-command t t))
+
+(defun vwe-edit-region-edit-mode-disable ()
+  "Disable mode."
+  (remove-hook 'pre-command-hook 'vwe-edit-region--store-original-command t)
+  (remove-hook 'post-command-hook 'vwe-edit-region--execute-original-command t)
+  (vwe-edit-region--remove-marker-cursor-overlays)
+  (vwe-edit-region--remove-marker-region-overlays)
+  (setq vwe-edit-region--this-command nil
+		vwe-edit-region--marker-cursor-id 0))
+
+;;;###autoload
+(define-minor-mode vwe-edit-region-edit-mode
+  "Edit region minor mode."
+  :group 'vwe-edit-region
+  :keymap vwe-edit-region--edit-keymap
+  (if vwe-edit-region-edit-mode
+	  (vwe-edit-region-edit-mode-enable)
+	(vwe-edit-region-edit-mode-disable)))
+
+(defun vwe-edit-region-mode-enable ()
+  "Enable mode.")
+
+(defun vwe-edit-region-mode-disable ()
+  "Disable mode.")
+
+;;;###autoload
+(define-minor-mode vwe-edit-region-mode
+  "Region minor mode."
+  :group 'vwe-edit-region
+  :keymap vwe-edit-region--keymap
+  :global t
+  (if vwe-edit-region-mode
+	  (vwe-edit-region-mode-enable)
+	(vwe-edit-region-mode-disable)))
+
+(provide 'vwe-edit)
+;;; vwe-edit.el ends here
