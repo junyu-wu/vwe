@@ -311,7 +311,8 @@
 ;; `format-all'
 ;;
 (vwe@lib--package 'format-all
-				  (add-hook 'prog-mode-hook #'format-all-mode))
+				  (add-hook 'prog-mode-hook #'format-all-mode)
+				  (add-hook 'after-save-hook #'format-all-buffer))
 
 ;;
 ;; `treemacs'
