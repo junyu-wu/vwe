@@ -114,15 +114,6 @@
 					(advice-add #'deactivate-mark :after #'vwe@pkg--symbol-overlay-turn-on)))
 
 ;;
-;; `vwe-mark'
-;;
-(vwe@lib--package 'vwe-mark
-				  (progn
-					(autoload 'vwe-mark-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-mark/vwe-mark.el" t) "Vwe mark mode" t t)
-					(add-hook 'after-init-hook #'vwe-mark-mode))
-				  nil nil nil (vwe@lib--path-vwe-site-lisp "vwe/vwe-mark"))
-
-;;
 ;; `all-the-icons'
 ;;
 (vwe@lib--package 'all-the-icons)

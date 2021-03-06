@@ -277,11 +277,6 @@
 					(sp-local-pair 'web-mode "<" ">")))
 
 ;;
-;; `paren-face'
-;;
-(vwe@lib--package 'paren-face)
-
-;;
 ;; `rainbow-delimiters' 彩虹括号
 ;;
 (vwe@lib--package 'rainbow-delimiters
@@ -294,33 +289,9 @@
 				  (define-key isearch-mode-map	(kbd "C-;") #'iedit-mode-from-isearch))
 
 ;;
-;; `multiple-cursors' 多个光标
-;;
-(vwe@lib--package 'multiple-cursors
-				  (setq mc/list-file (vwe@lib--path-cache "mc/.mc-lists.el" t)))
-
-;;
 ;; `comment-dwim-2' 注释
 ;;
 (vwe@lib--package 'comment-dwim-2)
-
-;;
-;; `clean-aindent-mode' 清除未使用的空格
-;;
-(vwe@lib--package 'clean-aindent-mode
-				  (add-hook 'prog-mode-hook #'clean-aindent-mode)
-				  nil
-				  (setq clean-aindent-is-simple-indent t))
-
-;;
-;; `string-inflection' 字符串大小写切换
-;;
-(vwe@lib--package 'string-inflection)
-
-;;
-;; `diminish'
-;;
-(vwe@lib--package 'diminish)
 
 ;;
 ;; `esup' test startup time
@@ -588,18 +559,27 @@
 (vwe@lib--package 'vwe-move
 				  (progn
 					(autoload 'vwe-move-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-move/vwe-move.el" t) "Vwe move mode." t t)
-					(vwe-move-mode t))
+					(add-hook 'after-init-hook #'vwe-move-mode))
 				  nil nil nil
 				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-move"))
 
 ;;
-;; `vwe-move'
+;; `vwe-edit'
 ;;
 (vwe@lib--package 'vwe-edit
 				  (progn
 					(autoload 'vwe-edit-region--mark-edit (vwe@lib--path-vwe-site-lisp "vwe/vwe-edit/vwe-edit.el" t) "Vwe edit mode." t t))
 				  nil nil nil
 				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-edit"))
+
+;;
+;; `vwe-mark'
+;;
+(vwe@lib--package 'vwe-mark
+				  (progn
+					(autoload 'vwe-mark-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-mark/vwe-mark.el" t) "Vwe mark mode" t t)
+					(add-hook 'after-init-hook #'vwe-mark-mode))
+				  nil nil nil (vwe@lib--path-vwe-site-lisp "vwe/vwe-mark"))
 
 ;;
 ;; `imenu-list'

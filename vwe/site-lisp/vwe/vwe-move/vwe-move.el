@@ -490,16 +490,289 @@ SELF is include curretn buffer."
     (vwe-move--switch-buffer-disable)))
 
 ;;
+;; marker point
+;;
+(defvar vwe-move-marker-point--keymap
+  (let* ((keymap (make-sparse-keymap)))
+	(define-key keymap (kbd "M-* m") #'vwe-move-marker-point--marker)
+	(define-key keymap (kbd "M-* g") #'vwe-move-marker-point--goto-marker)
+	(define-key keymap (kbd "M-* c") #'vwe-move-marker-point--clear-marker)
+	keymap)
+  "Last mark point.")
+
+(defface vwe-move-marker-point--face
+  '((t (:inherit 'error :weight bold)))
+  "Posit mark face.")
+
+(defvar-local vwe-move-marker-point--marker-point-overlay
+  nil
+  "Last mark point overlay.")
+
+(defun vwe-move-marker-point--line-indent (&optional goto)
+  "Get current point or GOTO point line indentation."
+  (interactive)
+  (unless goto (setq goto (point)))
+  (let* ((ind-pos (save-excursion (goto-char goto) (back-to-indentation) (point))))
+	ind-pos))
+
+(defun vwe-move-marker-point--line-eol (&optional goto)
+  "Get current point or GOTO point line eol."
+  (interactive)
+  (unless goto (setq goto (point)))
+  (let* ((eol-pos (save-excursion (goto-char goto) (end-of-line) (skip-chars-backward " \t" (vwe-move-marker-point--line-indent)) (point))))
+	eol-pos))
+
+(defun vwe-move-marker-point--marker ()
+  "Mark current point."
+  (interactive)
+  (let* ((overlay (make-overlay (1- (point)) (point))))
+	(setq vwe-move-marker-point--marker-point-overlay overlay)
+	(overlay-put overlay 'after-string
+				 (propertize (format "[M]")
+							 'display '((raise 0.5) (height 0.8))
+							 'face 'vwe-move-marker-point--face))))
+
+(defun vwe-move-marker-point--goto-marker ()
+  "Got mark list first point."
+  (interactive)
+  (let* ((goto-point (overlay-end vwe-move-marker-point--marker-point-overlay)))
+	(condition-case nil
+		(progn (when (numberp goto-point) (goto-char goto-point)))
+	  (error nil))))
+
+(defun vwe-move-marker-point--clear-marker ()
+  "Clear mark."
+  (interactive)
+  (delete-overlay vwe-move-marker-point--marker-point-overlay))
+
+(define-minor-mode vwe-move-marker-point-mode
+  "Point mode."
+  :group 'vwe-mark
+  :global t
+  :keymap vwe-move-marker-point--keymap)
+
+;;
+;; line preview
+;;
+(defvar vwe-move-line-preview--origin-window
+  nil
+  "Origin window.")
+
+(defvar vwe-move-line-preview--origin-window-line
+  nil
+  "Origin window line.")
+
+(defvar vwe-move-line-preview--origin-window-point
+  nil
+  "Origin window point.")
+
+(defvar vwe-move-line-preview--goto-line
+  nil
+  "Preveiw goto line.")
+
+(defvar vwe-move-line-preview--transient-keymap
+  (let ((keymap (make-sparse-keymap)))
+	(define-key keymap (kbd "q") #'vwe-move-line-preview--recovery)
+	(define-key keymap (kbd "g") #'vwe-move-line-preview--goto-line)
+	keymap)
+  "Preview temp keymap.")
+
+(defvar vwe-mark-line-preview--keymap
+  (let ((keymap (make-sparse-keymap)))
+	keymap)
+  "Move to mark map.")
+
+(defun vwe-move-line-preview ()
+  "Preview goto line."
+  (interactive)
+  (save-selected-window
+	(let* ((input-num-str (thing-at-point 'line)))
+	  (when input-num-str
+		(setq vwe-move-line-preview--goto-line (string-to-number input-num-str)))
+	  (when (and vwe-move-line-preview--origin-window vwe-move-line-preview--goto-line)
+		(select-window vwe-move-line-preview--origin-window)
+		(unless (zerop vwe-move-line-preview--goto-line)
+		  (goto-char (point-min))
+		  (forward-line (1- vwe-move-line-preview--goto-line)))
+		(set-transient-map vwe-move-line-preview--transient-keymap nil #'vwe-move-line-preview--recovery)))
+	(message "preview line %s" vwe-move-line-preview--goto-line)))
+
+(defun vwe-move-line-preview--goto-line (&optional line)
+  "Preview goto LINE."
+  (interactive)
+  (setq vwe-move-line-preview--goto-line (if line line (read-number "preview line:")))
+  (vwe-move-line-previe--bulid-preview-origin-snapshot)
+  (vwe-move-line-preview))
+
+(defun vwe-move-line-preview--dynamic-goto-line ()
+  "Preview dynamic goto line."
+  (interactive)
+  (vwe-move-line-previe--bulid-preview-origin-snapshot)
+  (unwind-protect
+	  (setq vwe-move-line-preview--goto-line (read-number "preview line:"))
+	(set-window-point vwe-move-line-preview--origin-window vwe-move-line-preview--origin-window-point)))
+
+(defun vwe-move-line-previe--bulid-preview-origin-snapshot ()
+  "Preview goto line."
+  (interactive)
+  (let* ((window (selected-window))
+		 (line-num (line-number-at-pos))
+		 (cur-point (point)))
+	(setq vwe-move-line-preview--origin-window window
+		  vwe-move-line-preview--origin-window-line line-num
+		  vwe-move-line-preview--origin-window-point cur-point))
+  (message "build exec finished %S" vwe-move-line-preview--origin-window))
+
+(defun vwe-move-line-preview--recovery ()
+  "Preview recovery."
+  (interactive)
+  (select-window vwe-move-line-preview--origin-window)
+  (when (and vwe-move-line-preview--origin-window (numberp vwe-move-line-preview--origin-window-point))
+	(set-window-point vwe-move-line-preview--origin-window vwe-move-line-preview--origin-window-point)))
+
+(defun vwe-move-line-preview--cmd-config ()
+  "Preview hook for minibuffer command."
+  (when (memq this-command '(vwe-move-line-preview--dynamic-goto-line))
+    (add-hook 'post-command-hook #'vwe-move-line-preview nil t)))
+
+(defun vwe-move-line-preview-enable ()
+  "Enable preview."
+  (define-key vwe-mark-line-preview--keymap (kbd "M-* r") #'vwe-move-line-preview--goto-line)
+  (define-key vwe-mark-line-preview--keymap (kbd "M-* d") #'vwe-move-line-preview--dynamic-goto-line)
+  (add-hook 'minibuffer-setup-hook 'vwe-move-line-preview--cmd-config))
+
+(defun vwe-move-line-preview--disable ()
+  "Disable preview."
+  (remove-hook 'minibuffer-setup-hook 'vwe-move-line-preview--cmd-config))
+
+(define-minor-mode vwe-move-line-preview-mode
+  "Mark line preview mode."
+  :group 'vwe-mark
+  :global t
+  (if vwe-move-line-preview-mode
+	  (vwe-move-line-preview-enable)
+	(vwe-move-line-preview--disable)))
+
+;; =============================================================================
+;; goto line
+;;
+;; =============================================================================
+(defvar vwe-move-goto-line--keymap
+  (let ((keymap (make-sparse-keymap)))
+	keymap)
+  "Move to mark map.")
+
+(defvar vwe-move-goto-line--current-overlay-list
+  nil
+  "Current overlay list.")
+
+(defun vwe-move-goto-line--calculate-marker-number (win-pos)
+  "Calculate mark number, WIN-POS if nil reverse calculate."
+  (let* ((cur-line (line-number-at-pos))
+		 (number))
+	(save-excursion
+	  (if win-pos
+		  (setq number (- (line-number-at-pos (window-end)) cur-line))
+		(setq number (- cur-line (line-number-at-pos (window-start)))))
+	  number)))
+
+(defun vwe-move-goto-line--show-mark (win-pos)
+  "Show mark with WIN-POS."
+  (interactive)
+  (when vwe-move-goto-line--current-overlay-list (mapc #'delete-overlay vwe-move-goto-line--current-overlay-list))
+  (let* ((keymap vwe-move-goto-line--keymap)
+		 (ov-list)
+		 (pos-list (vwe-move-goto-line--overlay-alist
+					(vwe-move-goto-line--calculate-marker-number win-pos) win-pos)))
+	(dotimes (i (length pos-list))
+	  (let* ((ov (make-overlay (cadr (nth i pos-list)) (1+ (cadr (nth i pos-list))))))
+		(overlay-put ov 'before-string
+					 (propertize (format "%d" (car (nth i pos-list)))
+								 'display '((raise 0.5))
+								 'face 'vwe-mark--position--face))
+		(push ov ov-list)
+		))
+	(define-key keymap (kbd "q") (lambda() (interactive) (mapc #'delete-overlay ov-list) (vwe-move-goto-line-mode -1)))
+	(if win-pos
+		(define-key keymap (kbd "g") #'vwe-move-goto-line-next-move-to)
+	  (define-key keymap (kbd "g") #'vwe-move-goto-line-previous-move-to))
+	(setq vwe-move-goto-line--current-overlay-list ov-list)))
+
+(defun vwe-move-goto-line--overlay-alist (num win-pos)
+  "Move lien to NUM with WIN-POS."
+  (let* ((line-pos-list '())
+		 (line-pos)
+		 (pos-num))
+	(dotimes (i num)
+	  (if win-pos (setq pos-num (1+ i)) (setq pos-num (* (1+ i) -1)))
+	  (save-excursion
+		(forward-line pos-num)
+		(setq line-pos (point)
+			  line-pos-list (append (list (list (1+ i) line-pos)) line-pos-list))))
+	line-pos-list))
+
+(defun vwe-move-goto-line-previous ()
+  "Line previous."
+  (interactive)
+  (when vwe-mark-mode
+	(vwe-move-goto-line-mode t)
+	(vwe-move-goto-line--show-mark nil)))
+
+(defun vwe-move-goto-line-next ()
+  "Line next."
+  (interactive)
+  (when vwe-mark-mode
+	(vwe-move-goto-line-mode t)
+	(vwe-move-goto-line--show-mark t)))
+
+(defun vwe-move-goto-line-next-move-to (&optional num)
+  "Move to NUM line."
+  (interactive "nto:")
+  (unless num (set num 1))
+  (when (numberp num)
+	(forward-line num))
+  (vwe-move-goto-line-next))
+
+(defun vwe-move-goto-line-previous-move-to (&optional num)
+  "Move to NUM line."
+  (interactive "nto:")
+  (unless num (set num -1))
+  (when (numberp num)
+	(forward-line (* num -1)))
+  (vwe-move-goto-line-previous))
+
+(defun vwe-move-goto-line--enable ()
+  "Enable.")
+
+(defun vwe-move-goto-line--disable ()
+  "Disable."
+  (when vwe-move-goto-line--current-overlay-list
+	(mapc #'delete-overlay vwe-move-goto-line--current-overlay-list))
+  (setq vwe-move-goto-line--current-overlay-list nil))
+
+(define-minor-mode vwe-move-goto-line-mode
+  "Mark line mode."
+  :group 'vwe-mark
+  :keymap vwe-move-goto-line--keymap
+  (if vwe-move-goto-line-mode
+	  (vwe-move-goto-line--enable)))
+
+;;
 ;; mode
 ;;
 (defun vwe-move-mode-enable ()
   "Enable mode."
   (vwe-move-line-mode 1)
-  (vwe-move-change-mode 1))
+  (vwe-move-change-mode 1)
+  (vwe-move-line-preview-mode 1)
+  (vwe-move-marker-point-mode 1))
 
 (defun vwe-move-mode-disable ()
   "Disable mode."
-  (vwe-move-line-mode -1))
+  (vwe-move-line-mode -1)
+  (vwe-move-change-mode -1)
+  (vwe-move-line-preview-mode -1)
+  (vwe-move-marker-point-mode -1))
 
 ;;;###autoload
 (define-minor-mode vwe-move-mode
