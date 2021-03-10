@@ -247,6 +247,12 @@
 						company-backends '((company-files company-yasnippet company-keywords company-capf)
 										   (company-abbrev company-dabbrev))))
 
+
+;;
+;; `wgrep'
+;;
+(vwe@lib--package 'wgrep)
+
 ;;
 ;; `hungry-delete' 删除多余的空格
 ;;
