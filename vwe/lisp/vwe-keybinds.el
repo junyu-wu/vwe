@@ -224,6 +224,20 @@
 				  (treemacs-mode)
 				  "C-M-<return>")
 
+  (vwe-key-define dired
+				  (("dired" :face (:background "red" :foreground "white" :weight bold))
+				   (("p" dired-filter-pop "filter pop")
+					("P" dired-filter-pop-all "filter pop all")
+					("f" dired-filter-by-file "filter by file")
+					("n" dired-filter-by-name "filter by name")
+					("m" dired-filter-by-mode "filter by mode")
+					("d" dired-filter-by-directory "filter by directory")
+					("t" dired-filter-by-dot-files "filter by dot files")
+					("e" dired-filter-by-executable "filter by executable")
+					("q" vwe-term--exit "exit terminal")
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  (dired-mode))
+
   (vwe-key-define term
 				  (("term" :face (:background "red" :foreground "white" :weight bold))
 				   (("c" term-char-mode "char mode")
