@@ -341,5 +341,189 @@
 	  (vwe-edit-region-mode-enable)
 	(vwe-edit-region-mode-disable)))
 
+;;
+;; toggle case
+;;
+(defconst vwe-edit-toggle-case--symbol-chars
+  "a-zA-Z0-9_-"
+  "Word chars.")
+
+(defconst vwe-edit-toggle-case--convert-case-list
+  '(("upper case" . vwe-edit-toggle-case--upper-case)
+	("lower case" . vwe-edit-toggle-case--lower-case)
+	("camel case" . vwe-edit-toggle-case--camel-case)
+	("capitalize" . vwe-edit-toggle-case--capitalize)
+	("underline" . vwe-edit-toggle-case--underline)
+	("hyphen" . vwe-edit-toggle-case--hyphen))
+  "Convert function list.")
+
+(defun vwe-edit-toggle-case--find-string-region-point ()
+  "Find string start and end point."
+  (let* ((start (point))
+		 (end (point)))
+	(if (use-region-p)
+		(setq start (if (> (region-end) (region-beginning)) (region-beginning) (region-end))
+			  end (if (> (region-end) (region-beginning)) (region-end) (region-beginning)))
+	  (save-excursion
+		(setq start (progn (skip-chars-backward vwe-edit-toggle-case--symbol-chars) (point))
+			  end (progn (skip-chars-forward vwe-edit-toggle-case--symbol-chars) (point)))))
+	(list start end)))
+
+(defun vwe-edit-toggle-case--get-current-string-and-delete ()
+  "Gets the symbol near the cursor."
+  (let* ((region (vwe-edit-toggle-case--find-string-region-point))
+		 (start (car region))
+		 (end (cadr region))
+		 (str (buffer-substring start end)))
+	(delete-region start end)
+	str))
+
+(defun vwe-edit-toggle-case--list-p (str)
+  "STR is list."
+  (let ((case-fold-search nil))
+	(> (length (split-string str " ")) 1)))
+
+(defun vwe-edit-toggle-case--lower-case-p (str)
+  "STR like foo."
+  (let ((case-fold-search nil))
+    (string-match "\\`[a-z0-9]+\\'" str)))
+
+(defun vwe-edit-toggle-case--upper-case-p (str)
+  "STR like FOO."
+  (let ((case-fold-search nil))
+    (string-match "\\`[A-Z0-9]+\\'" str)))
+
+(defun vwe-edit-toggle-case--underline-p (str)
+  "STR like foo_bar."
+  (let ((case-fold-search nil))
+    (string-match "_" str)))
+
+(defun vwe-edit-toggle-case--camel-case-p (str)
+  "STR like FooBar."
+  (let ((case-fold-search nil))
+    (or (and (string-match "[A-Z]" str) (string-match "\\`[a-z][a-zA-Z0-9]+\\'" str))
+		(and (string-match "[a-z]" str) (string-match "\\`[A-Z][a-zA-Z0-9]+\\'" str)))))
+
+(defun vwe-edit-toggle-case--hyphen-p (str)
+  "STR like foo-bar."
+  (let ((case-fold-search nil))
+	(string-match "-" str)))
+
+(defun vwe-edit-toggle-case--convert-to-upper-case (str)
+  "Upper case STR."
+  (upcase str))
+
+(defun vwe-edit-toggle-case--convert-to-lower-case (str)
+  "Lower case STR."
+  (downcase str))
+
+(defun vwe-edit-toggle-case--convert-to-capitalize (str)
+  "Capitalize STR."
+  (capitalize str))
+
+(defun vwe-edit-toggle-case--convert-to-underline (str)
+  "Underline STR."
+  (let ((case-fold-search nil))
+    (setq str (replace-regexp-in-string "\\([a-z0-9]\\)\\([A-Z]\\)" "\\1_\\2" str))
+    (setq str (replace-regexp-in-string "\\([A-Z]+\\)\\([A-Z][a-z]\\)" "\\1_\\2" str))
+    (setq str (replace-regexp-in-string "-" "_" str)) ; FOO-BAR => FOO_BAR
+    (setq str (replace-regexp-in-string "_+" "_" str))
+    (downcase str)))
+
+(defun vwe-edit-toggle-case--convert-to-camel-case (str)
+  "Camel case STR."
+  (setq str (split-string (vwe-edit-toggle-case--convert-to-underline str) "_"))
+  (concat (downcase (car str))
+          (mapconcat 'capitalize (cdr str) "")))
+
+(defun vwe-edit-toggle-case--convert-to-hyphen (str)
+  "Hyphen STR."
+  (let ((case-fold-search nil))
+    (setq str (vwe-edit-toggle-case--convert-to-underline str))
+    (setq str (replace-regexp-in-string "_" "-" str))))
+
+;;;###autoload
+(defun vwe-edit-toggle-case--upper-case ()
+  "Upper case."
+  (interactive)
+  (let* ((pos (vwe-edit-toggle-case--find-string-region-point))
+		 (str (vwe-edit-toggle-case--get-current-string-and-delete))
+		 (str-listp (vwe-edit-toggle-case--list-p str)))
+	(if str-listp
+		(setq str (mapconcat #'vwe-edit-toggle-case--convert-to-upper-case (split-string str " ") " "))
+	  (setq str (vwe-edit-toggle-case--convert-to-upper-case str)))
+	(goto-char (car pos))
+	(insert str)))
+
+;;;###autoload
+(defun vwe-edit-toggle-case--lower-case ()
+  "Lower case."
+  (interactive)
+  (let* ((pos (vwe-edit-toggle-case--find-string-region-point))
+		 (str (vwe-edit-toggle-case--get-current-string-and-delete))
+		 (str-listp (vwe-edit-toggle-case--list-p str)))
+	(if str-listp
+		(setq str (mapconcat #'vwe-edit-toggle-case--convert-to-lower-case (split-string str " ") " "))
+	  (setq str (vwe-edit-toggle-case--convert-to-lower-case str)))
+	(goto-char (car pos))
+	(insert str)))
+
+(defun vwe-edit-toggle-case--capitalize ()
+  "Capitalize."
+  (interactive)
+  (let* ((pos (vwe-edit-toggle-case--find-string-region-point))
+		 (str (vwe-edit-toggle-case--get-current-string-and-delete))
+		 (str-listp (vwe-edit-toggle-case--list-p str)))
+	(if str-listp
+		(setq str (mapconcat #'vwe-edit-toggle-case--convert-to-capitalize (split-string str " ") " "))
+	  (setq str (vwe-edit-toggle-case--convert-to-capitalize str)))
+	(goto-char (car pos))
+	(insert str)))
+
+(defun vwe-edit-toggle-case--underline ()
+  "Underline."
+  (interactive)
+  (let* ((pos (vwe-edit-toggle-case--find-string-region-point))
+		 (str (vwe-edit-toggle-case--get-current-string-and-delete))
+		 (str-listp (vwe-edit-toggle-case--list-p str)))
+	(if str-listp
+		(setq str (mapconcat #'vwe-edit-toggle-case--convert-to-underline (split-string str " ") " "))
+	  (setq str (vwe-edit-toggle-case--convert-to-underline str)))
+	(goto-char (car pos))
+	(insert str)))
+
+(defun vwe-edit-toggle-case--camel-case ()
+  "Camel case."
+  (interactive)
+  (let* ((pos (vwe-edit-toggle-case--find-string-region-point))
+		 (str (vwe-edit-toggle-case--get-current-string-and-delete))
+		 (str-listp (vwe-edit-toggle-case--list-p str)))
+	(if str-listp
+		(setq str (mapconcat #'vwe-edit-toggle-case--convert-to-camel-case (split-string str " ") " "))
+	  (setq str (vwe-edit-toggle-case--convert-to-camel-case str)))
+	(goto-char (car pos))
+	(insert str)))
+
+(defun vwe-edit-toggle-case--hyphen ()
+  "Hyphen."
+  (interactive)
+  (let* ((pos (vwe-edit-toggle-case--find-string-region-point))
+		 (str (vwe-edit-toggle-case--get-current-string-and-delete))
+		 (str-listp (vwe-edit-toggle-case--list-p str)))
+	(if str-listp
+		(setq str (mapconcat #'vwe-edit-toggle-case--convert-to-hyphen (split-string str " ") " "))
+	  (setq str (vwe-edit-toggle-case--convert-to-hyphen str)))
+	(goto-char (car pos))
+	(insert str)))
+
+;;;###autoload
+(defun vwe-edit-toggle-case-select-convert (&optional func)
+  "Select convret FUNC."
+  (interactive
+   (list (completing-read (format "select convert:")
+					 vwe-edit-toggle-case--convert-case-list)))
+  (funcall (cdr (assoc func vwe-edit-toggle-case--convert-case-list))))
+
+
 (provide 'vwe-edit)
 ;;; vwe-edit.el ends here
