@@ -49,7 +49,9 @@
 ;; `cal-china-x'
 ;;
 (vwe@lib--package 'cal-china-x
-				  (add-hook 'calendar-mode-hook #'cal-china-x-setup)
+				  (progn
+					(require 'cal-china-x)
+					(add-hook 'calendar-mode-hook #'cal-china-x-setup))
 				  (setq cal-china-x-important-holidays cal-china-x-chinese-holidays
 						cal-china-x-general-holidays '((holiday-lunar 1 15 "元宵节")
 													   (holiday-lunar 7 7 "七夕节")
@@ -77,7 +79,7 @@
 ;;
 ;; `w3m'
 ;;
-(vwe@lib--package 'w3m)
+;; (vwe@lib--package 'w3m)
 
 ;;
 ;; `wget'

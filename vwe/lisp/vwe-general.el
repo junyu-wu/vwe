@@ -317,8 +317,7 @@
 ;; `format-all'
 ;;
 (vwe@lib--package 'format-all
-				  (add-hook 'prog-mode-hook #'format-all-mode)
-				  (add-hook 'after-save-hook #'format-all-buffer))
+				  (add-hook 'prog-mode-hook #'format-all-mode))
 
 ;;
 ;; `treemacs'
@@ -546,8 +545,7 @@
 ;;
 (vwe@lib--package 'vwe-layout
 				  (progn
-					(autoload 'vwe-layout--enable (vwe@lib--path-vwe-site-lisp "vwe/vwe-layout/vwe-layout.el" t) "Vwe global layout mode." t t)
-					(vwe-layout--enable))
+					(autoload 'vwe-layout--enable (vwe@lib--path-vwe-site-lisp "vwe/vwe-layout/vwe-layout.el" t) "Vwe global layout mode." t t))
 				  nil nil nil
 				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-layout"))
 
