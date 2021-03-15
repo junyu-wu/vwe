@@ -325,7 +325,7 @@
 					("DEL" vwe-key:org-template "org template" :footer t :face (:background "magenta" :foreground "white" :weight bold))
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (org-mode)
-				  "C-M-<return>")
+				  (if vwe@lib--sys-win-p "C-<return>" "C-M-<return>"))
 
   (vwe-key-define markdown
 				  ("markdown"
