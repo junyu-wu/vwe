@@ -648,6 +648,7 @@ SELF is include curretn buffer."
 (define-minor-mode vwe-move-line-preview-mode
   "Mark line preview mode."
   :group 'vwe-mark
+  :keymap vwe-mark-line-preview--keymap
   :global t
   (if vwe-move-line-preview-mode
 	  (vwe-move-line-preview-enable)

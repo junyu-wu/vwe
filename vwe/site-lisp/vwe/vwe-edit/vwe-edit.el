@@ -77,6 +77,10 @@
   nil
   "Command executed.")
 
+(defvar vwe-edit-region--real-cursor-position
+  nil
+  "Real cursor position.")
+
 (defvar vwe-edit-region--support-command
   '(self-insert-command
 	quoted-insert
@@ -108,7 +112,10 @@
 	move-end-of-line
 	beginning-of-line
 	move-beginning-of-line
-	back-to-indentation)
+	back-to-indentation
+	mwim-beginning-of-code-or-line
+	mwim-end-of-code-or-line
+	comment-dwim-2)
   "Support command.")
 
 (defun vwe-edit-region--make-marker-cursor-id ()
@@ -243,6 +250,7 @@
   (when (and mark-active (/= (point) (mark)))
 	(let* ((start-pos (mark))
 		   (end-pos (point)))
+	  (setq vwe-edit-region--real-cursor-position end-pos)
 	  (deactivate-mark)
 	  (vwe-edit-region--marker-overlay-region start-pos end-pos)
 	  (goto-char start-pos)
@@ -258,12 +266,10 @@
 
 (defun vwe-edit-region--execute-command (cmd)
   "Run CMD, simulating the parts of the command loop for cursors."
-  (setq this-command cmd)
-  ;; (run-hooks 'pre-command-hook)
-  (unless (eq this-command 'ignore) (call-interactively cmd))
-  ;; (run-hooks 'post-command-hook)
-  ;; (when deactivate-mark (deactivate-mark))
-  (message "command %s executed" cmd)
+  (when cmd
+	(setq this-command cmd)
+	(unless (eq this-command 'ignore) (call-interactively cmd))
+	(message "command %s executed" cmd))
   (point))
 
 (defun vwe-edit-region--execute-command-for-cursor (cmd cursor)
@@ -281,8 +287,9 @@
 
 (defun vwe-edit-region--store-original-command ()
   "Store original command."
-  (let ((cmd (or (command-remapping this-original-command) this-original-command)))
-    (setq vwe-edit-region--this-command (and (not (eq cmd 'god-mode-self-insert)) cmd))))
+  (let ((cmd (or (command-remapping this-original-command)
+				 this-original-command)))
+    (setq vwe-edit-region--this-command cmd)))
 
 (defun vwe-edit-region--execute-original-command ()
   "Edit mode run command."
@@ -304,6 +311,7 @@
 ;;
 (defun vwe-edit-region-edit-mode-enable ()
   "Enable mode."
+  (setq cursor-type nil)
   (add-hook 'pre-command-hook 'vwe-edit-region--store-original-command t t)
   (add-hook 'post-command-hook 'vwe-edit-region--execute-original-command t t))
 
@@ -314,7 +322,8 @@
   (vwe-edit-region--remove-marker-cursor-overlays)
   (vwe-edit-region--remove-marker-region-overlays)
   (setq vwe-edit-region--this-command nil
-		vwe-edit-region--marker-cursor-id 0))
+		vwe-edit-region--marker-cursor-id 0
+		cursor-type 'bar))
 
 ;;;###autoload
 (define-minor-mode vwe-edit-region-edit-mode
@@ -517,11 +526,11 @@
 	(insert str)))
 
 ;;;###autoload
-(defun vwe-edit-toggle-case-select-convert (&optional func)
+(defun vwe-edit-toggle-case--select-convert (&optional func)
   "Select convret FUNC."
   (interactive
    (list (completing-read (format "select convert:")
-					 vwe-edit-toggle-case--convert-case-list)))
+						  vwe-edit-toggle-case--convert-case-list)))
   (funcall (cdr (assoc func vwe-edit-toggle-case--convert-case-list))))
 
 

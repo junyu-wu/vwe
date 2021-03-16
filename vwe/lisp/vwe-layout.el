@@ -36,24 +36,24 @@
 ;;
 ;; `persp-mode'
 ;;
-(vwe@lib--package 'persp-mode
-				  nil
-				  (setq persp-autokill-buffer-on-remove 'kill-weak
-						persp-save-dir (vwe@lib--path-cache "persp-confs/")
-						persp-nil-name "default"
-						persp-set-last-persp-for-new-frames nil
-						persp-kill-foreign-buffer-behaviour 'kill
-						persp-auto-resume-time 0
-						persp-common-buffer-filter-functions
-						(list #'(lambda (b)
-								  "Ignore temporary buffers."
-								  (or (string-prefix-p " " (buffer-name b))
-									  (and (string-prefix-p "*" (buffer-name b))
-										   (not (string-equal "*scratch*" (buffer-name b))))
-									  (string-prefix-p "magit" (buffer-name b))
-									  (string-prefix-p "Pfuture-Callback" (buffer-name b))
-									  (eq (buffer-local-value 'major-mode b) 'nov-mode)
-									  (eq (buffer-local-value 'major-mode b) 'vterm-mode))))))
+;; (vwe@lib--package 'persp-mode
+;; 				  nil
+;; 				  (setq persp-autokill-buffer-on-remove 'kill-weak
+;; 						persp-save-dir (vwe@lib--path-cache "persp-confs/")
+;; 						persp-nil-name "default"
+;; 						persp-set-last-persp-for-new-frames nil
+;; 						persp-kill-foreign-buffer-behaviour 'kill
+;; 						persp-auto-resume-time 0
+;; 						persp-common-buffer-filter-functions
+;; 						(list #'(lambda (b)
+;; 								  "Ignore temporary buffers."
+;; 								  (or (string-prefix-p " " (buffer-name b))
+;; 									  (and (string-prefix-p "*" (buffer-name b))
+;; 										   (not (string-equal "*scratch*" (buffer-name b))))
+;; 									  (string-prefix-p "magit" (buffer-name b))
+;; 									  (string-prefix-p "Pfuture-Callback" (buffer-name b))
+;; 									  (eq (buffer-local-value 'major-mode b) 'nov-mode)
+;; 									  (eq (buffer-local-value 'major-mode b) 'vterm-mode))))))
 
 ;;
 ;; `winum'

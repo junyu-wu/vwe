@@ -83,7 +83,7 @@
 	([remap comment-dwim]                 comment-dwim-2)
 	([remap move-beginning-of-line]       mwim-beginning-of-code-or-line)
 	([remap move-end-of-line]             mwim-end-of-code-or-line)
-	([remap goto-line]                    goto-line-preview))
+	([remap goto-line]                    vwe-move-line-preview--dynamic-goto-line))
   "Default keybind list.")
 
 (defun vwe@keybind--init ()
