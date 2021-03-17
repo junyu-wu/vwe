@@ -28,15 +28,15 @@
 ;;
 ;; `csharp-mode'
 ;;
-(vwe@lib--package 'csharp-mode
-				  (push '("\\.cs\\'" . csharp-mode) auto-mode-alist)
-				  ;;
-				  ;; `omnisharp' c#后端
-				  ;;
-				  (vwe@lib--package 'omnisharp
-									(add-hook 'csharp-mode-hook (lambda ()
-																  (omnisharp-mode)
-																  (add-to-list 'company-backends 'company-omnisharp)))))
+;; (vwe@lib--package 'csharp-mode
+;; 				  (push '("\\.cs\\'" . csharp-mode) auto-mode-alist)
+;; 				  ;;
+;; 				  ;; `omnisharp' c#后端
+;; 				  ;;
+;; 				  (vwe@lib--package 'omnisharp
+;; 									(add-hook 'csharp-mode-hook (lambda ()
+;; 																  (omnisharp-mode)
+;; 																  (add-to-list 'company-backends 'company-omnisharp)))))
 
 (provide 'vwe-csharp)
 ;;; vwe-csharp.el ends here

@@ -144,7 +144,7 @@
 (defvar vwe-search--result-keymap
   (let ((keymap (make-sparse-keymap)))
 	(define-key keymap (kbd "q") #'vwe-search--kill-result-buffer)
-	(define-key keymap (kbd "n") #'next-file)
+	(define-key keymap (kbd "n") #'next-line)
 	(define-key keymap (kbd "p") #'previous-line)
 	(define-key keymap (kbd "RET") #'vwe-search--find-file)
 	(define-key keymap (kbd "M-RET") #'vwe-search--find-file-after-back)
@@ -352,7 +352,7 @@ TYPE `word' `symbol' `point' `region' `input'."
 
 (defun vwe-search--engine (&optional keyword directory parameters command)
   "Execute COMMAND to Search KEYWORD in DIRECTORY with PARAMETERS."
-  (let* ((dir (or directory (vwe-search--read-directory)))
+  (let* ((dir (concat (or directory (vwe-search--read-directory)) "*"))
 		 (key (or keyword (vwe-search--read-keyword)))
 		 (cmd (or command vwe-search--command))
 		 (cmd-str (vwe-search--build-command key dir parameters cmd))
