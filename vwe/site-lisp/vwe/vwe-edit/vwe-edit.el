@@ -37,7 +37,8 @@
 
 (defvar vwe-edit-region--edit-keymap
   (let ((keymap (make-sparse-keymap)))
-	(define-key keymap (kbd "C-g") (lambda () (interactive) (vwe-edit-region-edit-mode -1) (keyboard-quit)))
+	;; (define-key keymap (kbd "C-g") (lambda () (interactive) (vwe-edit-region-edit-mode -1) (keyboard-quit)))
+	(define-key keymap (kbd "C-c C-c") #'vwe-edit-region--edit-finished)
 	keymap)
   "Region edit map.")
 
@@ -81,6 +82,10 @@
   nil
   "Real cursor position.")
 
+(defvar vwe-edit-region--command-ignore-line
+  nil
+  "Command ignore line.")
+
 (defvar vwe-edit-region--support-command
   '(self-insert-command
 	quoted-insert
@@ -115,7 +120,8 @@
 	back-to-indentation
 	mwim-beginning-of-code-or-line
 	mwim-end-of-code-or-line
-	comment-dwim-2)
+	comment-dwim-2
+	hungry-delete-backward)
   "Support command.")
 
 (defun vwe-edit-region--make-marker-cursor-id ()
@@ -216,7 +222,6 @@
 		 (id (or mcid (vwe-edit-region--make-marker-cursor-id))))
 	(if mcid
 		(progn
-		  ;; (vwe-edit-region--remove-marker-cursor-overlays mcid)
 		  (setq overlay (vwe-edit-region--find-cursor-overlay-by-id id))
 		  (move-overlay overlay start-pos end-pos))
 	  (setq overlay (make-overlay start-pos end-pos))
@@ -250,7 +255,8 @@
   (when (and mark-active (/= (point) (mark)))
 	(let* ((start-pos (mark))
 		   (end-pos (point)))
-	  (setq vwe-edit-region--real-cursor-position end-pos)
+	  (setq vwe-edit-region--real-cursor-position end-pos
+			vwe-edit-region--command-ignore-line (vwe-edit-region--line-number-at-point end-pos))
 	  (deactivate-mark)
 	  (vwe-edit-region--marker-overlay-region start-pos end-pos)
 	  (goto-char start-pos)
@@ -266,19 +272,22 @@
 
 (defun vwe-edit-region--execute-command (cmd)
   "Run CMD, simulating the parts of the command loop for cursors."
-  (when cmd
-	(setq this-command cmd)
-	(unless (eq this-command 'ignore) (call-interactively cmd))
-	(message "command %s executed" cmd))
-  (point))
+  (ignore-errors
+	(when cmd
+	  (setq this-command cmd)
+	  (unless (or (eq this-command 'ignore) (eq this-command 'keyboard-quit)) (call-interactively cmd))
+	  (message "command %s executed" cmd))))
 
 (defun vwe-edit-region--execute-command-for-cursor (cmd cursor)
   "Run CMD, simulating the parts of the command loop for CURSOR."
   (let* ((mcid (overlay-get cursor 'vwe-mcid))
 		 (start (overlay-start cursor)))
-	(goto-char start)
-	(ignore-errors
-	  (vwe-edit-region--marker-overlay-cursor (vwe-edit-region--execute-command cmd) mcid))))
+	(save-excursion
+	  (goto-char start)
+	  (ignore-errors
+		(progn
+		  (vwe-edit-region--execute-command cmd)
+		  (vwe-edit-region--marker-overlay-cursor (point) mcid))))))
 
 (defun vwe-edit-region--execute-command-for-all-cursors (cmd)
   "Run CMD, simulating the parts of the command loop for all cursors."
@@ -287,9 +296,11 @@
 
 (defun vwe-edit-region--store-original-command ()
   "Store original command."
-  (let ((cmd (or (command-remapping this-original-command)
-				 this-original-command)))
-    (setq vwe-edit-region--this-command cmd)))
+  (unless (equal this-command 'vwe-edit-region--edit-finished)
+	(let ((cmd (or (command-remapping this-original-command)
+				   this-original-command)))
+      (setq vwe-edit-region--this-command cmd
+			this-command 'ignore))))
 
 (defun vwe-edit-region--execute-original-command ()
   "Edit mode run command."
@@ -305,6 +316,13 @@
 			(setq cmd (intern (symbol-name cmd)))
 			(when (memq cmd vwe-edit-region--support-command)
 			  (vwe-edit-region--execute-command-for-all-cursors cmd))))))))
+
+(defun vwe-edit-region--edit-finished ()
+  "Edit finished."
+  (interactive)
+  (vwe-edit-region-edit-mode -1)
+  ;; (keyboard-quit)
+  )
 
 ;;
 ;; mode
@@ -323,6 +341,8 @@
   (vwe-edit-region--remove-marker-region-overlays)
   (setq vwe-edit-region--this-command nil
 		vwe-edit-region--marker-cursor-id 0
+		vwe-edit-region--real-cursor-position nil
+		vwe-edit-region--command-ignore-line nil
 		cursor-type 'bar))
 
 ;;;###autoload
