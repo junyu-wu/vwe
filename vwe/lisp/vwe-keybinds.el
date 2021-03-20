@@ -51,6 +51,7 @@
 	("M-C-y"                              vwe@lib--window-kill-current)
 	("M-C-o"                              vwe@lib--window-maximize)
 	("M-C-r"                              browse-kill-ring)
+	("M-C-z"                              eval-defun)
 	("M-\""                               vwe-move--switch-buffer)
 	("C-@"                                vwe@lib--minibuffer-switch)
 	("C-c C-f"                            format-all-buffer)

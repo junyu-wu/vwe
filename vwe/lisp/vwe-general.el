@@ -545,7 +545,11 @@
 ;;
 (vwe@lib--package 'vwe-layout
 				  (progn
-					(autoload 'vwe-layout--enable (vwe@lib--path-vwe-site-lisp "vwe/vwe-layout/vwe-layout.el" t) "Vwe global layout mode." t t))
+					(autoload 'vwe-layout--enable (vwe@lib--path-vwe-site-lisp "vwe/vwe-layout/vwe-layout.el" t) "Vwe global layout mode." t t)
+					(autoload 'vwe-layout--text-scale-increase (vwe@lib--path-vwe-site-lisp "vwe/vwe-layout/vwe-layout.el" t) "Vwe global layout mode." t t)
+					(autoload 'vwe-layout--text-scale-decrease (vwe@lib--path-vwe-site-lisp "vwe/vwe-layout/vwe-layout.el" t) "Vwe global layout mode." t t)
+					(autoload 'vwe-layout--text-scale-adjust (vwe@lib--path-vwe-site-lisp "vwe/vwe-layout/vwe-layout.el" t) "Vwe global layout mode." t t)
+					(autoload 'vwe-layout--zoom-type-toggle (vwe@lib--path-vwe-site-lisp "vwe/vwe-layout/vwe-layout.el" t) "Vwe global layout mode." t t))
 				  nil nil nil
 				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-layout"))
 

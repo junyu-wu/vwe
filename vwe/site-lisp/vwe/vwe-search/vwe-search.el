@@ -395,6 +395,9 @@ TYPE `word' `symbol' `point' `region' `input'."
   (set (make-local-variable 'font-lock-keywords-only) t)
   (font-lock-mode 1))
 
+(defun vwe-search--replace-match ()
+  "Replace match.")
+
 (define-derived-mode vwe-search-result-mode text-mode "vwe-search-result"
   "Search result minor mode."
   (interactive)

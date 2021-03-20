@@ -65,16 +65,19 @@
   nil
   "Windows `ratio' or `balance'.")
 
+;;;###autoload
 (defun vwe-layout--text-scale-increase ()
   "Text scale increase."
   (interactive)
   (text-scale-increase 1))
 
+;;;###autoload
 (defun vwe-layout--text-scale-decrease ()
   "Text scale decrease."
   (interactive)
   (text-scale-increase -1))
 
+;;;###autoload
 (defun vwe-layout--text-scale-adjust ()
   "Text scale adjust."
   (interactive)
@@ -182,9 +185,11 @@ HORIZONTAL horizontal or vertical."
 		 (delta (window-resizable nil (max (- win-ratio win-size) 0) horizontal?)))
 	(window-resize nil delta horizontal?)))
 
+;;;###autoload
 (defun vwe-layout--zoom-type-toggle ()
   "Toggle zoom type."
   (interactive)
+  (unless vwe-layout-zoom-mode (vwe-layout-zoom-mode 1))
   (if vwe-layout--zoom-balance-p
 	  (setq vwe-layout--zoom-balance-p nil)
 	(setq vwe-layout--zoom-balance-p t))

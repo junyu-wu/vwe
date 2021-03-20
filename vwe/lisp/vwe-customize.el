@@ -368,7 +368,7 @@ If nil hide all buffers."
 ;; debug
 ;; ***************************************************************************
 (defcustom vwe@custom--debug?
-  nil
+  t
   "Is debug running?"
   :group 'vwe-base
   :type 'boolean)
