@@ -20,7 +20,7 @@
 
 ;;; Commentary:
 ;; apt install nasm
-;; apt install poppler-utils
+;; apt install poppler-utils ;; pdf 解析
 ;; https://software.intel.com/en-us/articles/intel-sdm
 
 ;;; Code:

@@ -23,7 +23,7 @@
 ;; ripgrep
 
 ;;; Code:
-(require 'cl-lib)
+(require 'cl-lib)1
 (require 'subr-x)
 (require 'grep)
 
@@ -106,18 +106,18 @@
 
 (defvar vwe-search--current-search-info
   '()
-  "Current search info.")
+  "Current search info `:keyword' `:directory' `:result'.")
 
 (defvar vwe-search--result-buffer-name
   "**vwe-search-result**"
   "Buffer name.")
 
-(defvar vwe-search--result-temp-buffer-name
-  "**vwe-search-result-temp**"
+(defvar vwe-search--result-edit-buffer-name
+  "**vwe-search-result-edit**"
   "Buffer name.")
 
 (defvar vwe-search--default-parameters
-  "--column --color=always --smart-case --max-columns=300"
+  "--column --heading --hidden --with-filename --color=always --smart-case --max-columns=300"
   "Search command default parameters.")
 
 (defvar vwe-search--result-total
@@ -146,10 +146,19 @@
 	(define-key keymap (kbd "q") #'vwe-search--kill-result-buffer)
 	(define-key keymap (kbd "n") #'next-line)
 	(define-key keymap (kbd "p") #'previous-line)
+	(define-key keymap (kbd "e") #'vwe-search--switch-to-edit-mode)
 	(define-key keymap (kbd "RET") #'vwe-search--find-file)
 	(define-key keymap (kbd "M-RET") #'vwe-search--find-file-after-back)
 	keymap)
   "Search result mode keymap.")
+
+(defvar vwe-search--edit-keymap
+  (let ((keymap (make-sparse-keymap)))
+	(define-key keymap (kbd "v") #'vwe-search--switch-to-result-mode)
+	(define-key keymap (kbd "r") #'vwe-search--replace-match)
+	(define-key keymap (kbd "q") #'vwe-search--kill-result-edit-buffer)
+	keymap)
+  "Search edit mode keymap.")
 
 (defun vwe-search--at-point-char ()
   "Get current point char."
@@ -197,27 +206,12 @@ TYPE `word' `symbol' `point' `region' `input'."
       (goto-char (point-min)))
 	buffer))
 
-(defun vwe-search--clone-result-to-temp-buffer ()
-  "Clone result to temp buffer."
-  (vwe-search--kill-result-temp-buffer)
-  (with-current-buffer (get-buffer vwe-search--result-buffer-name)
-    (add-hook 'kill-buffer-hook 'vwe-search--kill-result-temp-buffer nil t)
-    (generate-new-buffer vwe-search--result-temp-buffer-name)
-    (append-to-buffer vwe-search--result-temp-buffer-name (point-min) (point-max))))
-
 (defun vwe-search--kill-result-buffer ()
   "Kill search result buffer."
   (interactive)
   (when (get-buffer vwe-search--result-buffer-name) (kill-buffer (get-buffer vwe-search--result-buffer-name))))
 
-(defvar vwe-search--last-change-lines nil)
-(defun vwe-search--kill-result-temp-buffer ()
-  "Kill result temp buffer."
-  (when (get-buffer vwe-search--result-temp-buffer-name)
-    (kill-buffer vwe-search--result-temp-buffer-name)
-    (setq vwe-search--last-change-lines nil)))
-
-(defun vwe-search--build-command (keyword directory parameters command &optional regexp)
+(defun vwe-search--build-command (keyword directory parameters command)
   "Build search COMMAND based on KEYWORD DIRECTORY PARAMETERS and REGEXP."
   (let* ((prefix-key vwe-search--prefix-key)
 		 (split " ")
@@ -280,17 +274,36 @@ TYPE `word' `symbol' `point' `region' `input'."
   "Match result file."
   (save-excursion
     (search-backward-regexp vwe-search--regexp-file nil t)
-    (string-remove-suffix "\n" (thing-at-point 'line))))
+	(let* ((file(string-remove-suffix "\n" (thing-at-point 'line))))
+	  (when (and file (file-exists-p file))
+		file))))
+
+(defun vwe-search--match-result-file-of-line ()
+  "Match result file."
+  (let* ((path))
+	(save-excursion
+	  (beginning-of-line)
+      (search-forward-regexp vwe-search--regexp-file (line-end-position) t)
+	  (let* ((file (string-remove-suffix "\n" (thing-at-point 'line))))
+		(when (and file (not (equal file "")) (file-exists-p file))
+		  (setq path (substring-no-properties file)))))
+	path))
 
 (defun vwe-search--match-result-line ()
   "Match result line."
-  (beginning-of-line)
-  (string-to-number (thing-at-point 'symbol)))
+  (save-excursion
+	(beginning-of-line)
+	(let* ((line))
+	  (condition-case nil
+		  (progn
+			(setq line (string-to-number (thing-at-point 'symbol))))
+		(error line)))))
 
 (defun vwe-search--match-result-column ()
   "Match result column."
-  (search-forward ":")
-  (string-to-number (thing-at-point 'symbol)))
+  (save-excursion
+	(search-forward ":")
+	(string-to-number (thing-at-point 'symbol))))
 
 (defun vwe-search--match-result-buffer (path)
   "Match result buffer with PATH."
@@ -395,8 +408,93 @@ TYPE `word' `symbol' `point' `region' `input'."
   (set (make-local-variable 'font-lock-keywords-only) t)
   (font-lock-mode 1))
 
+(defun vwe-search--clone-result-to-edit-buffer ()
+  "Clone result to edit buffer."
+  (vwe-search--kill-result-edit-buffer)
+  (with-current-buffer (get-buffer vwe-search--result-buffer-name)
+    (add-hook 'kill-buffer-hook 'vwe-search--kill-result-edit-buffer nil t)
+    (generate-new-buffer vwe-search--result-edit-buffer-name)
+    (append-to-buffer vwe-search--result-edit-buffer-name (point-min) (point-max))))
+
+(defun vwe-search--kill-result-edit-buffer ()
+  "Kill result edit buffer."
+  (interactive)
+  (when (get-buffer vwe-search--result-edit-buffer-name)
+    (kill-buffer vwe-search--result-edit-buffer-name)))
+
 (defun vwe-search--replace-match ()
-  "Replace match.")
+  "Replace match."
+  (interactive)
+  (save-excursion
+	(let* ((keyword (plist-get vwe-search--current-search-info :keyword))
+		   (result (plist-get vwe-search--current-search-info :result))
+		   (max-line (save-excursion (goto-char (point-max)) (line-number-at-pos)))
+		   (to-str (read-string (format "replace '%s' to:" keyword) keyword))
+		   (result-format) ;; '((file ((line column) (line column))))
+		   (index 0)
+		   (cur-line))
+	  (read-only-mode -1)
+	  (goto-char (point-min))
+	  (setq cur-line (line-number-at-pos))
+	  (catch 'break
+		(while (< cur-line max-line)
+		  (if (vwe-search--match-result-file-of-line)
+			  (progn
+				(setq result-format (cons (list (list (vwe-search--match-result-file-of-line))) result-format))
+				(forward-line 1)
+				(while (and (vwe-search--match-result-line) (> (vwe-search--match-result-line) 0))
+				  (let* ((line (vwe-search--match-result-line))
+						 (column (vwe-search--match-result-column))
+						 (position (list line column))
+						 (file-result (cons position (cadr (car result-format)))))
+					(when (and line column)
+					  (setcdr (cadr result-format) file-result)
+					  ;; TODO: replace
+					  (beginning-of-line)
+					  (search-forward keyword (line-end-position) t)
+					  (replace-match to-str)
+					  (setq index (1+ index))))
+				  (forward-line 1)))
+			(forward-line 1))
+		  (setq cur-line (line-number-at-pos))))
+
+	  ;; (catch 'break
+	  ;;   (while (search-forward keyword nil t)
+	  ;; 	(setq index (1+ index))
+	  ;; 	(when (> (point) (point-max))
+	  ;; 	  (throw 'break nil))
+	  ;; 	(replace-match to-str)))
+
+	  (read-only-mode 1)
+	  (message "match result %d to replace %d." result index))))
+
+(defun vwe-search--switch-to-edit-mode ()
+  "Switch to edit mode."
+  (interactive)
+  (when (equal major-mode 'vwe-search-result-mode)
+	(vwe-search--clone-result-to-edit-buffer)
+	(let* ((buffer (get-buffer vwe-search--result-edit-buffer-name)))
+	  (with-current-buffer buffer
+		(goto-char (point-min))
+		(vwe-search-edit-mode))
+	  (switch-to-buffer buffer))))
+
+(defun vwe-search--switch-to-result-mode ()
+  "Switch to result mode."
+  (interactive)
+  (when (equal major-mode 'vwe-search-edit-mode)
+	(let* ((buffer (get-buffer vwe-search--result-buffer-name)))
+	  (when buffer
+		(switch-to-buffer buffer)))))
+
+(define-derived-mode vwe-search-edit-mode text-mode "vwe-edit-result"
+  "Search result minor mode."
+  (interactive)
+  (kill-all-local-variables)
+  (setq major-mode 'vwe-search-edit-mode
+		mode-name "vwe-search-edit-mode")
+  (read-only-mode 1)
+  (use-local-map vwe-search--edit-keymap))
 
 (define-derived-mode vwe-search-result-mode text-mode "vwe-search-result"
   "Search result minor mode."

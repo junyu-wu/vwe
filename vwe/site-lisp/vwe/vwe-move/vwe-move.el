@@ -660,6 +660,8 @@ SELF is include curretn buffer."
 ;; =============================================================================
 (defvar vwe-move-goto-line--keymap
   (let ((keymap (make-sparse-keymap)))
+	(define-key keymap (kbd "M-* p") #'vwe-move-goto-line-previous)
+	(define-key keymap (kbd "M-* n") #'vwe-move-goto-line-next)
 	keymap)
   "Move to mark map.")
 

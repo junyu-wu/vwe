@@ -20,9 +20,7 @@
 
 ;;; Commentary:
 
-;; apt install llvm libclang-dev clang clang-format clang-tools
-;; apt install clangd-9 libcppunit-dev cppcheck
-;; apt install gdb or lldb
+;; apt install llvm libclang-dev clang clang-format clang-tools clangd libcppunit-dev cppcheck gdb or lldb
 ;; install ctags
 
 ;;; Code:

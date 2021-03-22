@@ -34,8 +34,6 @@
   (let ((keymap (make-sparse-keymap)))
 	(define-key keymap (kbd "C->") #'vwe-mark-position--forward-word)
 	(define-key keymap (kbd "C-<") #'vwe-mark-position--backward-word)
-	(define-key keymap (kbd "M-* p") #'vwe-mark-line-previous)
-	(define-key keymap (kbd "M-* n") #'vwe-mark-line-next)
 	keymap)
   "Move to mark map.")
 
