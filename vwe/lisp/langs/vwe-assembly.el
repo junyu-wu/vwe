@@ -21,7 +21,7 @@
 ;;; Commentary:
 ;; apt install nasm
 ;; apt install poppler-utils ;; pdf 解析
-;; https://software.intel.com/en-us/articles/intel-sdm
+;; https://software.intel.com/en-us/articles/intel-sdm ;; intel cpu 命令说明文档
 
 ;;; Code:
 ;; ***************************************************************************
