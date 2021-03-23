@@ -451,6 +451,17 @@
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (java-mode))
 
+   (vwe-key-define lua
+				  ("lua"
+				   (("s" lua-start-process "new repl")
+					("k" lua-kill-process "kill repl")
+					("t" lua-send-buffer "send buffer")
+					("d" lua-send-defun "send defun")
+					("l" lua-send-current-line "send current line")
+					("r" lua-restart-with-whole-file "send buffer restart repl")
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  (lua-mode))
+
   (vwe-key-define web
 				  ("web"
 				   (("r" (lambda () (interactive) (vwe@web--open-to-brower nil)) "open to brower")

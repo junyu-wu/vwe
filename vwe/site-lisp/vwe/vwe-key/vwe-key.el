@@ -294,15 +294,15 @@
 (defun vwe-key--make-content-footer ()
   "Make content footer."
   (let* ((custom-str "")
-		 (other (propertize (format "[%s] : quit    [%s] : toggle hint/func    ◕‿-｡ "
-									vwe-key--quit-key vwe-key--toggle-hint-key)
+		 (other (propertize (format "[%s]:quit  [%s]:hint/func  [%s]:minibuffer  ◕‿-｡"
+									vwe-key--quit-key vwe-key--toggle-hint-key vwe-key--toggle-minibuffer-key)
 							'face 'vwe-key--footer-face)))
 	(dotimes (i (length vwe-key--footer-list))
 	  (setq custom-str (concat custom-str
-							   (propertize (concat "[" (format "%s" (car (nth i vwe-key--footer-list))) "]" " : ")
+							   (propertize (concat "[" (format "%s" (car (nth i vwe-key--footer-list))) "]" ":")
 										   'face 'vwe-key--footer-face)
 							   (format "%s" (cadr (nth i vwe-key--footer-list)))
-							   (propertize "    " 'face 'vwe-key--footer-face))))
+							   (propertize "  " 'face 'vwe-key--footer-face))))
 	(string-trim (format "%s%s" custom-str other))))
 
 (defun vwe-key--window-get-top (&optional win)
