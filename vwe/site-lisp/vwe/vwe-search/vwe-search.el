@@ -136,6 +136,14 @@
   "-e"
   "Keyword prefix parameter.")
 
+(defvar vwe-search--apply-replace-alist
+  nil
+  "Apply replace alist.")
+
+(defvar vwe-search--replace-key-to-value
+  nil
+  "Apply replace alist.")
+
 (defvar vwe-search--keymap
   (let ((keymap (make-sparse-keymap)))
 	keymap)
@@ -156,6 +164,7 @@
   (let ((keymap (make-sparse-keymap)))
 	(define-key keymap (kbd "v") #'vwe-search--switch-to-result-mode)
 	(define-key keymap (kbd "r") #'vwe-search--replace-match)
+	(define-key keymap (kbd "x") #'vwe-search--apply-replace)
 	(define-key keymap (kbd "q") #'vwe-search--kill-result-edit-buffer)
 	keymap)
   "Search edit mode keymap.")
@@ -425,6 +434,7 @@ TYPE `word' `symbol' `point' `region' `input'."
 (defun vwe-search--replace-match ()
   "Replace match."
   (interactive)
+  (when vwe-search--apply-replace-alist (setq vwe-search--apply-replace-alist nil))
   (save-excursion
 	(let* ((keyword (plist-get vwe-search--current-search-info :keyword))
 		   (result (plist-get vwe-search--current-search-info :result))
@@ -438,35 +448,57 @@ TYPE `word' `symbol' `point' `region' `input'."
 	  (setq cur-line (line-number-at-pos))
 	  (catch 'break
 		(while (< cur-line max-line)
-		  (if (vwe-search--match-result-file-of-line)
-			  (progn
-				(setq result-format (cons (list (list (vwe-search--match-result-file-of-line))) result-format))
-				(forward-line 1)
-				(while (and (vwe-search--match-result-line) (> (vwe-search--match-result-line) 0))
-				  (let* ((line (vwe-search--match-result-line))
-						 (column (vwe-search--match-result-column))
-						 (position (list line column))
-						 (file-result (cons position (cadr (car result-format)))))
-					(when (and line column)
-					  (setcdr (cadr result-format) file-result)
-					  ;; TODO: replace
-					  (beginning-of-line)
-					  (search-forward keyword (line-end-position) t)
-					  (replace-match to-str)
-					  (setq index (1+ index))))
-				  (forward-line 1)))
-			(forward-line 1))
+		  (let* ((file)
+				 (sub-result))
+			(if (vwe-search--match-result-file-of-line)
+				(progn
+				  (setq file (vwe-search--match-result-file-of-line))
+				  (forward-line 1)
+				  (while (and (vwe-search--match-result-line) (> (vwe-search--match-result-line) 0))
+					(let* ((line (vwe-search--match-result-line))
+						   (column (vwe-search--match-result-column))
+						   (position (list (list line column)))
+						   (file-result (append (cadr sub-result) position)))
+					  (when (and line column)
+						(setq sub-result (list file file-result))
+						(beginning-of-line)
+						(while (search-forward keyword (line-end-position) t)
+						  (replace-match to-str))
+						(setq index (1+ index))))
+					(forward-line 1)))
+			  (forward-line 1))
+			(when sub-result
+			  (setq result-format (cons sub-result result-format))))
 		  (setq cur-line (line-number-at-pos))))
-
-	  ;; (catch 'break
-	  ;;   (while (search-forward keyword nil t)
-	  ;; 	(setq index (1+ index))
-	  ;; 	(when (> (point) (point-max))
-	  ;; 	  (throw 'break nil))
-	  ;; 	(replace-match to-str)))
-
 	  (read-only-mode 1)
+	  (setq vwe-search--apply-replace-alist result-format
+			vwe-search--replace-key-to-value (list keyword to-str))
 	  (message "match result %d to replace %d." result index))))
+
+(defun vwe-search--apply-replace ()
+  "Apply replace."
+  (interactive)
+  (when vwe-search--apply-replace-alist
+	(dotimes (file-index (length vwe-search--apply-replace-alist))
+	  (save-excursion
+		(let* ((keyword (car vwe-search--replace-key-to-value))
+			   (to-str (cadr vwe-search--replace-key-to-value))
+			   (file (car (nth file-index vwe-search--apply-replace-alist)))
+			   (replace-item (cadr (nth file-index vwe-search--apply-replace-alist)))
+			   (replace-len (length replace-item))
+			   (buffer (find-file-noselect file)))
+		  (when buffer
+			(with-current-buffer buffer
+			  (when buffer-read-only (setq buffer-read-only nil))
+			  (dotimes (rep-index replace-len)
+				(let* ((row-info (nth rep-index replace-item))
+					   (line (car row-info)))
+				  (when (and line (> line 0))
+					(goto-line line)
+					(beginning-of-line)
+					(while (search-forward keyword (line-end-position) t)
+					  (replace-match to-str)))))
+			  (save-buffer))))))))
 
 (defun vwe-search--switch-to-edit-mode ()
   "Switch to edit mode."
@@ -492,7 +524,8 @@ TYPE `word' `symbol' `point' `region' `input'."
   (interactive)
   (kill-all-local-variables)
   (setq major-mode 'vwe-search-edit-mode
-		mode-name "vwe-search-edit-mode")
+		mode-name "vwe-search-edit-mode"
+		vwe-search--apply-replace-alist nil)
   (read-only-mode 1)
   (use-local-map vwe-search--edit-keymap))
 
