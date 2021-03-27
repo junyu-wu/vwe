@@ -34,6 +34,9 @@
 	(define-key keymap (kbd "SPC") (lambda () (interactive) (vwe-editor-edit-mode t)))
 	(define-key keymap (kbd "p") #'previous-line)
 	(define-key keymap (kbd "n") #'next-line)
+	(define-key keymap (kbd "v") #'scroll-up-command)
+	(define-key keymap (kbd "V") #'scroll-down-command)
+	(define-key keymap (kbd "q") #'kill-buffer)
 	keymap)
   "Keymap.")
 

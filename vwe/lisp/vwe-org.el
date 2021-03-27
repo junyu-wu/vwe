@@ -43,7 +43,7 @@
 
 (defun vwe@org--template (str &optional mod)
   "Insert STR and MOD expand org template."
-  (let (text)
+  (let* ((text))
 	(when (region-active-p)
 	  (setq text (buffer-substring (region-beginning) (region-end)))
 	  (delete-region (region-beginning) (region-end)))

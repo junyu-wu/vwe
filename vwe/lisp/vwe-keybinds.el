@@ -273,7 +273,7 @@
 					("v" (lambda () (interactive) (vwe@org--template "<v"))                              "verse")
 					("I" (lambda () (interactive) (vwe@org--template "<i"))                              "index")
 					("A" (lambda () (interactive) (vwe@org--template "<A"))                              "ASCII")
-					("C" (lambda () (interactive) (vwe@org--template "<I"))                              "include")
+					("i" (lambda () (interactive) (vwe@org--template "<I"))                              "include")
 					("H" (lambda () (interactive) (vwe@org--template "<H"))                              "html")
 					("L" (lambda () (interactive) (vwe@org--template "<L"))                              "laTeX")
 					("s" (lambda () (interactive) (vwe@org--template "<s"))                              "src")
