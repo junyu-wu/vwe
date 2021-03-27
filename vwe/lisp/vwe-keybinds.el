@@ -55,8 +55,6 @@
 	("M-\""                               vwe-move--switch-buffer)
 	("C-@"                                vwe@lib--minibuffer-switch)
 	("C-c C-f"                            format-all-buffer)
-	("C-M-["                              mc/edit-beginnings-of-lines)
-	("C-M-]"                              mc/edit-ends-of-lines)
 	("C-M-|"                              set-rectangular-region-anchor)
 	("C-M-="                              cua-rectangle-mark-mode)
 	("M-'"                                sp-up-sexp)

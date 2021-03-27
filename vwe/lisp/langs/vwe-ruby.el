@@ -47,8 +47,8 @@
 ;;
 ;; `ruby-electric' 自动添加 'end'
 ;;
-(vwe@lib--package 'ruby-electric
-				  (add-hook 'ruby-mode-hook #'ruby-electric-mode))
+;; (vwe@lib--package 'ruby-electric
+;; 				  (add-hook 'ruby-mode-hook #'ruby-electric-mode))
 
 ;;
 ;; `robe' 辅助ruby repl加载程序或gem.包括位置与跳转
