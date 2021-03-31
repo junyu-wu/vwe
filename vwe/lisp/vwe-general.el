@@ -238,7 +238,7 @@
 						company-tooltip-limit 12
 						company-idle-delay 0
 						company-echo-delay (if (display-graphic-p) nil 0)
-						company-minivwe-prefix-length 1
+						company-minimum-prefix-length 0
 						company-require-match nil
 						company-dabbrev-ignore-case nil
 						company-dabbrev-downcase nil
