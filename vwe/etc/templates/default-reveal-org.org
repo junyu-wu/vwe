@@ -6,7 +6,6 @@
 #+REVEAL_HLEVEL: 2
 #+REVEAL_ROOT: https://cdn.jsdelivr.net/npm/reveal.js
 #+LATEX_COMPILER: xelatex
-#+TODO: TODO(t) WAITING(w) VERIFY(v) | DONE(d) CANCELLED(c)
 #+CATEGORY:${1:[Default]}
 #+TAGS:${2:[Note]}
 #+TITLE: ${3:`(file-name-sans-extension (file-name-nondirectory (buffer-file-name)))`}

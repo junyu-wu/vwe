@@ -81,7 +81,8 @@
 ;; `org'
 ;;
 (vwe@lib--package 'org
-				  (add-hook 'org-mode-hook #'toggle-truncate-lines)
+				  (progn
+					(add-hook 'org-mode-hook #'toggle-truncate-lines))
 				  (progn
 					(define-key org-mode-map (kbd "C-RET") #'org-meta-return)
 
@@ -205,11 +206,16 @@
 																	 (file (vwe@lib--path-cache "org/appointment.org" t)
 																		   "* %?\n%^T\n** Note:\n\n"))))
 									  nil nil nil t))
-				  (setq org-hide-leading-start t
-						org-src-fontify-natively t
+				  (setq org-src-fontify-natively t
 						org-log-done 'time
 						org-image-actual-width '(400)
-						org-todo-keywords '((sequence "TODO(t)" "DOING(i)" "WAITING(w)" "|" "DONE(d)" "CANCEL(c)"))))
+						org-todo-keywords '((sequence "TODO(t@/!)" "DOING(r@/!)" "WAITING(w@/!)" "VERIFY(v@/!)" "|" "DONE(d@/!)" "CANCELED(c@/!)"))
+						org-todo-keyword-faces '(("TODO" . warning)
+												 ("DOING" . success)
+												 ("WAITING" . error)
+												 ("VERIFY" . error)
+												 ("DONE" . shadow)
+												 ("CANCELED" . shadow))))
 
 ;;
 ;; `org-roam'
