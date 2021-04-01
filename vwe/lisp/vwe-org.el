@@ -63,6 +63,14 @@
   (org-meta-return)
   (org-shiftmetaright))
 
+(defun vwe@org--todo-current-line ()
+  "Todo current line."
+  (interactive)
+  (if (org-at-heading-p)
+	  (org-todo)
+	(org-toggle-heading)
+	(org-todo)))
+
 (defun vwe@org--reveal-load()
   "Load reveal."
   (interactive)
@@ -92,6 +100,13 @@
 					(vwe@lib--package 'ob-mermaid)
 
 					(org-babel-do-load-languages 'org-babel-load-languages vwe@org--language-alist)
+
+					;;
+					;; `org-appear' 显示修饰符号
+					;;
+					(vwe@lib--package 'org-appear
+					  				  (add-hook 'org-mode-hook #'org-appear-mode)
+									  (progn (setq org-appear-autolinks t)))
 
 					;;
 					;; `org-download' 托拽图片
@@ -207,6 +222,7 @@
 																		   "* %?\n%^T\n** Note:\n\n"))))
 									  nil nil nil t))
 				  (setq org-src-fontify-natively t
+						org-hide-emphasis-markers t
 						org-log-done 'time
 						org-image-actual-width '(400)
 						org-todo-keywords '((sequence "TODO(t@/!)" "DOING(r@/!)" "WAITING(w@/!)" "VERIFY(v@/!)" "|" "DONE(d@/!)" "CANCELED(c@/!)"))
