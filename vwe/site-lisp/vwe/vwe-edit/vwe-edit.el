@@ -39,6 +39,7 @@
   (let ((keymap (make-sparse-keymap)))
 	;; (define-key keymap (kbd "C-g") (lambda () (interactive) (vwe-edit-region-edit-mode -1) (keyboard-quit)))
 	(define-key keymap (kbd "C-c C-c") #'vwe-edit-region--edit-finished)
+	(define-key keymap (kbd "C-g") #'vwe-edit-region--edit-finished)
 	keymap)
   "Region edit map.")
 
