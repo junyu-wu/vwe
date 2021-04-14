@@ -141,35 +141,35 @@
 ;;
 (vwe@lib--package 'ivy
 				  (add-hook 'after-init-hook #'ivy-mode)
-				  ;;
-				  ;; `ivy-rich'
-				  ;;
-				  (vwe@lib--package 'ivy-rich
-									(add-hook 'ivy-mode-hook (lambda () (ivy-rich-mode 1)))
-									(progn
-									  (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)))
+				  (progn
+					;;
+					;; `ivy-rich'
+					;;
+					(vwe@lib--package 'ivy-rich
+									  (add-hook 'ivy-mode-hook (lambda () (ivy-rich-mode 1)))
+									  (progn
+										(setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)))
+					;;
+					;; `counsel'
+					;;
+					(vwe@lib--package 'counsel
+									  nil
+									  (if (executable-find "rg")
+										  (setq counsel-grep-base-command
+												"rg -i -M 120 --no-heading --line-number --color never %s %s"
+												counsel-rg-base-command
+												"rg -i -M 120 --no-heading --line-number --color never %s .")))
+
+					;;
+					;; `swiper'
+					;;
+					(vwe@lib--package 'swiper))
 				  (setq ivy-use-virtual-buffers t
 						ivy-height 10
 						ivy-initial-inputs-alist nil
 						ivy-count-format "%d/%d"
 						ivy-re-builders-alist `((t . ivy--regex-ignore-order))
 						enable-recursive-minibuffers t))
-
-;;
-;; `counsel'
-;;
-(vwe@lib--package 'counsel
-				  nil
-				  (if (executable-find "rg")
-					  (setq counsel-grep-base-command
-							"rg -i -M 120 --no-heading --line-number --color never %s %s"
-							counsel-rg-base-command
-							"rg -i -M 120 --no-heading --line-number --color never %s .")))
-
-;;
-;; `swiper'
-;;
-(vwe@lib--package 'swiper)
 
 ;;
 ;; `yasnippet' include `yasnippet-snippets' `auto-yasnippet'
