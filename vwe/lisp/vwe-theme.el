@@ -45,6 +45,10 @@
 					  :inverse-video t)
   (set-face-attribute 'fringe nil
 					  :inherit 'mode-line)
+
+  (set-face-attribute 'trailing-whitespace nil
+					  :background (face-attribute 'fringe :foreground))
+
   (set-face-attribute 'show-paren-match nil
 					  :foreground nil
 					  :background (face-attribute 'secondary-selection :background))
