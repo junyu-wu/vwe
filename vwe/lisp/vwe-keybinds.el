@@ -145,6 +145,7 @@
 					("=" vwe-layout--zoom-type-toggle "toggle zoom")
 					("*" treemacs-select-window "treemacs window")
 					("S" sudo-edit "sudo")
+					("b" revert-buffer-with-coding-system "revert coding system")
 					("!" winum-mode "win number")
 					("~" vwe-mark-paren--paren-pair "paren mark")
 					("(" vwe@base--paren-toggle-style "paren style")
