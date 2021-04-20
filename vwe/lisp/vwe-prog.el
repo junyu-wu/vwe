@@ -301,6 +301,8 @@ MODE."
 						lsp-modeline-diagnostics-enable nil
 						lsp-keep-workspace-alive nil
 						lsp-eldoc-enable-hover nil
+						lsp-headerline-arrow ">"
+						lsp-headerline-breadcrumb-icons-enable nil
 						lsp-session-file (vwe@lib--path-cache "lsp/.lspsession-v1" t)))
 
 ;;
