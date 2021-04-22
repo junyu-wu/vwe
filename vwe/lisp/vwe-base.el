@@ -163,6 +163,24 @@ SOURCE-NAME is source name."
 	 (vwe@lib--sys-startup-info)
 	 "\n")))
 
+(defun vwe@base--ui-init ()
+  "UI init."
+  (interactive)
+  (setq-default cursor-type    'bar
+				fill-column    80
+				tab-width      4
+				show-trailing-whitespace t)
+  (setq frame-title-format (list (format "%s %%S: %%j " (system-name)) '(buffer-file-name "%f" (dired-directory dired-directory "%b")))
+		icon-title-format frame-title-format)
+
+  (unless vwe@custom--frame-menu-bar?
+	(menu-bar-mode -1))
+  (unless vwe@custom--frame-tool-bar?
+	(tool-bar-mode -1))
+  (unless vwe@custom--frame-scroll-bar?
+	(scroll-bar-mode -1))
+  (blink-cursor-mode -1))
+
 (defun vwe@base--init ()
   "Base init."
   (interactive)
@@ -176,6 +194,7 @@ SOURCE-NAME is source name."
   (vwe@base--server-init)
   (vwe@base--debug-init)
   (vwe@base--deamon-init)
+  (vwe@base--ui-init)
 
   (add-hook 'emacs-startup-hook #'vwe@lib--sys-startup-info)
   (add-hook 'before-save-hook  #'delete-trailing-whitespace)

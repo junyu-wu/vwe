@@ -37,31 +37,9 @@
    ((< size 0) (text-scale-decrease (* size -1)))
    ((= size 0) (text-scale-adjust 0))))
 
-(defun vwe@ui--init ()
-  "UI init."
-  (interactive)
-  (setq-default cursor-type    'bar
-				fill-column    80
-				tab-width      4
-				show-trailing-whitespace t)
-  (setq frame-title-format (list (format "%s %%S: %%j " (system-name))
-								 '(buffer-file-name "%f"
-													(dired-directory dired-directory "%b")))
-		icon-title-format frame-title-format)
-
-  (unless vwe@custom--frame-menu-bar?
-	(menu-bar-mode -1))
-  (unless vwe@custom--frame-tool-bar?
-	(tool-bar-mode -1))
-  (unless vwe@custom--frame-scroll-bar?
-	(scroll-bar-mode -1))
-  (blink-cursor-mode -1))
-
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
-(vwe@ui--init)
-
 ;;
 ;; `hl-line'
 ;;

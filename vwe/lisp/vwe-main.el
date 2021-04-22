@@ -42,6 +42,9 @@
 	  (error))))
 
 (cond ((vwe@lib--found-custom-arg "-vq") (message "vwe feature config ignore load."))
+	  ((vwe@lib--found-custom-arg "-origin") (progn
+											   (require 'vwe-base)
+											   (message "vwe by emacs origin config.")))
 	  ((vwe@lib--found-custom-arg "-base") (progn
 											 (require 'vwe-base)
 											 (require 'vwe-ui)
@@ -73,12 +76,14 @@
 		   ;; inti misc
 		   ;;
 		   (require 'vwe-misc)
+
+		   ;;
+		   ;; init keybindings
+		   ;;
+		   (require 'vwe-keybinds)
+
 		   (message "vwe all config init."))))
 
-;;
-;; init keybindings
-;;
-(require 'vwe-keybinds)
 
 (provide 'vwe-main)
 ;;; vwe-main.el ends here
