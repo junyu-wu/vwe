@@ -122,7 +122,8 @@
 	mwim-beginning-of-code-or-line
 	mwim-end-of-code-or-line
 	comment-dwim-2
-	hungry-delete-backward)
+	hungry-delete-backward
+	hungry-delete-forward)
   "Support command.")
 
 (defun vwe-edit-region--make-marker-cursor-id ()
