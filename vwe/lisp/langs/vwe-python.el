@@ -60,20 +60,24 @@
 					  				  (add-hook 'python-mode-hook #'py-autopep8-enable-on-save))
 
 					;;
+					;; `anaconda-mode'
+					;;
+					(vwe@lib--package 'anaconda-mode
+					  				  (add-hook 'python-mode-hook 'anaconda-mode))
+
+					;;
 					;; `company-anaconda'
 					;;
-					(vwe@lib--package 'company-anaconda
-					  				  (add-hook 'python-mode-hook (lambda ()
-																	(add-to-list (make-local-variable 'company-backends)
-																				 'company-anaconda))))
+					(vwe@lib--package 'company-anaconda nil nil
+									  ;; (add-to-list 'company-backends 'company-anaconda)
+									   (add-hook 'python-mode-hook (lambda () (set (make-local-variable 'company-backends) '(company-anaconda)))))
 
 					;;
 					;; `elpy'
 					;;
 					(vwe@lib--package 'elpy
-					  				  (progn (add-hook 'python-mode-hook #'elpy-enable)
-											 (add-hook 'elpy-mode-hook (lambda ()
-																		 (elpy-shell-set-local-shell (elpy-project-root)))))
+					  				  (progn
+										(add-hook 'elpy-mode-hook (lambda () (elpy-shell-set-local-shell (elpy-project-root)))))
 					  				  (setq elpy-shell-add-to-shell-history t
 											elpy-rpc-virtualenv-path (vwe@lib--path-cache "elpy/rpc-venv")
 											elpy-rpc-python-command "python3"

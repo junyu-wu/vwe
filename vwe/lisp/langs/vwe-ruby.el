@@ -55,8 +55,7 @@
 ;;
 (vwe@lib--package 'robe
 				  (add-hook 'ruby-mode-hook #'robe-mode)
-				  (add-to-list (make-local-variable 'company-backends)
-							   '(company-robe)))
+				  (add-hook (set (make-local-variable 'company-backends) '(company-robe))))
 
 ;;
 ;; `rubocop' 代码分析与格式化 flycheck with rubocop

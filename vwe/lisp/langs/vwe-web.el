@@ -55,7 +55,7 @@
 (vwe@lib--package 'css-mode
 				  (add-hook 'css-mode-hook
 							(lambda()
-							  (add-to-list (make-local-variable 'company-backends)
+							  (set (make-local-variable 'company-backends)
 										   '(company-css company-files company-yasnippet company-capf))))
 				  nil
 				  (setq css-indent-offset 2
@@ -103,7 +103,7 @@
 				  (vwe@lib--package 'company-web
 									(add-hook 'web-mode-hook
 											  (lambda ()
-												(add-to-list (make-local-variable 'company-backends) '(company-web-html))
+												(set (make-local-variable 'company-backends) '(company-web-html))
 												(company-mode t))))
 				  (setq web-mode-markup-indent-offset 2
 						web-mode-css-indent-offset 2

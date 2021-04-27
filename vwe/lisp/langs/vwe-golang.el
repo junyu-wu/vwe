@@ -56,8 +56,8 @@
 					;;
 					;; `company-go'
 					;;
-					(vwe@lib--package 'company-go
-					  				  (add-hook 'go-mode-hook (lambda() (add-to-list (make-local-variable 'company-backends) '(company-go)))))
+					(vwe@lib--package 'company-go nil nil
+					  				  (add-hook 'go-mode-hook (lambda() (set (make-local-variable 'company-backends) '(company-go)))))
 
 					;;
 					;; `go-eldoc'
