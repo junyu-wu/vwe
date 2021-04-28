@@ -365,7 +365,7 @@
 						  treemacs-tag-follow-delay              1.5
 						  treemacs-width                         25)
 
-					(treemacs-resize-icons 45)
+					(treemacs-resize-icons 24)
 					(treemacs-tag-follow-mode t)
 					(treemacs-git-mode nil)
 					(treemacs-follow-mode t)
