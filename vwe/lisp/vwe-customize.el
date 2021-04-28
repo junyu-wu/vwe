@@ -344,9 +344,7 @@
 
 (defcustom vwe@custom--buffer-filter-list
   '("\\*shell[0-9]*\\*\\|\\*terminal*\\|\\*terminal\\(<[0-9]*>\\)\\*\\'"
-	"\\*treemacs.*\\'"
 	"\\*company-box.*\\'"
-	"\\*dashboard\\*\\'"
 	"\\*vwe-key\\*\\'"
 	"\\*mu4e-[0-9 a-z A-Z].*\\'"
     "*scratch*"
@@ -357,8 +355,7 @@
 
 (defcustom vwe@custom--modeline--hide-list
   '("*scratch*"
-    "*Messages*"
-    "*dashboard*")
+    "*Messages*")
   "Hide modeline list.
 If nil hide all buffers."
   :group 'vwe-base
