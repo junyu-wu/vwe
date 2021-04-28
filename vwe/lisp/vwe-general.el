@@ -367,13 +367,10 @@
 
 					(treemacs-resize-icons 45)
 					(treemacs-tag-follow-mode t)
-					(treemacs-git-mode t)
+					(treemacs-git-mode nil)
 					(treemacs-follow-mode t)
 					(treemacs-filewatch-mode t)
-					(treemacs-fringe-indicator-mode t)
-					(pcase (cons (not (null (executable-find "git"))) (not (null treemacs-python-executable)))
-					  (`(t . t) (treemacs-git-mode 'deferred))
-					  (`(t . _) (treemacs-git-mode 'simple)))))
+					(treemacs-fringe-indicator-mode t)))
 
 ;;
 ;; `command-log-mode'

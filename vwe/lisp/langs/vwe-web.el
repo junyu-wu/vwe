@@ -70,7 +70,9 @@
 ;; `js2-mode'
 ;;
 (vwe@lib--package 'js2-mode
-				  nil nil
+				  (progn
+					(push '("\\.js\\'" . js2-mode) auto-mode-alist))
+				  nil
 				  (setq indent-tabs-mode nil
 						js2-basic-offset 2
 						js-indent-level 2

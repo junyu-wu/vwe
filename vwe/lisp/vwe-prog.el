@@ -288,11 +288,7 @@ MODE."
 					;;
 					;; `lsp-ivy'
 					;;
-					(vwe@lib--package 'lsp-ivy)
-					;;
-					;; `lsp-treemacs'
-					;;
-					(vwe@lib--package 'lsp-treemacs nil (lsp-treemacs-sync-mode 1) nil t))
+					(vwe@lib--package 'lsp-ivy))
 				  (setq lsp-keymap-prefix "C-c l"
 						lsp-completion-provider :capf
 						lsp-idle-delay 0.500

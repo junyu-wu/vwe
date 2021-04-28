@@ -51,27 +51,26 @@
 					(define-key go-mode-map (kbd "M-.") #'godef-jump)
 					(add-hook 'before-save-hook #'gofmt-before-save)
 					(with-eval-after-load 'exec-path-from-shell
-					  (exec-path-from-shell-copy-envs
-					   '("GOPATH" "GO111MODULE" "GOPROXY")))
+					  (exec-path-from-shell-copy-envs '("GOPATH" "GO111MODULE" "GOPROXY")))
+
 					;;
 					;; `company-go'
 					;;
 					(vwe@lib--package 'company-go nil nil
-					  				  (add-hook 'go-mode-hook (lambda() (set (make-local-variable 'company-backends) '(company-go)))))
+					  				  (add-hook 'go-mode-hook (lambda() (set (make-local-variable 'company-backends) '(company-go)) (company-mode))))
 
 					;;
 					;; `go-eldoc'
 					;;
-					(vwe@lib--package 'go-eldoc
-									  (add-hook 'go-mode-hook #'go-eldoc-setup))
+					(vwe@lib--package 'go-eldoc (add-hook 'go-mode-hook #'go-eldoc-setup))
 
 					;;
 					;; `go-guru' go代码编辑扩展
 					;;
-					(vwe@lib--package 'go-guru
-					  				  (add-hook 'go-mode-hook #'go-guru-hl-identifier-mode)))
+					(vwe@lib--package 'go-guru (add-hook 'go-mode-hook #'go-guru-hl-identifier-mode)))
 				  (setq go-command (concat (getenv "GOROOT") "/bin/go")
 						gofmt-command (concat (getenv "GOPATH") "/bin/goimports")
+						company-go-gocode-command (concat (getenv "GOPATH") "/bin/gocode")
 						flycheck-go-gofmt-executable (concat (getenv "GOPATH") "/bin/goimports")
 						flycheck-go-golint-executable (concat (getenv "GOPATH") "/bin/golint")
 						flycheck-go-build-executable (concat (getenv "GOROOT") "/bin/go")
