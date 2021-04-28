@@ -253,7 +253,6 @@
 						company-backends '((company-files company-yasnippet company-keywords company-capf)
 										   (company-abbrev company-dabbrev))))
 
-
 ;;
 ;; `wgrep'
 ;;
@@ -324,52 +323,6 @@
 ;;
 (vwe@lib--package 'format-all
 				  (add-hook 'prog-mode-hook #'format-all-mode))
-
-;;
-;; `treemacs'
-;;
-(vwe@lib--package 'treemacs nil
-				  (progn
-					(setq treemacs-collapse-dirs                 (if treemacs-python-executable 3 0)
-						  treemacs-deferred-git-apply-delay      0.5
-						  treemacs-display-in-side-window        t
-						  treemacs-eldoc-display                 t
-						  treemacs-file-event-delay              5000
-						  treemacs-file-follow-delay             0.2
-						  treemacs-follow-after-init             t
-						  treemacs-git-command-pipe              ""
-						  treemacs-goto-tag-strategy             'refetch-index
-						  treemacs-indentation                   2
-						  treemacs-indentation-string            " "
-						  treemacs-is-never-other-window         nil
-						  treemacs-max-git-entries               5000
-						  treemacs-missing-project-action        'ask
-						  treemacs-no-png-images                 nil
-						  treemacs-no-delete-other-windows       t
-						  treemacs-project-follow-cleanup        nil
-						  treemacs-persist-file                  (vwe@lib--path-cache "treemacs/treemacs-persisst" t)
-						  treemacs-position                      'left
-						  treemacs-recenter-distance             0.1
-						  treemacs-recenter-after-file-follow    t
-						  treemacs-recenter-after-tag-follow     nil
-						  treemacs-recenter-after-project-jump   'always
-						  treemacs-recenter-after-project-expand 'on-distance
-						  treemacs-show-cursor                   nil
-						  treemacs-show-hidden-files             t
-						  treemacs-silent-filewatch              nil
-						  treemacs-silent-refresh                nil
-						  treemacs-sorting                       'alphabetic-desc
-						  treemacs-space-between-root-nodes      t
-						  treemacs-tag-follow-cleanup            t
-						  treemacs-tag-follow-delay              1.5
-						  treemacs-width                         25)
-
-					(treemacs-resize-icons 24)
-					(treemacs-tag-follow-mode t)
-					(treemacs-git-mode nil)
-					(treemacs-follow-mode t)
-					(treemacs-filewatch-mode t)
-					(treemacs-fringe-indicator-mode t)))
 
 ;;
 ;; `command-log-mode'
