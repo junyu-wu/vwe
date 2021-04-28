@@ -328,8 +328,7 @@
 ;;
 ;; `treemacs'
 ;;
-(vwe@lib--package 'treemacs
-				  nil
+(vwe@lib--package 'treemacs nil
 				  (progn
 					(setq treemacs-collapse-dirs                 (if treemacs-python-executable 3 0)
 						  treemacs-deferred-git-apply-delay      0.5
