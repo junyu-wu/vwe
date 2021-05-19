@@ -566,7 +566,7 @@ SELF is include curretn buffer."
   nil
   "Origin window point.")
 
-(defvar vwe-move-line-preview--goto-line
+(defvar vwe-move-line-preview--line-number
   nil
   "Preveiw goto line.")
 
@@ -585,31 +585,35 @@ SELF is include curretn buffer."
 (defun vwe-move-line-preview ()
   "Preview goto line."
   (interactive)
-  (save-selected-window
-	(let* ((input-num-str (thing-at-point 'line)))
-	  (when input-num-str
-		(setq vwe-move-line-preview--goto-line (string-to-number input-num-str)))
-	  (when (and vwe-move-line-preview--origin-window vwe-move-line-preview--goto-line)
+  (let* ((input-num-str (thing-at-point 'line)))
+	(when input-num-str
+	  (setq vwe-move-line-preview--line-number (string-to-number input-num-str)))
+	(save-selected-window
+	  (when (and vwe-move-line-preview--origin-window vwe-move-line-preview--line-number)
 		(select-window vwe-move-line-preview--origin-window)
-		(unless (zerop vwe-move-line-preview--goto-line)
+		(unless (zerop vwe-move-line-preview--line-number)
 		  (goto-char (point-min))
-		  (forward-line (1- vwe-move-line-preview--goto-line)))
-		(set-transient-map vwe-move-line-preview--transient-keymap nil #'vwe-move-line-preview--recovery)))
-	(message "preview line %s" vwe-move-line-preview--goto-line)))
+		  (forward-line (1- vwe-move-line-preview--line-number)))
+		;; (set-transient-map vwe-move-line-preview--transient-keymap nil #'vwe-move-line-preview--recovery)
+		))
+	(message "preview line %s" vwe-move-line-preview--line-number)))
 
 (defun vwe-move-line-preview--goto-line (&optional line)
   "Preview goto LINE."
   (interactive)
-  (setq vwe-move-line-preview--goto-line (if line line (read-number "preview line:")))
-  (vwe-move-line-previe--bulid-preview-origin-snapshot)
-  (vwe-move-line-preview))
+  (setq vwe-move-line-preview--line-number (if line line (read-number "line:")))
+  (goto-char (point-min))
+  (forward-line (1- vwe-move-line-preview--line-number))
+  ;; (vwe-move-line-previe--bulid-preview-origin-snapshot)
+  ;; (vwe-move-line-preview)
+  )
 
 (defun vwe-move-line-preview--dynamic-goto-line ()
   "Preview dynamic goto line."
   (interactive)
   (vwe-move-line-previe--bulid-preview-origin-snapshot)
   (unwind-protect
-	  (setq vwe-move-line-preview--goto-line (read-number "preview line:"))
+	  (setq vwe-move-line-preview--line-number (read-number "line:"))
 	(set-window-point vwe-move-line-preview--origin-window vwe-move-line-preview--origin-window-point)))
 
 (defun vwe-move-line-previe--bulid-preview-origin-snapshot ()
@@ -658,8 +662,7 @@ SELF is include curretn buffer."
 ;; goto line
 ;;
 ;; =============================================================================
-(defvar vwe-move-goto-line--keymap
-  (let ((keymap (make-sparse-keymap)))
+(defvar vwe-move-goto-line--keymap (let ((keymap (make-sparse-keymap)))
 	(define-key keymap (kbd "M-* p") #'vwe-move-goto-line-previous)
 	(define-key keymap (kbd "M-* n") #'vwe-move-goto-line-next)
 	keymap)
