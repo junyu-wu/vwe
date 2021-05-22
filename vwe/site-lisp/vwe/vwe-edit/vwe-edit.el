@@ -26,7 +26,7 @@
 (require 'cl-lib)
 
 (defgroup vwe-edit-region nil
-  "Customization group for beacon."
+  "Edit region."
   :group 'vwiss-vwe
   :prefix "vwe-edit-region--")
 

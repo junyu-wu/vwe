@@ -105,6 +105,9 @@
 					("P" vwe-proxy--enable-global "proxy global enable")
 					("," toggle-frame-maximized "maximized")
 					("." toggle-frame-fullscreen "fullscreen")
+					("M" menu-bar-mode "menu bar mode")
+					("T" tool-bar-mode "tool bar mode")
+					("S" scroll-bar-mode "scroll bar mode")
 					("F" helpful-function "help func")
 					("V" helpful-variable "help var")
 					("K" helpful-key "help key")
@@ -326,7 +329,10 @@
 
   (vwe-key-define gud
 				  ("GUD"
-				   (("g" gdb "gbd")
+				   (("g" gdb "gdb")
+					("G" gud-gdb "gud")
+					("m" gdb-many-windows "many windos")
+					("R" gdb-restore-windows "restore windos")
 					("x" vwe@prog--gud-or-gud-go "gud go")
 					("d" vwe@prog--gdb-disable "disable gdb")
 					("b" vwe@prog--gud-breakpoint-set-or-remove "breakpoint")
@@ -341,7 +347,12 @@
 					("j" gud-jdb-find-source "find source")
 					("t" gud-stepi "stepi")
 					("p" gud-print "print")
-					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
+					("w" gud-watch "watch")
+					("o" gud-tooltip-mode "tooltip mode")
+					("M" menu-bar-mode "menu bar mode")
+					("T" tool-bar-mode "tool bar mode")
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				   (gud-mode gdb-mode sdb-mode dbx-mode perldb-mode xdb-mode jdb-mode))
 
   (vwe-key-define clang
 				  ("C/C++"
@@ -390,6 +401,7 @@
 					("i" go-impl "impl")
 					("a" go-import-add "import add")
 					("m" go-remove-unused-imports "remove imports")
+					("u" vwe-key:gud "gud")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (go-mode))
 
