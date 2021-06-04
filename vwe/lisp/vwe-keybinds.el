@@ -208,6 +208,8 @@
 					("d" dired-filter-by-directory "filter by directory")
 					("t" dired-filter-by-dot-files "filter by dot files")
 					("e" dired-filter-by-executable "filter by executable")
+					("F" dired-filter-group-mode "filter group mode")
+					("C" dired-collapse-mode "collapse mode")
 					("q" vwe-term--exit "exit terminal")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (dired-mode))
@@ -352,7 +354,7 @@
 					("M" menu-bar-mode "menu bar mode")
 					("T" tool-bar-mode "tool bar mode")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
-				   (gud-mode gdb-mode sdb-mode dbx-mode perldb-mode xdb-mode jdb-mode))
+				  (gud-mode gdb-mode sdb-mode dbx-mode perldb-mode xdb-mode jdb-mode))
 
   (vwe-key-define clang
 				  ("C/C++"
@@ -419,9 +421,29 @@
 					("k" ruby-send-block "send block")
 					("b" ruby-send-buffer "send buffer")
 					("I" inf-ruby-switch-setup "switch setup")
-
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (ruby-mode))
+
+  (vwe-key-define rust
+				  ("rust"
+				   (("c" rustic-compile "compile")
+					("C" rustic-recompile "recompile")
+					("f" rustic-format-buffer "format buffer")
+					("F" rustic-format-file "format File")
+					("r" rustic-cargo-run "cargo run")
+					("R" rust-run "run")
+					("W" rustic-cargo-fmt "cargo fmt workspace")
+					("a" rustic-cargo-add "cargo add")
+					("d" rustic-cargo-rm "cargo rm")
+					("u" rustic-cargo-upgrade "cargo upgrade")
+					("t" rustic-cargo-test "gargo test")
+					("T" rustic-cargo-current-test "gargo test current")
+					("o" rustic-cargo-outdated "cargo outdated")
+					("p" rustic-cargo-clippy "cargo clippy")
+					("n" rustic-cargo-clean "cargo clean")
+					("h" rustic-doc-mode "doc mode")
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  (rust-mode rustic-mode))
 
   (vwe-key-define java
 				  ("java"
@@ -432,7 +454,7 @@
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (java-mode))
 
-   (vwe-key-define lua
+  (vwe-key-define lua
 				  ("lua"
 				   (("s" lua-start-process "new repl")
 					("k" lua-kill-process "kill repl")

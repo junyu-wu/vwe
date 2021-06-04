@@ -21,9 +21,11 @@
 
 ;;; Commentary:
 ;; rustup toolchain add nightly
-;; rustup component add rust-src
+;; rustup component add rls rust-analysis rust-src
+;; rustup component add --toolchain nightly clippy
 ;; cargo fmt
 ;; cargo +nightly install racer
+;; cargo install cargo-edit
 
 ;;; Code:
 
@@ -32,33 +34,18 @@
 ;;
 (vwe@lib--package 'rust-mode
 				  (progn
-					(add-hook 'rust-mode-hook (lambda () (setq indent-tabs-mode nil))))
+					(add-hook 'rust-mode-hook 'rustic-mode))
 				  (progn
-					(define-key rust-mode-map (kbd "TAB") #'company-indent-or-complete-common)
 					;;
-					;; `cargo'
+					;; `rustic-mode'
 					;;
-					(vwe@lib--package 'cargo
-					  				  (add-hook 'rust-mode-hook #'cargo-minor-mode)
-					  				  (setq compilation-filter-hook (append compilation-filter-hook '(cargo-process--add-errno-buttons))))
-
-					;;
-					;; `racer' 补全代码
-					;;
-					(vwe@lib--package 'racer
-					  				  (add-hook 'rust-mode-hook #'racer-mode))
-
-					;;
-					;; `rustic' rust-mode 扩展
-					;;
-					(vwe@lib--package 'rustic)
-
-					;;
-					;; `rust-playground'
-					;;
-					(vwe@lib--package 'rust-playground))
-				  (setq rust-format-on-save t
-						company-tooltip-align-annotations t))
+					(vwe@lib--package 'rustic-mode
+									  (progn
+										(push '("\\.rs\\'" . rustic-mode) auto-mode-alist))
+									  (progn
+										(add-hook 'before-save-hook #'rustic-format-buffer)
+										(push 'rustic-clippy flycheck-checkers))
+									  (setq rustic-lsp-server nil))))
 
 (provide 'vwe-rust)
 ;;; vwe-rust.el ends here
