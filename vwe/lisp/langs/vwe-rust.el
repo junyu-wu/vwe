@@ -23,9 +23,7 @@
 ;; rustup toolchain add nightly
 ;; rustup component add rls rust-analysis rust-src
 ;; rustup component add --toolchain nightly clippy
-;; cargo fmt
-;; cargo +nightly install racer
-;; cargo install cargo-edit
+;; cargo install cargo-edit   ;; libssl-dev
 
 ;;; Code:
 
@@ -39,7 +37,7 @@
 					;;
 					;; `rustic-mode'
 					;;
-					(vwe@lib--package 'rustic-mode
+					(vwe@lib--package 'rustic
 									  (progn
 										(push '("\\.rs\\'" . rustic-mode) auto-mode-alist))
 									  (progn
