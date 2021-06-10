@@ -32,7 +32,7 @@
 	("<f3>"                               split-window-horizontally)
 	("C-<f3>"                             split-window-vertically)
 	("<f4>"                               vwe@theme--init)
-	("<f12>"                              toggle-frame-fullscreen)
+	("<f11>"                              toggle-frame-maximized)
 	("C-r"                                recentf-open-files)
 	("C-'"                                imenu-list-smart-toggle)
 	("C-s"                                swiper)
@@ -67,7 +67,7 @@
 	("M-C-,"                              eacl-complete-multiline)
 	("C-]"                                counsel-etags-find-tag-at-point)
 	("M-C-?"                              youdao-dictionary-search-at-point+)
-	("s-s"                                toggle-frame-maximized)
+	("S-s"                                toggle-frame-maximized)
 	("M-&"                                (lambda () (interactive) (if (bound-and-true-p hs-minor-mode) (hs-toggle-hiding) (hs-minor-mode t) (hs-toggle-hiding))))
 	("C-1"                                vwe-move--windmove-up)
 	("C-2"                                vwe-move--windmove-down)
@@ -279,9 +279,10 @@
 					("s" org-show-subtree "show subtree")
 					("T" org-table-toggle-coordinate-overlays "show table point")
 					("C" org-ctrl-c-ctrl-c "C-c")
-					("m" org-edit-special "edit special")
+					("M" org-edit-special "edit special")
 	  				("e" org-meta-return  "+meta elem")
 					("L" org-store-link "store link")
+					("m" org-meta-return "meta return")
 					("i" vwe@org--insert-sub-level-element "+sub elem")
 					("d" org-shiftmetaright "element down level")
 					("u" org-shiftmetaleft "element up level")
@@ -302,7 +303,7 @@
 					("DEL" vwe-key:org-template "org template" :footer t :face (:background "magenta" :foreground "white" :weight bold))
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (org-mode)
-				  (if vwe@lib--sys-win-p "C-<return>" "C-M-<return>"))
+				  (if vwe@lib--sys-win-p "C-<return>" "M-<return>"))
 
   (vwe-key-define markdown
 				  ("markdown"
