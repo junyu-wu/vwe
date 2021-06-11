@@ -307,11 +307,6 @@ MODE."
 (vwe@lib--package 'dap-mode)
 
 ;;
-;; `magit'
-;;
-(vwe@lib--package 'magit nil (add-hook 'after-save-hook #'magit-after-save-refresh-status))
-
-;;
 ;; `ejc-sql'
 ;;
 (vwe@lib--package 'ejc-sql

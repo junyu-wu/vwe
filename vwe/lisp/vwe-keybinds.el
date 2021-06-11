@@ -137,6 +137,7 @@
 					("E" vwe-editor-mode "editor")
 					("v" vwe-terminal "term")
 					("l" vwe@lsp--run "lsp")
+					("G" vwe-key:magit "magit")
 					("L" vwe-key:layout "layout")
 					("o" vwe-key:org-extend "org extend")
 					("C" vwe-key:check "check")
@@ -197,6 +198,12 @@
 					("o" projectile-switch-open-project "switch open project")
 					("s" projectile-switch-project "switch project")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
+
+  (vwe-key-define magit
+				  (("magit" :face (:background "red" :foreground "white" :weight bold))
+				   (("s" magit-status "status")
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  )
 
   (vwe-key-define dired
 				  (("dired" :face (:background "red" :foreground "white" :weight bold))

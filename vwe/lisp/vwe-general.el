@@ -560,5 +560,18 @@
 				  (push '("\\.txt\\'" . org-mode) auto-mode-alist)
 				  nil nil nil nil t)
 
+;;
+;; `diff-hl'
+;;
+(vwe@lib--package 'diff-hl)
+
+;;
+;; `magit'
+;;
+(vwe@lib--package 'magit nil (progn
+							   (add-hook 'after-save-hook #'magit-after-save-refresh-status)
+							   (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
+							   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)))
+
 (provide 'vwe-general)
 ;;; vwe-general.el ends here
