@@ -93,7 +93,10 @@ SOURCE-NAME is source name."
   (interactive)
   (when (display-graphic-p)
 	(if vwe@custom--frame-max? (toggle-frame-maximized)
-	  (vwe@lib--frame-reset vwe@custom--frame-width vwe@custom--frame-height 50 50))))
+	  (vwe@lib--frame-reset vwe@custom--frame-width
+							vwe@custom--frame-height
+							(car vwe@custom--frame-position)
+							(cadr vwe@custom--frame-position)))))
 
 (defun vwe@base--font-init ()
   "Font config."

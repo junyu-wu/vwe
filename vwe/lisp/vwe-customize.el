@@ -207,6 +207,13 @@
   :group 'vwe-ui
   :type 'integer)
 
+(defcustom vwe@custom--frame-position
+  nil
+  ;; '(50 50)
+  "Default position."
+  :group 'vwe-ui
+  :type 'list)
+
 (defcustom vwe@custom--frame-max?
   nil
   "Startup Frame max."
