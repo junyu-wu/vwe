@@ -93,8 +93,8 @@ SOURCE-NAME is source name."
   (interactive)
   (when (display-graphic-p)
 	(if vwe@custom--frame-max? (toggle-frame-maximized)
-	  (vwe@lib--frame-reset vwe@custom--frame-width
-							vwe@custom--frame-height
+	  (vwe@lib--frame-reset (car vwe@custom--frame-size)
+							(cadr vwe@custom--frame-size)
 							(car vwe@custom--frame-position)
 							(cadr vwe@custom--frame-position)))))
 

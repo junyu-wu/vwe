@@ -195,22 +195,16 @@
 ;; ***************************************************************************
 ;; frame
 ;; ***************************************************************************
-(defcustom vwe@custom--frame-width
-  85
-  "Default width."
+(defcustom vwe@custom--frame-size
+  '(135 55)
+  "Default width(car) and height(cdr)."
   :group 'vwe-ui
-  :type 'integer)
-
-(defcustom vwe@custom--frame-height
-  35
-  "Default hieght."
-  :group 'vwe-ui
-  :type 'integer)
+  :type 'list)
 
 (defcustom vwe@custom--frame-position
   nil
   ;; '(50 50)
-  "Default position."
+  "Default position X(car) and Y(cdr)."
   :group 'vwe-ui
   :type 'list)
 
