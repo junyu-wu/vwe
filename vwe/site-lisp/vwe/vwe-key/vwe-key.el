@@ -208,7 +208,7 @@
 			   (key (car body-item))
 			   (func (cadr body-item))
 			   (func-str (format "%s" func))
-			   (func-keep func-str)
+			   (func-keep func)
 			   (hint (car (cddr body-item)))
 			   (hint-str (format "%s" hint))
 			   (label-footer (plist-get (cdddr body-item) :footer))
@@ -218,7 +218,8 @@
 			(setq func (lambda () (interactive) (message "func is nil"))))
 		  (when circle
 			(setq func (lambda () (interactive)
-						 (funcall (intern func-keep))
+						 ;; (funcall (intern func-keep))
+						 (funcall func-keep)
 						 (funcall (intern (format "%s" func-name))))))
 		  (unless (< (length func-str) vwe-key--max-width)
 			(setq func-str (concat (substring func-str 0 (* 2 (/ vwe-key--max-width 3))) "...")))
