@@ -606,15 +606,19 @@ REQUIREP non-nil `require' PKG.
 IGNORE non-nil ignore package."
   `(condition-case nil
 	   (progn
-		 (unless ,ignore
-		   (if ,dir
-			   (progn
-				 (when (file-directory-p (format "%s" ,dir)) (push ,dir load-path)))
-			 (unless (package-installed-p ,pkg) (package-install ,pkg))))
-		 ,pre
-		 (when ,requirep (require ,pkg))
-		 (with-eval-after-load (format "%s" ,pkg) ,post)
-		 ,final)
+		 (if ,pkg
+			 (progn
+			   (unless ,ignore
+				 (if ,dir
+					 (progn
+					   (when (file-directory-p (format "%s" ,dir)) (push ,dir load-path)))
+				   (unless (package-installed-p ,pkg) (package-install ,pkg))))
+			   ,pre
+			   (when ,requirep (require ,pkg))
+			   (with-eval-after-load (format "%s" ,pkg) ,post)
+			   ,final)
+		   (progn
+			 ,pre ,post ,final)))
 	 (error
 	  (message "pkg %S not found or package inner error" ,pkg))))
 
