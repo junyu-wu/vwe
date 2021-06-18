@@ -35,6 +35,7 @@
 	("fundamental"      . fundamental-mode)
 	("special"          . special-mode)
 	("text"             . text-mode)
+	("conf"             . conf-mode)
 	("ruby"             . ruby-mode)
 	("shell script"     . sh-mode)
 	("shell"            . shell-mode)
