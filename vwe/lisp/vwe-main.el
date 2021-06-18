@@ -82,6 +82,11 @@
 		   ;;
 		   (require 'vwe-keybinds)
 
+		   ;;
+		   ;; after init
+		   ;;
+		   (require 'vwe-after-init)
+
 		   (message "vwe all config init."))))
 
 
