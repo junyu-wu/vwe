@@ -196,7 +196,7 @@
 ;; frame
 ;; ***************************************************************************
 (defcustom vwe@custom--frame-size
-  '(135 55)
+  '(80 35)
   "Default width(car) and height(cdr)."
   :group 'vwe-ui
   :type 'list)

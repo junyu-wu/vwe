@@ -107,16 +107,14 @@
   (vwe-move-line--move-down (or index 1)))
 
 (defun vwe-move-line-mode-enable ()
-  "Enable mode."
-  (define-key vwe-move--keymap (kbd "M-n") #'vwe-move-line--down)
-  (define-key vwe-move--keymap (kbd "M-p") #'vwe-move-line--up))
+  "Enable mode.")
 
 (defun vwe-move-line-mode-disable ()
   "Disable mode.")
 
 ;;;###autoload
 (define-minor-mode vwe-move-line-mode
-  "Vwe tags minor mode."
+  "Vwe move line minor mode."
   :group 'vwe-move
   :keymap vwe-move--keymap
   :global t
@@ -663,9 +661,9 @@ SELF is include curretn buffer."
 ;;
 ;; =============================================================================
 (defvar vwe-move-goto-line--keymap (let ((keymap (make-sparse-keymap)))
-	(define-key keymap (kbd "M-* p") #'vwe-move-goto-line-previous)
-	(define-key keymap (kbd "M-* n") #'vwe-move-goto-line-next)
-	keymap)
+									 (define-key keymap (kbd "M-* p") #'vwe-move-goto-line-previous)
+									 (define-key keymap (kbd "M-* n") #'vwe-move-goto-line-next)
+									 keymap)
   "Move to mark map.")
 
 (defvar vwe-move-goto-line--current-overlay-list
@@ -763,6 +761,170 @@ SELF is include curretn buffer."
   (if vwe-move-goto-line-mode
 	  (vwe-move-goto-line--enable)))
 
+;; =============================================================================
+;; mark and goto
+;; word/symbol,paren,line,expression
+;; =============================================================================
+(defvar vwe-mark-and-goto--keymap
+  (let ((keymap (make-sparse-keymap)))
+	keymap)
+  "Move to mark map.")
+
+(defvar vwe-mark-and-goto--show-mark-keymap
+  (let ((keymap (make-sparse-keymap)))
+	keymap)
+  "Move to mark map.")
+
+(defface vwe-mark-and-goto--mark-face
+  '((t (:inherit 'error :inverse-video nil)))
+  "Position makr hint face."
+  :group 'vwe-mark)
+
+(defvar vwe-mark-and-goto--mark-list
+  nil
+  "Mark list, like '(point1 ... pointn)).")
+
+(defvar vwe-mark-and-goto--is-back
+  nil
+  "Is backward.")
+
+(defvar vwe-mark-and-goto--type
+  'word
+  "Mark and goto type, `word', `symbol', `line', `expression', `paragraph',`paren'.")
+
+(defun vwe-mark-and-goto--mark ()
+  "Mark word, forward."
+  (interactive)
+  (setq vwe-mark-and-goto--mark-list nil)
+  (let* ((win-start (window-start))
+		 (win-end (window-end))
+		 (mark-pos (point))
+		 (mark-overlay nil)
+		 (mark-index 0)
+		 (next t))
+	(save-excursion
+	  (while next
+		(if vwe-mark-and-goto--is-back
+			(progn
+			  (cond
+			   ((eq vwe-mark-and-goto--type 'word) (backward-word))
+			   ((eq vwe-mark-and-goto--type 'symbol) (forward-symbol -1))
+			   ((eq vwe-mark-and-goto--type 'line) (forward-line -1))
+			   ((eq vwe-mark-and-goto--type 'expression) (backward-sexp))
+			   ((eq vwe-mark-and-goto--type 'paragraph) (backward-paragraph))
+			   ))
+		  (progn
+			(cond
+			 ((eq vwe-mark-and-goto--type 'word) (forward-word))
+			 ((eq vwe-mark-and-goto--type 'symbol) (forward-symbol 1))
+			 ((eq vwe-mark-and-goto--type 'line) (forward-line))
+			 ((eq vwe-mark-and-goto--type 'expression) (forward-sexp))
+			 ((eq vwe-mark-and-goto--type 'paragraph) (forward-paragraph))
+			 )))
+
+		(if (or (>= mark-pos win-end) (<= mark-pos win-start))
+			(setq next nil)
+		  (setq mark-pos (point)
+				mark-overlay (make-overlay (1- mark-pos) mark-pos)
+				mark-index (1+ mark-index)
+				vwe-mark-and-goto--mark-list (append vwe-mark-and-goto--mark-list (list (list mark-index mark-pos mark-overlay))))
+		  (overlay-put mark-overlay 'after-string
+					   (propertize (format "%d" mark-index)
+								   'display '((raise 0.5))
+								   'face 'vwe-mark-and-goto--mark-face))))
+	  (define-key vwe-mark-and-goto--show-mark-keymap (kbd "q") #'vwe-mark-and-goto--remove-mark-list)
+	  (define-key vwe-mark-and-goto--show-mark-keymap (kbd "C-g") #'vwe-mark-and-goto--remove-mark-list)
+	  (define-key vwe-mark-and-goto--show-mark-keymap (kbd "g") #'vwe-mark-and-goto--goto-mark)
+	  (set-transient-map vwe-mark-and-goto--show-mark-keymap nil nil))))
+
+(defun vwe-mark-and-goto--goto-mark (&optional arg)
+  "Goto mark ARG."
+  (interactive)
+  (let* ((goto (if arg arg (read-number "goto:"))))
+	(if vwe-mark-and-goto--is-back
+		(progn
+		  (cond
+		   ((eq vwe-mark-and-goto--type 'word) (backward-word goto))
+		   ((eq vwe-mark-and-goto--type 'symbol) (forward-symbol (* goto -1)))
+		   ((eq vwe-mark-and-goto--type 'line) (forward-line (* goto -1)))
+		   ((eq vwe-mark-and-goto--type 'expression) (backward-sexp goto))
+		   ((eq vwe-mark-and-goto--type 'paragraph) (backward-paragraph goto))
+		   ))
+	  (progn
+		(cond
+		 ((eq vwe-mark-and-goto--type 'word) (forward-word goto))
+		 ((eq vwe-mark-and-goto--type 'symbol) (forward-symbol goto))
+		 ((eq vwe-mark-and-goto--type 'line) (forward-line goto))
+		 ((eq vwe-mark-and-goto--type 'expression) (forward-sexp goto))
+		 ((eq vwe-mark-and-goto--type 'paragraph) (forward-paragraph goto))
+		 )))
+
+	(vwe-mark-and-goto--remove-mark-list)
+	(setq vwe-mark-and-goto--is-back nil)))
+
+(defun vwe-mark-and-goto--remove-mark-list ()
+  "Remove mark list."
+  (interactive)
+  (mapc #'delete-overlay (mapcar (lambda (m) (caddr m)) vwe-mark-and-goto--mark-list))
+  (setq vwe-mark-and-goto--mark-list nil))
+
+(defun vwe-mark-and-goto--mark-line ()
+  "Mark line."
+  (interactive)
+  (setq vwe-mark-and-goto--type 'line)
+  (vwe-mark-and-goto--remove-mark-list)
+  (vwe-mark-and-goto--mark))
+
+(defun vwe-mark-and-goto--forward-mark-line ()
+  "Forward mark line."
+  (interactive)
+  (setq vwe-mark-and-goto--is-back nil)
+  (vwe-mark-and-goto--mark-line))
+
+(defun vwe-mark-and-goto--backward-mark-line ()
+  "Backward mark line."
+  (interactive)
+  (setq vwe-mark-and-goto--is-back t)
+  (vwe-mark-and-goto--mark-line))
+
+(defun vwe-mark-and-goto--mark-word ()
+  "Mark word."
+  (interactive)
+  (setq vwe-mark-and-goto--type 'word)
+  (vwe-mark-and-goto--remove-mark-list)
+  (vwe-mark-and-goto--mark))
+
+(defun vwe-mark-and-goto--forward-mark-word ()
+  "Forward mark word."
+  (interactive)
+  (setq vwe-mark-and-goto--is-back nil)
+  (vwe-mark-and-goto--mark-word))
+
+(defun vwe-mark-and-goto--backward-mark-word ()
+  "Backward mark word."
+  (interactive)
+  (setq vwe-mark-and-goto--is-back t)
+  (vwe-mark-and-goto--mark-word))
+
+(defun vwe-mark-and-goto-mode-enable ()
+  "Enable mode."
+  (define-key vwe-mark-and-goto--keymap (kbd "C->") #'vwe-mark-and-goto--forward-mark-word)
+  (define-key vwe-mark-and-goto--keymap (kbd "C-<") #'vwe-mark-and-goto--backward-mark-word)
+  (define-key vwe-mark-and-goto--keymap (kbd "M-* n") #'vwe-mark-and-goto--forward-mark-line)
+  (define-key vwe-mark-and-goto--keymap (kbd "M-* p") #'vwe-mark-and-goto--backward-mark-line))
+
+(defun vwe-mark-and-goto-mode-disable ()
+  "Disable mode.")
+
+(define-minor-mode vwe-mark-and-goto-mode
+  "Mark and goto mode."
+  :group 'vwe-move
+  :keymap vwe-mark-and-goto--keymap
+  :global t
+  (if vwe-mark-and-goto-mode
+	  (vwe-mark-and-goto-mode-enable)
+	(vwe-mark-and-goto-mode-disable)))
+
 ;;
 ;; mode
 ;;
@@ -771,14 +933,16 @@ SELF is include curretn buffer."
   (vwe-move-line-mode 1)
   (vwe-move-change-mode 1)
   (vwe-move-line-preview-mode 1)
-  (vwe-move-marker-point-mode 1))
+  (vwe-move-marker-point-mode 1)
+  (vwe-mark-and-goto-mode 1))
 
 (defun vwe-move-mode-disable ()
   "Disable mode."
   (vwe-move-line-mode -1)
   (vwe-move-change-mode -1)
   (vwe-move-line-preview-mode -1)
-  (vwe-move-marker-point-mode -1))
+  (vwe-move-marker-point-mode -1)
+  (vwe-mark-and-goto-mode -1))
 
 ;;;###autoload
 (define-minor-mode vwe-move-mode
