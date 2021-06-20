@@ -78,6 +78,14 @@
   "^[*|\s*]"
   "Filter regexp.")
 
+(defvar vwe-editor-view-mode-hook
+  nil
+  "View mode hook.")
+
+(defvar vwe-editor-edit-mode-hook
+  nil
+  "View mode hook.")
+
 (defun vwe-editor--find-file (func &rest args)
   "Find FUNC and ARGS file."
   (apply func args)
@@ -123,10 +131,12 @@
   :group 'vwe-editor
   :keymap vwe-editor-view--keymap
   (if vwe-editor-view-mode
-	  (when vwe-editor--mode-activate?
-		(setq buffer-read-only t
-			  vwe-editor--mode-current-type 'view)
-		(vwe-editor-edit-mode -1))))
+	  (progn
+		(when vwe-editor--mode-activate?
+		  (setq vwe-editor--mode-current-type 'view
+				buffer-read-only t)
+		  (vwe-editor-edit-mode -1))
+		(run-hooks 'vwe-editor-view-mode-hook))))
 
 (define-minor-mode vwe-editor-edit-mode
   "Editor edit mode."
@@ -134,11 +144,12 @@
   :keymap vwe-editor-edit--keymap
   (if vwe-editor-edit-mode
 	  (when vwe-editor--mode-activate?
-		(setq buffer-read-only nil
-			  vwe-editor--mode-current-type 'edit)
+		(setq vwe-editor--mode-current-type 'edit) ;;buffer-read-only nil
+		(read-only-mode -1)
 		(vwe-editor-view-mode -1)
 		(when vwe-editor--idle-toggle-mode
-		  (setq vwe-editor--timer (run-with-idle-timer vwe-editor--idle-time t #'vwe-editor-view--active))))
+		  (setq vwe-editor--timer (run-with-idle-timer vwe-editor--idle-time t #'vwe-editor-view--active)))
+		(run-hooks 'vwe-editor-edit-mode-hook))
 	(when (timerp vwe-editor--timer) (cancel-timer vwe-editor--timer))))
 
 (defun vwe-editor-enable ()
@@ -159,9 +170,9 @@
   (advice-remove #'save-buffer #'vwe-editor-view--save-buffer)
   (advice-remove #'switch-to-buffer #'vwe-editor-view--switch-buffer)
   (advice-remove #'select-window #'vwe-editor-view--select-window)
-  (setq vwe-editor--mode-activate? nil
-		buffer-read-only nil
-		vwe-editor--mode-current-type nil))
+  (setq vwe-editor--mode-activate? nil ;;buffer-read-only nil
+		vwe-editor--mode-current-type nil)
+  (read-only-mode -1))
 
 ;;;###autoload
 (define-minor-mode vwe-editor-mode

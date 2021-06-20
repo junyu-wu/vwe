@@ -107,7 +107,9 @@
   (vwe-move-line--move-down (or index 1)))
 
 (defun vwe-move-line-mode-enable ()
-  "Enable mode.")
+  "Enable mode."
+  (define-key vwe-move--keymap (kbd "M-p") #'vwe-move-line--up)
+  (define-key vwe-move--keymap (kbd "M-n") #'vwe-move-line--down))
 
 (defun vwe-move-line-mode-disable ()
   "Disable mode.")
@@ -775,6 +777,11 @@ SELF is include curretn buffer."
 	keymap)
   "Move to mark map.")
 
+(defvar vwe-mark-and-goto-show--keymap
+  (let ((keymap (make-sparse-keymap)))
+	keymap)
+  "Move to mark map.")
+
 (defface vwe-mark-and-goto--mark-face
   '((t (:inherit 'error :inverse-video nil)))
   "Position makr hint face."
@@ -802,6 +809,12 @@ SELF is include curretn buffer."
 		 (mark-overlay nil)
 		 (mark-index 0)
 		 (next t))
+	(vwe-mark-and-goto-show-mode-enable)
+	(when (= mark-pos (point-min))
+	  (setq mark-pos (1+ mark-pos)))
+	(when (= mark-pos (point-max))
+	  (setq mark-pos (1- mark-pos)))
+
 	(save-excursion
 	  (while next
 		(if vwe-mark-and-goto--is-back
@@ -832,10 +845,11 @@ SELF is include curretn buffer."
 					   (propertize (format "%d" mark-index)
 								   'display '((raise 0.5))
 								   'face 'vwe-mark-and-goto--mark-face))))
-	  (define-key vwe-mark-and-goto--show-mark-keymap (kbd "q") #'vwe-mark-and-goto--remove-mark-list)
-	  (define-key vwe-mark-and-goto--show-mark-keymap (kbd "C-g") #'vwe-mark-and-goto--remove-mark-list)
-	  (define-key vwe-mark-and-goto--show-mark-keymap (kbd "g") #'vwe-mark-and-goto--goto-mark)
-	  (set-transient-map vwe-mark-and-goto--show-mark-keymap nil nil))))
+	  ;; (define-key vwe-mark-and-goto--show-mark-keymap (kbd "q") #'vwe-mark-and-goto--remove-mark-list)
+	  ;; (define-key vwe-mark-and-goto--show-mark-keymap (kbd "C-g") #'vwe-mark-and-goto--remove-mark-list)
+	  ;; (define-key vwe-mark-and-goto--show-mark-keymap (kbd "g") #'vwe-mark-and-goto--goto-mark)
+	  ;; (set-transient-map vwe-mark-and-goto--show-mark-keymap nil nil)
+	  )))
 
 (defun vwe-mark-and-goto--goto-mark (&optional arg)
   "Goto mark ARG."
@@ -856,17 +870,20 @@ SELF is include curretn buffer."
 		 ((eq vwe-mark-and-goto--type 'symbol) (forward-symbol goto))
 		 ((eq vwe-mark-and-goto--type 'line) (forward-line goto))
 		 ((eq vwe-mark-and-goto--type 'expression) (forward-sexp goto))
-		 ((eq vwe-mark-and-goto--type 'paragraph) (forward-paragraph goto))
-		 )))
+		 ((eq vwe-mark-and-goto--type 'paragraph) (forward-paragraph goto)))))
 
 	(vwe-mark-and-goto--remove-mark-list)
-	(setq vwe-mark-and-goto--is-back nil)))
+	(setq vwe-mark-and-goto--is-back nil)
+	(vwe-mark-and-goto-show-mode-disable)))
 
 (defun vwe-mark-and-goto--remove-mark-list ()
   "Remove mark list."
   (interactive)
-  (mapc #'delete-overlay (mapcar (lambda (m) (caddr m)) vwe-mark-and-goto--mark-list))
-  (setq vwe-mark-and-goto--mark-list nil))
+  (when vwe-mark-and-goto--mark-list
+	(mapc #'delete-overlay (mapcar (lambda (m) (caddr m)) vwe-mark-and-goto--mark-list))
+	(setq vwe-mark-and-goto--mark-list nil))
+  (when vwe-mark-and-goto-show-mode
+	(vwe-mark-and-goto-show-mode-disable)))
 
 (defun vwe-mark-and-goto--mark-line ()
   "Mark line."
@@ -905,6 +922,29 @@ SELF is include curretn buffer."
   (interactive)
   (setq vwe-mark-and-goto--is-back t)
   (vwe-mark-and-goto--mark-word))
+
+(defun vwe-mark-and-goto-show-mode-enable ()
+  "Enable mode."
+  (vwe-mark-and-goto-show-mode 1)
+  (setq buffer-read-only t)
+  (add-hook 'vwe-editor-edit-mode-hook #'vwe-mark-and-goto-show-mode-disable)
+  (define-key vwe-mark-and-goto-show--keymap (kbd "g") #'vwe-mark-and-goto--goto-mark)
+  (define-key vwe-mark-and-goto-show--keymap (kbd "q") #'vwe-mark-and-goto--remove-mark-list)
+  (define-key vwe-mark-and-goto-show--keymap (kbd "c-g") #'vwe-mark-and-goto--remove-mark-list))
+
+(defun vwe-mark-and-goto-show-mode-disable ()
+  "Disable mode."
+  (setq buffer-read-only nil)
+  (remove-hook 'vwe-editor-edit-mode-hook #'vwe-mark-and-goto-show-mode-disable)
+  (vwe-mark-and-goto-show-mode -1)
+  (vwe-mark-and-goto--remove-mark-list))
+
+(define-minor-mode vwe-mark-and-goto-show-mode
+  "Mark and goto show mode."
+  :group 'vwe-move
+  :keymap vwe-mark-and-goto-show--keymap
+  :global nil
+  )
 
 (defun vwe-mark-and-goto-mode-enable ()
   "Enable mode."
