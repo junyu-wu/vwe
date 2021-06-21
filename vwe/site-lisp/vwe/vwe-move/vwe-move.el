@@ -803,19 +803,19 @@ SELF is include curretn buffer."
   "Mark word, forward."
   (interactive)
   (setq vwe-mark-and-goto--mark-list nil)
-  (let* ((win-start (window-start))
-		 (win-end (window-end))
-		 (mark-pos (point))
-		 (mark-overlay nil)
-		 (mark-index 0)
-		 (next t))
-	(vwe-mark-and-goto-show-mode-enable)
-	(when (= mark-pos (point-min))
-	  (setq mark-pos (1+ mark-pos)))
-	(when (= mark-pos (point-max))
-	  (setq mark-pos (1- mark-pos)))
+  (save-excursion
+	(let* ((win-start (window-start))
+		   (win-end (window-end))
+		   (mark-pos (point))
+		   (mark-overlay nil)
+		   (mark-index 0)
+		   (next t))
+	  (vwe-mark-and-goto-show-mode-enable)
+	  (when (= mark-pos (point-min))
+		(setq mark-pos (1+ mark-pos)))
+	  (when (= mark-pos (point-max))
+		(setq mark-pos (1- mark-pos)))
 
-	(save-excursion
 	  (while next
 		(if vwe-mark-and-goto--is-back
 			(progn
@@ -837,23 +837,29 @@ SELF is include curretn buffer."
 
 		(if (or (>= mark-pos win-end) (<= mark-pos win-start))
 			(setq next nil)
-		  (setq mark-pos (point)
-				mark-overlay (make-overlay (1- mark-pos) mark-pos)
-				mark-index (1+ mark-index)
-				vwe-mark-and-goto--mark-list (append vwe-mark-and-goto--mark-list (list (list mark-index mark-pos mark-overlay))))
-		  (overlay-put mark-overlay 'after-string
-					   (propertize (format "%d" mark-index)
-								   'display '((raise 0.5))
-								   'face 'vwe-mark-and-goto--mark-face))))
-	  ;; (define-key vwe-mark-and-goto--show-mark-keymap (kbd "q") #'vwe-mark-and-goto--remove-mark-list)
-	  ;; (define-key vwe-mark-and-goto--show-mark-keymap (kbd "C-g") #'vwe-mark-and-goto--remove-mark-list)
-	  ;; (define-key vwe-mark-and-goto--show-mark-keymap (kbd "g") #'vwe-mark-and-goto--goto-mark)
-	  ;; (set-transient-map vwe-mark-and-goto--show-mark-keymap nil nil)
-	  )))
+		  (when next
+			(setq mark-pos (point)
+				  mark-overlay (make-overlay (1- mark-pos) mark-pos)
+				  mark-index (1+ mark-index)
+				  vwe-mark-and-goto--mark-list (append vwe-mark-and-goto--mark-list (list (list mark-index mark-pos mark-overlay))))
+			(overlay-put mark-overlay 'after-string
+						 (propertize (format "%d" mark-index)
+									 'display '((raise 0.5))
+									 'face 'vwe-mark-and-goto--mark-face)))))
+
+	  (dotimes (i (if (> (length vwe-mark-and-goto--mark-list) 10) 10 (length vwe-mark-and-goto--mark-list)))
+		(define-key vwe-mark-and-goto-show--keymap
+		  (kbd (number-to-string i))
+		  (lambda ()
+			(interactive)
+			(vwe-mark-and-goto--goto-mark i))))
+	  (set-transient-map vwe-mark-and-goto--show-mark-keymap nil nil))))
 
 (defun vwe-mark-and-goto--goto-mark (&optional arg)
   "Goto mark ARG."
   (interactive)
+  (message "index is %S" arg)
+  (message "list length is %d" (length vwe-mark-and-goto--mark-list))
   (let* ((goto (if arg arg (read-number "goto:"))))
 	(if vwe-mark-and-goto--is-back
 		(progn
