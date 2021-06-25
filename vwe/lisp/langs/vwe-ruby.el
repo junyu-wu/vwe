@@ -36,6 +36,8 @@
 ;;
 (vwe@lib--package 'ruby-mode nil
 				  (progn
+
+					
 					;;
 					;; `rvm'
 					;;
@@ -70,7 +72,8 @@
 					;; `ruby-electric' 自动添加 'end'
 					;;
 					(vwe@lib--package 'ruby-electric
-									  (add-hook 'ruby-mode-hook #'ruby-electric-mode))
+									  (add-hook 'ruby-mode-hook #'ruby-electric-mode)
+									  (define-key ruby-electric-mode-map (kbd "SPC") nil))
 
 					;;
 					;; `rubocop' 代码分析与格式化 flycheck with rubocop
