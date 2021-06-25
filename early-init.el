@@ -23,13 +23,13 @@
 ;;
 
 ;;; Code:
+
 (message "\n%s\n%s\n%s\n%s %s"
 		 "+-+-+-+-+-+-+-+ +-+-+-+-+-+ +-+-+-+-+-+ +-+-+-+-+-+ +-+-+-+"
 		 "|w|e|l|c|o|m|e| |v|w|i|s|s| |e|m|a|c|s| |(|v|w|e|)| |^|_|^|"
 		 "+-+-+-+-+-+-+-+ +-+-+-+-+-+ +-+-+-+-+-+ +-+-+-+-+-+ +-+-+-+"
 		 "active (running)"
-		 (format-time-string "%y-%m-%d %H:%M %a")
-		 )
+		 (format-time-string "%y-%m-%d %H:%M %a"))
 
 (provide 'early-init)
 ;;; early-init.el ends here
