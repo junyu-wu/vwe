@@ -777,6 +777,11 @@ SELF is include curretn buffer."
 	keymap)
   "Move to mark map.")
 
+(defvar vwe-mark-and-goto--paren-mark-keymap
+  (let ((keymap (make-sparse-keymap)))
+	keymap)
+  "Move to paren map.")
+
 (defvar vwe-mark-and-goto-show--keymap
   (let ((keymap (make-sparse-keymap)))
 	keymap)
@@ -824,16 +829,14 @@ SELF is include curretn buffer."
 			   ((eq vwe-mark-and-goto--type 'symbol) (forward-symbol -1))
 			   ((eq vwe-mark-and-goto--type 'line) (forward-line -1))
 			   ((eq vwe-mark-and-goto--type 'expression) (backward-sexp))
-			   ((eq vwe-mark-and-goto--type 'paragraph) (backward-paragraph))
-			   ))
+			   ((eq vwe-mark-and-goto--type 'paragraph) (backward-paragraph))))
 		  (progn
 			(cond
 			 ((eq vwe-mark-and-goto--type 'word) (forward-word))
 			 ((eq vwe-mark-and-goto--type 'symbol) (forward-symbol 1))
 			 ((eq vwe-mark-and-goto--type 'line) (forward-line))
 			 ((eq vwe-mark-and-goto--type 'expression) (forward-sexp))
-			 ((eq vwe-mark-and-goto--type 'paragraph) (forward-paragraph))
-			 )))
+			 ((eq vwe-mark-and-goto--type 'paragraph) (forward-paragraph)))))
 
 		(if (or (>= mark-pos win-end) (<= mark-pos win-start))
 			(setq next nil)
@@ -951,6 +954,43 @@ SELF is include curretn buffer."
   :keymap vwe-mark-and-goto-show--keymap
   :global nil
   )
+
+;; (defun vwe-mark-and-goto--paren (&optional goto)
+;;   "Mark and GOTO paren."
+;;   (interactive)
+;;   )
+
+;; (defun vwe-mark-and-goto--goto-paren (&optional goto)
+;;   "GOTO paren."
+;;   (interactive)
+;;   )
+
+(defun vwe-mark-and-goto--mark-paren ()
+  "Mark word."
+  (interactive)
+  (setq vwe-mark-and-goto--type 'paren)
+  (vwe-mark-and-goto--remove-mark-list)
+  (vwe-mark-and-goto--paren))
+
+(defun vwe-mark-and-goto-paren-mode-enable ()
+  "Enable mode."
+  (vwe-mark-and-goto-paren-mode 1)
+  (setq buffer-read-only t)
+  (add-hook 'vwe-editor-edit-mode-hook #'vwe-mark-and-goto-paren-mode-disable)
+  (define-key vwe-mark-and-goto-show--keymap (kbd "c-g") #'vwe-mark-and-goto--remove-mark-list))
+
+(defun vwe-mark-and-goto-paren-mode-disable ()
+  "Disable mode."
+  (setq buffer-read-only nil)
+  (remove-hook 'vwe-editor-edit-mode-hook #'vwe-mark-and-goto-paren-mode-disable)
+  (vwe-mark-and-goto-paren-mode -1)
+  (vwe-mark-and-goto--remove-mark-list))
+
+(define-minor-mode vwe-mark-and-goto-paren-mode
+  "Mark and goto show mode."
+  :group 'vwe-move
+  :keymap vwe-mark-and-goto--paren-mark-keymap
+  :global nil)
 
 (defun vwe-mark-and-goto-mode-enable ()
   "Enable mode."

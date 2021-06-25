@@ -19,8 +19,7 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;; gem install pry pry-doc
-;; gem install rufo rubocop
+;; gem install pry pry-doc rubocop
 ;; gem install solargraph  ;; lsp
 
 ;;; Code:
@@ -33,51 +32,60 @@
 ;; ***************************************************************************
 
 ;;
-;; `rvm'
+;; `ruby'
 ;;
-(vwe@lib--package 'rvm
-				  (add-hook 'ruby-mode-hook (lambda () (rvm-activate-corresponding-ruby) (rvm-use-default))))
+(vwe@lib--package 'ruby-mode nil
+				  (progn
+					;;
+					;; `rvm'
+					;;
+					(vwe@lib--package 'rvm
+									  (add-hook 'ruby-mode-hook
+												(lambda ()
+												  (rvm-activate-corresponding-ruby)
+												  (rvm-use-default))))
 
-;;
-;; `inf-ruby' 连接ruby repl
-;;
-(vwe@lib--package 'inf-ruby
-				  (add-hook 'ruby-mode-hook #'inf-ruby-minor-mode))
+					;;
+					;; `inf-ruby' 连接ruby repl
+					;;
+					(vwe@lib--package 'inf-ruby
+									  (add-hook 'ruby-mode-hook #'inf-ruby-minor-mode)
+									  (progn
+										(with-eval-after-load 'rvm
+										  (advice-add 'inf-ruby-console-auto
+													  :before #'rvm-activate-corresponding-ruby)))
+									  (define-key compilation-shell-minor-mode-map (kbd "M-RET") nil))
+					;;
+					;; `robe' 辅助ruby repl加载程序或gem.包括位置与跳转
+					;;
+					(vwe@lib--package 'robe
+									  (add-hook 'ruby-mode-hook #'robe-mode)
+									  (progn
+										(add-hook 'ruby-mode-hook
+												  (lambda ()
+													(set (make-local-variable 'company-backends)
+														 '(company-anaconda))))))
 
-;;
-;; `ruby-electric' 自动添加 'end'
-;;
-;; (vwe@lib--package 'ruby-electric
-;; 				  (add-hook 'ruby-mode-hook #'ruby-electric-mode))
+					;;
+					;; `ruby-electric' 自动添加 'end'
+					;;
+					(vwe@lib--package 'ruby-electric
+									  (add-hook 'ruby-mode-hook #'ruby-electric-mode))
 
-;;
-;; `robe' 辅助ruby repl加载程序或gem.包括位置与跳转
-;;
-(vwe@lib--package 'robe
-				  (add-hook 'ruby-mode-hook #'robe-mode)
-				  (add-hook (set (make-local-variable 'company-backends) '(company-robe))))
+					;;
+					;; `rubocop' 代码分析与格式化 flycheck with rubocop
+					;;
+					(vwe@lib--package 'rubocop
+									  (add-hook 'ruby-mode-hook #'rubocop-mode))
 
-;;
-;; `rubocop' 代码分析与格式化 flycheck with rubocop
-;;
-(vwe@lib--package 'rubocop
-				  (add-hook 'ruby-mode-hook #'rubocop-mode))
+					;;
+					;; `solargraph' 后端支持
+					;;
+					(vwe@lib--package 'solargraph
+									  (add-hook 'ruby-mode-hook (lambda() (vwe@lib--package-load 'solargraph)))
+									  nil nil nil
+									  (vwe@lib--path-vwe-site-lisp "emacs-solargraph"))))
 
-;;
-;; `rufo' 自动格式化代码
-;;
-(vwe@lib--package 'rufo
-				  (add-hook 'ruby-mode-hook #'rufo-minor-mode)
-				  nil
-				  (setq rufo-minor-mode-use-bundler t))
-
-;;
-;; `solargraph' 后端支持
-;;
-(vwe@lib--package 'solargraph
-				  (add-hook 'ruby-mode-hook (lambda() (vwe@lib--package-load 'solargraph)))
-				  nil nil nil
-				  (vwe@lib--path-vwe-site-lisp "emacs-solargraph"))
 
 (provide 'vwe-ruby)
 ;;; vwe-Ruby.el ends here
