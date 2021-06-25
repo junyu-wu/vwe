@@ -60,7 +60,7 @@
 ;;
 (vwe@lib--package 'winum
 				  (add-hook 'after-init-hook #'winum-mode)
-				  (vwe@lib--keymap-global-set '(("M-`" winum-select-window-by-number)
+				  (vwe@lib--keymap-global-set '(("M-~" winum-select-window-by-number)
 												("M-0" winum-select-window-0-or-10)
 												("M-1" winum-select-window-1)
 												("M-2" winum-select-window-2)

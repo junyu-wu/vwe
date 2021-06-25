@@ -108,6 +108,7 @@
 					("M" menu-bar-mode "menu bar mode")
 					("T" tool-bar-mode "tool bar mode")
 					("S" scroll-bar-mode "scroll bar mode")
+					("b" tmm-menubar "menubar")
 					("F" helpful-function "help func")
 					("V" helpful-variable "help var")
 					("K" helpful-key "help key")
