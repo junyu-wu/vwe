@@ -48,6 +48,9 @@
   "Error face."
   :group 'vwe-paren)
 
+(defconst vwe-paren--delimiter-font-lock-keywords
+  '(vwe-paren--delimiter-keywords))
+
 (defmacro vwe-paren--delimiter-define-depth-faces ()
   "Define depth FACES."
   (let ((faces '())
@@ -81,8 +84,7 @@ PAIR is paren pair."
 					(concat "vwe-paren--depth-"
 							(number-to-string
 							 (if (<= depth vwe-paren--delimiter-max-depth)
-								 depth
-							   (mod depth 10)))
+								 depth (mod depth 10)))
 							"-face")))))
 	face))
 
@@ -100,13 +102,9 @@ PAIR is paren pair."
 
   (let* ((last-pos (point))
 		 (ppss (syntax-ppss)))
-	;; (message "last pos is:%d" last-pos)
-	;; (message "ppss is:%S" ppss)
 	(while (> end (progn (skip-syntax-forward "^()" end) (point)))
 	  (let* ((pos (point))
 			 (after-syntax (syntax-after pos)))
-		;; (message "cur point is:%d" pos)
-		;; (message "after syntab is:%S" after-syntax)
 		(setq ppss (parse-partial-sexp last-pos pos nil nil ppss)
 			  last-pos pos)
 		(forward-char)
@@ -127,13 +125,10 @@ PAIR is paren pair."
   (when (or (bound-and-true-p syntax-begin-function)
             (bound-and-true-p font-lock-beginning-of-syntax-function))
     (syntax-ppss-flush-cache 0))
-
   (when (boundp 'syntax-begin-function)
     (set (make-local-variable 'syntax-begin-function) nil))
-
   (when (boundp 'font-lock-beginning-of-syntax-function)
     (set (make-local-variable 'font-lock-beginning-of-syntax-function) nil))
-
   (when font-lock-mode
     (if (fboundp 'font-lock-flush)
         (font-lock-flush)
@@ -146,9 +141,6 @@ PAIR is paren pair."
 ;;
 ;; mode
 ;;
-(defconst vwe-paren--delimiter-font-lock-keywords
-  '(vwe-paren--delimiter-keywords))
-
 (defun vwe-paren-mode-enable ()
   "Enable mode."
   (vwe-paren--delimiter-enable))
