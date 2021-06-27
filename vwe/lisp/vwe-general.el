@@ -254,6 +254,14 @@
 										   (company-abbrev company-dabbrev))))
 
 ;;
+;; `mmm-mode'
+;;
+(vwe@lib--package 'mmm-mode nil
+				  (progn
+					(mmm-add-mode-ext-class nil "\\.html\\'" 'js2-mode))
+				  (setq mmm-global-mode 'maybe))
+
+;;
 ;; `wgrep'
 ;;
 (vwe@lib--package 'wgrep)
@@ -286,12 +294,6 @@
 					(sp-local-pair 'emacs-lisp-mode "`" nil :actions nil)
 					(sp-local-pair 'lisp-interaction-mode "`" nil :actions nil)
 					(sp-local-pair 'web-mode "<" ">")))
-
-;;
-;; `rainbow-delimiters' 彩虹括号
-;;
-(vwe@lib--package 'rainbow-delimiters
-				  (add-hook 'prog-mode-hook #'rainbow-delimiters-mode))
 
 ;;
 ;; `iedit' 批量编辑
@@ -538,6 +540,16 @@
 					(autoload 'vwe-edit-toggle-case--select-convert (vwe@lib--path-vwe-site-lisp "vwe/vwe-edit/vwe-edit.el" t) "Vwe edit mode." t t))
 				  nil nil nil
 				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-edit"))
+
+;;
+;; `vwe-paren'
+;;
+(vwe@lib--package 'vwe-paren
+				  (progn
+					(autoload 'vwe-paren-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-paren/vwe-paren.el" t) "Vwe paren mode." t t)
+					(add-hook 'prog-mode-hook #'vwe-paren-mode))
+				  nil nil nil
+				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-paren"))
 
 ;;
 ;; `imenu-list'

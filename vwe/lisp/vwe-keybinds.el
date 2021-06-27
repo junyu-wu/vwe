@@ -406,13 +406,13 @@
 
   (vwe-key-define clang
 				  ("C/C++"
-				   (("r" rmsbolt-mode "rmsbolt")
+				   (("b" rmsbolt-mode "rmsbolt")
 					("t" rmsbolt-starter "create run file")
 					("c" rmsbolt-compile "compile")
 					("x" smart-compile "compile")
 					("e" compile-goto-error "goto error")
 					("o" quickrun-compile-only "compile only")
-					("q" quickrun "quickrun")
+					("r" quickrun "quickrun")
 					("s" quickrun-shell "run shell")
 					("g" gdb "gdb")
 					("u" vwe-key:gud "gud" :face (:foreground "yellow" :underline t :weight bold))

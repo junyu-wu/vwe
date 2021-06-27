@@ -535,6 +535,19 @@ IGNORES is a ignore file of directory list."
     (goto-char pos)
     (= (logand (skip-syntax-backward "/\\") 1) 0)))
 
+(defun vwe@lib--point-paren-info (&optional pos)
+  "POS is paren info, like (1 10) (-1 10).
+1 is open and -1 is close."
+  (interactive)
+  (unless pos (setq pos (point)))
+  (cond
+   ((and (eq (syntax-class (syntax-after pos)) 4)
+		 (vwe@lib--point-unescaped-p pos))
+    (cons 1 pos))
+   ((and (eq (syntax-class (syntax-after pos)) 5)
+		 (vwe@lib--point-unescaped-p pos))
+    (cons -1 (1+ pos)))))
+
 ;; ************************************************************************
 ;; keymap
 ;; ************************************************************************
