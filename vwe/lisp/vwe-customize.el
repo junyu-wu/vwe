@@ -381,7 +381,7 @@ If nil hide all buffers."
 ;; process
 ;; ***************************************************************************
 (defcustom vwe@custom--tags-command
-  "ectags -e -R"
+  "ctags -R"
   "Tags command."
   :group 'vwe-prog
   :type 'string)

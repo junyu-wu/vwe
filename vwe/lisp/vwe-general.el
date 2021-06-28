@@ -542,6 +542,18 @@
 				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-edit"))
 
 ;;
+;; `vwe-tags'
+;;
+(vwe@lib--package 'vwe-tags
+				  (progn
+					(autoload 'vwe-tags-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-tags/vwe-tags.el" t) "Vwe tags mode." t t)
+					(autoload 'vwe-tags--create-tags (vwe@lib--path-vwe-site-lisp "vwe/vwe-tags/vwe-tags.el" t) "Create tags ." t t)
+					(autoload 'vwe-tags--refresh-tags (vwe@lib--path-vwe-site-lisp "vwe/vwe-tags/vwe-tags.el" t) "Refresh tags." t t)
+					(add-hook 'prog-mode-hook #'vwe-tags-mode))
+				  nil nil nil
+				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-tags"))
+
+;;
 ;; `vwe-paren'
 ;;
 (vwe@lib--package 'vwe-paren

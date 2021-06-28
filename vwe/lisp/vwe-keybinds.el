@@ -126,7 +126,7 @@
 					("R" vwe@lib--replace "replace")
 					("r" vwe-search--rg "search")
 					("x" vwe@lib--frame-reset "reset frame")
-					("t" vwe@theme--toggle "toggle theme")
+					("T" vwe@theme--toggle "toggle theme")
 					("f" format-all-buffer "format code")
 					("p" vwe@prog--switch-mode "switch mode")
 					("n" switch-to-next-buffer "next buffer ")
@@ -134,10 +134,11 @@
 					("c" vwe-edit-toggle-case--select-convert "covert string")
 					("H" vwe-headerline-mode "header line")
 					("M" vwe-modeline-mode "modeline")
-					("T" vwe-tray-mode "tray")
+					("Y" vwe-tray-mode "tray")
 					("E" vwe-editor-mode "editor")
 					("v" vwe-terminal "term")
 					("l" vwe@lsp--run "lsp")
+					("t" vwe-key:tags "tags" :face (:foreground "yellow" :underline t :weight bold))
 					("G" vwe-key:magit "magit" :face (:foreground "yellow" :underline t :weight bold))
 					("L" vwe-key:layout "layout" :face (:foreground "yellow" :underline t :weight bold))
 					("D" vwe-key:diff "diff" :face (:foreground "yellow" :underline t :weight bold))
@@ -259,6 +260,13 @@
 					("q" vwe-term--exit "exit terminal")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (term-mode))
+
+  (vwe-key-define tags
+				  (("tags" :face (:background "red" :foreground "white" :weight bold))
+				   (("c" vwe-tags--tags "create tags")
+					("r" vwe-tags--refresh-tags "refresh tags")
+					("d" vwe-tags--delete-tags "del tags")
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
   (vwe-key-define emacs-lisp
 				  (("emacs lisp" :face (:background "red" :foreground "white" :weight bold))
