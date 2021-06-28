@@ -20,7 +20,8 @@
 
 ;;; Commentary:
 
-;;
+;; copy from rainbow-delimiters for reference study
+;; git addr: https://github.com/Fanael/rainbow-delimiters.git
 
 ;;; Code:
 
@@ -54,23 +55,25 @@
 (defmacro vwe-paren--delimiter-define-depth-faces ()
   "Define depth FACES."
   (let ((faces '())
-		(light-colors ["#707183" "#7388d6" "#909183" "#709870" "#907373"
-                       "#6276ba" "#858580" "#80a880" "#887070"])
-        (dark-colors ["grey55" "#93a8c6" "#b0b1a3" "#97b098" "#aebed8"
-                      "#b0b0b3" "#90a890" "#a2b6da" "#9cb6ad"]))
+		(light-colors ["#ff4500" "#ff1493" "#ff00ff" "#ffa500" "#ffff00" "#7fff00" "#00ffff" "#1e90ff" "#e066ff"])
+        (dark-colors ["#ff4500" "#ff1493" "#ff00ff" "#ffa500" "#ffff00" "#7fff00" "#00ffff" "#1e90ff" "#e066ff"]))
     (dotimes (i 9)
-      (push `(defface ,(intern (format "vwe-paren--depth-%d-face" i))
+      (push `(defface ,(intern (format "vwe-paren--depth-%d-face" (1+ i)))
                '((default (:inherit vwe-paren--delimiter-face))
                  (((class color) (background light)) :foreground ,(aref light-colors i))
                  (((class color) (background dark)) :foreground ,(aref dark-colors i)))
-               ,(format "Nested delimiter face, depth %d." i)
+               ,(format "Nested delimiter face, depth %d." (1+ i))
                :group 'vwe-paren)
             faces))
     `(progn ,@faces)))
 
 (defun vwe-paren--delimiter-ignore-paren (pos ppss code)
   "When POS CODE parse PPSS is string/comment/escaped according ignore."
-  (or (nth 3 ppss) (nth 4 ppss) (nth 5 ppss)))
+  (or (nth 3 ppss) (nth 4 ppss) (nth 5 ppss)
+	  (cond
+       ((/= 0 (logand #x10000 code)) (/= 0 (logand #x20000 (or (car (syntax-after (1+ pos))) 0))))
+       ((/= 0 (logand #x20000 code)) (/= 0 (logand #x10000 (or (car (syntax-after (1- pos))) 0))))
+       (t nil))))
 
 (defun vwe-paren--delimiter-pick-face (depth pair)
   "Pick face.
@@ -84,7 +87,9 @@ PAIR is paren pair."
 					(concat "vwe-paren--depth-"
 							(number-to-string
 							 (if (<= depth vwe-paren--delimiter-max-depth)
-								 depth (mod depth 10)))
+								 depth
+							   (+ 1 0 (mod (- depth vwe-paren--delimiter-max-depth 1)
+										   (- vwe-paren--delimiter-max-depth 0)))))
 							"-face")))))
 	face))
 
@@ -112,9 +117,12 @@ PAIR is paren pair."
 			  (depth (1+ (nth 0 ppss))))
 		  (cond
 		   ((vwe-paren--delimiter-ignore-paren pos ppss code) nil)
-		   ((= 4 (logand #xFFFF code)) (vwe-paren--delimiter-apply-face pos depth t))
-		   ((= 5 (logand #xFFFF code)) (vwe-paren--delimiter-apply-face pos depth t)))))
-	  ))
+		   ((= 4 (logand #xFFFF code))
+			(vwe-paren--delimiter-apply-face pos depth t))
+		   ((= 5 (logand #xFFFF code))
+			(vwe-paren--delimiter-apply-face pos (nth 0 ppss)
+											 (eq (cdr after-syntax)
+												 (char-after (nth 1 ppss))))))))))
   nil)
 
 (defun vwe-paren--delimiter-enable ()
@@ -147,8 +155,7 @@ PAIR is paren pair."
 
 (defun vwe-paren-mode-disable ()
   "Disable mode."
-  (vwe-paren--delimiter-disable)
-  (vwe-paren-mode -1))
+  (vwe-paren--delimiter-disable))
 
 ;;;###autoload
 (define-minor-mode vwe-paren-mode
