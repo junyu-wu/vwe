@@ -264,8 +264,7 @@
   (vwe-key-define tags
 				  (("tags" :face (:background "red" :foreground "white" :weight bold))
 				   (("c" vwe-tags--tags "create tags")
-					("r" vwe-tags--refresh-tags "refresh tags")
-					("d" vwe-tags--delete-tags "del tags")
+					("d" vwe-tags--remove-tags "remove tags")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
   (vwe-key-define emacs-lisp

@@ -181,6 +181,7 @@
   "Read keyword.
 TYPE `word' `symbol' `point' `region' `input'."
   (let* ((key)
+		 (sexp (thing-at-point 'sexp t))
 		 (word (thing-at-point 'word t))
 		 (symbol (thing-at-point 'symbol t))
 		 (char (vwe-search--at-point-char)))
@@ -189,10 +190,11 @@ TYPE `word' `symbol' `point' `region' `input'."
 	 ((equal 'symbol type) (setq key symbol))
 	 ((equal 'point type) (setq key word))
 	 ((region-active-p) (setq key (buffer-substring-no-properties (region-beginning) (region-end))))
-	 (t (setq key (read-string (format "keyword%s:" (cond (symbol (format "[%s]" symbol))
+	 (t (setq key (read-string (format "keyword%s:" (cond (sexp (format "[%s]" sexp))
+														  (symbol (format "[%s]" symbol))
 														  (word  (format "[%s]" word))
 														  (t (format "[%s]" (if (equal (string-to-char char) 10)
-																				(format " ") char))))) nil nil word nil))))
+																				(format " ") char))))) nil nil (or sexp symbol word) nil))))
 	key))
 
 (defun vwe-search--read-directory (&optional directory)
@@ -225,6 +227,7 @@ TYPE `word' `symbol' `point' `region' `input'."
   (let* ((prefix-key vwe-search--prefix-key)
 		 (split " ")
 		 (cmd vwe-search--command))
+	(message "dir is:%s" directory)
 	(setq cmd (concat command split (or parameters vwe-search--default-parameters) split prefix-key split keyword split directory))
 	(when (memq system-type '(cygwin windows-nt ms-dos))
       (setq cmd (encode-coding-string cmd locale-coding-system)))
@@ -374,11 +377,17 @@ TYPE `word' `symbol' `point' `region' `input'."
 
 (defun vwe-search--engine (&optional keyword directory parameters command)
   "Execute COMMAND to Search KEYWORD in DIRECTORY with PARAMETERS."
-  (let* ((dir (concat (or directory (vwe-search--read-directory)) "*"))
-		 (key (or keyword (vwe-search--read-keyword)))
+  (let* ((dir (concat (if (and directory (directory-name-p directory)) directory default-directory) "*"))
+		 (key (or keyword
+				  (cond ((thing-at-point 'sexp t) (format "%s" (thing-at-point 'sexp t)))
+						((thing-at-point 'symbol t) (format "%s" (thing-at-point 'symbol t)))
+						((thing-at-point 'word t)  (format "%s" (thing-at-point 'word t)))
+						(t (format "%s" (if (equal (string-to-char char) 10)
+											(format " ") char))))))
 		 (cmd (or command vwe-search--command))
 		 (cmd-str (vwe-search--build-command key dir parameters cmd))
 		 (buffer (vwe-search--make-result-buffer)))
+	(message "cmd str:%s" dir)
 	(when (bufferp buffer)
 	  (setq vwe-search--result-total 0
 			vwe-search--current-search-info nil)
@@ -392,7 +401,11 @@ TYPE `word' `symbol' `point' `region' `input'."
 (defun vwe-search--rg ()
   "Rg search."
   (interactive)
-  (vwe-search--engine))
+  (let* ((dir (vwe-search--read-directory))
+		 (key (vwe-search--read-keyword))
+		 (parameters nil)
+		 (cmd vwe-search--command))
+	(vwe-search--engine key dir parameters cmd)))
 
 (defun vwe-search--process-setup-function (&rest _args)
   "Process setup function format input message."

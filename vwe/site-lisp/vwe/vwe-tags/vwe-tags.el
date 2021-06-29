@@ -24,7 +24,7 @@
 
 ;;; Code:
 (defgroup vwe-tags nil
-  "Customization group for beacon."
+  "Tags."
   :group 'vwiss-vwe
   :prefix "vwe-tags--")
 
@@ -34,97 +34,68 @@
   "Move to mark map.")
 
 (defcustom vwe-tags--command
-  'etags
-  "Tags defaultcommand."
+  "uctags"
+  "Tags build command function.
+reutrn command string to exec."
   :type 'string
   :group 'vwe-tags)
 
-(defcustom vwe-tags--shell
-  nil
-  "Tags defaultcommand."
-  :type 'string
+(defcustom vwe-tags--command-func
+  'vwe-tags--build-ctags-cmd-func
+  "Tags build command function.
+reutrn command string to exec."
+  :type 'function
   :group 'vwe-tags)
 
-(defcustom vwe-tags--default-tags-file-name
+(defcustom vwe-tags--default-file-name
   "TAGS"
   "Default tags file name."
   :type 'string
   :group 'vwe-tags)
 
-(defun vwe-tags--tags (&optional src name language extension)
-  "Create or refresh tags.
-SRC is tags directory.
-NAME is tags file name.
-LANGUAGE setup tags language.
-EXTENSION setup tags file type."
+(defvar-local vwe-tags--root-src
+  nil
+  "Root src.")
+
+(defun vwe-tags--tags ()
+  "Create or refresh tags file.
+SRC create tags file path."
   (interactive)
-  (when (or (null src) (directory-name-p src))
-	(setq src (read-file-name "directory:" nil (file-name-directory (buffer-file-name)))))
-  (unless language
-	(setq language (read-string "language(all):")))
-  (unless extension
-	(setq extension "*"))
-  (unless name
-	(setq name (read-string (format "tags name(%s):"
-									vwe-tags--default-tags-file-name)
-							nil nil
-							vwe-tags--default-tags-file-name)))
-  (string-match (regexp-quote ".") extension)
-  (vwe-tags--apply-command src name language extension))
+  (setq vwe-tags--root-src (read-directory-name "src:"))
+  (vwe-tags--exec-command (funcall vwe-tags--command-func)))
 
-(defun vwe-tags--apply-command (src name language extension)
-  "Build tags command.
-SRC is tags directory.
-NAME is tags file name.
-LANGUAGE setup tags language.
-EXTENSION setup tags file type."
-  (when (or (null src) (directory-name-p src))
-	(setq src (file-name-directory (buffer-file-name))))
-  (unless language
-	(setq language ""))
-  (unless extension
-	(setq extension "*"))
-  (unless name
-	(setq name vwe-tags--default-tags-file-name))
+(defun vwe-tags--build-etags-cmd-func ()
+  "Build etags command str."
+  (let* ((src vwe-tags--root-src)
+		 (cmd (format "%s -o %s%s -" vwe-tags--command src vwe-tags--default-file-name)))
+	(setq cmd (concat (format "find %s -name \"*\" | " src) cmd))
+	cmd))
 
-  (let* ((cmd))
-	(cond
-	 ((eq 'etags vwe-tags--command)
-	  (progn
-		(setq cmd (format "find %s -type f -name \"%s\" | etags -o %s %s -"
-						  src
-						  (if (string-match (regexp-quote ".") extension)
-							  extension (concat "*." extension))
-						  name
-						  (if (equal language "")
-							  "" (concat "-l " language))))))
-	 ((eq 'uctags vwe-tags--command) (progn
-									   )))
-	(when cmd (vwe-tags--exec cmd)
-		  (message "tags file %s%s create finished" src name))))
+(defun vwe-tags--build-ctags-cmd-func ()
+  "Build ctags command str."
+  (let* ((src vwe-tags--root-src)
+		 (cmd (format "%s -R -e -o %s%s" vwe-tags--command src vwe-tags--default-file-name)))
+	(concat (format "cd %s && " src) cmd)))
 
-(defun vwe-tags--exec (cmd)
-  "Run CMD to create for tags."
+(defun vwe-tags--exec-command (cmd)
+  "Exec tags CMD command."
   (if cmd
 	  (progn
-		(with-temp-buffer (shell-command cmd (buffer-name))))
+		(with-temp-buffer
+		  (shell-command cmd (buffer-name))
+		  (message "tags command exec finished.")))
 	(message "command is nil")))
 
-(defun vwe-tags--refresh-tags ()
-  "Refresh tags."
-  (interactive))
-
-(defun vwe-tags--delete-tags (&optional src)
-  "Delete tags for SRC."
+(defun vwe-tags--remove-tags ()
+  "Remove tags file."
   (interactive)
-  (let* ((tags-names (list "tags" "TAGS" "ETAGS")))
-	(unless src ;; (setq src (file-name-directory (buffer-file-name)))
-	  (setq src (read-directory-name "directory:")))
-	(dotimes (i (length tags-names))
-	  (let* ((file (concat src (nth i tags-names))))
-		(when (file-exists-p file)
-		  (delete-file file)
-		  (message "delete %s file" file))))))
+  (let* ((tags (concat (or vwe-tags--root-src (read-directory-name "remove:" nil default-directory))
+					   vwe-tags--default-file-name)))
+	(if (file-exists-p tags)
+		(progn
+		  (delete-file tags)
+		  (message "remove tags %s finished." tags))
+	  (message "remove tags failed. not found %s" tags))))
 
 ;;
 ;; mode
