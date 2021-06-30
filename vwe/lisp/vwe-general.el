@@ -235,23 +235,28 @@
 											company-box-backends-colors nil
 											company-box-show-single-candidate t
 											company-box-max-candidates 50
-											company-box-doc-delay 1.5))
-					;;
-					;; `company-posframe'
-					;;
-					(vwe@lib--package 'company-posframe (add-hook 'prog-mode-hook #'company-posframe-mode)))
+											company-box-doc-delay 1.5)))
 				  (setq company-tooltip-align-annotations t
 						company-tooltip-limit 12
 						company-idle-delay 0
-						company-echo-delay (if (display-graphic-p) nil 0)
-						company-minimum-prefix-length 0
 						company-require-match nil
-						company-dabbrev-ignore-case nil
-						company-dabbrev-downcase nil
+						company-minimum-prefix-length 0
 						company-show-numbers t
-						company-frontends '(company-pseudo-tooltip-frontend company-echo-metadata-frontend)
-						company-backends '((company-files company-yasnippet company-keywords company-capf)
-										   (company-abbrev company-dabbrev))))
+						company-echo-delay (if (display-graphic-p) nil 0)
+
+						company-dabbrev-downcase nil
+						company-dabbrev-ignore-case t
+						;; yasnippet support for all company backends
+						company-backends (mapcar (lambda (backend)
+												   (if (or (and (listp backend) (member 'company-yasnippet backend)))
+													   backend
+													 (append (if (consp backend) backend (list backend))
+															 '(:with company-yasnippet))))
+												 '((company-abbrev
+													company-dabbrev
+													company-keywords
+													company-files
+													company-capf)))))
 
 ;;
 ;; `mmm-mode'

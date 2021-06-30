@@ -34,7 +34,7 @@
   "Move to mark map.")
 
 (defcustom vwe-tags--command
-  "uctags"
+  (or (executable-find "uctags") (executable-find "etags"))
   "Tags build command function.
 reutrn command string to exec."
   :type 'string
@@ -53,6 +53,12 @@ reutrn command string to exec."
   :type 'string
   :group 'vwe-tags)
 
+(defcustom vwe-tags--tags-file-cache-path
+  (concat user-emacs-directory ".tags/")
+  "Default tags file name."
+  :type 'string
+  :group 'vwe-tags)
+
 (defvar-local vwe-tags--root-src
   nil
   "Root src.")
@@ -66,7 +72,12 @@ SRC create tags file path."
 
 (defun vwe-tags--build-etags-cmd-func ()
   "Build etags command str."
-  (let* ((src vwe-tags--root-src)
+  (let* ((src (or vwe-tags--root-src default-directory))
+		 (name (md5 src))
+		 ;; (cmd (format "%s -o %s%s -"
+		 ;; 			  vwe-tags--command
+		 ;; 			  vwe-tags--tags-file-cache-path
+		 ;; 			  name))
 		 (cmd (format "%s -o %s%s -" vwe-tags--command src vwe-tags--default-file-name)))
 	(setq cmd (concat (format "find %s -name \"*\" | " src) cmd))
 	cmd))

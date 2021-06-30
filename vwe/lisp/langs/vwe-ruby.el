@@ -37,7 +37,7 @@
 (vwe@lib--package 'ruby-mode nil
 				  (progn
 
-					
+
 					;;
 					;; `rvm'
 					;;

@@ -33,6 +33,48 @@
 	keymap)
   "Move to mark map.")
 
+(defvar vwe-project--root-tag-file-name
+  ".vwe"
+  "Project root tag file name.")
+
+(defvar-local vwe-project--info
+  '(:name nil :label nil)
+  "Project info.")
+
+(defun vwe-project--setup-root (&optional dir)
+  "Setup project root DIR."
+  (interactive (let ((dir (read-directory-name "setup root:")))
+				 (list dir)))
+  (vwe-project--make-root-tag-file dir))
+
+(defun vwe-project--make-root-tag-file (dir)
+  "Make root tag file for DIR."
+  (when (and dir (file-directory-p dir))
+	(let* ((names (split-string dir "/" t))
+		   (name (nth (length names) names))
+		   (label (md5 dir))
+		   (tag-file (format "%s%s"
+							 dir
+							 vwe-project--root-tag-file-name))
+		   (overried nil))
+	  (if (file-exists-p tag-file)
+		  (when (y-or-n-p "Tag file existed, overried ? ")
+			(setq overried t))
+		(setq overried t))
+
+	  (when overried
+		(with-temp-buffer (insert (format "%s\n%s"
+										  label
+										  (format-time-string "%y-%m-%d %H:%M %a")))
+						  (write-file tag-file))
+		(setq vwe-project--info (list :name name :label label))))))
+
+(defun vwe-project--find-root ()
+  "Find root."
+  (interactive)
+  (let* ((dir default-directory))
+	(directory-files default-directory)))
+
 ;;
 ;; mode
 ;;
