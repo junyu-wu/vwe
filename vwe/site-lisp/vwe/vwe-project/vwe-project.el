@@ -28,6 +28,18 @@
   :group 'vwiss-vwe
   :prefix "vwe-project--")
 
+(defcustom vwe-project--root-file-list
+  '(".vwe" ".git")
+  "Root file list."
+  :type 'list
+  :group 'vwe-project)
+
+(defcustom vwe-project--root-directory-list
+  '(".snv")
+  "Root directory list."
+  :type 'list
+  :group 'vwe-project)
+
 (defvar vwe-project--keymap
   (let ((keymap (make-sparse-keymap)))
 	keymap)
@@ -69,11 +81,27 @@
 						  (write-file tag-file))
 		(setq vwe-project--info (list :name name :label label))))))
 
+(defun vwe-project--find-up-directory (dir)
+  "Find the previous directory of the DIR."
+  (when (file-directory-p dir)
+	(let* ((dir-split (split-string dir "/" t))
+		   (dir-length (length dir-split))
+		   (up-dir (nth 0 (split-string dir (nth (1- dir-length) dir-split)))))
+	  (if (or (= dir-length 0) (equal up-dir ""))
+		  nil
+		up-dir))))
+
 (defun vwe-project--find-root ()
   "Find root."
   (interactive)
-  (let* ((dir default-directory))
-	(directory-files default-directory)))
+  (let* ((dir default-directory)
+		 (root dir))
+	(while dir
+	  (if (file-exists-p (concat dir vwe-project--root-tag-file-name))
+		  (setq root dir
+				dir nil)
+		(setq dir (vwe-project--find-up-directory dir))))
+	root))
 
 ;;
 ;; mode
