@@ -26,9 +26,9 @@
 
 (message "\n%s\n%s\n%s\n%s %s"
 		 "+-+-+-+-+-+-+-+ +-+-+-+-+-+ +-+-+-+-+-+ +-+-+-+-+-+ +-+-+-+"
-		 "|w|e|l|c|o|m|e| |v|w|i|s|s| |e|m|a|c|s| |(|v|w|e|)| |^|_|^|"
+		 "|W|e|l|c|o|m|e| |V|W|I|S|S| |E|m|a|c|s| |(|V|W|E|)| |^|_|^|"
 		 "+-+-+-+-+-+-+-+ +-+-+-+-+-+ +-+-+-+-+-+ +-+-+-+-+-+ +-+-+-+"
-		 "active (running)"
+		 "Active (Running...)"
 		 (format-time-string "%y-%m-%d %H:%M %a"))
 
 (provide 'early-init)

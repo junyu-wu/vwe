@@ -28,8 +28,35 @@
   :group 'vwiss-vwe
   :prefix "vwe-project--")
 
+(defvar vwe-project--keymap
+  (let ((keymap (make-sparse-keymap)))
+	keymap)
+  "Move to mark map.")
+
+(defvar vwe-project--root-tag-file-name
+  ".vwe"
+  "Project root tag file name.")
+
+(defvar vwe-project--cache-name
+  ".vwe-project"
+  "Project root tag file name.")
+
+(defvar-local vwe-project--info
+  nil
+  "Project info.")
+
+(defvar vwe-project--info-list
+  nil
+  "Project info list.")
+
+(defcustom vwe-project--cache-path
+  user-emacs-directory
+  "Project cache path."
+  :type 'string
+  :group 'vwe-project)
+
 (defcustom vwe-project--root-file-list
-  '(".vwe" ".git")
+  '(vwe-project--root-tag-file-name ".git")
   "Root file list."
   :type 'list
   :group 'vwe-project)
@@ -40,30 +67,29 @@
   :type 'list
   :group 'vwe-project)
 
-(defvar vwe-project--keymap
-  (let ((keymap (make-sparse-keymap)))
-	keymap)
-  "Move to mark map.")
+(defun vwe-project--find-directory-last-name (dir)
+  "Find DIR last directory name."
+  (let* ((split-dir (split-string dir "/" t)))
+	(nth (1- (length split-dir)) split-dir)))
 
-(defvar vwe-project--root-tag-file-name
-  ".vwe"
-  "Project root tag file name.")
-
-(defvar-local vwe-project--info
-  '(:name nil :label nil)
-  "Project info.")
-
-(defun vwe-project--setup-root (&optional dir)
-  "Setup project root DIR."
-  (interactive (let ((dir (read-directory-name "setup root:")))
+;;;###autoload
+(defun vwe-project--add-project (&optional dir name)
+  "Add project for DIR and NAME."
+  (interactive (let ((dir (read-directory-name "setup root:"
+											   (vwe-project--find-root)
+											   (vwe-project--find-root))))
 				 (list dir)))
-  (vwe-project--make-root-tag-file dir))
+  (setq name (or name
+				 (read-string "project name:"
+							  (vwe-project--find-directory-last-name dir)
+							  nil
+							  (vwe-project--find-directory-last-name dir))))
+  (vwe-project--make-root-tag-file dir name))
 
-(defun vwe-project--make-root-tag-file (dir)
-  "Make root tag file for DIR."
+(defun vwe-project--make-root-tag-file (dir name)
+  "Make root tag file for DIR and NAME."
   (when (and dir (file-directory-p dir))
-	(let* ((names (split-string dir "/" t))
-		   (name (nth (length names) names))
+	(let* ((name (or name (vwe-project--find-directory-last-name dir)))
 		   (label (md5 dir))
 		   (tag-file (format "%s%s"
 							 dir
@@ -73,13 +99,31 @@
 		  (when (y-or-n-p "Tag file existed, overried ? ")
 			(setq overried t))
 		(setq overried t))
-
 	  (when overried
-		(with-temp-buffer (insert (format "%s\n%s"
-										  label
-										  (format-time-string "%y-%m-%d %H:%M %a")))
-						  (write-file tag-file))
-		(setq vwe-project--info (list :name name :label label))))))
+		(let ((pro-info (list label (list label name dir)))
+			  (pro-info-str (format "%s:%s:%s:%s\n"
+									label name dir
+									(time-to-seconds)))
+			  (pro-file (format "%s%s"
+								vwe-project--cache-path
+								vwe-project--cache-name)))
+		  (when (memq label vwe-project--info-list)
+			(setq vwe-project--info-list (delq pro-info vwe-project--info-list)))
+		  (setq vwe-project--info-list (append vwe-project--info-list (list pro-info))
+				vwe-project--info pro-info)
+		  (save-excursion
+			(with-current-buffer (find-file-noselect pro-file)
+			  (when (search-forward label nil t)
+				(let* ((begin (progn (beginning-of-line) (point)))
+					   (end (progn (end-of-line) (point))))
+				  (setq buffer-read-only nil)
+				  (delete-region begin (1+ end))
+				  (save-buffer)))))
+		  (with-temp-buffer (insert pro-info-str)
+							(write-file tag-file)
+							(append-to-file (point-min)
+											(point-max)
+											pro-file)))))))
 
 (defun vwe-project--find-up-directory (dir)
   "Find the previous directory of the DIR."
@@ -87,21 +131,62 @@
 	(let* ((dir-split (split-string dir "/" t))
 		   (dir-length (length dir-split))
 		   (up-dir (nth 0 (split-string dir (nth (1- dir-length) dir-split)))))
-	  (if (or (= dir-length 0) (equal up-dir ""))
-		  nil
-		up-dir))))
+	  (if (or (= dir-length 0) (equal up-dir "")) nil up-dir))))
 
 (defun vwe-project--find-root ()
   "Find root."
   (interactive)
   (let* ((dir default-directory)
-		 (root dir))
-	(while dir
-	  (if (file-exists-p (concat dir vwe-project--root-tag-file-name))
-		  (setq root dir
-				dir nil)
+		 (root nil))
+	(catch 'break
+	  (while dir
+		(dotimes (i (length vwe-project--root-file-list))
+		  (when (file-exists-p
+				 (format "%s%s" dir (nth i vwe-project--root-file-list)))
+			(setq root dir)
+			(throw 'break nil)))
+		(dotimes (i (length vwe-project--root-directory-list))
+		  (when (directory-name-p
+				 (format "%s%s" dir (nth i vwe-project--root-directory-list)))
+			(setq root dir)
+			(throw 'break nil)))
 		(setq dir (vwe-project--find-up-directory dir))))
 	root))
+
+(defun vwe-project--format-project-info (info &optional arg)
+  "Format project INFO.
+return project info or someone ARG.
+ARG privode `name' `label' `path'"
+  (let* ((label)
+		 (name)
+		 (path))
+	(if (listp info)
+		(setq label (car info)
+			  name (car (cdadr info))
+			  path (cadr (cdadr info)))
+	  (when (stringp info)
+		(let ((strs (split-string info ":" t)))
+		  (setq label (car strs)
+				name (cadr strs)
+				path (caddr strs)))))
+	(cond
+	 ((eq arg 'label) label)
+	 ((eq arg 'name) name)
+	 ((eq arg 'path) path)
+	 (t (format "%s:%s:%s" label name path)))))
+
+(defun vwe-project--switch-project (&optional info)
+  "Switch project by INFO."
+  (interactive
+   (list (completing-read
+		  (format "project (%s)"
+				  (or (vwe-project--format-project-info vwe-project--info 'name) ""))
+		  (mapcar (lambda (p)
+					(vwe-project--format-project-info p))
+				  vwe-project--info-list)
+		  nil nil
+		  (vwe-project--format-project-info vwe-project--info))))
+  (find-file (vwe-project--format-project-info info 'path)))
 
 ;;
 ;; mode

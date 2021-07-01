@@ -467,6 +467,26 @@
 						 (add-hook 'magit-post-refresh-hook #'diff-hl-magit-post-refresh)))
 
 ;;
+;; `imenu-list'
+;;
+(vwe@lib--package 'imenu-list)
+
+;;
+;; `text-mode'
+;;
+(vwe@lib--package 'text-mode
+				  (push '("\\.txt\\'" . org-mode) auto-mode-alist)
+				  nil nil nil nil t)
+
+;;
+;; `magit'
+;;
+(vwe@lib--package 'magit nil (progn
+							   (add-hook 'after-save-hook #'magit-after-save-refresh-status)
+							   (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
+							   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)))
+
+;;
 ;; `vwe-key'
 ;;
 (vwe@lib--package 'vwe-key
@@ -559,39 +579,24 @@
 				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-tags"))
 
 ;;
-;; `vwe-paren'
+;; `vwe-project'
 ;;
-(vwe@lib--package 'vwe-paren
+(vwe@lib--package 'vwe-project
+				  (progn
+					(autoload 'vwe-project-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-project/vwe-project.el" t) "Vwe project mode." t t)
+					(autoload 'vwe-project--add-project (vwe@lib--path-vwe-site-lisp "vwe/vwe-project/vwe-project.el" t) "add project." t t))
+				  nil nil nil
+				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-project"))
+
+;;
+;; `vwe-panren'
+;;
+(vwe@lib--package 'vwe-panren
 				  (progn
 					(autoload 'vwe-paren-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-paren/vwe-paren.el" t) "Vwe paren mode." t t)
 					(add-hook 'prog-mode-hook #'vwe-paren-mode))
 				  nil nil nil
 				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-paren"))
-
-;;
-;; `imenu-list'
-;;
-(vwe@lib--package 'imenu-list)
-
-;;
-;; `text-mode'
-;;
-(vwe@lib--package 'text-mode
-				  (push '("\\.txt\\'" . org-mode) auto-mode-alist)
-				  nil nil nil nil t)
-
-;;
-;; `diff-hl'
-;;
-(vwe@lib--package 'diff-hl)
-
-;;
-;; `magit'
-;;
-(vwe@lib--package 'magit nil (progn
-							   (add-hook 'after-save-hook #'magit-after-save-refresh-status)
-							   (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
-							   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)))
 
 (provide 'vwe-general)
 ;;; vwe-general.el ends here

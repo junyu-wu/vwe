@@ -181,34 +181,6 @@ MODE."
 				  (setq flycheck-check-syntax-automatically '(save mode-enabled)))
 
 ;;
-;; `projectile'
-;;
-(vwe@lib--package 'projectile
-				  (setq projectile-known-projects-file (vwe@lib--path-cache "projectile/projectile-bookmarks.eld" t)
-						projectile-cache-file (vwe@lib--path-cache "projectile/projectile.cache" t)
-						projectile-completion-system 'ivy
-						projectile-sort-order 'recently-active
-						projectile-indexing-method 'alien
-						projectile-enable-caching t
-						projectile-require-project-root nil
-						projectile-mode-line-function '(lambda () (format "P:[%s]" (projectile-project-name))))
-
-				  (progn
-					(define-key projectile-mode-map (kbd "C-c p") #'projectile-command-map)
-					;;
-					;; `counsel-projectile'
-					;;
-					(vwe@lib--package 'counsel-projectile
-									  nil
-									  (counsel-projectile-mode t)
-									  nil t)
-
-					;;
-					;; `find-file-in-project'
-					;;
-					(vwe@lib--package 'find-file-in-project)))
-
-;;
 ;; `smart-compile'
 ;;
 (vwe@lib--package 'smart-compile
@@ -235,23 +207,6 @@ MODE."
 					(push '("\\.asm\\'" . "asm") quickrun-file-alist)
 					(push '(asm-mode . "asm") quickrun--major-mode-alist)
 					(push "asm" quickrun--support-languages)))
-
-;;
-;; `counsel-etags'
-;;
-;; (vwe@lib--package 'counsel-etags
-;; 				  (add-hook 'prog-mode-hook #'counsel-mode)
-;; 				  (progn
-;; 					(append '("build" "build_clang" ".vscode") counsel-etags-ignore-directories)
-;; 					(append '("TAGS" "tags" ".clang-format") counsel-etags-ignore-filenames))
-;; 				  (progn
-;; 					(setq tags-revert-without-query t
-;; 						  large-file-warning-threshold nil
-;; 						  counsel-etags-sort-grep-result-p t
-;; 						  imenu-create-index-function 'counsel-etags-imenu-default-create-index-function
-;; 						  counsel-etags-update-interval 60
-;; 						  counsel-etags-update-tags-backend (lambda () (shell-command vwe@custom--tags-command)))
-;; 					(add-hook 'prog-mode-hook (lambda () (add-hook 'after-save-hook 'counsel-etags-virtual-update-tags 'append 'local)))))
 
 ;;
 ;; `lsp-mode'

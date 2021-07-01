@@ -224,11 +224,9 @@
 
   (vwe-key-define project
 				  ("project"
-				   (("p" projectile-mode "projectile mode")
-					("g" projectile-grep "grep")
-					("a" projectile-add-known-project "add project")
-					("o" projectile-switch-open-project "switch open project")
-					("s" projectile-switch-project "switch project")
+				   (("p" vwe-project-mode "project mode")
+					("a" vwe-project--add-project "add project")
+					("s" vwe-project--switch-project "switch project")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
   (vwe-key-define magit
@@ -264,7 +262,9 @@
   (vwe-key-define tags
 				  (("tags" :face (:background "red" :foreground "white" :weight bold))
 				   (("c" vwe-tags--tags "create tags")
-					("d" vwe-tags--remove-tags "remove tags")
+					("u" vwe-tags--tags-update "update tags")
+					("m" vwe-tags--manual-build-tags "manual shell")
+					("r" vwe-tags--remove-tags "remove tags")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
   (vwe-key-define emacs-lisp
@@ -570,7 +570,7 @@
   "Show Qwerty layout."
   (interactive)
   (message "\n%s"
-		 "/* Qwerty layer
+		   "/* Qwerty layer
  * ,-----------------------------------------------------------------------------------------.
  * | Esc |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9  |  0  |  -  |  =  |     `     |
  * |-----------------------------------------------------------------------------------------+
