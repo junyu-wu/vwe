@@ -212,6 +212,8 @@
 															  ("C-p" company-select-previous)
 															  ("<tab>" company-complete-common-or-cycle)))
 
+					(add-to-list 'company-transformers #'delete-dups)
+
 					;;
 					;; `company-prescient'
 					;;
