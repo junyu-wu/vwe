@@ -56,7 +56,8 @@
 										(with-eval-after-load 'rvm
 										  (advice-add 'inf-ruby-console-auto
 													  :before #'rvm-activate-corresponding-ruby)))
-									  (define-key compilation-shell-minor-mode-map (kbd "M-RET") nil))
+									  (vwe@lib--keymap-set compilation-shell-minor-mode-map
+														   '(("M-RET" nil))))
 					;;
 					;; `robe' 辅助ruby repl加载程序或gem.包括位置与跳转
 					;;
@@ -68,7 +69,8 @@
 					;;
 					(vwe@lib--package 'ruby-electric
 									  (add-hook 'ruby-mode-hook #'ruby-electric-mode)
-									  (define-key ruby-electric-mode-map (kbd "SPC") nil))
+									  (vwe@lib--keymap-set ruby-electric-mode-map
+														   '(("SPC" nil))))
 
 					;;
 					;; `rubocop' 代码分析与格式化 flycheck with rubocop

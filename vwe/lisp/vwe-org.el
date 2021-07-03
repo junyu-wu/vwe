@@ -92,8 +92,8 @@
 				  (progn
 					(add-hook 'org-mode-hook #'toggle-truncate-lines))
 				  (progn
-					(define-key org-mode-map (kbd "M-C-RET") #'org-meta-return)
-
+					(vwe@lib--keymap-set org-mode-map
+										 '(("M-C-RET" org-meta-return)))
 					;; 代码运行环境
 					(vwe@lib--package 'ob-go)
 					(vwe@lib--package 'ob-rust)

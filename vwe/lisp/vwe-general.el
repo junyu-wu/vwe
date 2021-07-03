@@ -194,8 +194,22 @@
 (vwe@lib--package 'autoinsert
 				  (add-hook 'after-init-hook #'auto-insert-mode)
 				  (progn
-					(define-auto-insert "\\.org$" ["default-reveal-org.org" (lambda () (when (fboundp 'yas-expand-snippet) (yas-expand-snippet (buffer-string) (point-min) (point-max))))])
-					(define-auto-insert "\\.txt$" ["default-reveal-org.org" (lambda () (when (fboundp 'yas-expand-snippet) (yas-expand-snippet (buffer-string) (point-min) (point-max))))]))
+					(define-auto-insert
+					  "\\.org$"
+					  ["default-reveal-org.org"
+					   (lambda ()
+						 (when (fboundp 'yas-expand-snippet)
+						   (yas-expand-snippet (buffer-string)
+											   (point-min)
+											   (point-max))))])
+					(define-auto-insert
+					  "\\.txt$"
+					  ["default-reveal-org.org"
+					   (lambda ()
+						 (when (fboundp 'yas-expand-snippet)
+						   (yas-expand-snippet (buffer-string)
+											   (point-min)
+											   (point-max))))]))
 				  (setq auto-insert t
 						auto-insert-query nil
 						auto-insert-directory (vwe@lib--path-vwe-etc "templates")))
@@ -332,7 +346,8 @@
 ;; `iedit' 批量编辑
 ;;
 (vwe@lib--package 'iedit
-				  (define-key isearch-mode-map	(kbd "C-;") #'iedit-mode-from-isearch))
+				  (vwe@lib--keymap-set isearch-mode-map
+										 '(("C-;" iedit-mode-from-isearch))))
 
 ;;
 ;; `comment-dwim-2' 注释
@@ -369,7 +384,8 @@
 ;;
 (vwe@lib--package 'browse-kill-ring
 				  nil
-				  (define-key browse-kill-ring-mode-map (kbd "i") #'browse-kill-ring-insert-move-and-quit)
+				  (vwe@lib--keymap-set browse-kill-ring-mode-map
+										 '(("i" browse-kill-ring-insert-move-and-quit)))
 				  (setq browse-kill-ring-highlight-current-entry t
 						browse-kill-ring-highlight-inserted-item 'pulse))
 

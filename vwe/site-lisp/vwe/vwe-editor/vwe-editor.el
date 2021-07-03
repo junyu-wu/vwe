@@ -42,7 +42,7 @@
 
 (defvar-local vwe-editor-edit--keymap
   (let* ((keymap (make-sparse-keymap)))
-	(define-key keymap (kbd "ESC ESC") (lambda () (interactive) (vwe-editor-view-mode t)))
+	(define-key keymap (kbd "ESC SPC") (lambda () (interactive) (vwe-editor-view-mode t)))
 	keymap)
   "Keymap.")
 
@@ -144,8 +144,8 @@
   :keymap vwe-editor-edit--keymap
   (if vwe-editor-edit-mode
 	  (when vwe-editor--mode-activate?
-		(setq vwe-editor--mode-current-type 'edit) ;;buffer-read-only nil
-		(read-only-mode -1)
+		(setq vwe-editor--mode-current-type 'edit
+			  buffer-read-only nil)
 		(vwe-editor-view-mode -1)
 		(when vwe-editor--idle-toggle-mode
 		  (setq vwe-editor--timer (run-with-idle-timer vwe-editor--idle-time t #'vwe-editor-view--active)))
@@ -170,9 +170,9 @@
   (advice-remove #'save-buffer #'vwe-editor-view--save-buffer)
   (advice-remove #'switch-to-buffer #'vwe-editor-view--switch-buffer)
   (advice-remove #'select-window #'vwe-editor-view--select-window)
-  (setq vwe-editor--mode-activate? nil ;;buffer-read-only nil
-		vwe-editor--mode-current-type nil)
-  (read-only-mode -1))
+  (setq vwe-editor--mode-activate? nil
+		vwe-editor--mode-current-type nil
+		buffer-read-only nil))
 
 ;;;###autoload
 (define-minor-mode vwe-editor-mode

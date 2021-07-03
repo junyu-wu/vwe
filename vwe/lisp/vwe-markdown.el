@@ -68,7 +68,8 @@
 					;; `markdown-toc'
 					;;
 					(vwe@lib--package 'markdown-toc)
-					(define-key markdown-mode-map (kbd "M-C-k") #'vwe@lib--buffer-kill-current))
+					(vwe@lib--keymap-set markdown-mode-map
+										 '(("M-C-k" vwe@lib--buffer-kill-current))))
 				  (setq markdown-enable-wiki-links t
 						markdown-italic-underscore t
 						markdown-asymmetric-header t

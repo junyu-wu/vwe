@@ -48,7 +48,8 @@
 (vwe@lib--package 'go-mode
 				  (push '("\\.go\\'" . go-mode) auto-mode-alist)
 				  (progn
-					(define-key go-mode-map (kbd "M-.") #'godef-jump)
+					(vwe@lib--keymap-set go-mode-map
+										 '(("M-." godef-jump)))
 					(add-hook 'before-save-hook #'gofmt-before-save)
 					(with-eval-after-load 'exec-path-from-shell
 					  (exec-path-from-shell-copy-envs '("GOPATH" "GO111MODULE" "GOPROXY")))
