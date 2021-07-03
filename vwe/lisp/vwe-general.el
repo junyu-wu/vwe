@@ -347,7 +347,7 @@
 ;;
 (vwe@lib--package 'iedit
 				  (vwe@lib--keymap-set isearch-mode-map
-										 '(("C-;" iedit-mode-from-isearch))))
+									   '(("C-;" iedit-mode-from-isearch))))
 
 ;;
 ;; `comment-dwim-2' 注释
@@ -385,7 +385,7 @@
 (vwe@lib--package 'browse-kill-ring
 				  nil
 				  (vwe@lib--keymap-set browse-kill-ring-mode-map
-										 '(("i" browse-kill-ring-insert-move-and-quit)))
+									   '(("i" browse-kill-ring-insert-move-and-quit)))
 				  (setq browse-kill-ring-highlight-current-entry t
 						browse-kill-ring-highlight-inserted-item 'pulse))
 
@@ -537,7 +537,11 @@
 				  (progn
 					(autoload 'vwe-editor-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-editor/vwe-editor.el" t) "Vwe editor mode." t t)
 					(add-hook 'after-init-hook  #'vwe-editor-mode))
-				  nil nil nil
+
+				  (progn
+					(setq vwe-editor--ignore-func '(browse-kill-ring
+													ediff-files)))
+				  nil nil
 				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-editor"))
 
 ;;

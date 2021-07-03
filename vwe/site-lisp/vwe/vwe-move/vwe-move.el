@@ -329,7 +329,10 @@
 	(define-key keymap (kbd "q") #'vwe-move--kill-switch-side-buffer)
 	(define-key keymap (kbd "n") #'next-line)
 	(define-key keymap (kbd "p") #'previous-line)
-	(define-key keymap (kbd "s") (lambda () (interactive) (if (fboundp 'swiper) (swiper) (isearch-forward))))
+	(define-key keymap (kbd "s") (lambda () (interactive)
+								   (if (fboundp 'swiper)
+									   (swiper)
+									 (isearch-forward))))
 	(define-key keymap (kbd "TAB") #'vwe-move--switch-buffer)
 	keymap)
   "Switch buffer keymap.")
@@ -366,9 +369,15 @@
   "Switch buffer."
   (interactive)
   (cond
-   ((equal vwe-move--switch-side-show-status 'buffer) (setq vwe-move--switch-side-show-status 'temp) (vwe-move--display-switch-side-buffer))
-   ((equal vwe-move--switch-side-show-status 'temp) (setq vwe-move--switch-side-show-status 'buffer) (vwe-move--display-switch-side-buffer t))
-   (t (setq vwe-move--switch-side-show-status 'temp) (vwe-move--display-switch-side-buffer))))
+   ((equal vwe-move--switch-side-show-status 'buffer)
+	(setq vwe-move--switch-side-show-status 'temp)
+	(vwe-move--display-switch-side-buffer))
+   ((equal vwe-move--switch-side-show-status 'temp)
+	(setq vwe-move--switch-side-show-status 'buffer)
+	(vwe-move--display-switch-side-buffer t))
+   (t
+	(setq vwe-move--switch-side-show-status 'temp)
+	(vwe-move--display-switch-side-buffer))))
 
 (defun vwe-move--build-switch-buffer-headerline ()
   "Build switch buffer headerline."
@@ -376,7 +385,8 @@
 		 (buflen (length (vwe-move--get-buffer-list)))
 		 (tmpbuflen (length (vwe-move--get-buffer-list t)))
 		 (hidebuflen (- allbuf buflen tmpbuflen))
-		 (split (propertize (format " | ") 'face 'vwe-move--default-face)))
+		 (split (propertize (format " | ")
+							'face 'vwe-move--default-face)))
 	(concat
 	 (propertize (format "Vwe switch buffer:")
 				 'face 'vwe-move--success-face)
@@ -413,7 +423,9 @@
 (defun vwe-move--display-switch-side-buffer (&optional tmp?)
   "Make switch buffer cmd buffer.
 TMP is tmp buffer."
-  (let* ((buffer (if (get-buffer vwe-move--switch-side-buffer-name) (get-buffer vwe-move--switch-side-buffer-name) (get-buffer-create vwe-move--switch-side-buffer-name)))
+  (let* ((buffer (if (get-buffer vwe-move--switch-side-buffer-name)
+					 (get-buffer vwe-move--switch-side-buffer-name)
+				   (get-buffer-create vwe-move--switch-side-buffer-name)))
 		 ;; (buffer-length (length (vwe-move--get-buffer-list)))
 		 ;; (tmpbuf-length (length (vwe-move--get-buffer-list t)))
 		 ;; (headerline (concat (format "buffer total %d | buffer %d | tmp buffer %d | hide buffer %d"
@@ -436,7 +448,10 @@ TMP is tmp buffer."
 					header-line-format headerline)
 		(vwe-move--switch-buffer-mode 1)
 		(dotimes (i (length bufname-list))
-		  (insert-button (concat  "[" (nth i bufname-list) "]" (unless (= (1+ i) (length bufname-list)) "\n"))
+		  (insert-button (concat  "["
+								  (nth i bufname-list)
+								  "]"
+								  (unless (= (1+ i) (length bufname-list)) "\n"))
 						 'action (lambda(_)
 								   (vwe-move--kill-switch-side-buffer)
 								   (switch-to-buffer (nth i bufname-list)))
@@ -460,7 +475,9 @@ SELF is include curretn buffer."
   (seq-filter 'bufferp
 			  (mapcar
 			   (lambda (item)
-				 (if (and (string-match regexp (buffer-name item)) (not (equal vwe-move--switch-side-buffer-name (buffer-name item))))
+				 (if (and (string-match regexp (buffer-name item))
+						  (not (equal vwe-move--switch-side-buffer-name
+									  (buffer-name item))))
 					 (if self?
 						 item
 					   (unless (equal item (current-buffer)) item))))
@@ -519,7 +536,11 @@ SELF is include curretn buffer."
   "Get current point or GOTO point line eol."
   (interactive)
   (unless goto (setq goto (point)))
-  (let* ((eol-pos (save-excursion (goto-char goto) (end-of-line) (skip-chars-backward " \t" (vwe-move-marker-point--line-indent)) (point))))
+  (let* ((eol-pos (save-excursion
+					(goto-char goto)
+					(end-of-line)
+					(skip-chars-backward " \t" (vwe-move-marker-point--line-indent))
+					(point))))
 	eol-pos))
 
 (defun vwe-move-marker-point--marker ()
@@ -614,7 +635,8 @@ SELF is include curretn buffer."
   (vwe-move-line-previe--bulid-preview-origin-snapshot)
   (unwind-protect
 	  (setq vwe-move-line-preview--line-number (read-number "line:"))
-	(set-window-point vwe-move-line-preview--origin-window vwe-move-line-preview--origin-window-point)))
+	(set-window-point vwe-move-line-preview--origin-window
+					  vwe-move-line-preview--origin-window-point)))
 
 (defun vwe-move-line-previe--bulid-preview-origin-snapshot ()
   "Preview goto line."
@@ -631,8 +653,10 @@ SELF is include curretn buffer."
   "Preview recovery."
   (interactive)
   (select-window vwe-move-line-preview--origin-window)
-  (when (and vwe-move-line-preview--origin-window (numberp vwe-move-line-preview--origin-window-point))
-	(set-window-point vwe-move-line-preview--origin-window vwe-move-line-preview--origin-window-point)))
+  (when (and vwe-move-line-preview--origin-window
+			 (numberp vwe-move-line-preview--origin-window-point))
+	(set-window-point vwe-move-line-preview--origin-window
+					  vwe-move-line-preview--origin-window-point)))
 
 (defun vwe-move-line-preview--cmd-config ()
   "Preview hook for minibuffer command."
@@ -685,7 +709,8 @@ SELF is include curretn buffer."
 (defun vwe-move-goto-line--show-mark (win-pos)
   "Show mark with WIN-POS."
   (interactive)
-  (when vwe-move-goto-line--current-overlay-list (mapc #'delete-overlay vwe-move-goto-line--current-overlay-list))
+  (when vwe-move-goto-line--current-overlay-list
+	(mapc #'delete-overlay vwe-move-goto-line--current-overlay-list))
   (let* ((keymap vwe-move-goto-line--keymap)
 		 (ov-list)
 		 (pos-list (vwe-move-goto-line--overlay-alist
@@ -698,7 +723,9 @@ SELF is include curretn buffer."
 								 'face 'vwe-mark--position--face))
 		(push ov ov-list)
 		))
-	(define-key keymap (kbd "q") (lambda() (interactive) (mapc #'delete-overlay ov-list) (vwe-move-goto-line-mode -1)))
+	(define-key keymap (kbd "q") (lambda() (interactive)
+								   (mapc #'delete-overlay ov-list)
+								   (vwe-move-goto-line-mode -1)))
 	(if win-pos
 		(define-key keymap (kbd "g") #'vwe-move-goto-line-next-move-to)
 	  (define-key keymap (kbd "g") #'vwe-move-goto-line-previous-move-to))
@@ -839,13 +866,16 @@ SELF is include curretn buffer."
 			(setq mark-pos (point)
 				  mark-overlay (make-overlay (1- mark-pos) mark-pos)
 				  mark-index (1+ mark-index)
-				  vwe-mark-and-goto--mark-list (append vwe-mark-and-goto--mark-list (list (list mark-index mark-pos mark-overlay))))
+				  vwe-mark-and-goto--mark-list (append vwe-mark-and-goto--mark-list
+													   (list (list mark-index mark-pos mark-overlay))))
 			(overlay-put mark-overlay 'after-string
 						 (propertize (format "%d" mark-index)
 									 'display '((raise 0.5) (height 0.7))
 									 'face 'vwe-mark-and-goto--mark-face)))))
 
-	  (dotimes (i (if (> (length vwe-mark-and-goto--mark-list) 10) 10 (length vwe-mark-and-goto--mark-list)))
+	  (dotimes (i (if (> (length vwe-mark-and-goto--mark-list) 10)
+					  10
+					(length vwe-mark-and-goto--mark-list)))
 		(define-key vwe-mark-and-goto-show--keymap
 		  (kbd (number-to-string i))
 		  (lambda ()

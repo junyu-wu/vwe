@@ -146,6 +146,7 @@
 					("P" vwe-key:project "project" :face (:foreground "yellow" :underline t :weight bold))
 					("u" vwe-key:undo "undo" :face (:foreground "yellow" :underline t :weight bold))
 					("e" vwe-edit-region--mark-edit "edit region")
+					("g" magit-diff-dwim "magit diff")
 					("U" esup "esup")
 					("O" command-log-mode "command log")
 					("z" customize-group "customize group")

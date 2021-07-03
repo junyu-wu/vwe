@@ -78,6 +78,10 @@
   "^[*|\s*]"
   "Filter regexp.")
 
+(defvar vwe-editor--last-buffer
+  nil
+  "Last view buffer.")
+
 (defvar vwe-editor-view-mode-hook
   nil
   "View mode hook.")
@@ -86,10 +90,15 @@
   nil
   "View mode hook.")
 
+(defvar vwe-editor--ignore-func
+  nil
+  "Ignore func.")
+
 (defun vwe-editor--find-file (func &rest args)
   "Find FUNC and ARGS file."
   (apply func args)
-  (vwe-editor-view-mode t))
+  (unless (vwe-editor--tmp-buffer-p (current-buffer))
+	(vwe-editor-view-mode t)))
 
 (defun vwe-editor-view--save-buffer (&rest _)
   "Active view mode."
@@ -101,30 +110,41 @@
   (interactive)
   (vwe-editor-view-mode t))
 
+(defun vwe-editor--tmp-buffer-p (buffer)
+  "Is temp BUFFER."
+  (when (and (bufferp buffer)
+			 (string-match vwe-editor--filter-regexp
+						   (buffer-name buffer)))
+	t))
+
 (defun vwe-editor-view--switch-buffer (func &rest args)
   "Call FUNC and ARGS to Switch buffer activate view mode."
   (let* ((from (current-buffer))
 		 (to (get-buffer (car args))))
 	(cond
-	 ((string-match vwe-editor--filter-regexp (buffer-name from)) (apply func args))
-	 ((string-match vwe-editor--filter-regexp (buffer-name to)) (apply func args))
+	 ;; ((string-match vwe-editor--filter-regexp (buffer-name from)) (apply func args))
+	 ;; ((string-match vwe-editor--filter-regexp (buffer-name to)) (apply func args))
+	 ((vwe-editor--tmp-buffer-p from) (apply func args))
+	 ((vwe-editor--tmp-buffer-p to) (apply func args))
 	 ((equal from to) (apply func args))
 	 (t (apply func args) (vwe-editor-view-mode t)))))
 
 (defun vwe-editor-view--select-window (func &rest args)
   "Call FUNC and ARGS select window activate view mode."
   (let* ((from (current-buffer))
-		 (to)
 		 (selected (selected-window))
-		 (window (apply func args)))
-	(when (windowp window)
-	  (setq to (window-buffer))
-	  (when (and (bufferp to)
-				 (not (equal selected window))
-				 (not (string-match vwe-editor--filter-regexp (buffer-name from)))
-				 (not (string-match vwe-editor--filter-regexp (buffer-name to)))
-				 (not (equal (buffer-name from) (buffer-name to))))
-		(vwe-editor-view-mode t)))))
+		 (window (apply func args))
+		 (to (window-buffer)))
+	(unless (vwe-editor--tmp-buffer-p from)
+	  (setq vwe-editor--last-buffer from))
+	(when (and (windowp window)
+			   (bufferp to)
+			   (not (equal to vwe-editor--last-buffer))
+			   (not (equal selected window))
+			   (not (vwe-editor--tmp-buffer-p from))
+			   (not (vwe-editor--tmp-buffer-p to))
+			   (not (equal (buffer-name from) (buffer-name to))))
+	  (vwe-editor-view-mode t))))
 
 (define-minor-mode vwe-editor-view-mode
   "Editor view mode."
@@ -138,6 +158,18 @@
 		  (vwe-editor-edit-mode -1))
 		(run-hooks 'vwe-editor-view-mode-hook))))
 
+(defun vwe-editor-filter-func ()
+  "Filter function."
+  (let* ((cmd (or (command-remapping this-original-command)
+				  this-original-command)))
+	(when (memq cmd vwe-editor--ignore-func)
+	  (vwe-editor-mode -1))))
+
+(defun vwe-editor--restart-mode ()
+  "Restart editor mode."
+  (unless vwe-editor--mode-activate?
+	(vwe-editor-mode 1)))
+
 (define-minor-mode vwe-editor-edit-mode
   "Editor edit mode."
   :group 'vwe-editor
@@ -149,13 +181,18 @@
 		(vwe-editor-view-mode -1)
 		(when vwe-editor--idle-toggle-mode
 		  (setq vwe-editor--timer (run-with-idle-timer vwe-editor--idle-time t #'vwe-editor-view--active)))
-		(run-hooks 'vwe-editor-edit-mode-hook))
-	(when (timerp vwe-editor--timer) (cancel-timer vwe-editor--timer))))
+		(run-hooks 'vwe-editor-edit-mode-hook)
+		(add-hook 'pre-command-hook 'vwe-editor-filter-func t t)
+		(add-hook 'post-command-hook 'vwe-editor--restart-mode t t))
+	(when (timerp vwe-editor--timer) (cancel-timer vwe-editor--timer))
+	(remove-hook 'pre-command-hook 'vwe-editor-filter-func)
+	(remove-hook 'post-command-hook 'vwe-editor--restart-mode)))
 
 (defun vwe-editor-enable ()
   "Enable editor mode."
   (interactive)
-  (setq vwe-editor--mode-activate? t)
+  (setq vwe-editor--mode-activate? t
+		vwe-editor--last-buffer nil)
   (advice-add #'find-file :around #'vwe-editor--find-file)
   (advice-add #'save-buffer :after #'vwe-editor-view--save-buffer)
   (advice-add #'switch-to-buffer :around #'vwe-editor-view--switch-buffer)
