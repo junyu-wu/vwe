@@ -162,10 +162,10 @@
 
 (defvar vwe-search--edit-keymap
   (let ((keymap (make-sparse-keymap)))
-	(define-key keymap (kbd "v") #'vwe-search--switch-to-result-mode)
-	(define-key keymap (kbd "r") #'vwe-search--replace-match)
-	(define-key keymap (kbd "x") #'vwe-search--apply-replace)
-	(define-key keymap (kbd "q") #'vwe-search--kill-result-edit-buffer)
+	(define-key keymap (kbd "M-RET t") #'vwe-search--switch-to-result-mode)
+	(define-key keymap (kbd "M-RET r") #'vwe-search--replace-match)
+	(define-key keymap (kbd "M-RET x") #'vwe-search--apply-replace)
+	(define-key keymap (kbd "M-RET q") #'vwe-search--kill-result-edit-buffer)
 	keymap)
   "Search edit mode keymap.")
 
@@ -227,8 +227,7 @@ TYPE `word' `symbol' `point' `region' `input'."
   (let* ((prefix-key vwe-search--prefix-key)
 		 (split " ")
 		 (cmd vwe-search--command))
-	(message "dir is:%s" directory)
-	(setq cmd (concat command split (or parameters vwe-search--default-parameters) split prefix-key split keyword split directory))
+	(setq cmd (concat command split (or parameters vwe-search--default-parameters) split prefix-key split "\"" keyword "\"" split directory))
 	(when (memq system-type '(cygwin windows-nt ms-dos))
       (setq cmd (encode-coding-string cmd locale-coding-system)))
 	cmd))
@@ -387,7 +386,6 @@ TYPE `word' `symbol' `point' `region' `input'."
 		 (cmd (or command vwe-search--command))
 		 (cmd-str (vwe-search--build-command key dir parameters cmd))
 		 (buffer (vwe-search--make-result-buffer)))
-	(message "cmd str:%s" dir)
 	(when (bufferp buffer)
 	  (setq vwe-search--result-total 0
 			vwe-search--current-search-info nil)
@@ -449,7 +447,10 @@ TYPE `word' `symbol' `point' `region' `input'."
   (interactive)
   (when vwe-search--apply-replace-alist (setq vwe-search--apply-replace-alist nil))
   (save-excursion
-	(let* ((keyword (plist-get vwe-search--current-search-info :keyword))
+	(let* ((keyword (read-string (format "replace '%s' to:" (plist-get vwe-search--current-search-info :keyword))
+								 (plist-get vwe-search--current-search-info :keyword)
+								 nil
+								 (plist-get vwe-search--current-search-info :keyword)))
 		   (result (plist-get vwe-search--current-search-info :result))
 		   (max-line (save-excursion (goto-char (point-max)) (line-number-at-pos)))
 		   (to-str (read-string (format "replace '%s' to:" keyword) keyword))
@@ -539,7 +540,7 @@ TYPE `word' `symbol' `point' `region' `input'."
   (setq major-mode 'vwe-search-edit-mode
 		mode-name "vwe-search-edit-mode"
 		vwe-search--apply-replace-alist nil)
-  (read-only-mode 1)
+  (read-only-mode -1)
   (use-local-map vwe-search--edit-keymap))
 
 (define-derived-mode vwe-search-result-mode text-mode "vwe-search-result"

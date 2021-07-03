@@ -417,5 +417,7 @@ If nil hide all buffers."
 	(interactive)
 	(customize-group 'vwe))
 
+(vwe@lib--log "Initialization of Customize configuration is complete.")
+
 (provide 'vwe-customize)
 ;;; vwe-customize.el ends here

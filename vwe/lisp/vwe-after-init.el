@@ -24,11 +24,6 @@
 
 ;;; Code:
 
-(vwe@lib--package nil
-				  (progn
-					(push '("\\.action\\'" . conf-mode) auto-mode-alist)
-					))
-
 
 (provide 'vwe-after-init)
 ;;; vwe-after-init.el ends here

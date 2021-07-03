@@ -34,44 +34,33 @@
 ;; init emacs
 ;;
 
-(when (vwe@lib--found-custom-arg "-reset")
+(when (vwe@lib--found-custom-arg "-vr")
   (progn
 	(condition-case nil
 		(progn
-		  (vwe@lib--file-delete (vwe@lib--path-emacs.d "") vwe@custom--reset-ignore-file-list))
+		  (vwe@lib--file-delete (vwe@lib--path-emacs.d "")
+								vwe@custom--reset-ignore-file-list))
 	  (error))))
 
-(cond ((vwe@lib--found-custom-arg "-vq") (message "vwe feature config ignore load."))
-	  ((vwe@lib--found-custom-arg "-origin") (progn
-											   (require 'vwe-base)
-											   (message "vwe by emacs origin config.")))
-	  ((vwe@lib--found-custom-arg "-base") (progn
-											 (require 'vwe-base)
-											 (require 'vwe-ui)
-											 (require 'vwe-theme)
-											 (require 'vwe-layout)
-											 (message "vwe base config init.")))
+(cond ((vwe@lib--found-custom-arg "-vq")
+	   (vwe@lib--log "No configuration loaded."))
+	  ((vwe@lib--found-custom-arg "-vb")
+	   (progn
+		 (require 'vwe-base)))
+	  ((vwe@lib--found-custom-arg "-vs")
+	   (progn
+		 (require 'vwe-base)
+		 (require 'vwe-ui)
+		 (vwe@lib--log "Initialization of Simple configuration is complete.")))
 	  (t (progn
 		   ;;
 		   ;; init ui theme layout and general
 		   ;;
 		   (require 'vwe-base)
 		   (require 'vwe-ui)
-		   (require 'vwe-theme)
-		   (require 'vwe-layout)
 		   (require 'vwe-general)
 
-		   ;;
-		   ;; init edit
-		   ;;
-		   (require 'vwe-org)
-		   (require 'vwe-markdown)
-
-		   ;;
-		   ;; init prog and language
-		   ;;
-		   (require 'vwe-prog)
-
+		   (require 'vwe-lang)
 		   ;;
 		   ;; inti misc
 		   ;;
@@ -85,10 +74,9 @@
 		   ;;
 		   ;; after init
 		   ;;
-		   (require 'vwe-after-init)
+		   (require 'vwe-after-init))))
 
-		   (message "vwe all config init."))))
-
+(vwe@lib--log "Initialization finished.")
 
 (provide 'vwe-main)
 ;;; vwe-main.el ends here

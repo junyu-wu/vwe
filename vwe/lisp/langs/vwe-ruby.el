@@ -61,12 +61,7 @@
 					;; `robe' 辅助ruby repl加载程序或gem.包括位置与跳转
 					;;
 					(vwe@lib--package 'robe
-									  (add-hook 'ruby-mode-hook #'robe-mode)
-									  (progn
-										(add-hook 'ruby-mode-hook
-												  (lambda ()
-													(set (make-local-variable 'company-backends)
-														 '(company-anaconda))))))
+									  (add-hook 'ruby-mode-hook #'robe-mode))
 
 					;;
 					;; `ruby-electric' 自动添加 'end'

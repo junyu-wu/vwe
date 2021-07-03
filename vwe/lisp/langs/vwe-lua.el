@@ -24,19 +24,17 @@
 
 ;;; Code:
 
-(vwe@lib--package 'lua-mode
-				  (progn
-					(defun vwe@pkg--lua-mode-company-init ()
-					  (setq-local company-backends '((company-lua
-													  company-etags
-													  company-dabbrev-code
-													  company-yasnippet))))
-					(add-hook 'lua-mode-hook #'vwe@pkg--lua-mode-company-init))
+(vwe@lib--package 'lua-mode nil
 				  (progn (vwe@lib--package 'company-lua))
 				  (progn
 					(autoload 'lua-mode "lua-mode" "Lua editing mode." t)
 					(add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
-					(add-to-list 'interpreter-mode-alist '("lua" . lua-mode))))
+					(add-to-list 'interpreter-mode-alist '("lua" . lua-mode))
+					(with-eval-after-load 'company
+										(add-hook 'lua-mode-hook
+												  (lambda ()
+													(vwe@pkg--company-make-mode-local-backends
+													 'company-lua))))))
 
 (provide 'vwe-lua)
 ;;; vwe-lua.el ends here

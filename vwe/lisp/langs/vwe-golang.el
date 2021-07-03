@@ -57,7 +57,12 @@
 					;; `company-go'
 					;;
 					(vwe@lib--package 'company-go nil nil
-					  				  (add-hook 'go-mode-hook (lambda() (set (make-local-variable 'company-backends) '(company-go)) (company-mode))))
+									  (with-eval-after-load 'company
+										(setq company-go-gocode-command (concat (getenv "GOPATH") "/bin/gocode"))
+										(add-hook 'emacs-lisp-mode-hook
+												  (lambda ()
+													(vwe@pkg--company-make-mode-local-backends
+													 'company-go)))))
 
 					;;
 					;; `go-eldoc'
@@ -70,7 +75,6 @@
 					(vwe@lib--package 'go-guru (add-hook 'go-mode-hook #'go-guru-hl-identifier-mode)))
 				  (setq go-command (concat (getenv "GOROOT") "/bin/go")
 						gofmt-command (concat (getenv "GOPATH") "/bin/goimports")
-						company-go-gocode-command (concat (getenv "GOPATH") "/bin/gocode")
 						flycheck-go-gofmt-executable (concat (getenv "GOPATH") "/bin/goimports")
 						flycheck-go-golint-executable (concat (getenv "GOPATH") "/bin/golint")
 						flycheck-go-build-executable (concat (getenv "GOROOT") "/bin/go")

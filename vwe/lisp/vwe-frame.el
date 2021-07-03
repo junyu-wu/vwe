@@ -1,4 +1,4 @@
-;;; vwe-layout.el --- Layout Config       -*- lexical-binding: t; -*-
+;;; vwe-frame.el --- Frame and window Config       -*- lexical-binding: t; -*-
 
 ;; Copyright (C) 2015  Wu Junyu
 
@@ -73,5 +73,5 @@
 												("M-9" winum-select-window-9)))
 				  (setq winum-auto-setup-mode-line nil))
 
-(provide 'vwe-layout)
-;;; vwe-layout.el ends here
+(provide 'vwe-frame)
+;;; vwe-frame.el ends here

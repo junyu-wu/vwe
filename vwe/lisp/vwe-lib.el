@@ -656,5 +656,19 @@ REFRESHP non-nil refresh package contents."
 	   (error
 		(message "pkg %S not found" pkg))))))
 
+;; ************************************************************************
+;; log
+;; ************************************************************************
+(defun vwe@lib--log (msg &optional type)
+  "Log MSG TYPE.
+TYPE is `info' `warning' `error'."
+  (let* ((log (if (stringp msg) msg (format "%S" msg))))
+	(cond
+	 ((equal type 'warning) (message "[vwe-warning] %s" log))
+	 ((equal type 'error) (message "[vwe-error] %s" log))
+	 (t (message "[vwe-info] %s" log)))))
+
+(vwe@lib--log "vwe lib loaded.")
+
 (provide 'vwe-lib)
 ;;; vwe-lib.el ends here

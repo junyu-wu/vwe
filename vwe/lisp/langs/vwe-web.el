@@ -53,11 +53,12 @@
 ;; `css-mode'
 ;;
 (vwe@lib--package 'css-mode
-				  (add-hook 'css-mode-hook
-							(lambda()
-							  (set (make-local-variable 'company-backends)
-										   '(company-css company-files company-yasnippet company-capf))))
-				  nil
+				  nil nil
+				  (with-eval-after-load 'company
+										(add-hook 'css-mode-hook
+												  (lambda ()
+													(vwe@pkg--company-make-mode-local-backends
+													 'company-css))))
 				  (setq css-indent-offset 2
 						flycheck-stylelintrc (vwe@lib--path-vwe-etc "web/.stylelintrc" t)
 						flycheck-css-stylelint-executable "stylelint"))
@@ -102,11 +103,12 @@
 				  ;;
 				  ;; `company-web'
 				  ;;
-				  (vwe@lib--package 'company-web
-									(add-hook 'web-mode-hook
-											  (lambda ()
-												(set (make-local-variable 'company-backends) '(company-web-html))
-												(company-mode t))))
+				  (vwe@lib--package 'company-web nil nil
+									(with-eval-after-load 'company
+										(add-hook 'web-mode-hook
+												  (lambda ()
+													(vwe@pkg--company-make-mode-local-backends
+													 'company-web-html)))))
 				  (setq web-mode-markup-indent-offset 2
 						web-mode-css-indent-offset 2
 						web-mode-code-indent-offset 2

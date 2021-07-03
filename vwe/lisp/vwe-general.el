@@ -204,13 +204,47 @@
 ;; `company'
 ;;
 (vwe@lib--package 'company
-				  (add-hook 'prog-mode-hook #'global-company-mode)
 				  (progn
-					(vwe@lib--keymap-set company-search-map '(("C-n" company-select-next)
-															  ("C-p" company-select-previous)))
-					(vwe@lib--keymap-set company-active-map '(("C-n" company-select-next)
-															  ("C-p" company-select-previous)
-															  ("<tab>" company-complete-common-or-cycle)))
+					(defvar vwe@pkg--company-general-backends
+					  '((company-abbrev
+						 company-dabbrev
+						 company-dabbrev-code
+						 company-keywords
+						 company-files
+						 company-etags
+						 company-capf))
+					  "General company backends.")
+
+					(defvar vwe@pkg--company-with-yas-p
+					  t
+					  "Company backends with yas.")
+
+					(defun vwe@pkg--company-make-mode-local-backends (backends)
+					  "Make mode local BACKENDS."
+					  (let* ((backends (progn
+										 (unless (listp backends) (setq backends (list backends)))
+										 (list (append backends (car vwe@pkg--company-general-backends))))))
+						(set (make-local-variable 'company-backends)
+						   	 (if vwe@pkg--company-with-yas-p
+								 (mapcar #'vwe@pkg--company-backends-with-yas backends)
+							   backends))))
+
+					(defun vwe@pkg--company-backends-with-yas (backend)
+					  "Company backends with yasnippet."
+					  (if (or (and (listp backend) (member 'company-yasnippet backend)))
+						  backend
+						(append (if (consp backend) backend (list backend))
+								'(:with company-yasnippet))))
+
+					(add-hook 'prog-mode-hook #'global-company-mode))
+				  (progn
+					(vwe@lib--keymap-set company-search-map
+										 '(("C-n" company-select-next)
+										   ("C-p" company-select-previous)))
+					(vwe@lib--keymap-set company-active-map
+										 '(("C-n" company-select-next)
+										   ("C-p" company-select-previous)
+										   ("<tab>" company-complete-common-or-cycle)))
 
 					(add-to-list 'company-transformers #'delete-dups)
 
@@ -248,17 +282,9 @@
 
 						company-dabbrev-downcase nil
 						company-dabbrev-ignore-case t
-						;; yasnippet support for all company backends
-						company-backends (mapcar (lambda (backend)
-												   (if (or (and (listp backend) (member 'company-yasnippet backend)))
-													   backend
-													 (append (if (consp backend) backend (list backend))
-															 '(:with company-yasnippet))))
-												 '((company-abbrev
-													company-dabbrev
-													company-keywords
-													company-files
-													company-capf)))))
+
+						company-backends (mapcar #'vwe@pkg--company-backends-with-yas
+												 vwe@pkg--company-general-backends)))
 
 ;;
 ;; `mmm-mode'
@@ -352,8 +378,7 @@
 ;;
 (vwe@lib--package 'undo-tree
 				  (add-hook 'after-init-hook #'global-undo-tree-mode)
-				  (dolist (dir undo-tree-history-directory-alist)
-					(push (expand-file-name (cdr dir)) recentf-exclude))
+				  nil
 				  (setq undo-tree-visualizer-timestamps t
 						undo-tree-visualizer-diff t
 						undo-tree-enable-undo-in-region nil
@@ -474,13 +499,6 @@
 (vwe@lib--package 'imenu-list)
 
 ;;
-;; `text-mode'
-;;
-(vwe@lib--package 'text-mode
-				  (push '("\\.txt\\'" . org-mode) auto-mode-alist)
-				  nil nil nil nil t)
-
-;;
 ;; `magit'
 ;;
 (vwe@lib--package 'magit nil (progn
@@ -599,6 +617,8 @@
 					(add-hook 'prog-mode-hook #'vwe-paren-mode))
 				  nil nil nil
 				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-paren"))
+
+(vwe@lib--log "Initialization of General configuration is complete.")
 
 (provide 'vwe-general)
 ;;; vwe-general.el ends here

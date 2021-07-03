@@ -137,5 +137,7 @@
 						  emms-mode-line-format " %s"
 						  emms-playing-time-display-format " %s]")))
 
+(vwe@lib--log "Initialization of Misc configuration is complete.")
+
 (provide 'vwe-misc)
 ;;; vwe-misc.el ends here

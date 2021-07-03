@@ -69,8 +69,11 @@
 					;; `company-anaconda'
 					;;
 					(vwe@lib--package 'company-anaconda nil nil
-									  ;; (add-to-list 'company-backends 'company-anaconda)
-									   (add-hook 'python-mode-hook (lambda () (set (make-local-variable 'company-backends) '(company-anaconda)))))
+									  (with-eval-after-load 'company
+										(add-hook 'python-mode-hook
+												  (lambda ()
+													(vwe@pkg--company-make-mode-local-backends
+													 'company-anaconda)))))
 
 					;;
 					;; `elpy'

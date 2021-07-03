@@ -1,9 +1,9 @@
-;;; vwe-lisp.el --- Common Lisp And Emacs Lisp -*- lexical-binding: t; -*-
+;;; vwe-lang.el ---                                  -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2015  Wu Junyu
+;; Copyright (C) 2015  WuJunyu
 
-;; Author: Wu Junyu <vistar_w@hotmail.com>
-;; Keywords: languages, lisp
+;; Author: WuJunyu <vistar_w@hotmail.com>
+;; Keywords:
 
 ;; This program is free software; you can redistribute it and/or modify
 ;; it under the terms of the GNU General Public License as published by
@@ -30,33 +30,29 @@
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
+(vwe@lib--package nil
+				  (progn
+					(push '("\\.action\\'" . conf-mode) auto-mode-alist)))
 
 ;;
-;; `elisp-mode'
+;; `text-mode'
 ;;
-(vwe@lib--package 'elisp-mode
-				  (with-eval-after-load 'company
-					  (add-hook 'emacs-lisp-mode-hook
-								(lambda ()
-								  (vwe@pkg--company-make-mode-local-backends
-								   'company-elisp))))
+(vwe@lib--package 'text-mode
+				  (push '("\\.txt\\'" . org-mode) auto-mode-alist)
 				  nil nil nil nil t)
 
 ;;
-;; `highlight-defined' 高亮elisp符号
+;; init edit
 ;;
-(vwe@lib--package 'highlight-defined
-				  (add-hook 'emacs-lisp-mode-hook #'highlight-defined-mode)
-				  nil
-				  (setq highlight-defined-face-use-itself t))
+(require 'vwe-org)
+(require 'vwe-markdown)
 
 ;;
-;; `helpful' 根据上下文扩展帮助信息
+;; init prog and language
 ;;
-(vwe@lib--package 'helpful
-				  nil
-				  (vwe@lib--keymap-set emacs-lisp-mode-map '(([remap describe-key] helpful-key)
-															 ([remap describe-symbol] helpful-symbol))))
+(require 'vwe-prog)
 
-(provide 'vwe-lisp)
-;;; vwe-lisp.el ends here
+(vwe@lib--log "Initialization of Languages configuration is complete.")
+
+(provide 'vwe-lang)
+;;; vwe-lang.el ends here

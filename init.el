@@ -27,6 +27,6 @@
 ;; (add-to-list 'load-path (expand-file-name "vwe/lisp" user-emacs-directory))
 ;; (require 'vwe-main)
 
-(load-file (format "%s/vwe-main.el" (expand-file-name "vwe/lisp" user-emacs-directory)))
+(load-file (expand-file-name "vwe/lisp/vwe-main.el" user-emacs-directory))
 
 ;;; init.el ends here

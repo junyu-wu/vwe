@@ -32,6 +32,17 @@
 ;; config
 ;; ***************************************************************************
 
+(vwe@lib--package nil
+				  (with-eval-after-load 'company
+					  (add-hook 'c-mode-hook
+								(lambda ()
+								  (vwe@pkg--company-make-mode-local-backends
+								   '(company-semantic company-cmake company-clang))))
+					  (add-hook 'c++-mode-hook
+								(lambda ()
+								  (vwe@pkg--company-make-mode-local-backends
+								   '(company-semantic company-cmake company-clang))))))
+
 ;;
 ;; `modern-c++-font-lock'
 ;;

@@ -52,21 +52,22 @@
 ;;
 (vwe@lib--package 'nasm-mode
 				  (progn
-					(push '("\\.\\(asm\\|s\\|lst\\)$" . nasm-mode) auto-mode-alist)
-					(autoload 'nasm-mode (vwe@lib--path-vwe-site-lisp "nasm-mode/nasm-mode.el" t) "Nasm mode" t t)
+					(push '("\\.\\(asm\\|s\\|lst\\)$" . nasm-mode) auto-mode-alist))
+				  (progn
 					(add-hook 'before-save-hook #'delete-trailing-whitespace)
-					(add-hook 'nasm-mode-hook (lambda() (font-lock-add-keywords nil '(("section\\.[0-9 a-z A-Z \. _ ]+" . 'nasm-section-name))))))
-				  nil nil nil
-				  (vwe@lib--path-vwe-site-lisp "nasm-mode"))
-
-;;
-;; `company-nasm'
-;;
-(vwe@lib--package 'company-asm
-				  (add-hook 'nasm-mode-hook (lambda () (vwe@lib--package-load 'company-asm)))
-				  (add-to-list 'company-backends 'company-asm--manual-asm-backend)
-				  nil nil
-				  (vwe@lib--path-vwe-site-lisp "company"))
+					(add-hook 'nasm-mode-hook
+							  (lambda() (font-lock-add-keywords nil
+										 '(("section\\.[0-9 a-z A-Z \. _ ]+" . 'nasm-section-name)))))
+					;;
+					;; `company-nasm'
+					;;
+					(vwe@lib--package 'company-asm nil nil
+									  (with-eval-after-load 'company
+										(add-hook 'nasm-mode-hook
+												  (lambda ()
+													(vwe@pkg--company-make-mode-local-backends
+													 'company-assembly))))
+									  t (vwe@lib--path-vwe-site-lisp "company"))))
 
 (provide 'vwe-assembly)
 ;;; vwe-assembly.el ends here

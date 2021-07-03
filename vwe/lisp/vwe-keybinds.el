@@ -117,8 +117,7 @@
 
   (vwe-key-define global
 				  (("global" :face (:background "DarkOrange" :foreground "white" :weight bold))
-				   (("g" counsel-etags-grep "grep")
-					("B" ibuffer "ibuffer")
+				   (("B" ibuffer "ibuffer")
 					("@" vwe@lib--minibuffer-switch "switch minibuffer")
 					("i" recentf-open-files "recent files")
 					("d" dired "dired")
@@ -145,21 +144,24 @@
 					("o" vwe-key:org-extend "org extend" :face (:foreground "yellow" :underline t :weight bold))
 					("C" vwe-key:check "check" :face (:foreground "yellow" :underline t :weight bold))
 					("P" vwe-key:project "project" :face (:foreground "yellow" :underline t :weight bold))
+					("u" vwe-key:undo "undo" :face (:foreground "yellow" :underline t :weight bold))
 					("e" vwe-edit-region--mark-edit "edit region")
 					("U" esup "esup")
+					("O" command-log-mode "command log")
 					("z" customize-group "customize group")
 					("=" vwe-layout--zoom-type-toggle "toggle zoom")
 					("S" sudo-edit "sudo")
 					("b" revert-buffer-with-coding-system "revert coding system")
+					("h" vwe@lib--eol-hidden-dos "hidden dos eol")
+					("^" vwe@lib--eol-remove-dos "remove dos eol")
 					("!" winum-mode "win number")
-					("~" vwe-mark-and-goto--mark-paren "paren mark")
 					("(" vwe@base--paren-toggle-style "paren style")
 					("-" vwe@lib--font-reset "font reset")
+					("*" calendar "calendar")
 					("$" youdao-dictionary-search-at-point+ "translate")
 					("?" (lambda () (interactive) (find-file (vwe@lib--path-vwe-lisp "vwe-main.el" t))) "main file")
 					("C-f" (lambda () (interactive)
 							 (vwe@base--init)
-							 (vwe@ui--init)
 							 (vwe@theme--init)) "reinit" :footer t)
 					("RET" vwe-key:common "common" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
@@ -248,6 +250,16 @@
 					("F" dired-filter-group-mode "filter group mode")
 					("C" dired-collapse-mode "collapse mode")
 					("q" vwe-term--exit "exit terminal")
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  (dired-mode))
+
+  (vwe-key-define undo
+				  (("undo" :face (:background "red" :foreground "white" :weight bold))
+				   (("v" undo-tree-visualize "visualize")
+					("u" undo-tree-undo "undo" :circle t)
+					("r" undo-tree-redo "redo" :circle t)
+					("w" undo-tree-save-history "save history")
+					("l" undo-tree-load-history "load history")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (dired-mode))
 
@@ -588,6 +600,8 @@
 ;; config
 ;; ***************************************************************************
 (vwe@keybind--init)
+
+(vwe@lib--log "Initialization of Keybinds configuration is complete.")
 
 (provide 'vwe-keybinds)
 ;;; vwe-keybinds.el ends here

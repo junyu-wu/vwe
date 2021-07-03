@@ -67,8 +67,9 @@ SOURCE-NAME is source name."
     (unless (file-exists-p custom)
       (vwe@lib--path-make-config-path (vwe@lib--path-emacs.d "custom.el") t)
       (when package--initialized (package-refresh-contents)))
-    (setq custom-file custom)
-    (load custom-file)))
+	(unless (equal custom custom-file)
+      (setq custom-file custom)
+      (load custom-file))))
 
 (defun vwe@base--encoding-init (&optional encoding)
   "Set Emacs ENCODING."
@@ -147,8 +148,7 @@ SOURCE-NAME is source name."
   "Debug init."
   (when vwe@custom--debug?
 	(setq debug-on-error t
-		  max-lisp-eval-depth vwe@custom--debug-max-lisp-eval-depth)
-	(toggle-debug-on-error)))
+		  max-lisp-eval-depth vwe@custom--debug-max-lisp-eval-depth)))
 
 (defun vwe@base--make-welcome-msg ()
   "Make welcome message."
@@ -238,6 +238,7 @@ SOURCE-NAME is source name."
         auto-save-list-file-prefix           (concat (vwe@lib--path-cache "auto-save") "/.saves-")
 		make-backup-files                    nil
 		confirm-kill-emacs                   (lambda (prompt) (if vwe@custom--quit-ask? (y-or-n-p-with-timeout "quit emacs:" 10 "y") '(nil)))
+		create-lockfiles                     nil
 
         select-enable-clipboard              t
 
@@ -247,7 +248,18 @@ SOURCE-NAME is source name."
 		recentf-max-menu-item                30
 		recentf-max-saved-items              200
 		recentf-save-file                    (vwe@lib--path-cache "recentf/.recentf" t)
-		recentf-exclude                      '("\\.?cache" ".cask" "url" "COMMIT_EDITMSG\\'" "bookmarks" "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\)$" "^/tmp/" "^/ssh:" "\\.?ido\\.last$" "\\.revive$" "/TAGS$" "^/var/folders/.+$"
+		recentf-exclude                      '("\\.?cache"
+                                               ".cask"
+                                               "url"
+                                               "COMMIT_EDITMSG\\'"
+                                               "bookmarks"
+                                               "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\)$"
+                                               "^/tmp/"
+                                               "^/ssh:"
+                                               "\\.?ido\\.last$"
+                                               "\\.revive$"
+                                               "/TAGS$"
+                                               "^/var/folders/.+$"
 											   (lambda (file)
                                                  (file-in-directory-p file package-user-dir)))
 
@@ -290,6 +302,8 @@ SOURCE-NAME is source name."
 				 (vwe@lib--path-vwe-etc' "win/emacs_hide_cmd.exe" t)))
 
 (vwe@base--init)
+
+(vwe@lib--log "Initialization of Base configuration is complete.")
 
 (provide 'vwe-base)
 ;;; vwe-base.el ends here
