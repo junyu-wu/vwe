@@ -338,7 +338,7 @@
   :type 'boolean)
 
 (defcustom vwe@custom--buffer-auto-save?
-  nil
+  t
   "Auto save?"
   :group 'vwe-base
   :type 'boolean)

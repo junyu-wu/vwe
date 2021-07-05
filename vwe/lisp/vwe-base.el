@@ -206,6 +206,7 @@ SOURCE-NAME is source name."
   (add-hook 'after-init-hook #'recentf-mode)
   (add-hook 'after-init-hook #'show-paren-mode)
   (add-hook 'server-after-make-frame-hook #'vwe@base--deamon-init)
+  (add-hook 'auto-save-hook #'vwe@lib--buffer-save-all)
 
   (setq inhibit-startup-screen               t
 		ring-bell-function                   'ignore
@@ -234,8 +235,9 @@ SOURCE-NAME is source name."
 		server-auth-dir                      (vwe@lib--path-cache "server")
 
 		indent-tabs-mode                     nil
-		auto-save-default                    nil
+		auto-save-default                    vwe@custom--buffer-auto-save?
         auto-save-list-file-prefix           (concat (vwe@lib--path-cache "auto-save") "/.saves-")
+		auto-save-visited-interval           1
 		make-backup-files                    nil
 		confirm-kill-emacs                   (lambda (prompt) (if vwe@custom--quit-ask? (y-or-n-p-with-timeout "quit emacs:" 10 "y") '(nil)))
 		create-lockfiles                     nil

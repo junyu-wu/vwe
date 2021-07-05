@@ -265,6 +265,15 @@ NOT-I is include curretn buffer."
 								 (+ (if (eq backend 'Hg) 2 3) 2)))
 	"*non-vcs*"))
 
+(defun vwe@lib--buffer-save-all ()
+  "Save all buffers."
+  (interactive)
+  (save-excursion
+    (dolist (buf (buffer-list))
+      (set-buffer buf)
+      (if (and (buffer-file-name) (buffer-modified-p))
+          (basic-save-buffer)))))
+
 ;; ************************************************************************
 ;; font
 ;; ************************************************************************

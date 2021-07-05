@@ -54,13 +54,12 @@ add `auto-save-hook' hook."
 (defun vwe@pkg--desktop-session-save ()
   "Save an Emacs session."
   (interactive)
-  (if (and (vwe@pkg--desktop-session-saved-p)
-		   vwe@custom--frame-save-and-recover-layout?)
-      (if (y-or-n-p "Overwrite existing desktop? ")
-		  (desktop-save-in-desktop-dir)
-		(message "Session not saved."))
-	(when (y-or-n-p "Save deskktop? ")
-	  (desktop-save-in-desktop-dir))))
+  (when vwe@custom--frame-save-and-recover-layout?
+	(cond
+	 ((vwe@pkg--desktop-session-saved-p) (if (y-or-n-p "Overwrite existing desktop? ")
+											 (desktop-save-in-desktop-dir)))
+	 (t (if (y-or-n-p "Save deskktop? ")
+			(desktop-save-in-desktop-dir))))))
 
 (defun vwe@pkg--desktop-session-load ()
   "Load session."
@@ -100,7 +99,9 @@ apply ORIGINAL and ARGS."
 					(add-hook 'after-init-hook #'desktop-save-mode)
 					(add-hook 'after-init-hook #'vwe@pkg--desktop-session-load)
 					(add-hook 'desktop-after-read-hook #'vwe@pkg--desktop-remove-session)
-					(add-hook 'auto-save-hook #'vwe@pkg--desktop-auto-save))
+					(add-hook 'auto-save-hook #'vwe@pkg--desktop-auto-save)
+					;; (add-hook 'kill-emacs-hook #'vwe@pkg--desktop-session-save)
+					)
 				  (progn
 					(add-to-list 'desktop-modes-not-to-save 'dired-mode)
 					(add-to-list 'desktop-modes-not-to-save 'Info-mode)
