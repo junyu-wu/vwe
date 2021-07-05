@@ -33,7 +33,7 @@
   "Desktop auto save.
 add `auto-save-hook' hook."
   (interactive)
-  (if (and vwe@custom--frame-recover-layout?
+  (if (and vwe@custom--frame-save-and-recover-layout?
 		   (eq (desktop-owner) (emacs-pid)))
       (desktop-save desktop-dirname)))
 
