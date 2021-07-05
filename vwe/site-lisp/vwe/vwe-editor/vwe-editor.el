@@ -122,8 +122,6 @@
   (let* ((from (current-buffer))
 		 (to (get-buffer (car args))))
 	(cond
-	 ;; ((string-match vwe-editor--filter-regexp (buffer-name from)) (apply func args))
-	 ;; ((string-match vwe-editor--filter-regexp (buffer-name to)) (apply func args))
 	 ((vwe-editor--tmp-buffer-p from) (apply func args))
 	 ((vwe-editor--tmp-buffer-p to) (apply func args))
 	 ((equal from to) (apply func args))
@@ -146,6 +144,21 @@
 			   (not (equal (buffer-name from) (buffer-name to))))
 	  (vwe-editor-view-mode t))))
 
+(defun vwe-editor--filter-func ()
+  "Filter function."
+  (unless (and (not vwe-editor--mode-activate?)
+			   (vwe-editor--tmp-buffer-p (current-buffer)))
+	(let* ((cmd (or (command-remapping this-original-command)
+					this-original-command)))
+	  (when (and (memq cmd vwe-editor--ignore-func))
+		;; (vwe-editor-mode -1)
+		(setq vwe-editor--mode-activate? nil)))))
+
+(defun vwe-editor--restart-mode ()
+  "Restart editor mode."
+  ;; (vwe-editor-mode 1)
+  (setq vwe-editor--mode-activate? t))
+
 (define-minor-mode vwe-editor-view-mode
   "Editor view mode."
   :group 'vwe-editor
@@ -158,18 +171,6 @@
 		  (vwe-editor-edit-mode -1))
 		(run-hooks 'vwe-editor-view-mode-hook))))
 
-(defun vwe-editor-filter-func ()
-  "Filter function."
-  (let* ((cmd (or (command-remapping this-original-command)
-				  this-original-command)))
-	(when (memq cmd vwe-editor--ignore-func)
-	  (vwe-editor-mode -1))))
-
-(defun vwe-editor--restart-mode ()
-  "Restart editor mode."
-  (unless vwe-editor--mode-activate?
-	(vwe-editor-mode 1)))
-
 (define-minor-mode vwe-editor-edit-mode
   "Editor edit mode."
   :group 'vwe-editor
@@ -180,12 +181,16 @@
 			  buffer-read-only nil)
 		(vwe-editor-view-mode -1)
 		(when vwe-editor--idle-toggle-mode
-		  (setq vwe-editor--timer (run-with-idle-timer vwe-editor--idle-time t #'vwe-editor-view--active)))
-		(run-hooks 'vwe-editor-edit-mode-hook)
-		(add-hook 'pre-command-hook 'vwe-editor-filter-func t t)
-		(add-hook 'post-command-hook 'vwe-editor--restart-mode t t))
-	(when (timerp vwe-editor--timer) (cancel-timer vwe-editor--timer))
-	(remove-hook 'pre-command-hook 'vwe-editor-filter-func)
+		  (setq vwe-editor--timer (run-with-idle-timer
+								   vwe-editor--idle-time
+								   t
+								   #'vwe-editor-view--active)))
+		(add-hook 'pre-command-hook 'vwe-editor--filter-func t t)
+		(add-hook 'post-command-hook 'vwe-editor--restart-mode t t)
+		(run-hooks 'vwe-editor-edit-mode-hook))
+	(when (timerp vwe-editor--timer)
+	  (cancel-timer vwe-editor--timer))
+	(remove-hook 'pre-command-hook 'vwe-editor--filter-func)
 	(remove-hook 'post-command-hook 'vwe-editor--restart-mode)))
 
 (defun vwe-editor-enable ()
@@ -217,7 +222,9 @@
   :init-value nil
   :group 'vwe-editor
   :global t
-  (if vwe-editor-mode (vwe-editor-enable) (vwe-editor-disable)))
+  (if vwe-editor-mode
+	  (vwe-editor-enable)
+	(vwe-editor-disable)))
 
 (provide 'vwe-editor)
 ;;; vwe-editor.el ends here

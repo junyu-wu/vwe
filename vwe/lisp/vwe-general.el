@@ -535,7 +535,11 @@
 ;;
 (vwe@lib--package 'vwe-editor
 				  (progn
-					(autoload 'vwe-editor-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-editor/vwe-editor.el" t) "Vwe editor mode." t t)
+					(autoload
+					  'vwe-editor-mode
+					  (vwe@lib--path-vwe-site-lisp "vwe/vwe-editor/vwe-editor.el" t)
+					  "Vwe editor mode."
+					  t t)
 					(add-hook 'after-init-hook  #'vwe-editor-mode))
 
 				  (progn
