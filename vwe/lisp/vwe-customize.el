@@ -232,6 +232,12 @@
   :group 'vwe
   :type 'string)
 
+(defcustom vwe@custom--frame-save-and-recover-layout?
+  t
+  "Save layout."
+  :group 'vwe
+  :type 'string)
+
 ;; ***************************************************************************
 ;; font
 ;; ***************************************************************************

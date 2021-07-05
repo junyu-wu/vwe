@@ -159,6 +159,7 @@
   ;; (vwe-editor-mode 1)
   (setq vwe-editor--mode-activate? t))
 
+;;;###autoload
 (define-minor-mode vwe-editor-view-mode
   "Editor view mode."
   :group 'vwe-editor
@@ -171,6 +172,7 @@
 		  (vwe-editor-edit-mode -1))
 		(run-hooks 'vwe-editor-view-mode-hook))))
 
+;;;###autoload
 (define-minor-mode vwe-editor-edit-mode
   "Editor edit mode."
   :group 'vwe-editor
@@ -198,6 +200,9 @@
   (interactive)
   (setq vwe-editor--mode-activate? t
 		vwe-editor--last-buffer nil)
+  (if (vwe-editor--tmp-buffer-p (current-buffer))
+	  (vwe-editor-edit-mode 1)
+	(vwe-editor-view-mode 1))
   (advice-add #'find-file :around #'vwe-editor--find-file)
   (advice-add #'save-buffer :after #'vwe-editor-view--save-buffer)
   (advice-add #'switch-to-buffer :around #'vwe-editor-view--switch-buffer)

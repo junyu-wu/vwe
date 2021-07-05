@@ -22,38 +22,108 @@
 ;;; Commentary:
 
 ;;; Code:
+;; ***************************************************************************
+;; lib
+;; ***************************************************************************
+(defvar vwe@pkg--desktop-before-restore-hook
+  nil
+  "Before restore hook.")
+
+(defun vwe@pkg--desktop-auto-save ()
+  "Desktop auto save.
+add `auto-save-hook' hook."
+  (interactive)
+  (if (and vwe@custom--frame-recover-layout?
+		   (eq (desktop-owner) (emacs-pid)))
+      (desktop-save desktop-dirname)))
+
+(defun vwe@pkg--desktop-session-saved-p ()
+  "Session saved."
+  (file-exists-p (format "%s%s"
+						 (or desktop-dirname user-emacs-directory)
+						 desktop-base-file-name)))
+
+(defun vwe@pkg--desktop-session-restore ()
+  "Restore a saved Emacs session."
+  (interactive)
+  (if (vwe@pkg--desktop-session-saved-p)
+	  (progn
+		(desktop-read))
+    (message "No desktop found.")))
+
+(defun vwe@pkg--desktop-session-save ()
+  "Save an Emacs session."
+  (interactive)
+  (if (and (vwe@pkg--desktop-session-saved-p)
+		   vwe@custom--frame-save-and-recover-layout?)
+      (if (y-or-n-p "Overwrite existing desktop? ")
+		  (desktop-save-in-desktop-dir)
+		(message "Session not saved."))
+	(when (y-or-n-p "Save deskktop? ")
+	  (desktop-save-in-desktop-dir))))
+
+(defun vwe@pkg--desktop-session-load ()
+  "Load session."
+  (if (and (vwe@pkg--desktop-session-saved-p)
+		   vwe@custom--frame-save-and-recover-layout?)
+	  (if (y-or-n-p "Restore desktop? ")
+		  (vwe@pkg--desktop-session-restore))))
+
+(defun vwe@pkg--desktop-remove-session ()
+  "Remove session."
+  (let* ((dir desktop-dirname))
+	(desktop-remove)
+	(setq desktop-dirname dir)))
+
+(defun vwe@pkg--desktop-owner-advice (original &rest args)
+  "Desktop owner advice.
+apply ORIGINAL and ARGS."
+  (let ((owner (apply original args)))
+    (if (and owner (/= owner (emacs-pid)))
+        (and (car (member owner (list-system-processes)))
+             (let (cmd (attrlist (process-attributes owner)))
+               (if (not attrlist) owner
+                 (dolist (attr attrlist)
+                   (and (string= "comm" (car attr))
+                        (setq cmd (car attr))))
+                 (and cmd (string-match-p "[Ee]macs" cmd) owner))))
+      owner)))
 
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
+;;
+;; `desktop'
+;;
+(vwe@lib--package 'desktop
+				  (progn
+					(add-hook 'after-init-hook #'desktop-save-mode)
+					(add-hook 'after-init-hook #'vwe@pkg--desktop-session-load)
+					(add-hook 'desktop-after-read-hook #'vwe@pkg--desktop-remove-session)
+					(add-hook 'auto-save-hook #'vwe@pkg--desktop-auto-save))
+				  (progn
+					(add-to-list 'desktop-modes-not-to-save 'dired-mode)
+					(add-to-list 'desktop-modes-not-to-save 'Info-mode)
+					(add-to-list 'desktop-modes-not-to-save 'info-lookup-mode)
+					(add-to-list 'desktop-modes-not-to-save 'fundamental-mode)
+					(advice-add #'desktop-owner :around #'vwe@pkg--desktop-owner-advice))
+				  (setq desktop-path (append (list (vwe@lib--path-cache "desktop/"))
+											 desktop-path)
+						desktop-dirname (vwe@lib--path-cache "desktop/")
+						desktop-base-file-name ".vwe.desktop"
+						desktop-buffers-not-to-save (concat "\\("
+															"^nn\\.a[0-9]+\\|\\.log\\|(ftp)\\|^tags\\|^TAGS"
+															"\\|\\.emacs.*\\|\\.diary\\|\\.newsrc-dribble\\|\\.bbdb"
+															"\\)$")
+						desktop-locals-to-save (append '(vwe-editor-mode vwe-editor-view-mode)
+													   desktop-locals-to-save))
+				  t nil t)
 
 ;;
 ;; `popwin'
 ;;
 (vwe@lib--package 'popwin
 				  (add-hook 'after-init-hook #'popwin-mode))
-
-;;
-;; `persp-mode'
-;;
-;; (vwe@lib--package 'persp-mode
-;; 				  nil
-;; 				  (setq persp-autokill-buffer-on-remove 'kill-weak
-;; 						persp-save-dir (vwe@lib--path-cache "persp-confs/")
-;; 						persp-nil-name "default"
-;; 						persp-set-last-persp-for-new-frames nil
-;; 						persp-kill-foreign-buffer-behaviour 'kill
-;; 						persp-auto-resume-time 0
-;; 						persp-common-buffer-filter-functions
-;; 						(list #'(lambda (b)
-;; 								  "Ignore temporary buffers."
-;; 								  (or (string-prefix-p " " (buffer-name b))
-;; 									  (and (string-prefix-p "*" (buffer-name b))
-;; 										   (not (string-equal "*scratch*" (buffer-name b))))
-;; 									  (string-prefix-p "magit" (buffer-name b))
-;; 									  (string-prefix-p "Pfuture-Callback" (buffer-name b))
-;; 									  (eq (buffer-local-value 'major-mode b) 'nov-mode)
-;; 									  (eq (buffer-local-value 'major-mode b) 'vterm-mode))))))
 
 ;;
 ;; `winum'

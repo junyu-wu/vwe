@@ -541,7 +541,6 @@
 					  "Vwe editor mode."
 					  t t)
 					(add-hook 'after-init-hook  #'vwe-editor-mode))
-
 				  (progn
 					(setq vwe-editor--ignore-func '(browse-kill-ring
 													ediff-files)))
