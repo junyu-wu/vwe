@@ -360,6 +360,8 @@
 					("T" org-table-toggle-coordinate-overlays "show table point")
 					("M" org-edit-special "edit special")
 
+					("g" org-set-tags-command "set tags")
+					("r" org-tags-sparse-tree "tags tree")
 					("x" org-export-dispatch "export")
 					("t" vwe@org--todo-current-line "todo")
 					("o" org-insert-todo-heading "insert todo")

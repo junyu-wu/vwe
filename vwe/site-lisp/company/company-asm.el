@@ -1290,7 +1290,6 @@ COMMAND can take any of a number of values.
 the ARG argument holds the value returned by prefix.
 IGNORED list."
   (interactive (list 'interactive))
-  (message "go in")
   (case command
 	(interactive (company-begin-backend 'company-assembly))
 	(prefix (or (company-asm--prefix) 'stop))

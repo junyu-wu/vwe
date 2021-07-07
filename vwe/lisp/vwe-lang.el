@@ -32,7 +32,8 @@
 ;; ***************************************************************************
 (vwe@lib--package nil
 				  (progn
-					(push '("\\.action\\'" . conf-mode) auto-mode-alist)))
+					(push '("\\.action\\'" . conf-mode) auto-mode-alist)
+					(push '("\\.bxrc\\'" . conf-mode) auto-mode-alist)))
 
 ;;
 ;; `text-mode'
