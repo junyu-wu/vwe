@@ -99,8 +99,8 @@ apply ORIGINAL and ARGS."
 					(add-hook 'after-init-hook #'desktop-save-mode)
 					(add-hook 'after-init-hook #'vwe@pkg--desktop-session-load)
 					(add-hook 'desktop-after-read-hook #'vwe@pkg--desktop-remove-session)
-					(add-hook 'auto-save-hook #'vwe@pkg--desktop-auto-save)
-					;; (add-hook 'kill-emacs-hook #'vwe@pkg--desktop-session-save)
+					(add-hook 'kill-emacs-hook #'vwe@pkg--desktop-session-save)
+					;; (add-hook 'auto-save-hook #'vwe@pkg--desktop-auto-save)
 					)
 				  (progn
 					(add-to-list 'desktop-modes-not-to-save 'dired-mode)
