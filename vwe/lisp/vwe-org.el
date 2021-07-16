@@ -81,6 +81,16 @@
   (interactive)
   (insert (format "#+REVEAL: split:t")))
 
+(defun vwe@org--reset-latex-fonts-size (&optional scale)
+  "Reset latex fonts size SCALE."
+  (interactive)
+  (unless scale
+	(setq scale (read-number
+				 (format "scale(%d):"
+						 (plist-get org-format-latex-options :scale)))))
+  (setq org-format-latex-options (plist-put org-format-latex-options
+											:scale scale)))
+
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************

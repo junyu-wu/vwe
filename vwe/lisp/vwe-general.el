@@ -230,7 +230,7 @@
 					  "General company backends.")
 
 					(defvar vwe@pkg--company-with-yas-p
-					  t
+					  nil
 					  "Company backends with yas.")
 
 					(defun vwe@pkg--company-make-mode-local-backends (backends)
@@ -605,7 +605,8 @@
 					(autoload 'vwe-edit-region--mark-edit (vwe@lib--path-vwe-site-lisp "vwe/vwe-edit/vwe-edit.el" t) "Vwe edit mode." t t)
 					(autoload 'vwe-edit-toggle-case--upper-case (vwe@lib--path-vwe-site-lisp "vwe/vwe-edit/vwe-edit.el" t) "Vwe edit mode." t t)
 					(autoload 'vwe-edit-toggle-case--lower-case (vwe@lib--path-vwe-site-lisp "vwe/vwe-edit/vwe-edit.el" t) "Vwe edit mode." t t)
-					(autoload 'vwe-edit-toggle-case--select-convert (vwe@lib--path-vwe-site-lisp "vwe/vwe-edit/vwe-edit.el" t) "Vwe edit mode." t t))
+					(autoload 'vwe-edit-toggle-case--select-convert (vwe@lib--path-vwe-site-lisp "vwe/vwe-edit/vwe-edit.el" t) "Vwe edit mode." t t)
+					(autoload 'vwe-edit-bound-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-edit/vwe-edit.el" t) "Vwe edit bound mode." t t))
 				  nil nil nil
 				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-edit"))
 

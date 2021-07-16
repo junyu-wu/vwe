@@ -173,7 +173,9 @@ SOURCE-NAME is source name."
 				fill-column    80
 				tab-width      4
 				show-trailing-whitespace t)
-  (setq frame-title-format (list (format "%s %%S: %%j " (system-name)) '(buffer-file-name "%f" (dired-directory dired-directory "%b")))
+  (setq frame-title-format (list (format "%s %%S: %%j "
+										 (system-name))
+								 '(buffer-file-name "%f" (dired-directory dired-directory "%b")))
 		icon-title-format frame-title-format)
 
   (unless vwe@custom--frame-menu-bar?
@@ -199,12 +201,15 @@ SOURCE-NAME is source name."
   (vwe@base--deamon-init)
   (vwe@base--ui-init)
 
+  ;; builtin mode setup
   (add-hook 'emacs-startup-hook #'vwe@lib--sys-startup-info)
   (add-hook 'before-save-hook  #'delete-trailing-whitespace)
   (add-hook 'after-init-hook #'delete-selection-mode)
   (add-hook 'after-init-hook #'save-place-mode)
   (add-hook 'after-init-hook #'recentf-mode)
   (add-hook 'after-init-hook #'show-paren-mode)
+  (add-hook 'after-init-hook #'global-auto-revert-mode)
+  (add-hook 'after-init-hook #'global-so-long-mode)
   (add-hook 'server-after-make-frame-hook #'vwe@base--deamon-init)
   (add-hook 'auto-save-hook #'vwe@lib--buffer-save-all)
 
@@ -221,7 +226,7 @@ SOURCE-NAME is source name."
 		column-number-mode                   t
         line-number-mode                     nil
         kill-whole-line                      t
-		line-move-visual                     nil
+		line-move-visual                     t
         track-eol                            t
         set-mark-command-repeat-pop          t
 
@@ -236,43 +241,54 @@ SOURCE-NAME is source name."
 
 		indent-tabs-mode                     nil
 		auto-save-default                    vwe@custom--buffer-auto-save?
-        auto-save-list-file-prefix           (concat (vwe@lib--path-cache "auto-save") "/.saves-")
+        auto-save-list-file-prefix           (concat (vwe@lib--path-cache "auto-save")
+													 "/.saves-")
 		auto-save-visited-interval           1
 		make-backup-files                    nil
-		confirm-kill-emacs                   (lambda (prompt) (if vwe@custom--quit-ask? (y-or-n-p-with-timeout "quit emacs:" 10 "y") '(nil)))
+		confirm-kill-emacs                   (lambda (prompt)
+											   (if vwe@custom--quit-ask?
+												   (y-or-n-p-with-timeout "quit emacs:" 10 "y")
+												 '(nil)))
 		create-lockfiles                     nil
 
-        select-enable-clipboard              t
+		select-enable-clipboard              t
 
-        save-place-file                      (vwe@lib--path-cache "saveplace/places" t)
+		save-place-file                      (vwe@lib--path-cache "saveplace/places" t)
 
-        recentf-auto-cleanup                 900
+		recentf-auto-cleanup                 900
 		recentf-max-menu-item                30
 		recentf-max-saved-items              200
 		recentf-save-file                    (vwe@lib--path-cache "recentf/.recentf" t)
 		recentf-exclude                      '("\\.?cache"
-                                               ".cask"
-                                               "url"
-                                               "COMMIT_EDITMSG\\'"
-                                               "bookmarks"
-                                               "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\)$"
-                                               "^/tmp/"
-                                               "^/ssh:"
-                                               "\\.?ido\\.last$"
-                                               "\\.revive$"
-                                               "/TAGS$"
-                                               "^/var/folders/.+$"
+											   ".cask"
+											   "url"
+											   "COMMIT_EDITMSG\\'"
+											   "bookmarks"
+											   "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\)$"
+											   "^/tmp/"
+											   "^/ssh:"
+											   "\\.?ido\\.last$"
+											   "\\.revive$"
+											   "/TAGS$"
+											   "^/var/folders/.+$"
 											   (lambda (file)
-                                                 (file-in-directory-p file package-user-dir)))
+												 (file-in-directory-p file
+																	  package-user-dir)))
 
 		completion-ignore-case               t
 
-        show-paren-style                     'expression)
+		show-paren-style                     'expression
+
+		hs-set-up-overlay (lambda (ov)
+						  (when (eq 'code (overlay-get ov 'hs))
+							(let* ((nlines (count-lines (overlay-start ov) (overlay-end ov)))
+								   (info (format " ... #%d " nlines)))
+							  (overlay-put ov 'display (propertize info 'face '((t (:inherit 'font-lock-comment-face :box t)))))))))
 
   (define-advice show-paren-function
       (:around (fn) fix-show-paren-function)
-    "Highlight enclosing parens."
-    (cond ((looking-at-p "\\s(") (funcall fn))
+	"Highlight enclosing parens."
+	(cond ((looking-at-p "\\s(") (funcall fn))
 		  (t (save-excursion
 			   (ignore-errors (backward-up-list))
 			   (funcall fn))))))

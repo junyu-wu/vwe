@@ -68,6 +68,8 @@
 	("C-]"                                counsel-etags-find-tag-at-point)
 	("M-C-?"                              youdao-dictionary-search-at-point+)
 	("S-s"                                toggle-frame-maximized)
+	("M-+"                                hs-show-block)
+	("M--"                                hs-hide-block)
 	("M-&"                                (lambda () (interactive) (if (bound-and-true-p hs-minor-mode) (hs-toggle-hiding) (hs-minor-mode t) (hs-toggle-hiding))))
 	("C-1"                                vwe-move--windmove-up)
 	("C-2"                                vwe-move--windmove-down)
@@ -136,6 +138,7 @@
 					("Y" vwe-tray-mode "tray")
 					("E" vwe-editor-mode "editor")
 					("v" vwe-terminal "term")
+					("I" vwe-edit-bound-mode "edit bound")
 					("l" vwe@lsp--run "lsp")
 					("t" vwe-key:tags "tags" :face (:foreground "yellow" :underline t :weight bold))
 					("G" vwe-key:magit "magit" :face (:foreground "yellow" :underline t :weight bold))
@@ -147,6 +150,7 @@
 					("u" vwe-key:undo "undo" :face (:foreground "yellow" :underline t :weight bold))
 					("e" vwe-edit-region--mark-edit "edit region")
 					("g" magit-diff-dwim "magit diff")
+					("F" follow-mode "follow mode")
 					("U" esup "esup")
 					("O" command-log-mode "command log")
 					("z" customize-group "customize group")
@@ -359,6 +363,9 @@
 
 					("T" org-table-toggle-coordinate-overlays "show table point")
 					("M" org-edit-special "edit special")
+
+					("P" org-latex-preview "latex preview")
+					("X" vwe@org--reset-latex-fonts-size "reset latex font size")
 
 					("g" org-set-tags-command "set tags")
 					("r" org-tags-sparse-tree "tags tree")

@@ -55,11 +55,18 @@ add `auto-save-hook' hook."
   "Save an Emacs session."
   (interactive)
   (when vwe@custom--frame-save-and-recover-layout?
-	(cond
-	 ((vwe@pkg--desktop-session-saved-p) (if (y-or-n-p "Overwrite existing desktop? ")
-											 (desktop-save-in-desktop-dir)))
-	 (t (if (y-or-n-p "Save deskktop? ")
-			(desktop-save-in-desktop-dir))))))
+	(if (vwe@pkg--desktop-session-saved-p)
+		(if (y-or-n-p "Overwrite existing desktop? ")
+			(desktop-save-in-desktop-dir))
+	  (if (y-or-n-p "Save deskktop? ")
+		  (desktop-save-in-desktop-dir))
+	  )
+	;; (cond
+	;;  ((vwe@pkg--desktop-session-saved-p) (if (y-or-n-p "Overwrite existing desktop? ")
+	;; 										 (desktop-save-in-desktop-dir)))
+	;;  (t (if (y-or-n-p "Save deskktop? ")
+	;; 		(desktop-save-in-desktop-dir))))
+	))
 
 (defun vwe@pkg--desktop-session-load ()
   "Load session."
@@ -78,15 +85,16 @@ add `auto-save-hook' hook."
   "Desktop owner advice.
 apply ORIGINAL and ARGS."
   (let ((owner (apply original args)))
-    (if (and owner (/= owner (emacs-pid)))
-        (and (car (member owner (list-system-processes)))
-             (let (cmd (attrlist (process-attributes owner)))
-               (if (not attrlist) owner
-                 (dolist (attr attrlist)
-                   (and (string= "comm" (car attr))
-                        (setq cmd (car attr))))
-                 (and cmd (string-match-p "[Ee]macs" cmd) owner))))
-      owner)))
+    (if (and (and owner (/= owner (emacs-pid)))
+			 (and (car (member owner (list-system-processes)))
+				  (let (cmd (attrlist (process-attributes owner)))
+					(when cmd
+					  (if (not attrlist) owner
+						(dolist (attr attrlist)
+						  (and (string= "comm" (car attr))
+							   (setq cmd (car attr))))
+						(and cmd (string-match-p "[Ee]macs" cmd) owner))))))
+		owner)))
 
 ;; ***************************************************************************
 ;; config
@@ -96,18 +104,20 @@ apply ORIGINAL and ARGS."
 ;;
 (vwe@lib--package 'desktop
 				  (progn
-					(add-hook 'after-init-hook #'desktop-save-mode)
-					(add-hook 'after-init-hook #'vwe@pkg--desktop-session-load)
-					(add-hook 'desktop-after-read-hook #'vwe@pkg--desktop-remove-session)
-					(add-hook 'kill-emacs-hook #'vwe@pkg--desktop-session-save)
+					(when vwe@custom--frame-save-and-recover-layout?
+					  (add-hook 'after-init-hook #'desktop-save-mode)
+					  (add-hook 'after-init-hook #'vwe@pkg--desktop-session-load)
+					  (add-hook 'desktop-after-read-hook #'vwe@pkg--desktop-remove-session)
+					  (add-hook 'kill-emacs-hook #'vwe@pkg--desktop-session-save))
 					;; (add-hook 'auto-save-hook #'vwe@pkg--desktop-auto-save)
 					)
 				  (progn
-					(add-to-list 'desktop-modes-not-to-save 'dired-mode)
-					(add-to-list 'desktop-modes-not-to-save 'Info-mode)
-					(add-to-list 'desktop-modes-not-to-save 'info-lookup-mode)
-					(add-to-list 'desktop-modes-not-to-save 'fundamental-mode)
-					(advice-add #'desktop-owner :around #'vwe@pkg--desktop-owner-advice))
+					(when vwe@custom--frame-save-and-recover-layout?
+					  (add-to-list 'desktop-modes-not-to-save 'dired-mode)
+					  (add-to-list 'desktop-modes-not-to-save 'Info-mode)
+					  (add-to-list 'desktop-modes-not-to-save 'info-lookup-mode)
+					  (add-to-list 'desktop-modes-not-to-save 'fundamental-mode)
+					  (advice-add #'desktop-owner :around #'vwe@pkg--desktop-owner-advice)))
 				  (setq desktop-path (append (list (vwe@lib--path-cache "desktop/"))
 											 desktop-path)
 						desktop-dirname (vwe@lib--path-cache "desktop/")

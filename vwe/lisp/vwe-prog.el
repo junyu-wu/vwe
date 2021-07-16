@@ -131,6 +131,10 @@ MODE."
   (unless (derived-mode-p 'emacs-lisp-mode 'lisp-mode 'asm-mode 'nasm-mode 'sh-mode)
 	(lsp-deferred)))
 
+(defun vwe@base--prog-init ()
+  "Prog init."
+  (add-hook 'prog-mode-hook #'hs-minor-mode))
+
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
@@ -273,6 +277,8 @@ MODE."
 				  (vwe@lib--package 'ejc-company nil
 									(add-to-list (make-local-variable 'company-backends) '(ejc-company-backend))))
 
+
+(vwe@base--prog-init)
 
 (push (expand-file-name "vwe/lisp/langs" user-emacs-directory) load-path)
 
