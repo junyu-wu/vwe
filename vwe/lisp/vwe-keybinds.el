@@ -41,7 +41,6 @@
 	("C-;"                                iedit-mode)
 	("C-M-;"                              iedit-rectangle-mode)
 	("C-="                                er/expand-region)
-	("C-,"                                goto-last-change)
 	("M-x"                                counsel-M-x)
 	("M-/"                                company-complete)
 	("C-M-/"                              company-yasnippet)

@@ -23,7 +23,7 @@
 ;; ripgrep
 
 ;;; Code:
-(require 'cl-lib)1
+(require 'cl-lib)
 (require 'subr-x)
 (require 'grep)
 

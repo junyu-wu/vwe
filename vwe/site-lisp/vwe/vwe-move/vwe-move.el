@@ -472,10 +472,13 @@ TMP is tmp buffer."
 					header-line-format headerline)
 		(vwe-move--switch-buffer-mode 1)
 		(dotimes (i (length bufname-list))
-		  (insert-button (concat  "["
-								  (nth i bufname-list)
-								  "]"
-								  (unless (= (1+ i) (length bufname-list)) "\n"))
+		  (insert-button (concat (nth i bufname-list)
+								 " ["
+								 (if (buffer-file-name (get-buffer (nth i bufname-list)))
+									 (buffer-file-name (get-buffer (nth i bufname-list)))
+								   " tmp buffer ")
+								 "]"
+								 (unless (= (1+ i) (length bufname-list)) "\n"))
 						 'action (lambda(_)
 								   (vwe-move--kill-switch-side-buffer)
 								   (switch-to-buffer (nth i bufname-list)))
