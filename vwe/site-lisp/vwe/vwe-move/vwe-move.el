@@ -594,11 +594,14 @@ SELF is include curretn buffer."
 (defun vwe-move-goto-line--recovery ()
   "Preview recovery."
   (interactive)
-  (select-window vwe-move-goto-line--origin-window)
-  (when (and vwe-move-goto-line--origin-window
-			 (numberp vwe-move-goto-line--origin-window-point))
-	(set-window-point vwe-move-goto-line--origin-window
-					  vwe-move-goto-line--origin-window-point)))
+  (if vwe-move-goto-line--origin-window
+	  (progn
+		(select-window vwe-move-goto-line--origin-window)
+		(when (and vwe-move-goto-line--origin-window
+				   (numberp vwe-move-goto-line--origin-window-point))
+		  (set-window-point vwe-move-goto-line--origin-window
+							vwe-move-goto-line--origin-window-point)))
+	(message "not found origin window.")))
 
 (defun vwe-move-goto-line--minibuffer-setup ()
   "Preview hook for minibuffer command."
