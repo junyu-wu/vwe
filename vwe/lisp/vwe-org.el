@@ -102,8 +102,8 @@
 				  (progn
 					(add-hook 'org-mode-hook #'toggle-truncate-lines))
 				  (progn
-					(vwe@lib--keymap-set org-mode-map
-										 '(("M-C-RET" org-meta-return)))
+					(vwe@lib--keymap-set org-mode-map '(("C-<return>" nil)
+														("C-<return>" org-meta-return)))
 					;; 代码运行环境
 					(vwe@lib--package 'ob-go)
 					(vwe@lib--package 'ob-rust)
@@ -231,17 +231,18 @@
 																	 (file (vwe@lib--path-cache "org/appointment.org" t)
 																		   "* %?\n%^T\n** Note:\n\n"))))
 									  nil nil nil t))
-				  (setq org-src-fontify-natively t
-						org-hide-emphasis-markers t
-						org-log-done 'time
-						org-image-actual-width '(400)
-						org-todo-keywords '((sequence "TODO(t@/!)" "DOING(r@/!)" "WAITING(w@/!)" "VERIFY(v@/!)" "|" "DONE(d@/!)" "CANCELED(c@/!)"))
-						org-todo-keyword-faces '(("TODO" . warning)
-												 ("DOING" . success)
-												 ("WAITING" . error)
-												 ("VERIFY" . error)
-												 ("DONE" . shadow)
-												 ("CANCELED" . shadow))))
+				  (progn
+					(setq org-src-fontify-natively t
+						  org-hide-emphasis-markers t
+						  org-log-done 'time
+						  org-image-actual-width '(400)
+						  org-todo-keywords '((sequence "TODO(t@/!)" "DOING(r@/!)" "WAITING(w@/!)" "VERIFY(v@/!)" "|" "DONE(d@/!)" "CANCELED(c@/!)"))
+						  org-todo-keyword-faces '(("TODO" . warning)
+												   ("DOING" . success)
+												   ("WAITING" . error)
+												   ("VERIFY" . error)
+												   ("DONE" . shadow)
+												   ("CANCELED" . shadow)))))
 
 ;;
 ;; `org-roam'
