@@ -230,15 +230,16 @@
 																	("a" "Appointment" entry
 																	 (file ,(vwe@lib--path-cache "org/appointment.org" t)
 																		   "* %?\n%^T\n** Note:\n\n"))))
-									  (progn (vwe@lib--path-cache "org/notes.org" t)
-											 (vwe@lib--path-cache "org/task.org" t)
-											 (vwe@lib--path-cache "org/quicknote.org" t)
-											 (vwe@lib--path-cache "org/journal.org" t)
-											 (vwe@lib--path-cache "org/appointment.org" t))
-									  nil nil t))
+									  ;; (progn (vwe@lib--path-cache "org/notes.org" t)
+									  ;; 		 (vwe@lib--path-cache "org/task.org" t)
+									  ;; 		 (vwe@lib--path-cache "org/quicknote.org" t)
+									  ;; 		 (vwe@lib--path-cache "org/journal.org" t)
+									  ;; 		 (vwe@lib--path-cache "org/appointment.org" t))
+									  nil nil nil t))
 				  (progn
 					(setq org-src-fontify-natively t
 						  org-hide-emphasis-markers t
+						  org-capture-bookmark nil
 						  org-log-done 'time
 						  org-image-actual-width '(400)
 						  org-todo-keywords '((sequence "TODO(t@/!)" "DOING(r@/!)" "WAITING(w@/!)" "VERIFY(v@/!)" "|" "DONE(d@/!)" "CANCELED(c@/!)"))

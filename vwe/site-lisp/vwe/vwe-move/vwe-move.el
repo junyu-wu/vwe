@@ -353,11 +353,31 @@
 	(define-key keymap (kbd "q") #'vwe-move--kill-switch-side-buffer)
 	(define-key keymap (kbd "n") #'next-line)
 	(define-key keymap (kbd "p") #'previous-line)
+	(define-key keymap (kbd "k") #'vwe-move--switch-buffer-kill-current-line-buffer)
 	(define-key keymap (kbd "s") (lambda () (interactive)
 								   (if (fboundp 'swiper)
 									   (swiper)
 									 (isearch-forward))))
 	(define-key keymap (kbd "TAB") #'vwe-move--switch-buffer)
+	(define-key keymap (kbd "1") (lambda () (interactive)
+								   (vwe-move--switch-buffer-goto-line 1)))
+	(define-key keymap (kbd "2") (lambda () (interactive)
+								   (vwe-move--switch-buffer-goto-line 2)))
+	(define-key keymap (kbd "3") (lambda () (interactive)
+								   (vwe-move--switch-buffer-goto-line 3)))
+	(define-key keymap (kbd "4") (lambda () (interactive)
+								   (vwe-move--switch-buffer-goto-line 4)))
+	(define-key keymap (kbd "5") (lambda () (interactive)
+								   (vwe-move--switch-buffer-goto-line 5)))
+	(define-key keymap (kbd "6") (lambda () (interactive)
+								   (vwe-move--switch-buffer-goto-line 6)))
+	(define-key keymap (kbd "7") (lambda () (interactive)
+								   (vwe-move--switch-buffer-goto-line 7)))
+	(define-key keymap (kbd "8") (lambda () (interactive)
+								   (vwe-move--switch-buffer-goto-line 8)))
+	(define-key keymap (kbd "9") (lambda () (interactive)
+								   (vwe-move--switch-buffer-goto-line 9)))
+
 	keymap)
   "Switch buffer keymap.")
 
@@ -388,6 +408,18 @@
 (defvar vwe-move--switch-side-show-status
   'buffer
   "Switch side buffer show content `buffer' or `temp' buffer.")
+
+(defvar vwe-move--switch-buffer-buffer-store-list
+  nil
+  "Buffer store list.")
+
+(defvar vwe-move--switch-buffer-temp-buffer-store-list
+  nil
+  "Buffer store list.")
+
+(defvar vwe-move--switch-buffer-current-buffer
+  nil
+  "Current buffer.")
 
 (defun vwe-move--switch-buffer ()
   "Switch buffer."
@@ -462,6 +494,7 @@ TMP is tmp buffer."
 				  (window-height . fit-window-to-buffer)
 				  (direction . 'down)
 				  (slot . 0))))
+	(setq vwe-move--switch-buffer-current-buffer (current-buffer))
 	(when buffer
 	  (with-current-buffer buffer
 		(read-only-mode -1)
@@ -471,13 +504,25 @@ TMP is tmp buffer."
 					show-trailing-whitespace nil
 					header-line-format headerline)
 		(vwe-move--switch-buffer-mode 1)
+		(setq vwe-move--switch-buffer-temp-buffer-store-list nil
+			  vwe-move--switch-buffer-buffer-store-list nil)
 		(dotimes (i (length bufname-list))
-		  (insert-button (concat (nth i bufname-list)
-								 " ["
-								 (if (buffer-file-name (get-buffer (nth i bufname-list)))
-									 (buffer-file-name (get-buffer (nth i bufname-list)))
-								   " tmp buffer ")
-								 "]"
+		  (if tmp?
+			  (setq vwe-move--switch-buffer-temp-buffer-store-list (append vwe-move--switch-buffer-temp-buffer-store-list
+																		   (list (cons (format "%d" (1+ i)) (nth i bufname-list)))))
+			(setq vwe-move--switch-buffer-buffer-store-list (append vwe-move--switch-buffer-buffer-store-list
+																	(list (cons (format "%d" (1+ i)) (nth i bufname-list))))))
+		  (insert-button (concat (propertize (if (< i 9)
+												 (format "%d:" (1+ i))
+											   (format ".:"))
+											 'face 'vwe-move--warning-face)
+								 (propertize (nth i bufname-list)
+											 'face 'vwe-move--info-face)
+								 "|"
+								 (propertize (if (buffer-file-name (get-buffer (nth i bufname-list)))
+												 (buffer-file-name (get-buffer (nth i bufname-list)))
+											   " tmp buffer ")
+											 'face 'vwe-move--success-face)
 								 (unless (= (1+ i) (length bufname-list)) "\n"))
 						 'action (lambda(_)
 								   (vwe-move--kill-switch-side-buffer)
@@ -487,6 +532,32 @@ TMP is tmp buffer."
 		(read-only-mode t))
 	  (select-window (display-buffer-in-side-window buffer alist)))))
 
+(defun vwe-move--switch-get-buffer-name-by-id (id)
+  "Get buffer name by ID."
+  (when (get-buffer vwe-move--switch-side-buffer-name)
+	(let* ((buffer-store-list))
+	  (if (equal vwe-move--switch-side-show-status 'temp)
+		  (setq buffer-store-list vwe-move--switch-buffer-buffer-store-list)
+		(setq buffer-store-list vwe-move--switch-buffer-temp-buffer-store-list))
+	  (when buffer-store-list
+		(cdr (assoc id buffer-store-list))))))
+
+(defun vwe-move--switch-buffer-goto-line (id)
+  "Go to line by ID."
+  (when (get-buffer vwe-move--switch-side-buffer-name)
+	(goto-line id)))
+
+(defun vwe-move--switch-buffer-kill-current-line-buffer ()
+  "Kill current line buffer."
+  (interactive)
+  (when (get-buffer vwe-move--switch-side-buffer-name)
+	(let* ((id (number-to-string (line-number-at-pos))))
+	  (when (and (vwe-move--switch-get-buffer-name-by-id id)
+				 (get-buffer (vwe-move--switch-get-buffer-name-by-id id)))
+		(unless (equal vwe-move--switch-buffer-current-buffer (get-buffer (vwe-move--switch-get-buffer-name-by-id id)))
+		  (kill-buffer (vwe-move--switch-get-buffer-name-by-id id)))
+		(vwe-move--display-switch-side-buffer)))))
+
 (defun vwe-move--kill-switch-side-buffer ()
   "Kill side buffer."
   (interactive)
@@ -494,7 +565,8 @@ TMP is tmp buffer."
 	(when buffer
 	  (delete-windows-on buffer)
 	  (kill-buffer buffer)
-	  (setq vwe-move--switch-side-show-status 'buffer))))
+	  (setq vwe-move--switch-side-show-status 'buffer
+			vwe-move--switch-buffer-current-buffer nil))))
 
 (defun vwe-move--buffer-list-filter (regexp &optional self?)
   "Find buffer list of REGEXP.
