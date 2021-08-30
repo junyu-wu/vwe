@@ -218,19 +218,24 @@
 					(vwe@lib--package 'org-capture
 									  nil
 									  (setq org-default-notes-file (vwe@lib--path-cache "org/notes.org" t)
-											org-capture-templates '(("t" "Todo" entry
-																	 (file+headline (vwe@lib--path-cache "org/task.org" t) "Task")
+											org-capture-templates `(("t" "Todo" entry
+																	 (file+headline ,(vwe@lib--path-cache "org/task.org" t) "Task")
 																	 "* TODO %?\n  %i\n  %a")
 																	("q" "QuickNote" entry
-																	 (file+headline (vwe@lib--path-cache "org/quicknote.org" t) "QuickNote")
+																	 (file+headline ,(vwe@lib--path-cache "org/quicknote.org" t) "QuickNote")
 																	 "* TODO %?\n  %i\n  %a")
 																	("j" "Journal" entry
-																	 (file+olp+datetree (vwe@lib--path-cache "org/journal.org" t))
+																	 (file+olp+datetree ,(vwe@lib--path-cache "org/journal.org" t))
 																	 "* %?\n Entered on: %U\n %i\n %a")
 																	("a" "Appointment" entry
-																	 (file (vwe@lib--path-cache "org/appointment.org" t)
+																	 (file ,(vwe@lib--path-cache "org/appointment.org" t)
 																		   "* %?\n%^T\n** Note:\n\n"))))
-									  nil nil nil t))
+									  (progn (vwe@lib--path-cache "org/notes.org" t)
+											 (vwe@lib--path-cache "org/task.org" t)
+											 (vwe@lib--path-cache "org/quicknote.org" t)
+											 (vwe@lib--path-cache "org/journal.org" t)
+											 (vwe@lib--path-cache "org/appointment.org" t))
+									  nil nil t))
 				  (progn
 					(setq org-src-fontify-natively t
 						  org-hide-emphasis-markers t

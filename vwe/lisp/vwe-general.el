@@ -543,7 +543,8 @@
 					(add-hook 'after-init-hook  #'vwe-editor-mode))
 				  (progn
 					(setq vwe-editor--ignore-func '(browse-kill-ring
-													ediff-files)))
+													ediff-files
+													org-capture)))
 				  nil nil
 				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-editor"))
 
