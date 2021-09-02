@@ -407,6 +407,17 @@
 (vwe@lib--package 'sudo-edit)
 
 ;;
+;; `epa-file'
+;;
+(vwe@lib--package 'epa-file
+				  nil
+				  (progn
+					(setenv "GPG_AGENT_INFO" nil)
+					(epa-file-enable))
+				  (setq epa-file-inhibit-auto-save nil)
+				  nil nil t)
+
+;;
 ;; `exec-path-from-shell'
 ;;
 (vwe@lib--package 'exec-path-from-shell
