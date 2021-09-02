@@ -47,6 +47,7 @@
 ;;
 (require 'vwe-org)
 (require 'vwe-markdown)
+(require 'vwe-pdf)
 
 ;;
 ;; init prog and language
