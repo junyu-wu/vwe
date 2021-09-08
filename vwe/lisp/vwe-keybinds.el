@@ -102,8 +102,6 @@
 					("n" (lambda () (interactive) (vwe@lib--buffer-kill-other (buffer-list) "^*")) "kill ohter")
 					("d" delete-window "del window")
 					("x" save-buffers-kill-terminal "kill emacs")
-					("p" vwe-proxy--enable "proxy enable")
-					("P" vwe-proxy--enable-global "proxy global enable")
 					("," toggle-frame-maximized "maximized")
 					("." toggle-frame-fullscreen "fullscreen")
 					("M" menu-bar-mode "menu bar mode")
@@ -147,6 +145,7 @@
 					("C" vwe-key:check "check" :face (:foreground "yellow" :underline t :weight bold))
 					("P" vwe-key:project "project" :face (:foreground "yellow" :underline t :weight bold))
 					("u" vwe-key:undo "undo" :face (:foreground "yellow" :underline t :weight bold))
+					("X" vwe-key:proxy "proxy" :face (:foreground "yellow" :underline t :weight bold))
 					("e" vwe-edit-region--mark-edit "edit region")
 					("g" magit-diff-dwim "magit diff")
 					("F" follow-mode "follow mode")
@@ -168,6 +167,14 @@
 							 (vwe@base--init)
 							 (vwe@theme--init)) "reinit" :footer t)
 					("RET" vwe-key:common "common" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
+
+  (vwe-key-define proxy
+				  (("proxy" :face (:background "DarkOrange" :foreground "white" :weight bold))
+				   (("e" vwe-proxy--enable "proxy enable")
+					("d" vwe-proxy--enable-global "proxy global disable")
+					("E" vwe-proxy--disable "proxy enable")
+					("D" vwe-proxy--disable-global "proxy global disable")
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
   (vwe-key-define layout
 				  (("window" :face (:background "DarkOrange" :foreground "white" :weight bold))
