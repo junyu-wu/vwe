@@ -356,6 +356,7 @@
 					("u" org-shiftmetaleft "element up level")
 					("h" org-toggle-heading "toggle head")
 
+					("U" (lambda()(interactive)(outline-up-heading 1)) "parent head" :circle t)
 					("f" org-forward-heading-same-level "forward head" :circle t)
 					("b" org-backward-heading-same-level "backward head" :circle t)
 					("n" (lambda()(interactive) (call-interactively 'org-next-visible-heading))  "next heading" :circle t)
@@ -363,8 +364,8 @@
 
 					("<" org-shiftmetaup "move up" :circle t)
 					(">" org-shiftmetadown "move down" :circle t)
-					("," org-up-element "up elem" :circle t)
-					("." org-down-element "down elem" :circle t)
+					("," org-up-element "goto parent elem" :circle t)
+					("." org-down-element "goto sub elem" :circle t)
 
 					("T" org-table-toggle-coordinate-overlays "show table point")
 					("M" org-edit-special "edit special")
