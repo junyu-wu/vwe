@@ -34,11 +34,11 @@
   "Move to mark map.")
 
 (defvar vwe-project--root-tag-file-name
-  ".vwe"
+  ".project.tag.vw"
   "Project root tag file name.")
 
 (defvar vwe-project--cache-name
-  ".vwe-project"
+  ".project.cache.vw"
   "Project root tag file name.")
 
 (defvar-local vwe-project--info
@@ -192,7 +192,9 @@ ARG privode `name' `label' `path'"
 ;; mode
 ;;
 (defun vwe-project-mode-enable ()
-  "Enable mode.")
+  "Enable mode."
+  ;; (vwe-project--add-project)
+  )
 
 (defun vwe-project-mode-disable ()
   "Disable mode.")

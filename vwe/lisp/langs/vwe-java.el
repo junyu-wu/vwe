@@ -37,6 +37,15 @@
 ;; ***************************************************************************
 
 ;;
+;; `java-mode'
+;;
+(vwe@lib--package 'java-mode
+				  (progn (add-hook 'lsp-mode-hook #'lsp-lens-mode)
+						 (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
+						 (add-hook 'java-mode-hook #'vwe@java--init))
+				  nil nil nil nil t)
+
+;;
 ;; `lsp-java'
 ;;
 (vwe@lib--package 'lsp-java

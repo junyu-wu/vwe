@@ -220,13 +220,14 @@
 (vwe@lib--package 'company
 				  (progn
 					(defvar vwe@pkg--company-general-backends
-					  '((company-abbrev
-						 company-dabbrev
-						 company-dabbrev-code
-						 company-keywords
-						 company-files
-						 company-etags
-						 company-capf))
+					  '((company-files ;; file path
+						 company-dabbrev ;; buffer word
+						 company-dabbrev-code ;; buffer code
+						 company-keywords ;; local keywords
+						 company-capf :with company-yasnippet
+						 ;;company-abbrev
+						 ;; company-etags
+						 ))
 					  "General company backends.")
 
 					(defvar vwe@pkg--company-with-yas-p
@@ -297,6 +298,7 @@
 						company-dabbrev-downcase nil
 						company-dabbrev-ignore-case t
 
+						vwe@pkg--company-with-yas-p nil
 						company-backends (mapcar #'vwe@pkg--company-backends-with-yas
 												 vwe@pkg--company-general-backends)))
 
@@ -641,8 +643,11 @@
 (vwe@lib--package 'vwe-project
 				  (progn
 					(autoload 'vwe-project-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-project/vwe-project.el" t) "Vwe project mode." t t)
-					(autoload 'vwe-project--add-project (vwe@lib--path-vwe-site-lisp "vwe/vwe-project/vwe-project.el" t) "add project." t t))
-				  nil nil nil
+					(autoload 'vwe-project--add-project (vwe@lib--path-vwe-site-lisp "vwe/vwe-project/vwe-project.el" t) "add project." t t)
+					(add-hook 'prog-mode-hook #'vwe-project-mode))
+				  (progn
+					(vwe-project--add-project user-emacs-directory "emacs"))
+				  nil nil
 				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-project"))
 
 ;;

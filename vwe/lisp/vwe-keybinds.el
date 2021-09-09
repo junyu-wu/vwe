@@ -171,8 +171,8 @@
   (vwe-key-define proxy
 				  (("proxy" :face (:background "DarkOrange" :foreground "white" :weight bold))
 				   (("e" vwe-proxy--enable "proxy enable")
-					("d" vwe-proxy--enable-global "proxy global disable")
-					("E" vwe-proxy--disable "proxy enable")
+					("E" vwe-proxy--enable-global "proxy global disable")
+					("d" vwe-proxy--disable "proxy enable")
 					("D" vwe-proxy--disable-global "proxy global disable")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 

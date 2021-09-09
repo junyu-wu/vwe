@@ -77,11 +77,6 @@
 (vwe@lib--package 'eww)
 
 ;;
-;; `w3m'
-;;
-;; (vwe@lib--package 'w3m)
-
-;;
 ;; `wget'
 ;;
 (vwe@lib--package 'wget

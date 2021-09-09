@@ -604,8 +604,11 @@ NOT-I is include curretn buffer."
 	(if workspaces
 		(concat "L^"
 				(string-join
-				 (mapcar (lambda (w) (format "[%s]" (lsp--workspace-print w)))
-						 workspaces))))))
+				 (mapcar (lambda (w) (format "[%s]" (if (lsp--workspace-print w)
+														(lsp--workspace-print w)
+													  "none")))
+						 workspaces)))
+	  (format "%s" "L^[none]"))))
 
 (defun vwe-modeline--segment-lsp ()
   "Display lsp status."

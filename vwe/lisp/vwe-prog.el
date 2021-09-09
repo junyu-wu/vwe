@@ -216,7 +216,9 @@ MODE."
 ;; `lsp-mode'
 ;;
 (vwe@lib--package 'lsp-mode
-				  nil
+				  (progn
+					(add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
+					(add-hook 'lsp-mode-hook #'dap-mode))
 				  (progn
 					(vwe@lib--keymap-set lsp-mode-map '(("C-M-i" lsp-describe-thing-at-point)
 														([remap xref-find-definitions] lsp-find-definition)
@@ -253,6 +255,7 @@ MODE."
 						lsp-completion-provider :capf
 						lsp-idle-delay 0.500
 						lsp-enable-file-watchers nil
+						lsp-completion-enable-additional-text-edit nil
 						lsp-log-io t
 						lsp-modeline-diagnostics-enable nil
 						lsp-keep-workspace-alive nil
@@ -264,7 +267,8 @@ MODE."
 ;;
 ;; `dap-mode'
 ;;
-(vwe@lib--package 'dap-mode)
+(vwe@lib--package 'dap-mode
+				  nil (progn (dap-auto-configure-mode)))
 
 ;;
 ;; `ejc-sql'
