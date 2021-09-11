@@ -83,6 +83,7 @@
   (interactive)
   (text-scale-increase 0))
 
+;;;###autoload
 (defun vwe-layout--window-height-enlarge (&optional delta)
   "Window height enlarge DELTA."
   (interactive)
@@ -90,6 +91,7 @@
   (condition-case nil (enlarge-window delta)
 	(error (set-frame-height (selected-frame) (+ (frame-height (selected-frame)) delta)))))
 
+;;;###autoload
 (defun vwe-layout--window-height-shrink (&optional delta)
   "Window height shrink DELTA."
   (interactive)
@@ -97,6 +99,7 @@
   (condition-case nil (shrink-window delta)
 	(error (set-frame-height (selected-frame) (- (frame-height (selected-frame)) delta)))))
 
+;;;###autoload
 (defun vwe-layout--window-width-enlarge (&optional delta)
   "Window width enlarge DELTA."
   (interactive)
@@ -104,6 +107,7 @@
   (condition-case nil (enlarge-window delta t)
 	(error (set-frame-width (selected-frame) (+ (frame-width (selected-frame)) delta)))))
 
+;;;###autoload
 (defun vwe-layout--window-width-shrink (&optional delta)
   "Window width shrink DELTA."
   (interactive)

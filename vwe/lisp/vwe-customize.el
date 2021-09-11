@@ -181,13 +181,13 @@
 ;; theme
 ;; ***************************************************************************
 (defcustom vwe@custom--theme-gui
-  'doom-ephemeral
+  'vwe-style-dark
   "Default gui theme."
   :group 'vwe-ui
   :type 'symbol)
 
 (defcustom vwe@custom--theme-tty
-  'doom-ephemeral
+  'vwe-style-dark
   "Default tty theme."
   :group 'vwe-ui
   :type 'symbol)

@@ -38,39 +38,14 @@
 
 (defun vwe@theme--face-init()
   "Set default face."
-  (set-face-attribute 'header-line nil
-					  :background (face-attribute 'mode-line :background))
-  (set-face-attribute 'region nil
-					  :background (face-attribute 'cursor :background)
-					  :inverse-video t)
-  (set-face-attribute 'fringe nil
-					  :inherit 'mode-line)
-
-  (set-face-attribute 'trailing-whitespace nil
-					  :background (face-attribute 'fringe :foreground))
-
-  (set-face-attribute 'show-paren-match nil
-					  :foreground nil
-					  :background (face-attribute 'secondary-selection :background))
-  (with-eval-after-load 'whitespace
-	(set-face-attribute 'whitespace-line nil
-						:foreground nil))
-  (with-eval-after-load 'font-lock
-	(set-face-attribute 'font-lock-comment-face nil
-						:distant-foreground (if (display-graphic-p) nil (face-attribute 'error :foreground))))
-  (with-eval-after-load 'symbol-overlay
-	(set-face-attribute 'symbol-overlay-default-face nil
-						:inherit nil
-						:foreground nil
-						:distant-foreground (face-attribute 'default :foreground)
-						:background (face-attribute 'cursor :background)
-						:weight 'ultra-light))
-  (with-eval-after-load 'ivy
-	(set-face-attribute 'ivy-minibuffer-match-face-2 nil
-						:foreground "SpringGreen"
-						:underline '(:color "DarkOrange"))
-	(set-face-attribute 'ivy-current-match nil
-						:box `(:color "DarkOrange"))))
+  ;; (with-eval-after-load 'symbol-overlay
+  ;; 	(set-face-attribute 'symbol-overlay-default-face nil
+  ;; 						:inherit nil
+  ;; 						:foreground nil
+  ;; 						:distant-foreground (face-attribute 'default :foreground)
+  ;; 						:background (face-attribute 'cursor :background)
+  ;; 						:weight 'ultra-light))
+  )
 
 ;; 主题切换
 (defun vwe@theme--toggle (&optional theme)
@@ -106,12 +81,13 @@
 (vwe@lib--package 'doom-themes)
 
 ;;
-;; `vwe-style-theme'
+;; `vwe-style'
 ;;
-(vwe@lib--package 'vwe-style-theme
-				  nil nil nil t
+(vwe@lib--package 'vwe-style
+				  (progn
+					(vwe@lib--load-theme (vwe@lib--path-vwe-site-lisp "vwe/vwe-theme")))
+				  nil nil nil
 				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-theme"))
-;;(load-file (vwe@lib--path-vwe-site-lisp "vwe/vwe-theme/vwe-style-theme.el" t))
 
 (vwe@theme--init)
 

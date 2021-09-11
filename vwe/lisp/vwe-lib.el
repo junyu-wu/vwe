@@ -1,6 +1,6 @@
 ;;; vwe-lib.el ---                                   -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2020  WuJunyu
+;; Copyright (C) 2015  WuJunyu
 
 ;; Author: WuJunyu <vistar_w@hotmail.com>
 ;; Keywords:
@@ -639,10 +639,18 @@ IGNORE non-nil ignore package."
 			   (when ,requirep (require ,pkg))
 			   (with-eval-after-load (format "%s" ,pkg) ,post)
 			   ,final)
-		   (progn
-			 ,pre ,post ,final)))
+		   (progn ,pre ,post ,final)))
 	 (error
 	  (message "pkg %S not found or package inner error" ,pkg))))
+
+(defmacro vwe@lib--load-theme (theme-path)
+  "Load THEME-PATH."
+  `(condition-case nil
+	   (progn
+		 (when (file-directory-p ,theme-path)
+		   (add-to-list 'custom-theme-load-path ,theme-path)))
+	 (error
+	  (message "theme path %S not found." ,theme-path))))
 
 (defmacro vwe@lib--package-install (package &optional refreshp)
   "Install PACKAGE.

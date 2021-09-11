@@ -27,7 +27,7 @@
 ;; lib
 ;; ***************************************************************************
 (defvar vwe@keybind--default-list
-  '(("<f1>"                               (lambda () (interactive) (find-file (vwe@lib--path-vwe-lisp "vwe-main.el" t))))
+  '(("<f1>"                               vwe-key:global)
 	("<f2>"                               vwe-layout-zoom-mode)
 	("<f3>"                               split-window-horizontally)
 	("C-<f3>"                             split-window-vertically)
@@ -186,7 +186,7 @@
 					("P" previous-window-any-frame "prev frame")
 					("N" next-window-any-frame "next frame")
 					("k" (lambda()(interactive) (delete-frame (selected-frame))) "delete frame")
-					("i" image-show-frame "image shoe frame")
+					("i" image-show-frame "image show frame")
 					("e" vwe-layout--window-height-enlarge "win height+" :circle t)
 					("s" vwe-layout--window-height-shrink "win height-" :circle t)
 					("E" vwe-layout--window-width-enlarge "win width+" :circle t)
