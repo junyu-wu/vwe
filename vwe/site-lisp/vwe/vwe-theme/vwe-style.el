@@ -95,7 +95,7 @@
 (defun vwe-style--load (name colors faces)
   "Load and setup NAME face by COLORS and FACES."
   (apply #'custom-theme-set-faces
-		 'vwe-style-dark
+		 name
 		 (vwe-style--build-face-color colors faces)))
 
 (defun vwe-style--load-theme-file ()

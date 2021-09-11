@@ -1,4 +1,4 @@
-;;; vwe-style-dark-theme.el --- Dark theme         -binding: t; -*-
+;;; vwe-style-light-theme.el --- Dark theme         -binding: t; -*-
 
 ;; Copyright (C) 2021
 
@@ -25,22 +25,22 @@
 ;;; Code:
 (require 'vwe-style)
 
-(deftheme vwe-style-dark
+(deftheme vwe-style-light
   "Vwe style theme.")
 
-(defvar vwe-style-dark--colors
+(defvar vwe-style-light--colors
   '((none nil nil nil)
-	(bg      "#293039" "unspecified-bg" "unspecified-bg") ; official background
-    (fg      "#f8f8f2" "#ffffff" "brightwhite") ; official foreground
-    (current "#44475a" "#303030" "brightblack") ; official current-line/selection
-    (comt "#6272a4" "#5f5faf" "blue")        ; official comt
-    (cyan    "#8be9fd" "#87d7ff" "brightcyan")  ; official cyan
-    (green   "#50fa7b" "#5fff87" "green")       ; official green
-    (orange  "#ffb86c" "#ffaf5f" "brightred")   ; official orange
-    (pink    "#ff79c6" "#ff87d7" "magenta")     ; official pink
-    (purple  "#bd93f9" "#af87ff" "brightmagenta") ; official purple
-    (red     "#ff5555" "#ff8787" "red")         ; official red
-    (yellow  "#f1fa8c" "#ffff87" "yellow")      ; official yellow
+	(bg "#fdf6e3" "#fdf6e3" "white")
+	(fg "#556b72" "#556b72" "black")
+    (current "#ffeaaa" "#ffeaaa" "brightblack")
+    (comt "#6272a4" "#5f5faf" "blue")
+    (cyan    "#8be9fd" "#87d7ff" "brightcyan")
+    (green   "#50fa7b" "#5fff87" "green")
+    (orange  "#ffb86c" "#ffaf5f" "brightred")
+    (pink    "#ff79c6" "#ff87d7" "magenta")
+    (purple  "#bd93f9" "#af87ff" "brightmagenta")
+    (red     "#ff5555" "#ff8787" "red")
+    (yellow  "#f1fa8c" "#ffff87" "yellow")
 	(moccasin "#ffe4b5" "#ffe4b5" "yellow")
 	(deepskyblue "00688B" "00688B" "00688B")
 	(forestgreen "#228b22" "#228b22" "green")
@@ -52,32 +52,35 @@
 	(mediumspringgreen  "#00fa9a" "#00fa9a" "green")
 	(snow3  "#cdc9c9" "#cdc9c9" "gray")
 	(slategray4  "#6c7b8b" "#6c7b8b" nil)
-	(parent "#29393f" "#29393f" "#29393f")
+	(parent "#fff1cc" "#fff1cc" "#fff1cc")
 	(ecyan "#00ffff" "#00ffff" "#00ffff")
 	(whitesmoke "#f5f5f5" "#f5f5f5" "white")
 	(regionc "#3f3f5f" "#555555" "#555555")
 	(grey9  "#171717" "#171717" "black")
 	(gold "#ffd700" "#ffd700" "yellow")
 	(darkgoldenrod "#b8860b" "#b8860b" "#b8860b")
+	(trailing "#ffee99" "#ffee99" "#ffee99")
+	(palegreen  "#98fb98" "#98fb98" "#98fb98")
+	(darkturquoise "#00ced1" "#00ced1" "#00ced1")
 
-    (bg2             "#373844" "#121212" "brightblack")
-    (bg3             "#464752" "#262626" "brightblack")
-    (bg4             "#565761" "#444444" "brightblack")
-    (fg2             "#e2e2dc" "#e4e4e4" "brightwhite")
-    (fg3             "#ccccc7" "#c6c6c6" "white")
-    (fg4             "#b6b6b2" "#b2b2b2" "white")
+    (bg2             "#FCF8ED" "#FCF8ED" "brightblack")
+    (bg3             "#FCF7E8" "#FCF7E8" "brightblack")
+    (bg4             "#F2E6CE" "#F2E6CE" "brightblack")
+    (fg2             "#E1DBCD" "#E1DBCD" "brightblack")
+    (fg3             "#D6D6D6" "#D6D6D6" "brightblack")
+    (fg4             "#96A7A9" "#96A7A9" "brightblack")
     (other-blue      "#0189cc" "#0087ff" "brightblue"))
   "Theme colors.")
 
-(defvar vwe-style-dark--faces
+(defvar vwe-style-light--faces
   '(;; default
-    (cursor :background ,ecyan :weight bold)
+    (cursor :background ,red :weight bold)
     (default :background ,bg :foreground ,fg)
 	(error :foreground ,red)
 	;; (escape-glyph :foreground "#79e6f3")
     (fringe :background ,bg :foreground ,fg4)
     (header-line :background ,bg)
-    (highlight :foreground ,none :background ,bg3)
+    (highlight :foreground ,none :background ,darkturquoise)
 	;; (homoglyph :foreground ,fg3)
     (lazy-highlight :foreground ,fg2 :background ,bg2)
     (line-number :slant italic :foreground ,bg4 :background ,bg)
@@ -86,14 +89,14 @@
 	;; (line-number-minor-tick :background ,bg3)
     (link :foreground ,cyan :underline t)
 	(link-visited :foreground ,cyan :underline t)
-    (match :background ,yellow :foreground ,bg)
+    (match :background ,gold :foreground ,bg)
 	(minibuffer-prompt :weight bold :foreground ,pink)
 	(mode-line :background ,current :box ,current :inverse-video nil :foreground ,fg3)
 	;; (mode-line-emphasis :foreground ,bg3)
 	;; (mode-line-highlight :foreground ,bg3 :background ,bg3)
     (mode-line-inactive :foreground ,comt :background ,bg :box ,bg)
 	;; (nobreak-hyphen :foreground ,bg3)
-    (region :background ,darkgoldenrod :foreground ,none :box (:color ,darkgoldenrod :line-width 1) ;; :inverse-video t
+    (region :background ,orangered :foreground ,none :box (:color ,orangered :line-width 1) ;; :inverse-video t
 			)
 	;; (secondary-selection :background ,bg3)
     (shadow :foreground ,comt)
@@ -106,7 +109,7 @@
     (tab-line-tab-inactive :foreground ,purple :background ,bg2 :box (:line-width 2 :color ,bg2 :style nil))
     (tab-line-tab-current :inherit tab-line-tab)
     (tab-line-close-highlight :foreground ,red)
-	(trailing-whitespace :background ,grey9)
+	(trailing-whitespace :background ,trailing)
 	;; (vertical-border :foreground ,bg3 :background ,bg3)
     (warning :foreground ,orange)
 
@@ -116,13 +119,13 @@
     (font-lock-comment-face :inherit shadow)
     (font-lock-constant-face :foreground ,orangered)
     (font-lock-doc-face :foreground ,comt)
-    (font-lock-function-name-face :foreground ,other-blue :weight bold)
-    (font-lock-keyword-face :foreground ,darkorange :weight bold)
-    (font-lock-negation-char-face :foreground ,dodgerblue)
+    (font-lock-function-name-face :foreground ,dodgerblue :weight bold)
+    (font-lock-keyword-face :foreground ,orangered :weight bold)
+    (font-lock-negation-char-face :foreground ,other-blue)
     (font-lock-preprocessor-face :foreground ,orange)
-    (font-lock-regexp-grouping-backslash :foreground ,dodgerblue)
+    (font-lock-regexp-grouping-backslash :foreground ,other-blue)
     (font-lock-regexp-grouping-construct :foreground ,purple)
-    (font-lock-string-face :foreground ,mediumspringgreen)
+    (font-lock-string-face :foreground ,chocolate)
     (font-lock-type-face :foreground ,purple)
     (font-lock-variable-name-face :foreground ,purple :weight bold)
     (font-lock-warning-face :foreground ,orange :background ,bg2)
@@ -144,7 +147,7 @@
     (company-tooltip-mouse :background ,bg)
     (company-tooltip-search :foreground ,green :underline t)
     (company-tooltip-search-selection :background ,green :foreground ,bg)
-    (company-tooltip-selection :inherit match)
+    (company-tooltip-selection :background ,orange)
 
 	;; completions (minibuffer.el)
     (completions-annotations :inherit font-lock-comment-face)
@@ -434,11 +437,12 @@
 	(whitespace-trailing :background ,grey9 :foreground ,none)
 
 	;; symbol overlay gourp
-	(symbol-overlay-default-face :background ,ecyan))
+	(symbol-overlay-default-face :background ,purple)
+	)
   "Theme faces.")
 
-(vwe-style--load 'vwe-style-dark vwe-style-dark--colors vwe-style-dark--faces)
+(vwe-style--load 'vwe-style-light vwe-style-light--colors vwe-style-light--faces)
 (vwe-style--load-theme-file)
 
-(provide-theme 'vwe-style-dark)
-;;; vwe-style-dark-theme.el ends here
+(provide-theme 'vwe-style-light)
+;;; vwe-style-light-theme.el ends here
