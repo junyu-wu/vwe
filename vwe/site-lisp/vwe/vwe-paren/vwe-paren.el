@@ -35,6 +35,10 @@
 	keymap)
   "Paren keymap.")
 
+(defvar vwe-paren--activateed
+  nil
+  "Paren activated.")
+
 (defvar vwe-paren--delimiter-max-depth
   9
   "Max depth.")
@@ -137,6 +141,10 @@ PAIR is paren pair."
     (set (make-local-variable 'syntax-begin-function) nil))
   (when (boundp 'font-lock-beginning-of-syntax-function)
     (set (make-local-variable 'font-lock-beginning-of-syntax-function) nil))
+  ;; (when (boundp 'syntax-begin-function)
+  ;;   (setq syntax-begin-function nil))
+  ;; (when (boundp 'font-lock-beginning-of-syntax-function)
+  ;;   (setq font-lock-beginning-of-syntax-function nil))
   (when font-lock-mode
     (if (fboundp 'font-lock-flush)
         (font-lock-flush)
@@ -144,18 +152,38 @@ PAIR is paren pair."
 
 (defun vwe-paren--delimiter-disable ()
   "Delimiter disable."
-  (font-lock-remove-keywords nil vwe-paren--delimiter-font-lock-keywords))
+  (font-lock-remove-keywords nil vwe-paren--delimiter-font-lock-keywords)
+  (when (or (bound-and-true-p syntax-begin-function)
+            (bound-and-true-p font-lock-beginning-of-syntax-function))
+    (syntax-ppss-flush-cache 0))
+  (when (boundp 'syntax-begin-function)
+    (setq syntax-begin-function nil))
+  (when (boundp 'font-lock-beginning-of-syntax-function)
+    (setq font-lock-beginning-of-syntax-function nil))
+  (when font-lock-mode
+    (if (fboundp 'font-lock-flush)
+        (font-lock-flush)
+      (with-no-warnings (font-lock-fontify-buffer)))))
+
+;;;###autoload
+(defun vwe-paren--toggle (&rest _)
+  "Toggle."
+  (interactive)
+  (if vwe-paren--activateed
+	  (vwe-paren--delimiter-enable)
+	(vwe-paren--delimiter-disable)))
 
 ;;
 ;; mode
 ;;
 (defun vwe-paren-mode-enable ()
   "Enable mode."
-  (vwe-paren--delimiter-enable))
+  (setq vwe-paren--activateed t)
+  (advice-add #'switch-to-buffer :after #'vwe-paren--toggle))
 
 (defun vwe-paren-mode-disable ()
   "Disable mode."
-  (vwe-paren--delimiter-disable))
+  (setq vwe-paren--activateed nil))
 
 ;;;###autoload
 (define-minor-mode vwe-paren-mode
@@ -165,7 +193,8 @@ PAIR is paren pair."
   :global t
   (if vwe-paren-mode
 	  (vwe-paren-mode-enable)
-	(vwe-paren-mode-disable)))
+	(vwe-paren-mode-disable))
+  (vwe-paren--toggle))
 
 (provide 'vwe-paren)
 ;;; vwe-paren.el ends here

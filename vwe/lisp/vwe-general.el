@@ -660,7 +660,9 @@
 (vwe@lib--package 'vwe-panren
 				  (progn
 					(autoload 'vwe-paren-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-paren/vwe-paren.el" t) "Vwe paren mode." t t)
-					(add-hook 'prog-mode-hook #'vwe-paren-mode))
+					(autoload 'vwe-paren--toggle (vwe@lib--path-vwe-site-lisp "vwe/vwe-paren/vwe-paren.el" t) "Vwe paren mode." t t)
+					(add-hook 'after-init-hook #'vwe-paren-mode)
+					(add-hook 'prog-mode-hook #'vwe-paren--toggle))
 				  nil nil nil
 				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-paren"))
 
