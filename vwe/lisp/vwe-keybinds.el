@@ -160,6 +160,7 @@
 					("^" vwe@lib--eol-remove-dos "remove dos eol")
 					("!" winum-mode "win number")
 					("(" vwe@base--paren-toggle-style "paren style")
+					(")" vwe-paren-mode "show paren color mode")
 					("-" vwe@lib--font-reset "font reset")
 					("*" calendar "calendar")
 					("$" youdao-dictionary-search-at-point+ "translate")
@@ -608,15 +609,15 @@
   (message "\n%s"
 		   "/* Qwerty layer
  * ,-----------------------------------------------------------------------------------------.
- * | Esc |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9  |  0  |  -  |  =  |     `     |
+ * | Esc |  1  |  2  |  3  |  4  |  5  |  6  |  7  |  8  |  9  |  0  |  -  |  =  |  ~  |  |  |
  * |-----------------------------------------------------------------------------------------+
  * | Tab    |  Q  |  W  |  E  |  R  |  T  |  Y  |  U  |  I  |  O  |  P  |  [  |  ]  |  BSPC  |
  * |-----------------------------------------------------------------------------------------+
- * | Ctrl    |  A  |  S  |  D  |  F  |  G  |  H  |  J  |  K  |  L  |  ;  |  '  |    Enter    |
+ * | RCtrl   |  A  |  S  |  D  |  F  |  G  |  H  |  J  |  K  |  L  |  ;  |  '  |    Enter    |
  * |-----------------------------------------------------------------------------------------+
- * | Shift     |  Z  |  X  |  C  |  V  |  B  |  N  |  M  |  ,  |  .  |  /  |   RShift        |
+ * | LShift    |  Z  |  X  |  C  |  V  |  B  |  N  |  M  |  ,  |  .  |  /  |   RShift        |
  * |-----------------------------------------------------------------------------------------+
- * | CapsLock | fn | LAlt  |              Space               |   RAlt | Menu | RGUI | RCtrl |
+ * | CapsLock | Fn | LAlt  |              Space               |   RAlt | Menu |  Fn  | RCtrl |
  * `-----------------------------------------------------------------------------------------'
  */"))
 

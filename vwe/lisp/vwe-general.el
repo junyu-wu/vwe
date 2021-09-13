@@ -503,8 +503,9 @@
 					;;
 					;; `dired-collapse' 如果目录只有一级或一个文件直接选中
 					;;
-					(vwe@lib--package 'dired-collapse
-									  (add-hook 'dired-mode-hook #'dired-collapse-mode)))
+					;; (vwe@lib--package 'dired-collapse
+					;; 				  (add-hook 'dired-mode-hook #'dired-collapse-mode))
+					)
 				  nil nil nil t)
 
 ;;
