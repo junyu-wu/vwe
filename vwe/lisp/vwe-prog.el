@@ -182,7 +182,8 @@ MODE."
 					(vwe@lib--package 'flycheck-pos-tip
 					  				  (add-hook 'flycheck-mode-hook #'flycheck-pos-tip-mode)
 					  				  (setq flycheck-pos-tip-timeout 30)))
-				  (setq flycheck-check-syntax-automatically '(save mode-enabled)))
+				  (setq flycheck-check-syntax-automatically '(save mode-enabled)
+						flycheck-checker-error-threshold 1000))
 
 ;;
 ;; `smart-compile'

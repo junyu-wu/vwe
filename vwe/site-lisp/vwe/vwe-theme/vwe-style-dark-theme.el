@@ -30,35 +30,37 @@
 
 (defvar vwe-style-dark--colors
   '((none nil nil nil)
-	(bg      "#293039" "unspecified-bg" "unspecified-bg") ; official background
-    (fg      "#f8f8f2" "#ffffff" "brightwhite") ; official foreground
-    (current "#44475a" "#303030" "brightblack") ; official current-line/selection
-    (comt "#6272a4" "#5f5faf" "blue")        ; official comt
-    (cyan    "#8be9fd" "#87d7ff" "brightcyan")  ; official cyan
-    (green   "#50fa7b" "#5fff87" "green")       ; official green
-    (orange  "#ffb86c" "#ffaf5f" "brightred")   ; official orange
-    (pink    "#ff79c6" "#ff87d7" "magenta")     ; official pink
-    (purple  "#bd93f9" "#af87ff" "brightmagenta") ; official purple
-    (red     "#ff5555" "#ff8787" "red")         ; official red
-    (yellow  "#f1fa8c" "#ffff87" "yellow")      ; official yellow
-	(moccasin "#ffe4b5" "#ffe4b5" "yellow")
-	(deepskyblue "00688B" "00688B" "00688B")
-	(forestgreen "#228b22" "#228b22" "green")
-	(darkgoldenrod  "#b8860b" "#b8860b" "yellow")
-	(chocolate "#d2691e" "#d2691e" "#d2691e")
-	(dodgerblue "#1e90ff" "#1e90ff" "blue")
-	(darkorange  "#ff8c00" "#ff8c00" "orange")
-	(orangered "#ff4500" "#ff4500" "#ff4500")
-	(mediumspringgreen  "#00fa9a" "#00fa9a" "green")
-	(snow3  "#cdc9c9" "#cdc9c9" "gray")
-	(slategray4  "#6c7b8b" "#6c7b8b" nil)
-	(parent "#29393f" "#29393f" "#29393f")
-	(ecyan "#00ffff" "#00ffff" "#00ffff")
-	(whitesmoke "#f5f5f5" "#f5f5f5" "white")
-	(regionc "#3f3f5f" "#555555" "#555555")
-	(grey9  "#171717" "#171717" "black")
-	(gold "#ffd700" "#ffd700" "yellow")
-	(darkgoldenrod "#b8860b" "#b8860b" "#b8860b")
+	(bg                   "#293039" "unspecified-bg" "unspecified-bg") ; official background
+    (fg                   "#f8f8f2" "#ffffff" "brightwhite") ; official foreground
+    (current              "#44475a" "#303030" "brightblack") ; official current-line/selection
+    (comt                 "#6272a4" "#5f5faf" "blue")        ; official comt
+    (cyan                 "#8be9fd" "#87d7ff" "brightcyan")  ; official cyan
+    (green                "#50fa7b" "#5fff87" "green")       ; official green
+    (orange               "#ffb86c" "#ffaf5f" "brightred")   ; official orange
+    (pink                 "#ff79c6" "#ff87d7" "magenta")     ; official pink
+    (purple               "#bd93f9" "#af87ff" "brightmagenta") ; official purple
+    (red                  "#ff5555" "#ff8787" "red")         ; official red
+    (yellow               "#f1fa8c" "#ffff87" "yellow")      ; official yellow
+	(moccasin             "#ffe4b5" "#ffe4b5" "yellow")
+	(deepskyblue          "#00688B" "#00688B" "#00688B")
+	(forestgreen          "#228b22" "#228b22" "green")
+	(darkgoldenrod        "#b8860b" "#b8860b" "yellow")
+	(chocolate            "#d2691e" "#d2691e" "#d2691e")
+	(dodgerblue           "#1e90ff" "#1e90ff" "blue")
+	(darkorange           "#ff8c00" "#ff8c00" "orange")
+	(orangered            "#ff4500" "#ff4500" "#ff4500")
+	(mediumspringgreen    "#00fa9a" "#00fa9a" "green")
+	(snow3                "#cdc9c9" "#cdc9c9" "gray")
+	(slategray4           "#6c7b8b" "#6c7b8b" nil)
+	(parent               "#2a3030" "#2a3030" "#2a3030")
+	(ecyan                "#00ffff" "#00ffff" "#00ffff")
+	(whitesmoke           "#f5f5f5" "#f5f5f5" "white")
+	(regionc              "#3f3f5f" "#555555" "#555555")
+	(grey9                "#171717" "#171717" "black")
+	(gold                 "#ffd700" "#ffd700" "yellow")
+	(darkgoldenrod        "#b8860b" "#b8860b" "#b8860b")
+	(hl                   "#3a3a3a" "#3a3a3a" "#3a3a3a")
+	(sym                  "#3f3f3f" "#3f3f3f" "#3f3f3f")
 
     (bg2             "#373844" "#121212" "brightblack")
     (bg3             "#464752" "#262626" "brightblack")
@@ -77,7 +79,7 @@
 	;; (escape-glyph :foreground "#79e6f3")
     (fringe :background ,bg :foreground ,fg4)
     (header-line :background ,bg)
-    (highlight :foreground ,none :background ,bg3)
+    (highlight :foreground ,none :background ,hl)
 	;; (homoglyph :foreground ,fg3)
     (lazy-highlight :foreground ,fg2 :background ,bg2)
     (line-number :slant italic :foreground ,bg4 :background ,bg)
@@ -434,7 +436,7 @@
 	(whitespace-trailing :background ,grey9 :foreground ,none)
 
 	;; symbol overlay gourp
-	(symbol-overlay-default-face :background ,ecyan))
+	(symbol-overlay-default-face :background ,sym))
   "Theme faces.")
 
 (vwe-style--load 'vwe-style-dark vwe-style-dark--colors vwe-style-dark--faces)

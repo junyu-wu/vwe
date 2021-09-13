@@ -78,6 +78,7 @@
 	("C-8"                                vwe-move--swap-down-buffer)
 	("C-9"                                vwe-move--swap-left-buffer)
 	("C-0"                                vwe-move--swap-right-buffer)
+	("M-j"                                vwe-key:global)
 	("M-RET"                              vwe-key:global)
 
 	([remap comment-dwim]                 comment-dwim-2)

@@ -86,7 +86,7 @@
 	(error :foreground ,red)
 	;; (escape-glyph :foreground "#79e6f3")
     (fringe :background ,bg :foreground ,fg)
-    (header-line :background ,bg)
+    (header-line :background ,fg)
     (highlight :foreground ,none :background ,hl)
 	;; (homoglyph :foreground ,fg)
     (lazy-highlight :foreground ,fg :background ,bg)
