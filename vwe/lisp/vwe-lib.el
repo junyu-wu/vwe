@@ -64,11 +64,15 @@
   "Show startup ready time and garbage collections."
   (interactive)
 
-  (let* ((spring '((:foreground "SpringGreen" :weight bold)))
+  (let* ((ver '((:background "DarkViolet" :foreground "white" :weight bold)))
+		 (spring '((:foreground "SpringGreen" :weight bold)))
 		 (orange '((:foreground "DarkOrange" :weight bold)))
 		 (red '((:foreground "OrangeRed" :weight bold))))
 	(format
-	 "startup in %s seconds. loaded %s packages and %s garbage collections."
+	 ;; "%s startup in %s seconds. loaded %s packages and %s garbage collections."
+	 "%s init %ss. load %s packages and %s garbage collections."
+	 (propertize (format "GNU Emacs (%s)" emacs-version)
+				 'face ver)
 	 (propertize (format "%.2f" (float-time
 								 (time-subtract after-init-time before-init-time)))
 				 'face spring)

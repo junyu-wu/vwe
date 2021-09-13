@@ -155,7 +155,7 @@ SOURCE-NAME is source name."
   (let* ((name '((:foreground "cyan" :weight bold)))
 		 (vwe '((:background "DarkViolet" :foreground "white" :weight bold))))
 	(concat
-	 ";; hello "
+	 ";; Hello "
 	 (propertize (format "%s" vwe@custom--user-name)
 				 'face name)
 	 ", welcome "
