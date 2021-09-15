@@ -114,6 +114,7 @@
 					("V" helpful-variable "help var")
 					("K" helpful-key "help key")
 					("m" (lambda () (interactive) (set-mark (point))) "mark")
+					("u" vwe-package--update-packages "update pkgs")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
   (vwe-key-define global

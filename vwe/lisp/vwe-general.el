@@ -545,6 +545,19 @@
 				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-key"))
 
 ;;
+;; `vwe-package'
+;;
+(vwe@lib--package 'vwe-package
+				  (progn
+					(autoload
+					  'vwe-package--update-packages
+					  (vwe@lib--path-vwe-site-lisp "vwe/vwe-package/vwe-package.el" t)
+					  "Vwe update packages."
+					  t t))
+				  nil nil nil
+				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-package"))
+
+;;
 ;; `vwe-editor'
 ;;
 (vwe@lib--package 'vwe-editor

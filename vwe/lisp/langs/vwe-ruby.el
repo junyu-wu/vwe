@@ -76,7 +76,10 @@
 					;; `rubocop' 代码分析与格式化 flycheck with rubocop
 					;;
 					(vwe@lib--package 'rubocop
-									  (add-hook 'ruby-mode-hook #'rubocop-mode))
+									  (add-hook 'ruby-mode-hook #'rubocop-mode)
+									  nil
+									  (setq rubocop-autocorrect-on-save t
+											rubocop-autocorrect-command "rubocop -A --format emacs"))
 
 					;;
 					;; `solargraph' 后端支持

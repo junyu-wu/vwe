@@ -1,6 +1,6 @@
 ;;; vwe-edit.el --- vwe edit                         -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2021  WuJunyu
+;; Copyright (C) 2019  WuJunyu
 
 ;; Author: WuJunyu <vistar_w@hotmail.com>
 ;; Keywords:
@@ -37,7 +37,6 @@
 
 (defvar vwe-edit-region--edit-keymap
   (let ((keymap (make-sparse-keymap)))
-	;; (define-key keymap (kbd "C-g") (lambda () (interactive) (vwe-edit-region-edit-mode -1) (keyboard-quit)))
 	(define-key keymap (kbd "C-c C-c") #'vwe-edit-region--edit-finished)
 	(define-key keymap (kbd "C-g") #'vwe-edit-region--edit-finished)
 	keymap)
@@ -174,7 +173,8 @@
   (let ((pos (or point (point))))
 	(save-excursion
 	  (goto-char pos)
-	  (and (vwe-edit-region--bol-at-point-p) (vwe-edit-region--eol-at-point-p)))))
+	  (and (vwe-edit-region--bol-at-point-p)
+		   (vwe-edit-region--eol-at-point-p)))))
 
 (defun vwe-edit-region--empty-line-at-line-p (&optional line)
   "LINE is empty line."
@@ -182,7 +182,8 @@
 	(save-excursion
 	  (goto-char (point-min))
 	  (forward-line (1- line-num))
-	  (and (vwe-edit-region--bol-at-point-p) (vwe-edit-region--eol-at-point-p)))))
+	  (and (vwe-edit-region--bol-at-point-p)
+		   (vwe-edit-region--eol-at-point-p)))))
 
 (defun vwe-edit-region--marker-overlay-region (begin end &optional end-cursorp)
   "Make overlay region at BEGIN point column END point column and END-CURSORP point."
@@ -206,7 +207,9 @@
 			  (vwe-edit-region--marker-overlay-cursor end)
 			(vwe-edit-region--marker-overlay-cursor start))
 		  (overlay-put overlay 'face 'vwe-edit-region--marker-overlay-face)
-		  (setq vwe-edit-region--marker-region-overlays (cons overlay vwe-edit-region--marker-region-overlays))
+		  (setq vwe-edit-region--marker-region-overlays
+				(cons overlay
+					  vwe-edit-region--marker-region-overlays))
 		  (if to-downp (forward-line 1) (forward-line -1)))))))
 
 (defun vwe-edit-region--remove-marker-region-overlays ()
@@ -219,7 +222,9 @@
 (defun vwe-edit-region--marker-overlay-cursor (&optional point mcid)
   "Make overlay region at POINT and set MCID."
   (let* ((start-pos (or point (point)))
-		 (end-pos (if (vwe-edit-region--eol-at-point-p) start-pos (1+ start-pos)))
+		 (end-pos (if (vwe-edit-region--eol-at-point-p)
+					  start-pos
+					(1+ start-pos)))
 		 (overlay)
 		 (id (or mcid (vwe-edit-region--make-marker-cursor-id))))
 	(if mcid
@@ -229,8 +234,11 @@
 	  (setq overlay (make-overlay start-pos end-pos))
 	  (overlay-put overlay 'vwe-mcid id)
 	  (overlay-put overlay 'type 'vwe-mc)
-	  (overlay-put overlay 'before-string (propertize vwe-edit-region--marker-cursor 'face 'vwe-edit-region--marker-cursor-face))
-	  (setq vwe-edit-region--marker-cursor-overlays (cons overlay vwe-edit-region--marker-cursor-overlays)))))
+	  (overlay-put overlay 'before-string
+				   (propertize vwe-edit-region--marker-cursor
+							   'face 'vwe-edit-region--marker-cursor-face))
+	  (setq vwe-edit-region--marker-cursor-overlays
+			(cons overlay vwe-edit-region--marker-cursor-overlays)))))
 
 (defun vwe-edit-region--find-cursor-overlay-by-id (id)
   "Find cursor overlay by ID."
@@ -238,7 +246,9 @@
 	(save-excursion
 	  (let ((overlay))
 		(dotimes (i (length vwe-edit-region--marker-cursor-overlays))
-		  (when (eq (overlay-get (nth i vwe-edit-region--marker-cursor-overlays) 'vwe-mcid) id)
+		  (when (eq (overlay-get (nth i vwe-edit-region--marker-cursor-overlays)
+								 'vwe-mcid)
+					id)
 			(setq overlay (nth i vwe-edit-region--marker-cursor-overlays))))
 		overlay))))
 
@@ -258,7 +268,8 @@
 	(let* ((start-pos (mark))
 		   (end-pos (point)))
 	  (setq vwe-edit-region--real-cursor-position end-pos
-			vwe-edit-region--command-ignore-line (vwe-edit-region--line-number-at-point end-pos))
+			vwe-edit-region--command-ignore-line
+			(vwe-edit-region--line-number-at-point end-pos))
 	  (deactivate-mark)
 	  (vwe-edit-region--marker-overlay-region start-pos end-pos)
 	  (goto-char start-pos)
@@ -270,14 +281,17 @@
 
 (defun vwe-edit-region--marker-overlay-cursor-total ()
   "Current buffer marker overlay cursor total."
-  (1+ (cl-count-if 'vwe-edit-region--marker-overlay-cursor-p (overlays-in (point-min) (point-max)))))
+  (1+ (cl-count-if 'vwe-edit-region--marker-overlay-cursor-p
+				   (overlays-in (point-min) (point-max)))))
 
 (defun vwe-edit-region--execute-command (cmd)
   "Run CMD, simulating the parts of the command loop for cursors."
   (ignore-errors
 	(when cmd
 	  (setq this-command cmd)
-	  (unless (or (eq this-command 'ignore) (eq this-command 'keyboard-quit)) (call-interactively cmd))
+	  (unless (or (eq this-command 'ignore)
+				  (eq this-command 'keyboard-quit))
+		(call-interactively cmd))
 	  (message "command %s executed" cmd))))
 
 (defun vwe-edit-region--execute-command-for-cursor (cmd cursor)
@@ -294,7 +308,9 @@
 (defun vwe-edit-region--execute-command-for-all-cursors (cmd)
   "Run CMD, simulating the parts of the command loop for all cursors."
   (dotimes (i (length vwe-edit-region--marker-cursor-overlays))
-	(vwe-edit-region--execute-command-for-cursor cmd (nth i vwe-edit-region--marker-cursor-overlays))))
+	(vwe-edit-region--execute-command-for-cursor
+	 cmd
+	 (nth i vwe-edit-region--marker-cursor-overlays))))
 
 (defun vwe-edit-region--store-original-command ()
   "Store original command."
@@ -432,8 +448,10 @@
 (defun vwe-edit-toggle-case--camel-case-p (str)
   "STR like FooBar."
   (let ((case-fold-search nil))
-    (or (and (string-match "[A-Z]" str) (string-match "\\`[a-z][a-zA-Z0-9]+\\'" str))
-		(and (string-match "[a-z]" str) (string-match "\\`[A-Z][a-zA-Z0-9]+\\'" str)))))
+    (or (and (string-match "[A-Z]" str)
+			 (string-match "\\`[a-z][a-zA-Z0-9]+\\'" str))
+		(and (string-match "[a-z]" str)
+			 (string-match "\\`[A-Z][a-zA-Z0-9]+\\'" str)))))
 
 (defun vwe-edit-toggle-case--hyphen-p (str)
   "STR like foo-bar."
@@ -455,8 +473,12 @@
 (defun vwe-edit-toggle-case--convert-to-underline (str)
   "Underline STR."
   (let ((case-fold-search nil))
-    (setq str (replace-regexp-in-string "\\([a-z0-9]\\)\\([A-Z]\\)" "\\1_\\2" str))
-    (setq str (replace-regexp-in-string "\\([A-Z]+\\)\\([A-Z][a-z]\\)" "\\1_\\2" str))
+    (setq str (replace-regexp-in-string "\\([a-z0-9]\\)\\([A-Z]\\)"
+										"\\1_\\2"
+										str))
+    (setq str (replace-regexp-in-string "\\([A-Z]+\\)\\([A-Z][a-z]\\)"
+										"\\1_\\2"
+										str))
     (setq str (replace-regexp-in-string "-" "_" str)) ; FOO-BAR => FOO_BAR
     (setq str (replace-regexp-in-string "_+" "_" str))
     (downcase str)))
@@ -481,7 +503,8 @@
 		 (str (vwe-edit-toggle-case--get-current-string-and-delete))
 		 (str-listp (vwe-edit-toggle-case--list-p str)))
 	(if str-listp
-		(setq str (mapconcat #'vwe-edit-toggle-case--convert-to-upper-case (split-string str " ") " "))
+		(setq str (mapconcat #'vwe-edit-toggle-case--convert-to-upper-case
+							 (split-string str " ") " "))
 	  (setq str (vwe-edit-toggle-case--convert-to-upper-case str)))
 	(goto-char (car pos))
 	(insert str)))
@@ -494,7 +517,8 @@
 		 (str (vwe-edit-toggle-case--get-current-string-and-delete))
 		 (str-listp (vwe-edit-toggle-case--list-p str)))
 	(if str-listp
-		(setq str (mapconcat #'vwe-edit-toggle-case--convert-to-lower-case (split-string str " ") " "))
+		(setq str (mapconcat #'vwe-edit-toggle-case--convert-to-lower-case
+							 (split-string str " ") " "))
 	  (setq str (vwe-edit-toggle-case--convert-to-lower-case str)))
 	(goto-char (car pos))
 	(insert str)))
@@ -506,7 +530,8 @@
 		 (str (vwe-edit-toggle-case--get-current-string-and-delete))
 		 (str-listp (vwe-edit-toggle-case--list-p str)))
 	(if str-listp
-		(setq str (mapconcat #'vwe-edit-toggle-case--convert-to-capitalize (split-string str " ") " "))
+		(setq str (mapconcat #'vwe-edit-toggle-case--convert-to-capitalize
+							 (split-string str " ") " "))
 	  (setq str (vwe-edit-toggle-case--convert-to-capitalize str)))
 	(goto-char (car pos))
 	(insert str)))
@@ -518,7 +543,8 @@
 		 (str (vwe-edit-toggle-case--get-current-string-and-delete))
 		 (str-listp (vwe-edit-toggle-case--list-p str)))
 	(if str-listp
-		(setq str (mapconcat #'vwe-edit-toggle-case--convert-to-underline (split-string str " ") " "))
+		(setq str (mapconcat #'vwe-edit-toggle-case--convert-to-underline
+							 (split-string str " ") " "))
 	  (setq str (vwe-edit-toggle-case--convert-to-underline str)))
 	(goto-char (car pos))
 	(insert str)))
@@ -530,7 +556,8 @@
 		 (str (vwe-edit-toggle-case--get-current-string-and-delete))
 		 (str-listp (vwe-edit-toggle-case--list-p str)))
 	(if str-listp
-		(setq str (mapconcat #'vwe-edit-toggle-case--convert-to-camel-case (split-string str " ") " "))
+		(setq str (mapconcat #'vwe-edit-toggle-case--convert-to-camel-case
+							 (split-string str " ") " "))
 	  (setq str (vwe-edit-toggle-case--convert-to-camel-case str)))
 	(goto-char (car pos))
 	(insert str)))
@@ -542,7 +569,8 @@
 		 (str (vwe-edit-toggle-case--get-current-string-and-delete))
 		 (str-listp (vwe-edit-toggle-case--list-p str)))
 	(if str-listp
-		(setq str (mapconcat #'vwe-edit-toggle-case--convert-to-hyphen (split-string str " ") " "))
+		(setq str (mapconcat #'vwe-edit-toggle-case--convert-to-hyphen
+							 (split-string str " ") " "))
 	  (setq str (vwe-edit-toggle-case--convert-to-hyphen str)))
 	(goto-char (car pos))
 	(insert str)))
@@ -673,6 +701,7 @@
 (defun wve-edit-bound--temp-show ()
   "Temporary display."
   (interactive)
+  (vwe-edit-bound--remove-overlays)
   (vwe-edit-bound--show (point-min) (point-max)))
 
 ;;;###autoload

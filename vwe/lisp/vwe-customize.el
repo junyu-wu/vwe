@@ -123,8 +123,19 @@
   :group 'vwe-base
   :type 'string)
 
+(defcustom vwe@custom--source-list
+  '(("melpa" .       (("melpa". "https://melpa.org/packages/")
+					  ("gnu" . "https://elpa.gnu.org/packages/")
+					  ("org"  . "http://orgmode.org/elpa/")))
+	("china-melpa" . (("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
+					  ("org-cn"   . "http://elpa.emacs-china.org/org/")
+					  ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/"))))
+  "Source Options."
+  :group 'vwe-base
+  :type 'list)
+
 (defcustom vwe@custom--source
-  "china-melpa"
+  "melpa"
   "Source name."
   :group 'vwe-base
   :type 'string)

@@ -26,15 +26,6 @@
 ;; ***************************************************************************
 ;; lib
 ;; ***************************************************************************
-(defconst vwe@base--pkg-source-list
-  '(("melpa" .       (("melpa". "https://melpa.org/packages/")
-					  ("gnu" . "https://elpa.gnu.org/packages/")
-					  ("org"  . "http://orgmode.org/elpa/")))
-	("china-melpa" . (("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
-					  ("org-cn"   . "http://elpa.emacs-china.org/org/")
-					  ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/"))))
-  "Source Options.")
-
 (defun vwe@base--pkg-source-toggle (source-name)
   "Toggle Emacs package source.
 SOURCE-NAME is source name."
@@ -42,8 +33,9 @@ SOURCE-NAME is source name."
    (list
     (completing-read "source:"
 					 (mapcar (lambda(item)
-							   (car item)) vwe@base--pkg-source-list))))
-  (let* ((source (cdr (assoc source-name vwe@base--pkg-source-list))))
+							   (car item))
+							 vwe@custom--source-list))))
+  (let* ((source (cdr (assoc source-name vwe@custom--source-list))))
 	(setq package-archives source)))
 
 (defun vwe@base--package-init ()
