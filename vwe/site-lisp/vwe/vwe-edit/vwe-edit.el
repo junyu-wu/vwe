@@ -634,10 +634,8 @@
 							 'face face
 							 'cursor cursorp)))))
 
-;;;###autoload
 (defun vwe-edit-bound--show (&optional start end)
   "Show edit bound between START and END."
-  (interactive)
   (let* ((fill-num (1+ (or vwe-edit-bound--fill-column fill-column)))
 		 (start (or start (window-start (selected-window))))
 		 (end (or end (window-end (selected-window)))))
@@ -670,6 +668,12 @@
 			  (when (overlay-get ol 'ebol)
 				(delete-overlay ol)))
           (overlays-in start end))))
+
+;;;###autoload
+(defun wve-edit-bound--temp-show ()
+  "Temporary display."
+  (interactive)
+  (vwe-edit-bound--show (point-min) (point-max)))
 
 ;;;###autoload
 (defun vwe-edit-bound--draw (&optional start end _ignored)

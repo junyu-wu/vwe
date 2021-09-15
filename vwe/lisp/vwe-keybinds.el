@@ -54,7 +54,7 @@
 	("M-\""                               vwe-move--switch-buffer)
 	("C-@"                                vwe@lib--minibuffer-switch)
 	("C-c C-f"                            format-all-buffer)
-	("C-|"                                vwe-edit-bound--show)
+	("C-|"                                wve-edit-bound--temp-show)
 	("C-M-|"                              vwe-edit-bound--remove-overlays)
 	("C-M-="                              cua-rectangle-mark-mode)
 	("M-'"                                sp-up-sexp)
