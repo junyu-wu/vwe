@@ -73,10 +73,9 @@
 	 "%s init %ss. load %s packages and %s garbage collections."
 	 (propertize (format "GNU Emacs (%s)" emacs-version)
 				 'face ver)
-	 (propertize (format "%.2f" (float-time
-								 (time-subtract after-init-time before-init-time)))
+	 (propertize (format "%.2f" (float-time (time-subtract after-init-time before-init-time))) ;; (emacs-init-time)
 				 'face spring)
-	 (propertize (format "%s" (length package-selected-packages);; (length package-activated-list)
+	 (propertize (format "%s" (length package-selected-packages) ;; (length package-activated-list)
 						 )
 				 'face orange)
 	 (propertize (format "%s" gcs-done)

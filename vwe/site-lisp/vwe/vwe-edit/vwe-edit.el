@@ -559,7 +559,7 @@
 ;; edit column bound
 ;;
 (defface vwe-edit-bound--show-face
-  '((t (:background nil :foreground "#c1ffc1" :weight normal :slant normal)))
+  '((t (:inherit 'shadow)))
   "Column bound face."
   :group 'vwe-edit)
 
@@ -579,6 +579,44 @@
   ?\uE001
   "Blank character.")
 
+(defvar vwe-edit-bound--is-show
+  nil
+  "Is show bound.")
+
+(defvar vwe-edit-bound--support-command
+  '(self-insert-command
+	quoted-insert
+	previous-line
+	next-line
+	newline
+	newline-and-indent
+	forward-char
+	forward-word
+	backward-char
+	backward-word
+	forward-list
+	backward-list
+	yank
+	yank-pop
+	kill-word
+	kill-line
+	backward-kill-word
+	delete-char
+	delete-forward-char
+	delete-backward-char
+	org-delete-backward-char
+	end-of-line
+	move-end-of-line
+	beginning-of-line
+	move-beginning-of-line
+	back-to-indentation
+	mwim-beginning-of-code-or-line
+	mwim-end-of-code-or-line
+	comment-dwim-2
+	hungry-delete-backward
+	hungry-delete-forward)
+  "Support command.")
+
 (defun vwe-edit-bound--build-char (limit)
   "Build fill column show char with LIMIT."
   (when (and limit (numberp limit))
@@ -596,9 +634,10 @@
 							 'face face
 							 'cursor cursorp)))))
 
-(defun vwe-edit-bound--show (&optional start end _ignored)
+;;;###autoload
+(defun vwe-edit-bound--show (&optional start end)
   "Show edit bound between START and END."
-  ;; (interactive)
+  (interactive)
   (let* ((fill-num (1+ (or vwe-edit-bound--fill-column fill-column)))
 		 (start (or start (window-start (selected-window))))
 		 (end (or end (window-end (selected-window)))))
@@ -609,86 +648,75 @@
 			   (limit)
 			   (char))
 		  (goto-char start)
-		  (vwe-edit-bound--remove-overlays)
 		  (condition-case nil
-		   (while (search-forward "\n" end t)
-			 (goto-char (match-beginning 0))
-			 (setq limit (- fill-num (current-column))
-				   char (vwe-edit-bound--build-char limit)
-				   ol (make-overlay (match-beginning 0) (match-beginning 0)))
-			 (when char
-			   (overlay-put ol 'ebol t)
-			   (overlay-put ol 'after-string char))
-			 (goto-char (match-end 0)))
-		   (error
-			(goto-char (window-start)))))))))
+			  (while (search-forward "\n" end t)
+				(goto-char (match-beginning 0))
+				(setq limit (- fill-num (current-column))
+					  char (vwe-edit-bound--build-char limit)
+					  ol (make-overlay (match-beginning 0) (match-beginning 0)))
+				(when char
+				  (overlay-put ol 'ebol t)
+				  (overlay-put ol 'after-string char))
+				(goto-char (match-end 0)))
+			(error
+			 (goto-char (window-start)))))))))
 
-(defun vwe-edit-bound--remove-between-overlays (start end)
+(defun vwe-edit-bound--remove-overlays (&optional start end)
   "Remvoe overlays between START and END."
-  (mapc #'(lambda (ol)
-			(if (overlay-get ol 'ebol)
+  (interactive)
+  (let* ((start (or start (point-min)))
+		 (end (or end (point-max))))
+	(mapc #'(lambda (ol)
+			  (when (overlay-get ol 'ebol)
 				(delete-overlay ol)))
-        (overlays-in start end)))
+          (overlays-in start end))))
 
-(defun vwe-edit-bound--remove-overlays ()
-  "Remvoe overlays between START and END."
-  (mapc #'(lambda (ol)
-			(if (overlay-get ol 'ebol)
-				(delete-overlay ol)))
-        (overlays-in (point-min) (point-max))))
+;;;###autoload
+(defun vwe-edit-bound--draw (&optional start end _ignored)
+  "Draw bound between START and END."
+  (interactive)
+  (when vwe-edit-bound--is-show
+	(vwe-edit-bound--remove-overlays start end)
+	(vwe-edit-bound--show start end)))
 
-(defun vwe-edit-bound--redraw (start end &optional ignored)
-  "Redraw between START END and IGNORED."
+(defun vwe-edit-bound--command ()
+  "Command."
+  (when (memq this-original-command vwe-edit-bound--support-command)
+	(vwe-edit-bound--draw)))
+
+(defun vwe-edit-bound--draw-advice (&rest _)
+  "Draw advice FUNC/ARGS and redraw."
   (vwe-edit-bound--remove-overlays)
-  (vwe-edit-bound--show start end ignored))
-
-(defun vwe-edit-bound--redraw-command ()
-  "Redraw WIN begin to START for scroll END."
-  (vwe-edit-bound--remove-overlays)
-  (vwe-edit-bound--show))
-
-(defun vwe-edit-bound--redraw-for-scroll (win start)
-  "Redraw WIN begin to START for scroll END."
-  (vwe-edit-bound--remove-overlays)
-  (vwe-edit-bound--redraw-window win start))
-
-(defun vwe-edit-bound--redraw-window (win &optional start)
-  "Redraw WIN begin to START."
-  (vwe-edit-bound--show (or start (window-start win))
-						(window-end win)))
+  (vwe-edit-bound--draw (point-min) (point-max)))
 
 (defun vwe-edit-bound-mode-enable ()
   "Enable mode."
-
   (when (boundp 'line-move-visual)
 	(if (local-variable-p 'line-move-visual)
 		(setq line-move-visual nil)
 	  (set (make-local-variable 'line-move-visual) nil)))
-  (setq truncate-lines t)
-  (vwe-edit-bound--show)
-  (add-hook 'after-change-functions #'vwe-edit-bound--redraw t)
-  (add-hook 'before-change-functions #'vwe-edit-bound--redraw nil)
-  (add-hook 'window-scroll-functions #'vwe-edit-bound--redraw-for-scroll nil)
-  (add-hook 'window-configuration-change-hook #'vwe-edit-bound--show)
-  (add-hook 'post-self-insert-hook #'vwe-edit-bound--show nil)
-  (add-hook 'post-command-hook #'vwe-edit-bound--redraw-command nil))
+  (setq truncate-lines t
+		vwe-edit-bound--is-show t)
+  (vwe-edit-bound--draw)
+  (add-hook 'post-command-hook #'vwe-edit-bound--command nil t)
+
+  (advice-add #'find-file :after #'vwe-edit-bound--draw-advice)
+  (advice-add #'switch-to-buffer :after #'vwe-edit-bound--draw-advice)
+  (advice-add #'select-window :after #'vwe-edit-bound--draw-advice))
 
 (defun vwe-edit-bound-mode-disable ()
   "Disable mode."
   (vwe-edit-bound--remove-overlays)
-  (remove-hook 'after-change-functions #'vwe-edit-bound--redraw)
-  (remove-hook 'before-change-functions #'vwe-edit-bound--redraw)
-  (remove-hook 'window-scroll-functions #'vwe-edit-bound--redraw-for-scroll)
-  (remove-hook 'window-configuration-change-hook #'vwe-edit-bound--show)
-  (add-hook 'post-self-insert-hook #'vwe-edit-bound--show)
-  (remove-hook 'post-command-hook #'vwe-edit-bound--redraw-command t))
+  (setq truncate-lines nil
+		vwe-edit-bound--is-show nil)
+  (remove-hook 'post-command-hook #'vwe-edit-bound--command t))
 
 ;;;###autoload
 (define-minor-mode vwe-edit-bound-mode
   "Bound minor mode."
   :group 'vwe-edit
   :keymap nil
-  :global nil
+  :global t
   (if vwe-edit-bound-mode
 	  (vwe-edit-bound-mode-enable)
 	(vwe-edit-bound-mode-disable)))
