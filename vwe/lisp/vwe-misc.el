@@ -51,7 +51,9 @@
 (vwe@lib--package 'cal-china-x
 				  (progn
 					(require 'cal-china-x)
-					(add-hook 'calendar-mode-hook #'cal-china-x-setup))
+					(add-hook 'calendar-mode-hook (lambda ()
+													(setq calendar-mark-holidays-flag t)
+													(cal-china-x-setup))))
 				  (setq cal-china-x-important-holidays cal-china-x-chinese-holidays
 						cal-china-x-general-holidays '((holiday-lunar 1 15 "元宵节")
 													   (holiday-lunar 7 7 "七夕节")

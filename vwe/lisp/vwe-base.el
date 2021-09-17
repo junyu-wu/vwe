@@ -68,6 +68,8 @@ SOURCE-NAME is source name."
   (interactive "zcoding:")
   (unless encoding
 	(setq encoding 'utf-8))
+  (setq locale-coding-system                 encoding
+		default-process-coding-system        '(encoding . encoding))
   (when (fboundp 'set-charset-priority)
 	(set-charset-priority 'unicode))
   (set-language-environment encoding)
@@ -167,7 +169,8 @@ SOURCE-NAME is source name."
 				show-trailing-whitespace t)
   (setq frame-title-format (list (format "%s %%S: %%j "
 										 (system-name))
-								 '(buffer-file-name "%f" (dired-directory dired-directory "%b")))
+								 '(buffer-file-name "%f"
+                                                    (dired-directory dired-directory "%b")))
 		icon-title-format frame-title-format)
 
   (unless vwe@custom--frame-menu-bar?
@@ -181,7 +184,6 @@ SOURCE-NAME is source name."
 (defun vwe@base--init ()
   "Base init."
   (interactive)
-
   (vwe@base--package-init)
   (vwe@base--custom-file-init)
   (vwe@base--gc-init)
@@ -195,113 +197,35 @@ SOURCE-NAME is source name."
 
   ;; builtin mode setup
   (add-hook 'emacs-startup-hook #'vwe@lib--sys-startup-info)
-  (add-hook 'before-save-hook  #'delete-trailing-whitespace)
-  (add-hook 'after-init-hook #'delete-selection-mode)
-  (add-hook 'after-init-hook #'save-place-mode)
-  (add-hook 'after-init-hook #'recentf-mode)
-  (add-hook 'after-init-hook #'show-paren-mode)
-  (add-hook 'after-init-hook #'global-auto-revert-mode)
-  (add-hook 'after-init-hook #'global-so-long-mode)
   (add-hook 'server-after-make-frame-hook #'vwe@base--deamon-init)
-  (add-hook 'auto-save-hook #'vwe@lib--buffer-save-all)
 
-  (setq inhibit-startup-screen               t
-		ring-bell-function                   'ignore
-		yes-or-no-p                          'y-or-n-p
-		locale-coding-system                 'utf-8
-		default-process-coding-system        '(utf-8 . utf-8)
-		user-full-name                       vwe@custom--user-name
+  (setq initial-scratch-message              (vwe@base--make-welcome-msg)
+		initial-major-mode                   'fundamental-mode
+		inhibit-startup-screen               t
+
+        user-full-name                       vwe@custom--user-name
 		user-mail-address                    vwe@custom--user-mail
-		initial-scratch-message              (vwe@base--make-welcome-msg)
-		initial-major-mode                   'text-mode
 
-		column-number-mode                   t
-        line-number-mode                     nil
-        kill-whole-line                      t
-		line-move-visual                     t
-        track-eol                            t
-        set-mark-command-repeat-pop          t
-
+		ring-bell-function                   'ignore
 		read-process-output-max              (* 1024 1024)
-
-		display-time-24hr-format             t
-		display-time-day-and-date            t
-
-		calendar-mark-holidays-flag          t
-
-		server-auth-dir                      (vwe@lib--path-cache "server")
-
 		indent-tabs-mode                     nil
-		auto-save-default                    vwe@custom--buffer-auto-save?
-        auto-save-list-file-prefix           (concat (vwe@lib--path-cache "auto-save")
-													 "/.saves-")
-		auto-save-visited-interval           1
-		make-backup-files                    nil
-		confirm-kill-emacs                   (lambda (prompt)
-											   (if vwe@custom--quit-ask?
-												   (y-or-n-p-with-timeout "quit emacs:" 10 "y")
-												 '(nil)))
-		create-lockfiles                     nil
-
-		select-enable-clipboard              t
-
-		save-place-file                      (vwe@lib--path-cache "saveplace/places" t)
-
-		recentf-auto-cleanup                 900
-		recentf-max-menu-item                30
-		recentf-max-saved-items              200
-		recentf-save-file                    (vwe@lib--path-cache "recentf/.recentf" t)
-		recentf-exclude                      '("\\.?cache"
-											   ".cask"
-											   "url"
-											   "COMMIT_EDITMSG\\'"
-											   "bookmarks"
-											   "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\)$"
-											   "^/tmp/"
-											   "^/ssh:"
-											   "\\.?ido\\.last$"
-											   "\\.revive$"
-											   "/TAGS$"
-											   "^/var/folders/.+$"
-											   (lambda (file)
-												 (file-in-directory-p file
-																	  package-user-dir)))
-
 		completion-ignore-case               t
 
-		show-paren-style                     'expression
+		yes-or-no-p                          'y-or-n-p
+        kill-whole-line                      t
+        delete-selection-mode                t
+        make-backup-files                    nil
+        create-lockfiles                     nil
+        select-enable-clipboard              t
+        confirm-kill-emacs                   (lambda (prompt)
+											   (if vwe@custom--quit-ask?
+												   (y-or-n-p-with-timeout "quit emacs:"
+                                                                          10
+                                                                          "y")
+												 '(nil)))
 
-		hs-set-up-overlay (lambda (ov)
-						  (when (eq 'code (overlay-get ov 'hs))
-							(let* ((nlines (count-lines (overlay-start ov) (overlay-end ov)))
-								   (info (format " ... #%d " nlines)))
-							  (overlay-put ov 'display (propertize info 'face '((t (:inherit 'font-lock-comment-face :box t)))))))))
-
-  (define-advice show-paren-function
-      (:around (fn) fix-show-paren-function)
-	"Highlight enclosing parens."
-	(cond ((looking-at-p "\\s(") (funcall fn))
-		  (t (save-excursion
-			   (ignore-errors (backward-up-list))
-			   (funcall fn))))))
-
-(defun vwe@base--recentf-clear ()
-  "Recentf clear."
-  (interactive)
-  (write-region "" nil recentf-save-file)
-  (setq recentf-list 'nil)
-  (recentf-save-list))
-
-(defun vwe@base--paren-toggle-style (&optional style)
-  "Paren STYLE."
-  (interactive
-   (list
-    (completing-read (format "style (%s):" show-paren-style)
-					 '("parenthesis" "expression" "mixed"))))
-  (let* ((styles '(("parenthesis" . parenthesis)
-				   ("expression" . expression)
-				   ("mixed" . mixed))))
-    (setq show-paren-style (cdr (assoc style styles)))))
+		display-time-day-and-date            t
+		display-time-24hr-format             t))
 
 ;; ***************************************************************************
 ;; config

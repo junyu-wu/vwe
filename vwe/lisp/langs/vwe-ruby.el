@@ -36,8 +36,6 @@
 ;;
 (vwe@lib--package 'ruby-mode nil
 				  (progn
-
-
 					;;
 					;; `rvm'
 					;;
@@ -62,7 +60,13 @@
 					;; `robe' 辅助ruby repl加载程序或gem.包括位置与跳转
 					;;
 					(vwe@lib--package 'robe
-									  (add-hook 'ruby-mode-hook #'robe-mode))
+									  (progn
+										(add-hook 'ruby-mode-hook #'robe-mode)
+										(with-eval-after-load 'company
+										  (add-hook 'ruby-mode-hook
+													(lambda ()
+													  (vwe@pkg--company-make-mode-local-backends
+													   'company-robe))))))
 
 					;;
 					;; `ruby-electric' 自动添加 'end'
@@ -78,8 +82,17 @@
 					(vwe@lib--package 'rubocop
 									  (add-hook 'ruby-mode-hook #'rubocop-mode)
 									  nil
-									  (setq rubocop-autocorrect-on-save t
-											rubocop-autocorrect-command "rubocop -A --format emacs"))
+									  ;; (setq rubocop-autocorrect-on-save t
+									  ;; 		rubocop-autocorrect-command "rubocop -A --format emacs")
+									  )
+					(vwe@lib--package 'rubocopfmt
+									  (progn
+										(add-hook 'before-save-hook #'rubocopfmt nil t)))
+
+					;;
+					;; `ruby-test-mode'
+					;;
+					(vwe@lib--package 'ruby-test-mode)
 
 					;;
 					;; `solargraph' 后端支持

@@ -138,7 +138,17 @@ MODE."
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
-
+;;
+;; `hideshow'
+;;
+(vwe@lib--package 'hideshow
+				  nil nil
+				  (setq hs-set-up-overlay (lambda (ov)
+											(when (eq 'code (overlay-get ov 'hs))
+											  (let* ((nlines (count-lines (overlay-start ov) (overlay-end ov)))
+													 (info (format " ... #%d " nlines)))
+												(overlay-put ov 'display (propertize info 'face '((t (:inherit 'font-lock-comment-face :box t)))))))))
+				  nil nil t)
 ;;
 ;; `eacl' 根据已有代码快速填充当前代码
 ;;

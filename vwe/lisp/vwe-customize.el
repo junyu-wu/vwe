@@ -244,7 +244,7 @@
   :type 'string)
 
 (defcustom vwe@custom--frame-save-and-recover-layout?
-  t
+  nil
   "Save layout."
   :group 'vwe
   :type 'string)

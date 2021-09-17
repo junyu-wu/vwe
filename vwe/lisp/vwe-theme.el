@@ -33,19 +33,7 @@
 (defun vwe@theme--load (func &rest args)
   "Advice around `load-theme' with FUNC and ARGS."
   (mapc #'disable-theme custom-enabled-themes)
-  (apply func args)
-  (vwe@theme--face-init))
-
-(defun vwe@theme--face-init()
-  "Set default face."
-  ;; (with-eval-after-load 'symbol-overlay
-  ;; 	(set-face-attribute 'symbol-overlay-default-face nil
-  ;; 						:inherit nil
-  ;; 						:foreground nil
-  ;; 						:distant-foreground (face-attribute 'default :foreground)
-  ;; 						:background (face-attribute 'cursor :background)
-  ;; 						:weight 'ultra-light))
-  )
+  (apply func args))
 
 ;; 主题切换
 (defun vwe@theme--toggle (&optional theme)
@@ -67,9 +55,8 @@
   (if (display-graphic-p)
 	  (setq vwe@theme--current-theme vwe@custom--theme-gui)
 	(setq vwe@theme--current-theme vwe@custom--theme-tty))
-  (if  (and vwe@theme--current-theme)
-	  (load-theme vwe@theme--current-theme t)
-	(vwe@theme--face-init)))
+  (if vwe@theme--current-theme
+	  (load-theme vwe@theme--current-theme t)))
 
 ;; ***************************************************************************
 ;; config

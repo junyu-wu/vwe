@@ -32,7 +32,6 @@
 ;; ***************************************************************************
 (require 'vwe-display)
 (require 'vwe-theme)
-(require 'vwe-frame)
 
 (vwe@lib--log "Initialization of UI configuration is complete.")
 

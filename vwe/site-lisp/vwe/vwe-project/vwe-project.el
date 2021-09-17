@@ -49,6 +49,12 @@
   nil
   "Project info list.")
 
+(defcustom vwe-project--ask-overried-root-file
+  nil
+  "Ask overried root file."
+  :type 'string
+  :group 'vwe-project)
+
 (defcustom vwe-project--cache-path
   user-emacs-directory
   "Project cache path."
@@ -95,7 +101,7 @@
 							 dir
 							 vwe-project--root-tag-file-name))
 		   (overried nil))
-	  (if (file-exists-p tag-file)
+	  (if (and vwe-project--ask-overried-root-file (file-exists-p tag-file))
 		  (when (y-or-n-p "Tag file existed, overried ? ")
 			(setq overried t))
 		(setq overried t))

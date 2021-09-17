@@ -52,7 +52,7 @@
 	(mediumspringgreen    "#00fa9a" "#00fa9a" "green")
 	(snow3                "#cdc9c9" "#cdc9c9" "gray")
 	(slategray4           "#6c7b8b" "#6c7b8b" nil)
-	(parent               "#2a3030" "#2a3030" "#2a3030")
+	(parent               "#222b2b" "#2a3030" "#2a3030")
 	(ecyan                "#00ffff" "#00ffff" "#00ffff")
 	(whitesmoke           "#f5f5f5" "#f5f5f5" "white")
 	(regionc              "#3f3f5f" "#555555" "#555555")
@@ -60,7 +60,7 @@
 	(gold                 "#ffd700" "#ffd700" "yellow")
 	(darkgoldenrod        "#b8860b" "#b8860b" "#b8860b")
 	(hl                   "#3a3a3a" "#3a3a3a" "#3a3a3a")
-	(sym                  "#3f3f3f" "#3f3f3f" "#3f3f3f")
+	(sym                  "#212121" "#212121" "#212121")
 
     (bg2             "#373844" "#121212" "brightblack")
     (bg3             "#464752" "#262626" "brightblack")
@@ -276,9 +276,6 @@
     (gnus-summary-low-ancient :inherit gnus-summary-low-read)
     (gnus-summary-low-ticked :inherit gnus-summary-low-read :underline t)
     (gnus-summary-selected :inverse-video t)
-
-	;; highlight-indentation minor mode
-    (highlight-indentation-face :background ,bg2)
 
 	;; ivy
     (ivy-current-match :weight bold :foreground ,orange :background ,forestgreen)

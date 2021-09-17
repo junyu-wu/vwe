@@ -26,11 +26,98 @@
 ;; ***************************************************************************
 ;; lib
 ;; ***************************************************************************
+(defun vwe@base--recentf-clear ()
+  "Recentf clear."
+  (interactive)
+  (write-region "" nil recentf-save-file)
+  (setq recentf-list 'nil)
+  (recentf-save-list))
 
+(defun vwe@base--paren-toggle-style (&optional style)
+  "Paren STYLE."
+  (interactive
+   (list
+    (completing-read (format "style (%s):" show-paren-style)
+					 '("parenthesis" "expression" "mixed"))))
+  (let* ((styles '(("parenthesis" . parenthesis)
+				   ("expression" . expression)
+				   ("mixed" . mixed))))
+    (setq show-paren-style (cdr (assoc style styles)))))
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
 
+;;; builtin pkgs
+(vwe@lib--package 'simple
+				  (add-hook 'before-save-hook  #'delete-trailing-whitespace)
+				  nil
+				  (setq column-number-mode t
+						line-number-mode t
+						line-move-visual t
+
+						track-eol t
+						set-mark-command-repeat-pop t)
+				  nil nil t)
+
+(vwe@lib--package 'files
+				  (add-hook 'auto-save-hook #'vwe@lib--buffer-save-all)
+				  nil
+				  (setq auto-save-default vwe@custom--buffer-auto-save?
+						auto-save-visited-interval 1
+						auto-save-list-file-prefix (concat (vwe@lib--path-cache "auto-save")))
+				  nil nil t)
+
+(vwe@lib--package 'saveplace
+				  (add-hook 'after-init-hook #'save-place-mode)
+				  nil
+				  (setq save-place-file (vwe@lib--path-cache "saveplace/places" t))
+				  nil nil t)
+
+(vwe@lib--package 'recentf
+				  (add-hook 'after-init-hook #'recentf-mode)
+				  nil
+				  (setq recentf-max-menu-item 30
+						recentf-max-saved-items 200
+						recentf-save-file (vwe@lib--path-cache "recentf/.recentf" t)
+						recentf-exclude '("\\.?cache"
+										  ".cask"
+										  "url"
+										  "COMMIT_EDITMSG\\'"
+										  "bookmarks"
+										  "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\)$"
+										  "^/tmp/"
+										  "^/ssh:"
+										  "\\.?ido\\.last$"
+										  "\\.revive$"
+										  "/TAGS$"
+										  "^/var/folders/.+$"
+										  (lambda (file)
+											(file-in-directory-p file
+																 package-user-dir))))
+				  nil nil t)
+
+(vwe@lib--package 'paren
+				  (progn
+					(add-hook 'after-init-hook #'show-paren-mode)
+					(define-advice show-paren-function
+						(:around (fn) fix-show-paren-function)
+					  "Highlight enclosing parens."
+					  (cond ((looking-at-p "\\s(") (funcall fn))
+							(t (save-excursion
+								 (ignore-errors (backward-up-list))
+								 (funcall fn))))))
+				  (setq show-paren-style 'expression)
+				  nil nil nil t)
+
+(vwe@lib--package 'autorevert
+				  (add-hook 'after-init-hook #'global-auto-revert-mode)
+				  nil nil nil nil t)
+
+(vwe@lib--package 'so-long
+				  (add-hook 'after-init-hook #'global-so-long-mode)
+				  nil nil nil nil t)
+
+;;; depand pkgs
 ;;
 ;; `vwe-modeline'
 ;;
@@ -175,7 +262,7 @@
 ;; `yasnippet' include `yasnippet-snippets' `auto-yasnippet'
 ;;
 (vwe@lib--package 'yasnippet
-				  (add-hook 'after-init-hook #'yas-global-mode)
+				  (add-hook 'prog-mode-hook #'yas-global-mode)
 				  (progn
 					(yas-reload-all)
 					;;
@@ -221,7 +308,7 @@
 				  (progn
 					(defvar vwe@pkg--company-general-backends
 					  '((company-files ;; file path
-						 company-dabbrev ;; buffer word
+						 ;; company-dabbrev ;; buffer word
 						 company-dabbrev-code ;; buffer code
 						 company-keywords ;; local keywords
 						 company-capf :with company-yasnippet
@@ -311,11 +398,6 @@
 				  (setq mmm-global-mode 'maybe))
 
 ;;
-;; `wgrep'
-;;
-(vwe@lib--package 'wgrep)
-
-;;
 ;; `hungry-delete' 删除多余的空格
 ;;
 (vwe@lib--package 'hungry-delete
@@ -360,7 +442,7 @@
 ;; `esup' test startup time
 ;;
 (vwe@lib--package 'esup
-				  (setq esup-child-max-depth 0))
+				  (setq esup-child-max-depth 1))
 
 ;;
 ;; `url-cache'
@@ -498,20 +580,13 @@
 											   ("Archives" (extension "zip" "rar" "gz" "bz2" "tar"))
 											   ("Media" (extension "mp4" "avi" "wmv" "flv" "mov" "3gp" "rmvb" "mkv" "flvc" "mp3" "aac" "ape"))
 											   ("Picture" (extension "jpg" "jepg" "png" "gif"))))))
-									  t nil nil)
-
-					;;
-					;; `dired-collapse' 如果目录只有一级或一个文件直接选中
-					;;
-					;; (vwe@lib--package 'dired-collapse
-					;; 				  (add-hook 'dired-mode-hook #'dired-collapse-mode))
-					)
+									  t nil nil))
 				  nil nil nil t)
 
 ;;
 ;; `ediff'
 ;;
-(vwe@lib--package 'ediff
+(vwe@lib--package 'ediff nil
 				  (setq ediff-window-setup-function 'ediff-setup-windows-plain
 						ediff-split-window-function 'split-window-horizontally
 						ediff-merge-split-window-function 'split-window-horizontally))
@@ -531,10 +606,11 @@
 ;;
 ;; `magit'
 ;;
-(vwe@lib--package 'magit nil (progn
-							   (add-hook 'after-save-hook #'magit-after-save-refresh-status)
-							   (add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
-							   (add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)))
+(vwe@lib--package 'magit nil
+				  (progn
+					(add-hook 'after-save-hook #'magit-after-save-refresh-status)
+					(add-hook 'magit-pre-refresh-hook 'diff-hl-magit-pre-refresh)
+					(add-hook 'magit-post-refresh-hook 'diff-hl-magit-post-refresh)))
 
 ;;
 ;; `vwe-key'
