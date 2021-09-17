@@ -17,6 +17,8 @@ README.html
 .org-id-locations
 .dap-breakpoints
 .vwe-project
+.project.cache.vw
+.project.tag.vw
 org-roam.db
 places
 recentf
