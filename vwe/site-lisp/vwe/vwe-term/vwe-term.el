@@ -184,6 +184,57 @@
 	  (cd (or default-directory vwe-term--terminal-default-path))
 	  (make-term tname (getenv "SHELL")))))
 
+(defun vwe-term--show-buffer (buffer &optional located slt)
+  "Show BUFFER by LOCATED and SLT."
+  (let* ((alist `((side . ,(or located 'right))
+				  (slot . ,(or 0 slt))
+				  (window-height . fit-window-to-buffer)
+				  (window-width . fit-window-to-buffer)
+				  (preserve-size . (t . nil))
+				  (window-parameters . ((no-other-window . t)
+										(no-delete-other-windows . t))))))
+	(when (and buffer (bufferp buffer))
+	  (display-buffer-in-side-window buffer alist)
+	  (when (windowp (vwe-term--find-shell-window))
+		(select-window (vwe-term--find-shell-window))))))
+
+(defun vwe-term--find-shell-window ()
+  "Find shell window."
+  (let (window)
+	(dolist (win (window-list))
+	  (when (string-match-p "\\**\\(?:\\[vwterm\\]\\)\\**" (buffer-name (window-buffer win)))
+		(setq window win)))
+	window))
+
+(defun vwe-term--reset-shell-located (&optional located)
+  "Reset BUFFER shell show LOCATED."
+  (interactive
+   (list
+    (completing-read (format "show:")
+					 (list 'top 'right 'left 'bottom))))
+  (let* ((window (vwe-term--find-shell-window))
+		 (buf (window-buffer window))
+		 (loc (or (intern located) 'right)))
+	(when (and window buf)
+	  (delete-windows-on buf)
+	  (vwe-term--show-buffer buf loc))))
+
+(defun vwe-term--switch-terminal (&optional bufname)
+  "Switch term by BUFNAME."
+  (interactive
+   (list
+    (completing-read (format "shell:")
+					 (mapcar (lambda (buf)
+							   (when (bufferp buf)
+								 (buffer-name buf)))
+							 vwe-term--terminal-list))))
+
+  (when (bufferp (get-buffer bufname))
+	(let* ((window (vwe-term--find-shell-window)))
+	  (if (windowp window)
+		  (set-window-buffer window bufname)
+		(vwe-term--show-buffer (get-buffer bufname))))))
+
 (defun vwe-term--kill-terminal ()
   "Quit term process."
   (interactive)
@@ -216,55 +267,6 @@
 	(term-mode)
 	(term-char-mode))
   (vwe-term--show-buffer buffer))
-
-(defun vwe-term--show-buffer (buffer &optional located slt)
-  "Show BUFFER by LOCATED and SLT."
-  (let* ((alist `((side . ,(or located 'right))
-				  (slot . ,(or 0 slt))
-				  (window-height . fit-window-to-buffer)
-				  (window-width . fit-window-to-buffer)
-				  (preserve-size . (t . nil))
-				  (window-parameters . ((no-other-window . t)
-										(no-delete-other-windows . t))))))
-	(when (and buffer (bufferp buffer))
-	  (display-buffer-in-side-window buffer alist))))
-
-(defun vwe-term--reset-shell-located (&optional located)
-  "Reset BUFFER shell show LOCATED."
-  (interactive
-   (list
-    (completing-read (format "show:")
-					 (list 'top 'right 'left 'bottom))))
-  (let* ((window (vwe-term--find-shell-window))
-		 (buf (window-buffer window))
-		 (loc (or (intern located) 'right)))
-	(when (and window buf)
-	  (delete-windows-on buf)
-	  (vwe-term--show-buffer buf loc))))
-
-(defun vwe-term--find-shell-window ()
-  "Find shell window."
-  (let (window)
-	(dolist (win (window-list))
-	  (when (string-match-p "\\**\\(?:\\[vwterm\\]\\)\\**" (buffer-name (window-buffer win)))
-		(setq window win)))
-	window))
-
-(defun vwe-term--switch-terminal (&optional bufname)
-  "Switch term by BUFNAME."
-  (interactive
-   (list
-    (completing-read (format "shell:")
-					 (mapcar (lambda (buf)
-							   (when (bufferp buf)
-								 (buffer-name buf)))
-							 vwe-term--terminal-list))))
-
-  (when (bufferp (get-buffer bufname))
-	(let* ((window (vwe-term--find-shell-window)))
-	  (if (windowp window)
-		  (set-window-buffer window bufname)
-		(vwe-term--show-buffer (get-buffer bufname))))))
 
 ;;;###autoload
 (defun vwe-terminal (&optional name)
