@@ -23,15 +23,7 @@
 ;;
 
 ;;; Code:
-
-;;
-;; require
-;;
 (require 'term)
-
-;;
-;; customize
-;;
 
 (defgroup vwe-term nil
   "Vwe term."
@@ -43,15 +35,12 @@
   :group 'vwe-term
   :type 'string)
 
-;;
-;; variable
-;;
-
 (defvar vwe-term--buffer-name-prefix
-  "m-term"
+  "[vwterm]"
   "Terminal buffer name prefix.")
 
 (defvar vwe-term--terminal-default-path
+  ;; (file-name-directory (buffer-file-name))
   (getenv "HOME")
   "Terminal default directory.")
 
@@ -59,58 +48,13 @@
   nil
   "Terminal list.")
 
-(defvar vwe-term--terminal-program-arguments
+(defvar vwe-term--terminal-window
   nil
-  "Terminal program arguments.")
+  "Terminal window.")
 
 (defconst vwe-term--unbinding-key-list
-  '("C-z" "C-x" "C-c" "C-h" "C-y" "<ESC>")
+  '("C-z" "C-x" "C-c" "C-h" "C-y" "C-r" "<ESC>")
   "Unbinding key list.")
-
-;;
-;; util func
-;;
-(defun vwe-term--make-buffer-name (&optional dedicated?)
-  "Make terminal buffer name with `vwe-term--buffer-name-prefix' + SUFFIX.
-If DEDICATED non-nil the buffer is dedicated."
-  (let* ((name (format "*%s:%s*"
-					   (if dedicated?
-						   (concat (upcase vwe-term--buffer-name-prefix)
-								   "-DEDICATED")
-						 (upcase vwe-term--buffer-name-prefix))
-					   (format-time-string "%y%m%d%H%M%S")))
-		 (buffer (get-buffer name)))
-	(if (bufferp buffer)
-		(vwe-term-make-buffer-name)
-	  name)))
-
-(defun vwe-term--get-shell-command ()
-  "Get shell command."
-  (let ((command))
-	(cond ((or (eq system-type 'windows-nt) (eq system-type 'cygwin)) (setq command vwe-term--shell-command))
-		  ((getenv "SHELL") (setq command (getenv "SHELL")))
-		  ((getenv "ESHELL") (setq command (getenv "ESHELL")))
-		  (t (setq command "/usr/bin/sh")))
-	command))
-
-(defun vwe-term--make-terminal (&optional special? dedicated?)
-  "Make terminal buffer with SH-CMD.
-If SPECIAL non-nil then input new shel command.
-If DEDICATED non-nil the buffer is dedicated."
-  (with-temp-buffer
-	(let* ((name (vwe-term--make-buffer-name))
-		   (buffer)
-		   (shell-cmd)
-		   (dir (or default-directory vwe-term--terminal-default-path)))
-	  (cd dir)
-	  (when dedicated? (setq name (vwe-term--make-buffer-name t)))
-	  (if special?
-		  (setq shell-cmd (read-from-minibuffer "shell:"))
-		(setq shell-cmd (vwe-term--get-shell-command)))
-	  (setq buffer (if vwe-term--terminal-program-arguments
-					   (make-term name shell-cmd nil vwe-term--terminal-program-arguments)
-					 (make-term name shell-cmd)))
-	  buffer)))
 
 (defun vwe-term--send-esc ()
   "Send ESC in term mode."
@@ -197,14 +141,11 @@ If DEDICATED non-nil the buffer is dedicated."
 	   ((mapp key-str) (setq key key-str)))
 	  (when key (define-key term-raw-map key nil))))
 
-  (define-key term-raw-map (kbd "C-s") #'isearch-forward)
-  (define-key term-raw-map (kbd "C-r") #'isearch-backward)
-  (define-key term-raw-map (kbd "C-r") #'isearch-backward)
+  (local-set-key (kbd "M-p") nil)
+  (local-set-key (kbd "M-n") nil)
 
   (define-key term-raw-map (kbd "C-a") #'vwe-term--send-move-begin-of-line)
   (define-key term-raw-map (kbd "C-e") #'vwe-term--send-move-end-of-line)
-  (define-key term-raw-map (kbd "M-,") #'term-send-raw)
-  (define-key term-raw-map (kbd "M-.") #'completion-at-point)
   (define-key term-raw-map (kbd "M-p") #'term-send-up)
   (define-key term-raw-map (kbd "M-n") #'term-send-down)
   (define-key term-raw-map (kbd "C-c l") #'term-line-mode)
@@ -220,61 +161,28 @@ If DEDICATED non-nil the buffer is dedicated."
   (define-key term-raw-map (kbd "M-f") #'vwe-term--send-forward-word)
   (define-key term-raw-map (kbd "M-b") #'vwe-term--send-backward-word)
   (define-key term-raw-map (kbd "M-d") #'vwe-term--send-delete-word)
+
   (define-key term-raw-map (kbd "M-<") #'vwe-term--previous-terminal)
   (define-key term-raw-map (kbd "M->") #'vwe-term--next-terminal))
 
-;;
-;; terminal
-;;
+(defun vwe-term--make-buffer-name (&optional name suffix)
+  "Make terminal buffer name with `vwe-term--buffer-name-prefix' + NAME + [SUFFIX]."
+  (let* ((buf-name (format "*%s:%s-%s*"
+						   vwe-term--buffer-name-prefix
+						   (or name "term")
+						   (or suffix 1)))
+		 (buffer (get-buffer (format "*%s*" buf-name)))
+		 (index (or suffix 1)))
+	(when (bufferp buffer)
+	  (setq buf-name (vwe-term--make-buffer-name name (1+ index))))
+	buf-name))
 
-(defun vwe-term--switch-terminal (term-buffer)
-  "Switch current to TERM-BUFFER buffer.
-Switch term to DIRECTION `next' or `previous' buffer."
-  (when vwe-term--terminal-list
-	(let* ((buffer (cond ((bufferp term-buffer) term-buffer)
-						 ((stringp term-buffer) (when (bufferp (get-buffer term-buffer))
-												  (get-buffer term-buffer))))))
-	  (when (and buffer (memq buffer vwe-term--terminal-list))
-		(switch-to-buffer buffer)))))
-
-(defun vwe-term--next-terminal ()
-  "To next term buffer."
-  (interactive)
-  (let* ((cur-buffer (current-buffer))
-		 (to-buffer))
-	(catch 'break
-	  (dotimes (i (length vwe-term--terminal-list))
-		(when (equal cur-buffer (nth i vwe-term--terminal-list))
-		  (setq to-buffer (nth (if (>= (1+ i) (length vwe-term--terminal-list))
-								   0 (1+ i))
-							   vwe-term--terminal-list))
-		  (throw 'break nil))))
-	(vwe-term--switch-terminal to-buffer)))
-
-(defun vwe-term--previous-terminal ()
-  "To previous term buffer."
-  (interactive)
-  (let* ((cur-buffer (current-buffer))
-		 (to-buffer))
-	(catch 'break
-	  (dotimes (i (length vwe-term--terminal-list))
-		(when (equal cur-buffer (nth i vwe-term--terminal-list))
-		  (setq to-buffer (nth (if (< (1- i) 0)
-								   (1- (length vwe-term--terminal-list))
-								 (1- i))
-							   vwe-term--terminal-list))
-		  (throw 'break nil))))
-	(vwe-term--switch-terminal to-buffer)))
-
-(defun vwe-term--kill-term-buffer ()
-  "Kill term buffer."
-  (interactive)
-  (when (ignore-errors (get-buffer-process (current-buffer)))
-    (set-process-sentinel
-	 (get-buffer-process (current-buffer))
-     (lambda (proc change)
-	   (when (string-match "\\(finished\\|exited\\)" change)
-		 (kill-buffer (process-buffer proc)))))))
+(defun vwe-term--make-terminal (&optional name)
+  "Make NAME terminal buffer with SH-CMD."
+  (with-temp-buffer
+	(let* ((tname (or name (vwe-term--make-buffer-name major-mode))))
+	  (cd (or default-directory vwe-term--terminal-default-path))
+	  (make-term tname (getenv "SHELL")))))
 
 (defun vwe-term--kill-terminal ()
   "Quit term process."
@@ -291,30 +199,90 @@ Switch term to DIRECTION `next' or `previous' buffer."
   (interactive)
   (when (eq major-mode 'term-mode)
 	(vwe-term--kill-terminal)
-	(kill-buffer)))
+	(if vwe-term--terminal-list
+		(kill-buffer)
+	  (let* ((window (selected-window))
+			 (buffer (current-buffer)))
+		(delete-window window)
+		(kill-buffer buffer)))))
 
-(defun vwe-term--run-term ()
-  "Run Emacs term and Vwe term."
-  (add-hook 'term-mode-hook #'vwe-term--init-keymap)
-  (term-mode)
-  (term-char-mode)
-  (vwe-term--kill-term-buffer)
-  (add-hook 'kill-buffer-hook #'vwe-term--kill-terminal))
+(defun vwe-term--run-term (buffer)
+  "Run term in BUFFER."
+  (set-buffer buffer)
+  (with-current-buffer buffer
+	(setq show-trailing-whitespace nil)
+	(add-hook 'term-mode-hook #'vwe-term--init-keymap)
+	(add-hook 'kill-buffer-hook #'vwe-term--kill-terminal)
+	(term-mode)
+	(term-char-mode))
+  (vwe-term--show-buffer buffer))
+
+(defun vwe-term--show-buffer (buffer &optional located slt)
+  "Show BUFFER by LOCATED and SLT."
+  (let* ((alist `((side . ,(or located 'right))
+				  (slot . ,(or 0 slt))
+				  (window-height . fit-window-to-buffer)
+				  (window-width . fit-window-to-buffer)
+				  (preserve-size . (t . nil))
+				  (window-parameters . ((no-other-window . t)
+										(no-delete-other-windows . t))))))
+	(when (and buffer (bufferp buffer))
+	  (display-buffer-in-side-window buffer alist))))
+
+(defun vwe-term--reset-shell-located (&optional located)
+  "Reset BUFFER shell show LOCATED."
+  (interactive
+   (list
+    (completing-read (format "show:")
+					 (list 'top 'right 'left 'bottom))))
+  (let* ((window (vwe-term--find-shell-window))
+		 (buf (window-buffer window))
+		 (loc (or (intern located) 'right)))
+	(when (and window buf)
+	  (delete-windows-on buf)
+	  (vwe-term--show-buffer buf loc))))
+
+(defun vwe-term--find-shell-window ()
+  "Find shell window."
+  (let (window)
+	(dolist (win (window-list))
+	  (when (string-match-p "\\**\\(?:\\[vwterm\\]\\)\\**" (buffer-name (window-buffer win)))
+		(setq window win)))
+	window))
+
+(defun vwe-term--switch-terminal (&optional bufname)
+  "Switch term by BUFNAME."
+  (interactive
+   (list
+    (completing-read (format "shell:")
+					 (mapcar (lambda (buf)
+							   (when (bufferp buf)
+								 (buffer-name buf)))
+							 vwe-term--terminal-list))))
+
+  (when (bufferp (get-buffer bufname))
+	(let* ((window (vwe-term--find-shell-window)))
+	  (if (windowp window)
+		  (set-window-buffer window bufname)
+		(vwe-term--show-buffer (get-buffer bufname))))))
 
 ;;;###autoload
-(defun vwe-terminal ()
-  "Run vwe term."
+(defun vwe-terminal (&optional name)
+  "Run vwe term with NAME."
   (interactive)
   (if (or (eq system-type 'windows-nt) (eq system-type 'cygwin))
 	  (eshell)
-	(let* ((buffer (vwe-term--make-terminal))
+	(let* ((tname (or name (read-string (format "term(%s):"
+												(vwe-term--make-buffer-name))
+										nil nil
+										(vwe-term--make-buffer-name))))
+		   (buffer (vwe-term--make-terminal tname))
 		   (dir (or default-directory vwe-term--terminal-default-path)))
 	  (when (bufferp buffer)
 		(setq vwe-term--terminal-list (append vwe-term--terminal-list (list buffer)))
-		(set-buffer buffer)
-		(vwe-term--run-term)
-		(with-current-buffer buffer (setq show-trailing-whitespace nil))
-		(switch-to-buffer buffer)
+		(when (vwe-term--find-shell-window)
+		  (delete-window (vwe-term--find-shell-window)))
+		(vwe-term--run-term buffer)
 		(when (and (featurep 'tramp) (tramp-tramp-file-p dir))
 		  (with-parsed-tramp-file-name dir path
 			(let ((method (cadr (assoc `tramp-login-program (assoc path-method tramp-methods)))))

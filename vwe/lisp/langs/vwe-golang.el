@@ -73,7 +73,15 @@
 					;;
 					;; `go-guru' go代码编辑扩展
 					;;
-					(vwe@lib--package 'go-guru (add-hook 'go-mode-hook #'go-guru-hl-identifier-mode)))
+					(vwe@lib--package 'go-guru (add-hook 'go-mode-hook #'go-guru-hl-identifier-mode))
+
+					;;
+					;; `go-tag'
+					;; go get github.com/fatih/gomodifytags
+					;;
+					(vwe@lib--package 'go-tag nil nil
+									  (setq go-tag-args (list "-transform" "lispcase"))))
+
 				  (setq go-command (concat (getenv "GOROOT") "/bin/go")
 						gofmt-command (concat (getenv "GOPATH") "/bin/goimports")
 						flycheck-go-gofmt-executable (concat (getenv "GOPATH") "/bin/goimports")

@@ -288,6 +288,8 @@
 				  (("term" :face (:background "red" :foreground "white" :weight bold))
 				   (("c" term-char-mode "char mode")
 					("l" term-line-mode "line mode")
+					("s" vwe-term--switch-terminal "switch term")
+					("r" vwe-term--reset-shell-located "reset located")
 					("q" vwe-term--exit "exit terminal")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (term-mode))
@@ -493,10 +495,11 @@
 
   (vwe-key-define golang
 				  ("golang"
-				   (("r" go-run "go run")
-					("i" go-impl "impl")
-					("a" go-import-add "import add")
+				   (("i" go-import-add "import add")
 					("m" go-remove-unused-imports "remove imports")
+					("t" go-tag-add "add tag")
+					("T" go-tag-remove "remove tag")
+					("r" go-tag-refresh  "refresh tag")
 					("u" vwe-key:gud "gud" :face (:foreground "yellow" :underline t :weight bold))
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (go-mode))
