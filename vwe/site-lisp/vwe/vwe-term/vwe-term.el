@@ -52,6 +52,18 @@
   nil
   "Terminal window.")
 
+(defvar vwe-term--default-solt
+  -3
+  "Default solt.")
+
+(defvar vwe-term--default-width
+  0.3
+  "Default width.")
+
+(defvar vwe-term--default-height
+  0.3
+  "Default height.")
+
 (defconst vwe-term--unbinding-key-list
   '("C-z" "C-x" "C-c" "C-h" "C-y" "C-r" "<ESC>")
   "Unbinding key list.")
@@ -188,21 +200,32 @@
 	  (when (string-match-p "\\**\\(?:\\[vwterm\\]\\)\\**" (buffer-name (window-buffer win)))
 		(setq window win)))
 	window))
+(defun vwe-term--make-buffer-alist (located slt)
+  "Make buffer alist by LOCATED and SLT."
+  (cond
+   ((or (eq located 'left) (eq located 'right)) `((side . ,located)
+												  (slot . ,(or slt vwe-term--default-solt))
+												  (window-width . ,vwe-term--default-width) ;; (window-width . fit-window-to-buffer)
+												  (window-parameters . ((no-other-window . t)
+																		(no-delete-other-windows . t)))))
+   ((or (eq located 'top) (eq located 'bottom)) `((side . ,located)
+												  (slot . ,(or slt vwe-term--default-solt))
+												  (window-height . ,vwe-term--default-height) ;; (window-height . fit-window-to-buffer)
+												  (window-parameters . ((no-other-window . t)
+																		(no-delete-other-windows . t)))))
+   (t  `((side . right)
+		 (slot . ,(or slt vwe-term--default-solt))
+		 (window-width . ,vwe-term--default-width) ;; (window-width . fit-window-to-buffer)
+		 (window-parameters . ((no-other-window . t)
+							   (no-delete-other-windows . t)))))))
 
 (defun vwe-term--show-buffer (buffer &optional located slt)
   "Show BUFFER by LOCATED and SLT."
-  (let* ((alist `((side . ,(or located 'right))
-				  (slot . ,(or 0 slt))
-				  (window-height . fit-window-to-buffer)
-				  (window-width . fit-window-to-buffer)
-				  (preserve-size . (t . nil))
-				  (window-parameters . ((no-other-window . t)
-										(no-delete-other-windows . t))))))
-	(when (and buffer (bufferp buffer))
-	  (display-buffer-in-side-window buffer alist)
-	  (when (windowp (vwe-term--find-shell-window))
-		(vwe-term--init-keymap)
-		(select-window (vwe-term--find-shell-window))))))
+  (when (and buffer (bufferp buffer))
+	(display-buffer-in-side-window buffer (vwe-term--make-buffer-alist located slt))
+	(when (windowp (vwe-term--find-shell-window))
+	  (vwe-term--init-keymap)
+	  (select-window (vwe-term--find-shell-window)))))
 
 (defun vwe-term--reset-shell-located (&optional located)
   "Reset BUFFER shell show LOCATED."

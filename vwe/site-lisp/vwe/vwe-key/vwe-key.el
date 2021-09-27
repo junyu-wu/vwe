@@ -369,7 +369,7 @@ WIN is Window."
   (let* ((alist '((window-width . vwe-key--max-width)
 				  (window-height . fit-window-to-buffer)
 				  (direction . 'down)
-				  (slot . 0))))
+				  (slot . -5))))
 
 	(when vwe-key--buffer-handle
 	  (with-current-buffer vwe-key--buffer-handle
