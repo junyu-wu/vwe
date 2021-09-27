@@ -64,6 +64,10 @@
   0.3
   "Default height.")
 
+(defvar vwe-term--located
+  'right
+  "Term show located.")
+
 (defconst vwe-term--unbinding-key-list
   '("C-z" "C-x" "C-c" "C-h" "C-y" "C-r" "<ESC>")
   "Unbinding key list.")
@@ -203,23 +207,27 @@
 (defun vwe-term--make-buffer-alist (located slt)
   "Make buffer alist by LOCATED and SLT."
   (cond
-   ((or (eq located 'left) (eq located 'right)) `((side . ,located)
-												  (slot . ,(or slt vwe-term--default-solt))
-												  (window-width . ,vwe-term--default-width) ;; (window-width . fit-window-to-buffer)
-												  (window-parameters . ((no-other-window . t)
-																		(no-delete-other-windows . t)))))
-   ((or (eq located 'top) (eq located 'bottom)) `((side . ,located)
-												  (slot . ,(or slt vwe-term--default-solt))
-												  (window-height . ,vwe-term--default-height) ;; (window-height . fit-window-to-buffer)
-												  (window-parameters . ((no-other-window . t)
-																		(no-delete-other-windows . t)))))
-   (t  `((side . right)
+   ((or (eq located 'left) (eq located 'right))
+	(setq vwe-term--located located)
+	`((side . ,vwe-term--located)
+	  (slot . ,(or slt vwe-term--default-solt))
+	  (window-width . ,vwe-term--default-width) ;; (window-width . fit-window-to-buffer)
+	  (window-parameters . ((no-other-window . t)
+							(no-delete-other-windows . t)))))
+   ((or (eq located 'top) (eq located 'bottom))
+	(setq vwe-term--located located)
+	`((side . ,vwe-term--located)
+	  (slot . ,(or slt vwe-term--default-solt))
+	  (window-height . ,vwe-term--default-height) ;; (window-height . fit-window-to-buffer)
+	  (window-parameters . ((no-other-window . t)
+							(no-delete-other-windows . t)))))
+   (t  `((side . ,vwe-term--located)
 		 (slot . ,(or slt vwe-term--default-solt))
 		 (window-width . ,vwe-term--default-width) ;; (window-width . fit-window-to-buffer)
 		 (window-parameters . ((no-other-window . t)
 							   (no-delete-other-windows . t)))))))
 
-(defun vwe-term--show-buffer (buffer &optional located slt)
+(defun vwe-term--show-buffer (buffer located &optional slt)
   "Show BUFFER by LOCATED and SLT."
   (when (and buffer (bufferp buffer))
 	(display-buffer-in-side-window buffer (vwe-term--make-buffer-alist located slt))
@@ -235,7 +243,7 @@
 					 (list 'top 'right 'left 'bottom))))
   (let* ((window (vwe-term--find-shell-window))
 		 (buf (window-buffer window))
-		 (loc (or (intern located) 'right)))
+		 (loc (or (intern located) vwe-term--located)))
 	(when (and window buf)
 	  (delete-windows-on buf)
 	  (vwe-term--show-buffer buf loc))))
@@ -255,7 +263,21 @@
 	(let* ((window (vwe-term--find-shell-window)))
 	  (if (windowp window)
 		  (set-window-buffer window bufname)
-		(vwe-term--show-buffer (get-buffer bufname))))))
+		(vwe-term--show-buffer (get-buffer bufname) vwe-term--located)))))
+
+(defun vwe-term--reshow-terminal-buffer ()
+  "Switch term by bufname."
+  (let ((bufname (completing-read
+				  (format "shell:")
+				  (mapcar (lambda (buf)
+							(when (bufferp buf)
+							  (buffer-name buf)))
+						  vwe-term--terminal-list))))
+	(when (bufferp (get-buffer bufname))
+	  (let* ((window (vwe-term--find-shell-window)))
+		(if (windowp window)
+			(set-window-buffer window bufname)
+		  (vwe-term--show-buffer (get-buffer bufname) vwe-term--located))))))
 
 (defun vwe-term--kill-terminal ()
   "Quit term process."
@@ -288,32 +310,41 @@
 	(add-hook 'term-mode-hook #'vwe-term--init-keymap)
 	(term-mode)
 	(term-char-mode))
-  (vwe-term--show-buffer buffer))
+  (vwe-term--show-buffer buffer vwe-term--located))
 
 ;;;###autoload
 (defun vwe-terminal (&optional name)
   "Run vwe term with NAME."
   (interactive)
-  (if (or (eq system-type 'windows-nt) (eq system-type 'cygwin))
-	  (eshell)
-	(let* ((tname (vwe-term--make-buffer-name
-				   (or name (read-string
-							 (format "term(%s):"
-									 (vwe-term--make-buffer-name))
-							 nil nil
-							 (vwe-term--make-buffer-name)))))
-		   (buffer (vwe-term--make-terminal tname))
-		   (dir (or default-directory vwe-term--terminal-default-path)))
-	  (when (bufferp buffer)
-		(setq vwe-term--terminal-list (append vwe-term--terminal-list (list buffer)))
-		(when (vwe-term--find-shell-window)
-		  (delete-window (vwe-term--find-shell-window)))
-		(vwe-term--run-term buffer)
-		(when (and (featurep 'tramp) (tramp-tramp-file-p dir))
-		  (with-parsed-tramp-file-name dir path
-			(let ((method (cadr (assoc `tramp-login-program (assoc path-method tramp-methods)))))
-			  (term-send-raw-string (concat method " " (when path-user (concat path-user "@")) path-host "\C-m"))
-			  (term-send-raw-string (concat "cd '" path-localname "'\C-m")))))))))
+  (let* ((new t))
+	(if vwe-term--terminal-list
+		(if (y-or-n-p "VWTerm exist, do you create new term? ")
+			(setq new t)
+		  (setq new nil))
+	  (setq vwe-term--located 'right))
+
+	(if new
+		(if (or (eq system-type 'windows-nt) (eq system-type 'cygwin))
+			(eshell)
+		  (let* ((tname (vwe-term--make-buffer-name
+						 (or name (read-string
+								   (format "term(%s):"
+										   (vwe-term--make-buffer-name))
+								   nil nil
+								   (vwe-term--make-buffer-name)))))
+				 (buffer (vwe-term--make-terminal tname))
+				 (dir (or default-directory vwe-term--terminal-default-path)))
+			(when (bufferp buffer)
+			  (setq vwe-term--terminal-list (append vwe-term--terminal-list (list buffer)))
+			  (when (vwe-term--find-shell-window)
+				(delete-window (vwe-term--find-shell-window)))
+			  (vwe-term--run-term buffer)
+			  (when (and (featurep 'tramp) (tramp-tramp-file-p dir))
+				(with-parsed-tramp-file-name dir path
+				  (let ((method (cadr (assoc `tramp-login-program (assoc path-method tramp-methods)))))
+					(term-send-raw-string (concat method " " (when path-user (concat path-user "@")) path-host "\C-m"))
+					(term-send-raw-string (concat "cd '" path-localname "'\C-m"))))))))
+	  (vwe-term--reshow-terminal-buffer))))
 
 (provide 'vwe-term)
 ;;; vwe-term.el ends here
