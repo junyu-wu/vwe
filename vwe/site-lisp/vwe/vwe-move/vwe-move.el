@@ -123,8 +123,8 @@
 
 (defun vwe-move-line-mode-enable ()
   "Enable mode."
-  (define-key vwe-move--keymap (kbd "M-p") #'vwe-move-line--up)
-  (define-key vwe-move--keymap (kbd "M-n") #'vwe-move-line--down))
+  (define-key vwe-move--keymap (kbd "M-[") #'vwe-move-line--up)
+  (define-key vwe-move--keymap (kbd "M-]") #'vwe-move-line--down))
 
 (defun vwe-move-line-mode-disable ()
   "Disable mode.")
@@ -967,8 +967,8 @@ SELF is include curretn buffer."
   "Enable mode."
   (define-key vwe-move-mark--keymap (kbd "C->") #'vwe-move-mark--forward-mark-word)
   (define-key vwe-move-mark--keymap (kbd "C-<") #'vwe-move-mark--backward-mark-word)
-  (define-key vwe-move-mark--keymap (kbd "M-]") #'vwe-move-mark--forward-mark-line)
-  (define-key vwe-move-mark--keymap (kbd "M-[") #'vwe-move-mark--backward-mark-line))
+  (define-key vwe-move-mark--keymap (kbd "M-{") #'vwe-move-mark--backward-mark-line)
+  (define-key vwe-move-mark--keymap (kbd "M-}") #'vwe-move-mark--forward-mark-line))
 
 (defun vwe-move-mark-mode-disable ()
   "Disable mode.")

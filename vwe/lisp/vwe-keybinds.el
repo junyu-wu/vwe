@@ -290,7 +290,7 @@
 					("l" term-line-mode "line mode")
 					("s" vwe-term--switch-terminal "switch term")
 					("r" vwe-term--reset-shell-located "reset located")
-					("q" vwe-term--exit "exit terminal")
+					("k" vwe-term--exit "exit terminal")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (term-mode))
 
@@ -489,7 +489,7 @@
 					("j" elpy-django-runserver "run django")
 					("b" python-shell-send-buffer "send buffer")
 					("r" python-shell-send-region "send region")
-					("q" vwe@python--kill-python-shell "quit")
+					("k" vwe@python--kill-python-shell "quit")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (python-mode))
 
@@ -500,6 +500,9 @@
 					("t" go-tag-add "add tag")
 					("T" go-tag-remove "remove tag")
 					("r" go-tag-refresh  "refresh tag")
+					("o" quickrun-compile-only "compile only")
+					("x" quickrun "quickrun")
+					("s" quickrun-shell "run shell")
 					("u" vwe-key:gud "gud" :face (:foreground "yellow" :underline t :weight bold))
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (go-mode))
