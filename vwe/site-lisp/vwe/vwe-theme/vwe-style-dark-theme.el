@@ -432,6 +432,9 @@
 	(whitespace-tab :background ,bg2 :foreground ,comt)
 	(whitespace-trailing :background ,grey9 :foreground ,none)
 
+	;; yasnippet
+	(yas-field-highlight-face :background ,sym)
+
 	;; symbol overlay gourp
 	(symbol-overlay-default-face :background ,sym))
   "Theme faces.")

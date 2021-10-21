@@ -443,6 +443,9 @@
 	(whitespace-tab :background ,bg :foreground ,comt)
 	(whitespace-trailing :background ,grey9 :foreground ,none)
 
+	;; yasnippet
+	(yas-field-highlight-face :background ,ragn)
+
 	;; symbol overlay gourp
 	(symbol-overlay-default-face :background ,ragn)
 	)

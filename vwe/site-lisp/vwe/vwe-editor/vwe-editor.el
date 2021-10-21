@@ -37,6 +37,10 @@
   nil
   "Ignore func.")
 
+(defvar vwe-editor--current-cmd
+  nil
+  "Current cmd.")
+
 (defun vwe-editor--tmp-buffer-p (buffer)
   "Is temp BUFFER."
   (when (and (bufferp buffer)
@@ -47,11 +51,13 @@
   "Filter function."
   (unless (vwe-editor--tmp-buffer-p (current-buffer))
 	(let* ((cmd (or (command-remapping this-original-command)
-					this-original-command)))
+				 	this-original-command
+					this-command)))
 	  (when (and (memq cmd vwe-editor--ignore-func))
 		(vwe-editor--toggle-submode t)
 		(setq vwe-editor--submode 'edit)
 		(vwe-editor--toggle-submode)
+		(message "cmd is: %s" vwe-editor--current-cmd)
 		t))))
 
 (defun vwe-editor--view-submode (&optional deactivate)
@@ -59,8 +65,7 @@
   (if deactivate
 	  (progn
 		(setq buffer-read-only t)
-		(local-unset-key (kbd "SPC"))
-		(message "vwe editor view submode deactivate."))
+		(local-unset-key (kbd "SPC")))
 	(progn
 	  (unless (or (vwe-editor--tmp-buffer-p (current-buffer))
 				  (vwe-editor--filter-func))
@@ -69,23 +74,20 @@
 									 (interactive)
 									 (vwe-editor--toggle-submode t)
 									 (setq vwe-editor--submode 'edit)
-									 (vwe-editor--toggle-submode))))
-	  (message "vwe editor view submode activate."))))
+									 (vwe-editor--toggle-submode)))))))
 
 (defun vwe-editor--edit-submode (&optional deactivate)
   "Activate or DEACTIVATE edit submode."
   (if deactivate
 	  (progn
-		(local-unset-key (kbd "ESC SPC"))
-		(message "vwe editor edit submode deactivate."))
+		(local-unset-key (kbd "ESC SPC")))
 	(progn
 	  (setq buffer-read-only nil)
 	  (local-set-key (kbd "ESC SPC") (lambda ()
 									   (interactive)
 									   (vwe-editor--toggle-submode t)
 									   (setq vwe-editor--submode 'view)
-									   (vwe-editor--toggle-submode)))
-	  (message "vwe editor edit submode activate."))))
+									   (vwe-editor--toggle-submode))))))
 
 (defun vwe-editor--toggle-submode (&optional deactivate)
   "Toggle editor submode activate or DEACTIVATE."
@@ -97,7 +99,7 @@
 (defun vwe-editor--find-file (func &rest args)
   "Find FUNC and ARGS file."
   (apply func args)
-  (unless (vwe-editor--tmp-buffer-p (current-buffer))
+  (unless (and (vwe-editor--tmp-buffer-p (current-buffer)))
 	(vwe-editor--toggle-submode t)
 	(setq vwe-editor--submode 'view)
 	(vwe-editor--toggle-submode)))
@@ -115,42 +117,20 @@
 		(setq vwe-editor--submode 'view)
 		(vwe-editor--toggle-submode)))))
 
-(defun vwe-editor--select-window-advice (func &rest args)
-  "Call FUNC and ARGS select window activate view mode."
-  (let* ((from (current-buffer))
-		 (selected (selected-window))
-		 (window (apply func args))
-		 (to (window-buffer)))
-	(when (and (windowp window)
-			   (bufferp to)
-			   (not (equal selected window))
-			   (not (vwe-editor--tmp-buffer-p from))
-			   (not (vwe-editor--tmp-buffer-p to))
-			   (not (equal (buffer-name from) (buffer-name to))))
-	  (vwe-editor--toggle-submode t)
-	  (setq vwe-editor--submode 'view)
-	  (vwe-editor--toggle-submode))))
-
 (defun vwe-editor-enable ()
   "Enable editor mode."
   (interactive)
   (vwe-editor--toggle-submode)
-  (message "vwe editor mode activate.")
-  ;; (advice-add #'save-buffer :after #'vwe-editor-view--save-buffer)
   (advice-add #'find-file :around #'vwe-editor--find-file)
-  (advice-add #'switch-to-buffer :around #'vwe-editor--switch-buffer-advice)
-  (advice-add #'select-window :around #'vwe-editor--select-window-advice))
+  (advice-add #'switch-to-buffer :around #'vwe-editor--switch-buffer-advice))
 
 (defun vwe-editor-disable ()
   "Disable editor mode."
   (interactive)
   (setq vwe-editor--submode nil)
   (vwe-editor--toggle-submode t)
-  (message "vwe editor mode deactivate.")
-  ;; (advice-remove #'save-buffer #'vwe-editor-view--save-buffer)
   (advice-remove #'find-file #'vwe-editor--find-file)
-  (advice-remove #'switch-to-buffer #'vwe-editor--switch-buffer-advice)
-  (advice-remove #'select-window #'vwe-editor--select-window-advice))
+  (advice-remove #'switch-to-buffer #'vwe-editor--switch-buffer-advice))
 
 ;;;###autoload
 (define-minor-mode vwe-editor-mode
