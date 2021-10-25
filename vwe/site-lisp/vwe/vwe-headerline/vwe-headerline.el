@@ -168,7 +168,8 @@
 (defun vwe-headerline--show-p ()
   "Header line is show."
   (when vwe-headerline-mode
-	(unless (vwe-headerline--buffer-match-p vwe-headerline--buffer-filter-list)
+	(if (vwe-headerline--buffer-match-p vwe-headerline--buffer-filter-list)
+		(setq header-line-format nil)
 	  (setq header-line-format (vwe-headerline--make-buffer-info)))))
 
 (define-minor-mode vwe-headerline-mode
