@@ -25,7 +25,6 @@
 ;; go get golang.org/x/tools/cmd/gorename
 ;; go get golang.org/x/lint/golint
 ;; go get github.com/rogpeppe/godef
-;; go get github.com/nsf/gocode  ;; gocode set autobuild true
 ;; go get -u github.com/josharian/impl
 ;; go get -u github.com/davidrjenni/reftools/cmd/fillstruct
 ;; go get -u github.com/cweill/gotests/...
@@ -50,25 +49,9 @@
 				  (progn
 					(vwe@lib--keymap-set go-mode-map
 										 '(("M-." godef-jump)))
-					(add-hook 'before-save-hook #'gofmt-before-save)
+					(add-hook 'before-save-hook #'gofmt-before-save nil t)
 					(with-eval-after-load 'exec-path-from-shell
 					  (exec-path-from-shell-copy-envs '("GOPATH" "GO111MODULE" "GOPROXY")))
-
-					;;
-					;; `company-go'
-					;;
-					(vwe@lib--package 'company-go nil nil
-									  (with-eval-after-load 'company
-										(setq company-go-gocode-command (concat (getenv "GOPATH") "/bin/gocode"))
-										(add-hook 'emacs-lisp-mode-hook
-												  (lambda ()
-													(vwe@pkg--company-make-mode-local-backends
-													 'company-go)))))
-
-					;;
-					;; `go-eldoc'
-					;;
-					(vwe@lib--package 'go-eldoc (add-hook 'go-mode-hook #'go-eldoc-setup))
 
 					;;
 					;; `go-guru' go代码编辑扩展
@@ -80,7 +63,8 @@
 					;; go get github.com/fatih/gomodifytags
 					;;
 					(vwe@lib--package 'go-tag nil nil
-									  (setq go-tag-args (list "-transform" "lispcase"))))
+									  (setq go-tag-args (list "-transform" "lispcase")))
+					)
 
 				  (setq go-command (concat (getenv "GOROOT") "/bin/go")
 						gofmt-command (concat (getenv "GOPATH") "/bin/goimports")

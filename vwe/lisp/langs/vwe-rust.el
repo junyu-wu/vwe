@@ -41,7 +41,7 @@
 									  (progn
 										(push '("\\.rs\\'" . rustic-mode) auto-mode-alist))
 									  (progn
-										(add-hook 'before-save-hook #'rustic-format-buffer)
+										(add-hook 'before-save-hook #'rustic-format-buffer nil t)
 										(push 'rustic-clippy flycheck-checkers))
 									  (setq rustic-lsp-server nil))))
 
