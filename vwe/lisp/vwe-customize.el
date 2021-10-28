@@ -332,6 +332,14 @@
   :group 'vwe-net
   :type 'integer)
 
+(defcustom vwe@custom--lsp
+  'lsp
+  "Language server."
+  :group 'vwe-net
+  :type '(choice (const :tag "LSP Mode" 'lsp)
+                 (const :tag "Eglot" 'eglot)
+                 (const :tag "Disable" nil)))
+
 ;; ***************************************************************************
 ;; buffer
 ;; ***************************************************************************

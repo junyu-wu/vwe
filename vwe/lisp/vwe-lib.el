@@ -594,6 +594,12 @@ IGNORES is a ignore file of directory list."
   (save-some-buffers)
   (kill-emacs))
 
+(defmacro vwe@lib--server-lsp (mode &rest body)
+  "Run LSP MODE and BODY."
+  `(cond
+	((eq ,mode 'lsp) ,(lsp-deferred) ,(plist-get body :lsp))
+	((eq ,mode 'eglot) ,(eglot-ensure) ,(plist-get body :eglot))))
+
 ;; ************************************************************************
 ;; debug
 ;; ************************************************************************

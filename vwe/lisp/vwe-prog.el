@@ -276,6 +276,11 @@ MODE."
 						lsp-session-file (vwe@lib--path-cache "lsp/.lspsession-v1" t)))
 
 ;;
+;; `eglot'
+;;
+(vwe@lib--package 'eglot)
+
+;;
 ;; `dap-mode'
 ;;
 (vwe@lib--package 'dap-mode

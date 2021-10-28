@@ -40,18 +40,17 @@
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
-
 ;;
 ;; `go-mode'
 ;;
 (vwe@lib--package 'go-mode
 				  (progn
 					(push '("\\.go\\'" . go-mode) auto-mode-alist)
-					(add-hook 'go-mode-hook (lambda ()
-											  (add-hook 'before-save-hook #'gofmt-before-save nil t)
-											  (with-eval-after-load 'lsp
-												(add-hook 'before-save-hook #'lsp-format-buffer t t)
-												(add-hook 'before-save-hook #'lsp-organize-imports t t)))))
+					;; (add-hook 'go-mode-hook (lambda () (add-hook 'before-save-hook #'gofmt-before-save nil t)))
+					(add-hook 'go-mode-hook (lambda () (vwe@lib--server-lsp vwe@custom--lsp
+																			:lsp (progn
+																				   (add-hook 'before-save-hook #'lsp-format-buffer nil t)
+																				   (add-hook 'before-save-hook #'lsp-organize-imports nil t))))))
 				  (progn
 					(vwe@lib--keymap-set go-mode-map
 										 '(("M-." godef-jump)))
