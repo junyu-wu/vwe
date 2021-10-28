@@ -45,11 +45,16 @@
 ;; `go-mode'
 ;;
 (vwe@lib--package 'go-mode
-				  (push '("\\.go\\'" . go-mode) auto-mode-alist)
+				  (progn
+					(push '("\\.go\\'" . go-mode) auto-mode-alist)
+					(add-hook 'go-mode-hook (lambda ()
+											  (add-hook 'before-save-hook #'gofmt-before-save nil t)
+											  (with-eval-after-load 'lsp
+												(add-hook 'before-save-hook #'lsp-format-buffer t t)
+												(add-hook 'before-save-hook #'lsp-organize-imports t t)))))
 				  (progn
 					(vwe@lib--keymap-set go-mode-map
 										 '(("M-." godef-jump)))
-					(add-hook 'before-save-hook #'gofmt-before-save nil t)
 					(with-eval-after-load 'exec-path-from-shell
 					  (exec-path-from-shell-copy-envs '("GOPATH" "GO111MODULE" "GOPROXY")))
 

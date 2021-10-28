@@ -28,22 +28,14 @@
 ;;; Code:
 
 ;;
-;; `rust-mode'
+;; `rustic-mode'
 ;;
-(vwe@lib--package 'rust-mode
+(vwe@lib--package 'rustic
 				  (progn
-					(add-hook 'rust-mode-hook 'rustic-mode))
+					(push '("\\.rs\\'" . rustic-mode) auto-mode-alist))
 				  (progn
-					;;
-					;; `rustic-mode'
-					;;
-					(vwe@lib--package 'rustic
-									  (progn
-										(push '("\\.rs\\'" . rustic-mode) auto-mode-alist))
-									  (progn
-										(add-hook 'before-save-hook #'rustic-format-buffer nil t)
-										(push 'rustic-clippy flycheck-checkers))
-									  (setq rustic-lsp-server nil))))
+					(add-hook 'before-save-hook #'rustic-format-buffer nil t)
+					(push 'rustic-clippy flycheck-checkers)))
 
 (provide 'vwe-rust)
 ;;; vwe-rust.el ends here
