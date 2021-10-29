@@ -46,7 +46,7 @@
 (vwe@lib--package 'go-mode
 				  (progn
 					(push '("\\.go\\'" . go-mode) auto-mode-alist)
-					;; (add-hook 'go-mode-hook (lambda () (add-hook 'before-save-hook #'gofmt-before-save nil t)))
+					(add-hook 'go-mode-hook (lambda () (add-hook 'before-save-hook #'gofmt-before-save nil t)))
 					(add-hook 'go-mode-hook (lambda () (vwe@lib--server-lsp vwe@custom--lsp
 																			:lsp (progn
 																				   (add-hook 'before-save-hook #'lsp-format-buffer nil t)

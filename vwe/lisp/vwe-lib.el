@@ -597,8 +597,8 @@ IGNORES is a ignore file of directory list."
 (defmacro vwe@lib--server-lsp (mode &rest body)
   "Run LSP MODE and BODY."
   `(cond
-	((eq ,mode 'lsp) ,(lsp-deferred) ,(plist-get body :lsp))
-	((eq ,mode 'eglot) ,(eglot-ensure) ,(plist-get body :eglot))))
+	((eq ,mode 'lsp) (lsp-deferred) ,(plist-get body :lsp))
+	((eq ,mode 'eglot) (eglot-ensure) ,(plist-get body :eglot))))
 
 ;; ************************************************************************
 ;; debug
