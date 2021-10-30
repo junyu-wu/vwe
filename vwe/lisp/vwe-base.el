@@ -31,7 +31,7 @@
 SOURCE-NAME is source name."
   (interactive
    (list
-    (completing-read "source:"
+    (completing-read (format "source (%s):" vwe@custom--source)
 					 (mapcar (lambda(item)
 							   (car item))
 							 vwe@custom--source-list))))
@@ -58,7 +58,8 @@ SOURCE-NAME is source name."
   (let* ((custom (expand-file-name "custom.el" user-emacs-directory)))
     (unless (file-exists-p custom)
       (vwe@lib--path-make-config-path (vwe@lib--path-emacs.d "custom.el") t)
-      (when package--initialized (package-refresh-contents)))
+      (when package--initialized (package-refresh-contents))
+	  (call-interactively #'vwe@base--pkg-source-toggle))
 	(unless (equal custom custom-file)
       (setq custom-file custom)
       (load custom-file))))

@@ -284,7 +284,9 @@ MODE."
 ;; `dap-mode'
 ;;
 (vwe@lib--package 'dap-mode
-				  nil (progn (dap-auto-configure-mode)))
+				  nil
+				  (progn (dap-auto-configure-mode))
+				  (setq dap-breakpoints-file (vwe@lib--path-cache "dap/.dap-breakpoints" t)))
 
 ;;
 ;; `ejc-sql'

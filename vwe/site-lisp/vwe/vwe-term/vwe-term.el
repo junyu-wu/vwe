@@ -204,6 +204,7 @@
 	  (when (string-match-p "\\**\\(?:\\[vwterm\\]\\)\\**" (buffer-name (window-buffer win)))
 		(setq window win)))
 	window))
+
 (defun vwe-term--make-buffer-alist (located slt)
   "Make buffer alist by LOCATED and SLT."
   (cond
@@ -227,7 +228,17 @@
 		 (window-parameters . ((no-other-window . t)
 							   (no-delete-other-windows . t)))))))
 
-(defun vwe-term--show-buffer (buffer located &optional slt)
+(defun vwe-term--show-buffer (buffer)
+  "Show BUFFER by LOCATED and SLT."
+  (when (and buffer (bufferp buffer))
+	(delete-window (selected-window))
+	(generate-new-buffer (buffer-name buffer))
+	(switch-to-buffer (buffer-name buffer))
+	(when (windowp (vwe-term--find-shell-window))
+	  (vwe-term--init-keymap)
+	  (select-window (vwe-term--find-shell-window)))))
+
+(defun vwe-term--show-side-buffer (buffer located &optional slt)
   "Show BUFFER by LOCATED and SLT."
   (when (and buffer (bufferp buffer))
 	(display-buffer-in-side-window buffer (vwe-term--make-buffer-alist located slt))
@@ -246,7 +257,7 @@
 		 (loc (or (intern located) vwe-term--located)))
 	(when (and window buf)
 	  (delete-windows-on buf)
-	  (vwe-term--show-buffer buf loc))))
+	  (vwe-term--show-side-buffer buf loc))))
 
 (defun vwe-term--switch-terminal (&optional bufname)
   "Switch term by BUFNAME."
@@ -263,7 +274,7 @@
 	(let* ((window (vwe-term--find-shell-window)))
 	  (if (windowp window)
 		  (set-window-buffer window bufname)
-		(vwe-term--show-buffer (get-buffer bufname) vwe-term--located)))))
+		(vwe-term--show-side-buffer (get-buffer bufname) vwe-term--located)))))
 
 (defun vwe-term--reshow-terminal-buffer ()
   "Switch term by bufname."
@@ -277,7 +288,7 @@
 	  (let* ((window (vwe-term--find-shell-window)))
 		(if (windowp window)
 			(set-window-buffer window bufname)
-		  (vwe-term--show-buffer (get-buffer bufname) vwe-term--located))))))
+		  (vwe-term--show-side-buffer (get-buffer bufname) vwe-term--located))))))
 
 (defun vwe-term--kill-terminal ()
   "Quit term process."
@@ -310,7 +321,7 @@
 	(add-hook 'term-mode-hook #'vwe-term--init-keymap)
 	(term-mode)
 	(term-char-mode))
-  (vwe-term--show-buffer buffer vwe-term--located))
+  (vwe-term--show-side-buffer buffer vwe-term--located))
 
 ;;;###autoload
 (defun vwe-terminal (&optional name)

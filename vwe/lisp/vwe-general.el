@@ -230,13 +230,6 @@
 				  (add-hook 'after-init-hook #'ivy-mode)
 				  (progn
 					;;
-					;; `ivy-rich'
-					;;
-					(vwe@lib--package 'ivy-rich
-									  (add-hook 'ivy-mode-hook (lambda () (ivy-rich-mode 1)))
-									  (progn
-										(setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)))
-					;;
 					;; `counsel'
 					;;
 					(vwe@lib--package 'counsel

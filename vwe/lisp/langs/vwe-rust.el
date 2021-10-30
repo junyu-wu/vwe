@@ -20,22 +20,28 @@
 
 
 ;;; Commentary:
-;; rustup toolchain add nightly
-;; rustup component add rls rust-analysis rust-src
-;; rustup component add --toolchain nightly clippy
-;; cargo install cargo-edit   ;; libssl-dev
+;; cargo install cargo-edit
+;; git clone https://github.com/rust-analyzer/rust-analyzer.git
+;; && cd rust-analyzer && cargo xtask install --server ;;  rust-analyzer
+;; rustup component add rust-src ;; rls
+
 
 ;;; Code:
 
 ;;
-;; `rustic-mode'
+;; `rustic'
 ;;
 (vwe@lib--package 'rustic
 				  (progn
-					(push '("\\.rs\\'" . rustic-mode) auto-mode-alist))
-				  (progn
-					(add-hook 'before-save-hook #'rustic-format-buffer nil t)
-					(push 'rustic-clippy flycheck-checkers)))
+					(add-hook 'rustic-mode-hook
+							  ((lambda ()
+								 (vwe@lib--server-lsp
+								  vwe@custom--lsp
+								  :lsp (progn
+										 (setq rustic-format-on-save nil
+											   rustic-lsp-formatto t)))))
+							  nil t))
+				  (setq rustic-format-on-save t))
 
 (provide 'vwe-rust)
 ;;; vwe-rust.el ends here

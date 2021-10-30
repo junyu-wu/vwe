@@ -533,7 +533,8 @@
 
   (vwe-key-define rust
 				  ("rust"
-				   (("c" rustic-compile "compile")
+				   (("n" rustic-cargo-new "cargo new")
+					("c" rustic-compile "compile")
 					("C" rustic-recompile "recompile")
 					("f" rustic-format-buffer "format buffer")
 					("F" rustic-format-file "format File")
@@ -543,12 +544,13 @@
 					("a" rustic-cargo-add "cargo add")
 					("d" rustic-cargo-rm "cargo rm")
 					("u" rustic-cargo-upgrade "cargo upgrade")
-					("t" rustic-cargo-test "gargo test")
+					("t" rustic-cargo-test "cargo test")
 					("T" rustic-cargo-current-test "gargo test current")
 					("o" rustic-cargo-outdated "cargo outdated")
 					("p" rustic-cargo-clippy "cargo clippy")
-					("n" rustic-cargo-clean "cargo clean")
+					("l" rustic-cargo-clean "cargo clean")
 					("h" rustic-doc-mode "doc mode")
+					("x" quickrun "quickrun")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (rust-mode rustic-mode))
 
