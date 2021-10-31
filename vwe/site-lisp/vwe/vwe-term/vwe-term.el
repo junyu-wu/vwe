@@ -229,14 +229,20 @@
 							   (no-delete-other-windows . t)))))))
 
 (defun vwe-term--show-buffer (buffer)
-  "Show BUFFER by LOCATED and SLT."
-  (when (and buffer (bufferp buffer))
-	(delete-window (selected-window))
-	(generate-new-buffer (buffer-name buffer))
-	(switch-to-buffer (buffer-name buffer))
-	(when (windowp (vwe-term--find-shell-window))
-	  (vwe-term--init-keymap)
-	  (select-window (vwe-term--find-shell-window)))))
+  "Show BUFFER."
+  (interactive
+   (list
+    (completing-read
+	 (format "shell:")
+	 (mapcar (lambda (buf)
+			   (when (bufferp buf)
+				 (buffer-name buf)))
+			 vwe-term--terminal-list))))
+  (let* ((win (selected-window))
+		 (to (next-window)))
+	(unless (eq win to)
+	  (delete-window win))
+	(set-window-buffer to buffer)))
 
 (defun vwe-term--show-side-buffer (buffer located &optional slt)
   "Show BUFFER by LOCATED and SLT."

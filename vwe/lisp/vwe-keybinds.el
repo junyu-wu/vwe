@@ -288,6 +288,7 @@
 				  (("term" :face (:background "red" :foreground "white" :weight bold))
 				   (("c" term-char-mode "char mode")
 					("l" term-line-mode "line mode")
+					("b" vwe-term--show-buffer "switch normal buffer")
 					("s" vwe-term--switch-terminal "switch term")
 					("r" vwe-term--reset-shell-located "reset located")
 					("k" vwe-term--exit "exit terminal")
