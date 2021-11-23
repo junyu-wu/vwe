@@ -273,7 +273,7 @@ MODE."
 						lsp-eldoc-enable-hover nil
 						lsp-headerline-arrow (propertize ">" 'face '((t :inherit shadow :height 1.0)))
 						lsp-headerline-breadcrumb-icons-enable nil
-						lsp-session-file (vwe@lib--path-cache "lsp/.lspsession-v1" t)))
+						lsp-session-file (concat (vwe@lib--path-cache "lsp/") ".lspsession-v1")))
 
 ;;
 ;; `eglot'
