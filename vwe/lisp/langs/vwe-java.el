@@ -50,8 +50,9 @@
 								(vwe@lib--server-lsp
 								 vwe@custom--lsp
 								 :lsp (progn
-										(add-hook 'before-save-hook #'lsp-format-buffer nil t)
-										(vwe@java--init))))))
+										(add-hook 'before-save-hook
+												  #'lsp-format-buffer nil t)
+										)))))
 				  (progn
 					;;
 					;; `lsp-java'
@@ -62,7 +63,9 @@
 									  ;; `dap-java'
 									  ;;
 									  (vwe@lib--package 'dap-java nil nil
-														(setq dap-java-test-runner (concat (vwe@lib--path-cache "lsp/eclipse.jdt.ls") "/test-runner/junit-platform-console-standalone.jar"))
+														(setq dap-java-test-runner
+															  (concat (vwe@lib--path-cache "lsp/eclipse.jdt.ls")
+																	  "/test-runner/junit-platform-console-standalone.jar"))
 														t nil t)
 									  (setq lsp-java-server-install-dir (vwe@lib--path-cache "lsp/eclipse.jdt.ls")
 											lsp-java-workspace-dir (vwe@lib--path-cache "java/workspace")
@@ -84,7 +87,8 @@
 											lsp-java-code-generation-use-blocks t
 											lsp-java-code-generation-generate-comments t
 											lsp-java-code-generation-to-string-limit-elements 0
-											lsp-java-inhibit-message t)))
+											lsp-java-inhibit-message t))
+					(vwe@java--init))
 				  nil nil nil t)
 
 
