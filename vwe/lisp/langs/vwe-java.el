@@ -91,7 +91,5 @@
 					(vwe@java--init))
 				  nil nil nil t)
 
-
-
 (provide 'vwe-java)
 ;;; vwe-java.el ends here
