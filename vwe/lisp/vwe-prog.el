@@ -229,11 +229,19 @@ MODE."
 (vwe@lib--package 'lsp-mode
 				  (progn
 					(add-hook 'lsp-mode-hook #'lsp-enable-which-key-integration)
-					(add-hook 'lsp-mode-hook #'dap-mode))
+					(add-hook 'lsp-mode-hook #'dap-auto-configure-mode))
 				  (progn
 					(vwe@lib--keymap-set lsp-mode-map '(("C-M-i" lsp-describe-thing-at-point)
 														([remap xref-find-definitions] lsp-find-definition)
 														([remap xref-find-references] lsp-find-references)))
+
+					;;
+					;; `dap-mode'
+					;;
+					(vwe@lib--package 'dap-mode
+									  nil nil
+									  (setq dap-breakpoints-file (concat (vwe@lib--path-cache "dap/") ".dap-breakpoints")))
+
 					;;
 					;; `lsp-ui'
 					;;
@@ -279,14 +287,6 @@ MODE."
 ;; `eglot'
 ;;
 (vwe@lib--package 'eglot)
-
-;;
-;; `dap-mode'
-;;
-(vwe@lib--package 'dap-mode
-				  nil
-				  (progn (dap-auto-configure-mode))
-				  (setq dap-breakpoints-file (vwe@lib--path-cache "dap/.dap-breakpoints" t)))
 
 ;;
 ;; `ejc-sql'

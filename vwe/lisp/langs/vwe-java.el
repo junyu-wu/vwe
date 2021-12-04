@@ -28,9 +28,9 @@
   "Java init."
   (interactive)
   (lsp-deferred)
-  (lsp-lens-mode t)
-  (lsp-java-lens-mode t)
-  (lsp-java-boot-lens-mode t))
+  (lsp-lens-mode 1)
+  (lsp-java-lens-mode 1)
+  (lsp-java-boot-lens-mode 1))
 
 ;; ***************************************************************************
 ;; config
@@ -51,27 +51,33 @@
 								 vwe@custom--lsp
 								 :lsp (progn
 										(add-hook 'before-save-hook
-												  #'lsp-format-buffer nil t)
-										)))))
-				  (progn
+												  #'lsp-format-buffer nil t)))
+								(lsp-deferred)
+								(lsp-lens-mode 1)))
+
 					;;
 					;; `lsp-java'
 					;;
 					(vwe@lib--package 'lsp-java
-									  nil
-									  ;;
-									  ;; `dap-java'
-									  ;;
-									  (vwe@lib--package 'dap-java nil nil
-														(setq dap-java-test-runner
-															  (concat (vwe@lib--path-cache "lsp/eclipse.jdt.ls")
-																	  "/test-runner/junit-platform-console-standalone.jar"))
-														t nil t)
-									  (setq lsp-java-server-install-dir (vwe@lib--path-cache "lsp/eclipse.jdt.ls")
-											lsp-java-workspace-dir (vwe@lib--path-cache "java/workspace")
-											lsp-java-workspace-cache-dir (vwe@lib--path-cache "java/workspace/.cache")
-											lsp-java-java-path "java"
-											lsp-java-import-gradle-enabled t
+									  (progn
+										(add-hook 'java-mode-hook (lambda ()
+																	(lsp-java-lens-mode 1)
+																	(lsp-java-boot-lens-mode 1)))
+
+										(setq lsp-java-server-install-dir (vwe@lib--path-cache "lsp/eclipse.jdt.ls")
+											  lsp-java-workspace-dir (vwe@lib--path-cache "java/workspace")
+											  lsp-java-workspace-cache-dir (vwe@lib--path-cache "java/workspace/.cache")
+											  lsp-java-java-path "java"))
+									  (progn
+										;;
+										;; `dap-java'
+										;;
+										(vwe@lib--package 'dap-java nil nil
+														  (setq dap-java-test-runner
+																(concat (vwe@lib--path-cache "lsp/eclipse.jdt.ls")
+																		"/test-runner/junit-platform-console-standalone.jar"))
+														  t nil t))
+									  (setq lsp-java-import-gradle-enabled t
 											lsp-java-import-maven-enabled t
 											lsp-java-maven-download-sources t
 											lsp-java-references-code-lens-enabled t
@@ -87,8 +93,7 @@
 											lsp-java-code-generation-use-blocks t
 											lsp-java-code-generation-generate-comments t
 											lsp-java-code-generation-to-string-limit-elements 0
-											lsp-java-inhibit-message t))
-					(vwe@java--init))
+											lsp-java-inhibit-message t)))
 				  nil nil nil t)
 
 (provide 'vwe-java)

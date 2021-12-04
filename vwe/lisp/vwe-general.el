@@ -290,7 +290,7 @@
 						   (yas-expand-snippet (buffer-string)
 											   (point-min)
 											   (point-max))))]))
-				  (setq auto-insert t
+				  (setq auto-insert nil
 						auto-insert-query nil
 						auto-insert-directory (vwe@lib--path-vwe-etc "templates")))
 
