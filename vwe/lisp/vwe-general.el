@@ -221,7 +221,9 @@
 ;; `which-key'
 ;;
 (vwe@lib--package 'which-key
-				  (add-hook 'after-init-hook #'which-key-mode))
+				  (add-hook 'after-init-hook #'which-key-mode)
+				  (progn
+					(setq which-key-use-C-h-commands nil)))
 
 ;;
 ;; `ivy'
@@ -248,7 +250,8 @@
 						ivy-height 10
 						ivy-initial-inputs-alist nil
 						ivy-count-format "%d/%d"
-						ivy-re-builders-alist `((t . ivy--regex-ignore-order))
+						ivy-re-builders-alist `((t . ivy--regex-ignore-order)
+												(t . orderless-ivy-re-builder))
 						enable-recursive-minibuffers t))
 
 ;;
@@ -381,6 +384,41 @@
 						vwe@pkg--company-with-yas-p nil
 						company-backends (mapcar #'vwe@pkg--company-backends-with-yas
 												 vwe@pkg--company-general-backends)))
+
+;;
+;; `vertico'
+;;
+(vwe@lib--package 'vertico
+				  (add-hook 'after-init-hook #'vertico-mode))
+
+;;
+;; `orderless'
+;;
+(vwe@lib--package 'orderless
+				  nil
+				  (progn
+					(setq completion-styles '(orderless)))
+				  nil t)
+
+;;
+;; `marginalia'
+;;
+(vwe@lib--package 'marginalia
+				  (add-hook 'after-init-hook #'marginalia-mode))
+
+;;
+;; `embark'
+;;
+(vwe@lib--package 'embark
+				  (progn
+					(setq prefix-help-command 'embark-prefix-help-command))
+				  nil nil
+				  t)
+
+;;
+;; `consult'
+;;
+;; (vwe@lib--package 'consult)
 
 ;;
 ;; `mmm-mode'

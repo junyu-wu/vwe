@@ -67,6 +67,8 @@
 	("M-h"                                vwe-edit-toggle-case--hyphen)
 	("M-C-,"                              eacl-complete-multiline)
 	("M-C-?"                              youdao-dictionary-search-at-point+)
+	("M-?"                                embark-act)
+	("C-h b"                              embark-bindings)
 	("S-s"                                toggle-frame-maximized)
 	("M-+"                                hs-show-block)
 	("M--"                                hs-hide-block)
