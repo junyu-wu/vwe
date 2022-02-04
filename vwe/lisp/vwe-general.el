@@ -228,31 +228,31 @@
 ;;
 ;; `ivy'
 ;;
-(vwe@lib--package 'ivy
-				  (add-hook 'after-init-hook #'ivy-mode)
-				  (progn
-					;;
-					;; `counsel'
-					;;
-					(vwe@lib--package 'counsel
-									  nil
-									  (if (executable-find "rg")
-										  (setq counsel-grep-base-command
-												"rg -i -M 120 --no-heading --line-number --color never %s %s"
-												counsel-rg-base-command
-												"rg -i -M 120 --no-heading --line-number --color never %s .")))
+;; (vwe@lib--package 'ivy
+;; 				  (add-hook 'after-init-hook #'ivy-mode)
+;; 				  (progn
+;; 					;;
+;; 					;; `counsel'
+;; 					;;
+;; 					(vwe@lib--package 'counsel
+;; 									  nil
+;; 									  (if (executable-find "rg")
+;; 										  (setq counsel-grep-base-command
+;; 												"rg -i -M 120 --no-heading --line-number --color never %s %s"
+;; 												counsel-rg-base-command
+;; 												"rg -i -M 120 --no-heading --line-number --color never %s .")))
 
-					;;
-					;; `swiper'
-					;;
-					(vwe@lib--package 'swiper))
-				  (setq ivy-use-virtual-buffers t
-						ivy-height 10
-						ivy-initial-inputs-alist nil
-						ivy-count-format "%d/%d"
-						ivy-re-builders-alist `((t . ivy--regex-ignore-order)
-												(t . orderless-ivy-re-builder))
-						enable-recursive-minibuffers t))
+;; 					;;
+;; 					;; `swiper'
+;; 					;;
+;; 					(vwe@lib--package 'swiper))
+;; 				  (setq ivy-use-virtual-buffers t
+;; 						ivy-height 10
+;; 						ivy-initial-inputs-alist nil
+;; 						ivy-count-format "%d/%d"
+;; 						ivy-re-builders-alist `((t . ivy--regex-ignore-order)
+;; 												(t . orderless-ivy-re-builder))
+;; 						enable-recursive-minibuffers t))
 
 ;;
 ;; `yasnippet' include `yasnippet-snippets' `auto-yasnippet'
@@ -407,18 +407,33 @@
 				  (add-hook 'after-init-hook #'marginalia-mode))
 
 ;;
+;; `consult'
+;;
+(vwe@lib--package 'consult
+				  nil
+				  (progn)
+				  (progn
+					(setq consult-narrow-key "<"
+						  consult-async-min-input 2)))
+
+;;
 ;; `embark'
 ;;
 (vwe@lib--package 'embark
 				  (progn
 					(setq prefix-help-command 'embark-prefix-help-command))
-				  nil nil
-				  t)
-
-;;
-;; `consult'
-;;
-;; (vwe@lib--package 'consult)
+				  (progn
+					(setq embark-verbose-indicator-display-action
+						  '((display-buffer-at-bottom)
+							(window-parameters (mode-line-format . none))
+							(window-height . fit-window-to-buffer)))
+					(eval-after-load 'consult
+					  (progn
+						(define-key embark-identifier-map "R" #'consult-ripgrep)
+						(define-key embark-identifier-map (kbd "C-s") #'consult-line)
+						(define-key embark-file-map (kbd "E") #'consult-file-externally)
+						(add-hook 'embark-collect-mode-hook #'consult-preview-at-point-mode))))
+				  nil t)
 
 ;;
 ;; `mmm-mode'

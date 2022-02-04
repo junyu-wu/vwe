@@ -269,7 +269,8 @@ MODE."
 					;;
 					;; `lsp-ivy'
 					;;
-					(vwe@lib--package 'lsp-ivy))
+					;; (vwe@lib--package 'lsp-ivy)
+					)
 				  (setq lsp-keymap-prefix "C-c l"
 						lsp-completion-provider :capf
 						lsp-idle-delay 0.500
