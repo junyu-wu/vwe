@@ -436,7 +436,39 @@
 	(yas-field-highlight-face :background ,sym)
 
 	;; symbol overlay gourp
-	(symbol-overlay-default-face :background ,sym))
+	(symbol-overlay-default-face :background ,sym)
+
+	;; web-mode
+    (web-mode-builtin-face :inherit font-lock-builtin-face)
+    (web-mode-comment-face :inherit font-lock-comment-face)
+    (web-mode-constant-face :inherit font-lock-constant-face)
+    (web-mode-css-property-name-face :inherit font-lock-constant-face)
+    (web-mode-doctype-face :inherit font-lock-comment-face)
+    (web-mode-function-name-face :inherit font-lock-function-name-face)
+    (web-mode-html-attr-name-face :foreground ,purple)
+    (web-mode-html-attr-value-face :foreground ,green)
+    (web-mode-html-tag-face :foreground ,pink :weight bold)
+    (web-mode-keyword-face :foreground ,pink)
+    (web-mode-string-face :foreground ,yellow)
+    (web-mode-type-face :inherit font-lock-type-face)
+    (web-mode-warning-face :inherit font-lock-warning-face)
+
+	;; js2-mode
+    (js2-external-variable :foreground ,purple)
+    (js2-function-param :foreground ,cyan)
+    (js2-jsdoc-html-tag-delimiter :foreground ,yellow)
+    (js2-jsdoc-html-tag-name :foreground ,yellow)
+    (js2-jsdoc-value :foreground ,yellow)
+    (js2-private-function-call :foreground ,cyan)
+    (js2-private-member :foreground ,fg3)
+    ;; js3-mode
+    (js3-error-face :underline ,orange)
+    (js3-external-variable-face :foreground ,fg)
+    (js3-function-param-face :foreground ,pink)
+    (js3-instance-member-face :foreground ,cyan)
+    (js3-jsdoc-tag-face :foreground ,pink)
+    (js3-warning-face :underline ,pink)
+	)
   "Theme faces.")
 
 (vwe-style--load 'vwe-style-dark vwe-style-dark--colors vwe-style-dark--faces)

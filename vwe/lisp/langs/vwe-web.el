@@ -55,10 +55,10 @@
 (vwe@lib--package 'css-mode
 				  nil nil
 				  (with-eval-after-load 'company
-										(add-hook 'css-mode-hook
-												  (lambda ()
-													(vwe@pkg--company-make-mode-local-backends
-													 'company-css))))
+					(add-hook 'css-mode-hook
+							  (lambda ()
+								(vwe@pkg--company-make-mode-local-backends
+								 'company-css))))
 				  (setq css-indent-offset 2
 						flycheck-stylelintrc (vwe@lib--path-vwe-etc "web/.stylelintrc" t)
 						flycheck-css-stylelint-executable "stylelint"))
@@ -100,15 +100,27 @@
 (vwe@lib--package 'web-mode
 				  (progn
 					(push '("\\.html\\'" . web-mode) auto-mode-alist))
-				  ;;
-				  ;; `company-web'
-				  ;;
-				  (vwe@lib--package 'company-web nil nil
-									(with-eval-after-load 'company
+				  (progn
+
+					(with-eval-after-load 'autoinsert
+					  (define-auto-insert
+						"\\.html$"
+						["default-html.html"
+						 (lambda ()
+						   (when (fboundp 'yas-expand-snippet)
+							 (yas-expand-snippet (buffer-string)
+												 (point-min)
+												 (point-max))))]))
+
+					;;
+					;; `company-web'
+					;;
+					(vwe@lib--package 'company-web nil nil
+									  (with-eval-after-load 'company
 										(add-hook 'web-mode-hook
 												  (lambda ()
 													(vwe@pkg--company-make-mode-local-backends
-													 'company-web-html)))))
+													 'company-web-html))))))
 				  (setq web-mode-markup-indent-offset 2
 						web-mode-css-indent-offset 2
 						web-mode-code-indent-offset 2
