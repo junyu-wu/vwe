@@ -22,6 +22,7 @@
 
 ;; npm install stylelint -g ;; css flycheck
 ;; npm install eslint -g    ;; js flycheck
+;; npm install --save-dev --save-exact prettier
 
 ;; npm install -g vscode-html-languageserver-bin ;; html lsp : server `html-ls'
 ;; npm install -g vscode-css-languageserver-bin  ;; css lsp : install server `css-ls'
@@ -40,6 +41,24 @@
 
   (unless url (setq url (buffer-file-name)))
   (funcall browse-url-secondary-browser-function url))
+
+(defun vwe@web--wrap-html-tag (tag)
+  "Add a TAG to beginning and ending of current word or text selection."
+  (interactive "sEnter tag name: ")
+  (let (p1 p2)
+    (if (use-region-p)
+        (progn
+          (setq p1 (region-beginning) )
+          (setq p2 (region-end) )
+          )
+      (let ((bds (bounds-of-thing-at-point 'symbol)))
+        (setq p1 (car bds) )
+        (setq p2 (cdr bds) ) ) )
+
+    (goto-char p2)
+    (insert "</" tag ">")
+    (goto-char p1)
+    (insert "<" tag ">")))
 
 ;; ***************************************************************************
 ;; config
@@ -99,7 +118,8 @@
 ;;
 (vwe@lib--package 'web-mode
 				  (progn
-					(push '("\\.html\\'" . web-mode) auto-mode-alist))
+					(push '("\\.html\\'" . web-mode) auto-mode-alist)
+					(push '("\\.vue\\'" . web-mode) auto-mode-alist))
 				  (progn
 
 					(with-eval-after-load 'autoinsert
