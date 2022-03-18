@@ -112,6 +112,7 @@
 					("x" save-buffers-kill-terminal "kill emacs")
 					("," toggle-frame-maximized "maximized")
 					("." toggle-frame-fullscreen "fullscreen")
+					("l" toggle-truncate-lines "truncate liens")
 					("M" menu-bar-mode "menu bar mode")
 					("T" tool-bar-mode "tool bar mode")
 					("S" scroll-bar-mode "scroll bar mode")
