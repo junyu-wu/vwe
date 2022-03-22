@@ -633,7 +633,18 @@
 					("r" eww-reload "reload")
 					("o" eww-open-file "open file")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
-				  (eww-mode)))
+				  (eww-mode))
+  (vwe-key-define epub
+				  ("epub"
+				   (("t" nov-goto-toc "table of contents")
+					("r" nov-render-document "render document")
+					("b" nov-history-back "back history")
+					("f" nov-history-forward "forward history")
+					("s" nov-view-source "view source")
+					("n" nov-next-document "next document")
+					("p" nov-previous-document "previous document")
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  (nov-mode)))
 
 (defun vwe@keybind--qwerty-layout ()
   "Show Qwerty layout."

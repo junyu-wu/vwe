@@ -134,6 +134,19 @@
 						  emms-mode-line-format " %s"
 						  emms-playing-time-display-format " %s]")))
 
+;;
+;; `nov' 电子书阅读器
+;;
+(vwe@lib--package 'nov
+				  (progn
+					(add-to-list 'auto-mode-alist '("\\.epub\\'" . nov-mode)))
+				  (progn
+					(setq nov-save-place-file (concat (vwe@lib--path-emacs.d) ".cache/nov/nov-splaces"))
+					(when vwe@lib--sys-win-p
+					  (setq process-coding-system-alist
+							(cons `(,nov-unzip-program . (gbk . gbk))
+								  process-coding-system-alist)))))
+
 (vwe@lib--log "Initialization of Misc configuration is complete.")
 
 (provide 'vwe-misc)
