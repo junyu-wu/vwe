@@ -618,6 +618,28 @@ IGNORES is a ignore file of directory list."
 ;; ************************************************************************
 ;; func call
 ;; ************************************************************************
+(defun vwe@lib--copy-to-clipboard ()
+  "Copy to clipboard."
+  (interactive)
+  (if (display-graphic-p)
+	  (progn
+		(call-interactively 'clipboard-kill-ring-save))
+	(if (region-active-p)
+		(progn
+		  (shell-command-on-region (region-beginning) (region-end) "xclip -in -selection clipboard &> /dev/null")
+		  (message "Yanked region to clipboard!")
+		  (deactivate-mark))
+	  (message "No region active; can't yank to clipboard!"))))
+
+(defun vwe@lib--paste-from-clipboard ()
+  "Paste from clipboard."
+  (interactive)
+  (if (display-graphic-p)
+	  (progn
+		(clipboard-yank))
+	(progn
+	  (insert (shell-command-to-string "xclip -o -selection clipboard")))))
+
 (defun vwe@lib--func-call-by-name (name)
   "Call functuion by NAME."
   (funcall (nth 0 (read-from-string name))))

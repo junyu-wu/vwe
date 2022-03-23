@@ -33,6 +33,8 @@
 	("<f4>"                               split-window-vertically)
 	("<f8>"                               vwe@theme--init)
 	("<f11>"                              toggle-frame-maximized)
+	("C-y"                                vwe@lib--paste-from-clipboard)
+	("M-w"                                vwe@lib--copy-to-clipboard)
 	("C-r"                                recentf-open-files)
 	("M-r"                                consult-recent-file)
 	("C-'"                                imenu-list-smart-toggle)
