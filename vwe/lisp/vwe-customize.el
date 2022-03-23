@@ -198,7 +198,7 @@
   :type 'symbol)
 
 (defcustom vwe@custom--theme-tty
-  'vwe-style-dark
+  'vwe-style-terminal
   "Default tty theme."
   :group 'vwe-ui
   :type 'symbol)

@@ -532,6 +532,13 @@
 						undo-tree-history-directory-alist `(("." . ,(vwe@lib--path-cache "undotree/hist")))))
 
 ;;
+;; `treemacs'
+;;
+(vwe@lib--package 'treemacs nil
+				  (progn
+							  (vwe@lib--keymap-global-set '(("M-0" treemacs-select-window)))))
+
+;;
 ;; `sudo-edit'
 ;;
 (vwe@lib--package 'sudo-edit)
