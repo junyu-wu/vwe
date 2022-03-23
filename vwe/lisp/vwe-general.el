@@ -573,6 +573,15 @@
 						tramp-backup-directory-alist (vwe@lib--path-cache "tramp")))
 
 ;;
+;; `clipetty'
+;;
+(vwe@lib--package 'clipetty
+				  (add-hook 'after-init-hook (lambda()
+											   (unless (display-graphic-p)
+												 (global-clipetty-mode)))))
+
+
+;;
 ;; `bookmark'
 ;;
 (vwe@lib--package 'bookmark

@@ -204,6 +204,9 @@ SOURCE-NAME is source name."
 		initial-major-mode                   'fundamental-mode
 		inhibit-startup-screen               t
 
+		select-enable-primary t
+		select-enable-clipboard t
+
         user-full-name                       vwe@custom--user-name
 		user-mail-address                    vwe@custom--user-mail
 
