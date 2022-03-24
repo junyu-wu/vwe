@@ -38,6 +38,7 @@
 	("C-r"                                recentf-open-files)
 	("M-r"                                consult-recent-file)
 	("C-'"                                imenu-list-smart-toggle)
+	("M-'"                                imenu-list-smart-toggle)
 	;; ("C-s"                                swiper)
 	("C-s"                                consult-line)
 	("M-s"                                consult-locate)
@@ -143,10 +144,11 @@
 					("N" display-line-numbers-mode "line number")
 					("c" vwe-edit-toggle-case--select-convert "covert string")
 					("m" vwe-key:move "move" :face (:foreground "yellow" :underline t :weight bold))
+					("E" vwe-key:edit "edit" :face (:foreground "yellow" :underline t :weight bold))
 					("H" vwe-headerline-mode "header line")
 					("M" vwe-modeline-mode "modeline")
 					("Y" vwe-tray-mode "tray")
-					("E" vwe-editor-mode "editor")
+					("V" vwe-editor-mode "editor")
 					("v" vwe-terminal "term")
 					("I" vwe-edit-bound-mode "edit bound")
 					("L" vwe@lsp--run "lsp")
@@ -194,6 +196,7 @@
   (vwe-key-define layout
 				  (("window" :face (:background "DarkOrange" :foreground "white" :weight bold))
 				   (("z" vwe-layout-zoom-mode "zoom mode")
+					("i" iedit-mode "iedit mode")
 					("2" split-window-vertically "split vertically")
 					("3" split-window-horizontally "split horizontally")
 					("o" switch-to-buffer-other-frame "view buffer other frame")
@@ -312,6 +315,11 @@
 					("u" vwe-tags--tags-update "update tags")
 					("m" vwe-tags--manual-build-tags "manual shell")
 					("r" vwe-tags--remove-tags "remove tags")
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
+
+  (vwe-key-define edit
+				  (("edit" :face (:background "red" :foreground "white" :weight bold))
+				   (("r" cua-rectangle-mark-mode "rectangle mark")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
   (vwe-key-define move
