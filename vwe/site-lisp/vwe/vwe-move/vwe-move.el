@@ -152,6 +152,9 @@
 
 (defvar vwe-move-change--keymap
   (let ((keymap (make-sparse-keymap)))
+	(define-key keymap (kbd "M-* l") #'vwe-move-change--goto-last)
+	(define-key keymap (kbd "M-* y") #'vwe-move-change--goto-last-cycle)
+
 	keymap)
   "Chage keymap.")
 
@@ -773,6 +776,10 @@ SELF is include curretn buffer."
 
 (defvar vwe-move-mark--keymap
   (let ((keymap (make-sparse-keymap)))
+	(define-key keymap (kbd "M-* w f ") #'vwe-move-mark--forward-mark-word)
+	(define-key keymap (kbd "M-* w b") #'vwe-move-mark--backward-mark-word)
+	(define-key keymap (kbd "M-* l b") #'vwe-move-mark--backward-mark-line)
+	(define-key keymap (kbd "M-* l f") #'vwe-move-mark--forward-mark-line)
 	keymap)
   "Move to mark map.")
 

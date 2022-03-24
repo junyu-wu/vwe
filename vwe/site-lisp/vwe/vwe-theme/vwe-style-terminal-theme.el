@@ -30,7 +30,7 @@
 
 (defvar vwe-style-terminal--colors
   '((none                 nil nil nil)
-	(bg                   "unspecified" "unspecified-bg" "unspecified-bg") ; official background
+	(bg                   "#151515" "#151515" "#151515") ; official background
     (fg                   "#f8f8f2" "#ffffff" "brightwhite") ; official foreground
     (current              "#44475a" "#303030" "brightblack") ; official current-line/selection
     (comt                 "#6272a4" "#5f5faf" "blue")        ; official comt
@@ -52,14 +52,14 @@
 	(mediumspringgreen    "#00fa9a" "#00fa9a" "green")
 	(snow3                "#cdc9c9" "#cdc9c9" "gray")
 	(slategray4           "#6c7b8b" "#6c7b8b" nil)
-	(parent               "#222b2b" "#2a3030" "#2a3030")
+	(parent               "#1f1f1f" "#1f1f1f" "#1f1f1f")
 	(ecyan                "#00ffff" "#00ffff" "#00ffff")
 	(whitesmoke           "#f5f5f5" "#f5f5f5" "white")
 	(regionc              "#3f3f5f" "#555555" "#555555")
 	(grey9                "#171717" "#171717" "black")
 	(gold                 "#ffd700" "#ffd700" "yellow")
 	(darkgoldenrod        "#b8860b" "#b8860b" "#b8860b")
-	(hl                   "#3a3a3a" "#3a3a3a" "#3a3a3a")
+	(hl                   "#050505" "#050505" "#050505")
 	(sym                  "#212121" "#212121" "#212121")
 
     (bg2             "#373844" "#121212" "brightblack")
@@ -76,29 +76,21 @@
     (cursor :background ,ecyan :weight bold)
     (default :background ,bg :foreground ,fg)
 	(error :foreground ,red)
-	;; (escape-glyph :foreground "#79e6f3")
-    (fringe :background ,bg :foreground ,fg4)
+	(fringe :background ,bg :foreground ,fg4)
     (header-line :background ,bg)
     (highlight :foreground ,none :background ,hl)
-	;; (homoglyph :foreground ,fg3)
-    (lazy-highlight :foreground ,fg2 :background ,bg2)
+	(lazy-highlight :foreground ,fg2 :background ,bg2)
     (line-number :slant italic :foreground ,bg4 :background ,bg)
 	(line-number-current-line :slant italic :foreground ,darkgoldenrod :background ,bg3)
-	;; (line-number-major-tick :background ,bg3)
-	;; (line-number-minor-tick :background ,bg3)
-    (link :foreground ,cyan :underline t)
+	(link :foreground ,cyan :underline t)
 	(link-visited :foreground ,cyan :underline t)
     (match :background ,yellow :foreground ,bg)
 	(minibuffer-prompt :weight bold :foreground ,pink)
 	(mode-line :background ,current :box ,current :inverse-video nil :foreground ,fg3)
-	;; (mode-line-emphasis :foreground ,bg3)
-	;; (mode-line-highlight :foreground ,bg3 :background ,bg3)
-    (mode-line-inactive :foreground ,comt :background ,bg :box ,bg)
-	;; (nobreak-hyphen :foreground ,bg3)
-    (region :background ,darkgoldenrod :foreground ,none :box (:color ,darkgoldenrod :line-width 1) ;; :inverse-video t
+	(mode-line-inactive :foreground ,comt :background ,bg :box ,bg)
+	(region :background ,grey9 :foreground ,yellow :box (:color ,red :line-width 1) ;; :inverse-video t
 			)
-	;; (secondary-selection :background ,bg3)
-    (shadow :foreground ,comt)
+	(shadow :foreground ,comt)
     (success :foreground ,green)
 	(tab-bar :foreground ,purple :background ,current :inherit variable-pitch)
     (tab-bar-tab :foreground ,pink :background ,bg :box (:line-width 2 :color ,bg :style nil))
@@ -109,8 +101,6 @@
     (tab-line-tab-current :inherit tab-line-tab)
     (tab-line-close-highlight :foreground ,red)
 	(trailing-whitespace :background ,grey9)
-	;; (vertical-border :foreground ,bg3 :background ,bg3)
-    (warning :foreground ,orange)
 
 	;; font lock
 	(font-lock-builtin-face :foreground ,orange)
@@ -404,6 +394,7 @@
 	(term-color-red :foreground ,red :background ,red)
 	(term-color-white :foreground ,fg :background ,fg)
 	(term-color-yellow :foreground ,yellow :background ,yellow)
+
 	;; undo-tree
 	(undo-tree-visualizer-current-face :foreground ,orange)
 	(undo-tree-visualizer-default-face :foreground ,fg2)

@@ -142,6 +142,7 @@
 					("n" switch-to-next-buffer "next buffer ")
 					("N" display-line-numbers-mode "line number")
 					("c" vwe-edit-toggle-case--select-convert "covert string")
+					("m" vwe-key:move "move" :face (:foreground "yellow" :underline t :weight bold))
 					("H" vwe-headerline-mode "header line")
 					("M" vwe-modeline-mode "modeline")
 					("Y" vwe-tray-mode "tray")
@@ -311,6 +312,21 @@
 					("u" vwe-tags--tags-update "update tags")
 					("m" vwe-tags--manual-build-tags "manual shell")
 					("r" vwe-tags--remove-tags "remove tags")
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
+
+  (vwe-key-define move
+				  (("move" :face (:background "red" :foreground "white" :weight bold))
+				   (("[" vwe-move-mark--backward-mark-line "backward line")
+					("]" vwe-move-mark--forward-mark-line "forward line")
+					("<" vwe-move-mark--backward-mark-word "backward word")
+					(">" vwe-move-mark--forward-mark-word "forward word")
+					("l" vwe-move-change--goto-last "goto last")
+					("c" vwe-move-change--goto-last-cycle "goto last cycle" :circle t)
+					("g" vwe-move-goto-line--goto "goto")
+					("r" vwe-move-goto-line--recovery "goto line recovery")
+					("m" vwe-move-marker-point--marker "point marker")
+					("p" vwe-move-marker-point--goto-marker "goto point marker")
+					("r" vwe-move-marker-point--clear-marker "clear point marker")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
   (vwe-key-define consult

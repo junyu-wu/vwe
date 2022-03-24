@@ -626,6 +626,7 @@ IGNORES is a ignore file of directory list."
 		(call-interactively 'clipboard-kill-ring-save))
 	(if (region-active-p)
 		(progn
+		  (call-interactively 'clipboard-kill-ring-save)
 		  (shell-command-on-region (region-beginning) (region-end) "xclip -in -selection clipboard &> /dev/null")
 		  (message "Yanked region to clipboard!")
 		  (deactivate-mark))
