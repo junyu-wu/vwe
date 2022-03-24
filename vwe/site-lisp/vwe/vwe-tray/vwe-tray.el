@@ -130,7 +130,9 @@
 
 (defun vwe-tray--begin ()
   "End."
-  (propertize vwe-tray--begin-str
+  (propertize (if (vwe-tray--segment-winnum)
+				  (vwe-tray--segment-winnum)
+				vwe-tray--begin-str)
 			  'face 'vwe-tray--success-face))
 
 (defun vwe-tray--end ()
@@ -206,6 +208,31 @@
   "Date."
   (propertize (format-time-string "%y-%m-%d %H:%M %a")
 			  'face 'vwe-tray--default-face))
+
+(defun vwe-tray--segment-winnum ()
+  "Display current windows number in mode-line."
+  (let ((num (cond
+			  ((bound-and-true-p ace-window-display-mode)
+			   (aw-update)
+			   (window-parameter (selected-window) 'ace-window-path))
+			  ((bound-and-true-p winum-mode)
+			   (setq winum-auto-setup-mode-line nil)
+			   (winum-get-number-string))
+			  ((bound-and-true-p window-numbering-mode)
+			   (window-numbering-get-number-string))
+			  (t ""))))
+    (if (and (< 0 (length num))
+             (< (if (active-minibuffer-window) 2 1) ; exclude minibuffer
+                (length (cl-mapcan
+                         (lambda (frame)
+						   ;; Exclude child frames
+						   (unless (and (fboundp 'frame-parent)
+                                        (frame-parent frame))
+                             (window-list)))
+                         (visible-frame-list)))))
+        (propertize (format "%s" num)
+                    'face 'vwe-modeline--info-face)
+	  nil)))
 
 ;;
 ;; make message

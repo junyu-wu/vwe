@@ -138,7 +138,7 @@
 (vwe@lib--package 'vwe-tray-mode
 				  (autoload 'vwe-tray-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-tray/vwe-tray.el" t) "Vwe tray mode" t t)
 				  nil
-				  (add-hook 'after-init-hook (lambda () (when vwe@custom--tray-show? (vwe-tray-mode))))
+				  (add-hook 'after-init-hook (lambda () (when (or vwe@custom--tray-show? (not (display-graphic-p))) (vwe-tray-mode))))
 				  nil
 				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-tray"))
 
@@ -149,7 +149,7 @@
 				  (autoload 'vwe-headerline-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-headerline/vwe-headerline.el" t) "Vwe headerline mode" t t)
 				  nil
 				  (progn
-					(add-hook 'after-init-hook (lambda () (when vwe@custom--headerline-show? (vwe-headerline-mode))))
+					(add-hook 'after-init-hook (lambda () (when (or vwe@custom--headerline-show? (not (display-graphic-p))) (vwe-headerline-mode))))
 					(setq vwe-headerline--buffer-filter-list vwe@custom--buffer-filter-list))
 				  nil
 				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-headerline"))
@@ -536,7 +536,67 @@
 ;;
 (vwe@lib--package 'treemacs nil
 				  (progn
-							  (vwe@lib--keymap-global-set '(("M-0" treemacs-select-window)))))
+					(vwe@lib--keymap-global-set '(("M-0" treemacs-select-window)))
+					(treemacs-follow-mode t)
+					(treemacs-filewatch-mode t)
+					(treemacs-fringe-indicator-mode 'always)
+					(pcase (cons (not (null (executable-find "git")))
+								 (not (null treemacs-python-executable)))
+					  (`(t . t)
+					   (treemacs-git-mode 'deferred))
+					  (`(t . _)
+					   (treemacs-git-mode 'simple)))
+
+					(treemacs-hide-gitignored-files-mode nil))
+				  (setq treemacs-collapse-dirs                   (if treemacs-python-executable 3 0)
+						treemacs-deferred-git-apply-delay        0.5
+						treemacs-directory-name-transformer      #'identity
+						treemacs-display-in-side-window          t
+						treemacs-eldoc-display                   'simple
+						treemacs-file-event-delay                5000
+						treemacs-file-extension-regex            treemacs-last-period-regex-value
+						treemacs-file-follow-delay               0.2
+						treemacs-file-name-transformer           #'identity
+						treemacs-follow-after-init               t
+						treemacs-expand-after-init               t
+						treemacs-find-workspace-method           'find-for-file-or-pick-first
+						treemacs-git-command-pipe                ""
+						treemacs-goto-tag-strategy               'refetch-index
+						treemacs-indentation                     2
+						treemacs-indentation-string              " "
+						treemacs-is-never-other-window           nil
+						treemacs-max-git-entries                 5000
+						treemacs-missing-project-action          'ask
+						treemacs-move-forward-on-expand          nil
+						treemacs-no-png-images                   nil
+						treemacs-no-delete-other-windows         t
+						treemacs-project-follow-cleanup          nil
+						treemacs-persist-file                    (expand-file-name ".cache/treemacs-persist" user-emacs-directory)
+						treemacs-position                        'left
+						treemacs-read-string-input               'from-child-frame
+						treemacs-recenter-distance               0.1
+						treemacs-recenter-after-file-follow      nil
+						treemacs-recenter-after-tag-follow       nil
+						treemacs-recenter-after-project-jump     'always
+						treemacs-recenter-after-project-expand   'on-distance
+						treemacs-litter-directories              '("/node_modules" "/.venv" "/.cask")
+						treemacs-show-cursor                     nil
+						treemacs-show-hidden-files               t
+						treemacs-silent-filewatch                nil
+						treemacs-silent-refresh                  nil
+						treemacs-sorting                         'alphabetic-asc
+						treemacs-select-when-already-in-treemacs 'move-back
+						treemacs-space-between-root-nodes        t
+						treemacs-tag-follow-cleanup              t
+						treemacs-tag-follow-delay                1.5
+						treemacs-text-scale                      nil
+						treemacs-user-mode-line-format           nil
+						treemacs-user-header-line-format         nil
+						treemacs-wide-toggle-width               70
+						treemacs-width                           35
+						treemacs-width-increment                 1
+						treemacs-width-is-initially-locked       t
+						treemacs-workspace-switch-cleanup        nil))
 
 ;;
 ;; `sudo-edit'

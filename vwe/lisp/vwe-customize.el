@@ -369,6 +369,7 @@
 
 (defcustom vwe@custom--buffer-filter-list
   '("\\*shell[0-9]*\\*\\|\\*terminal*\\|\\*terminal\\(<[0-9]*>\\)\\*\\'"
+	"\\**[-0-9a-zA-Z:*\\[\\]]*\\**\\'"
 	"\\*company-box.*\\'"
 	"\\*vwe-key\\*\\'"
 	"\\*mu4e-[0-9 a-z A-Z].*\\'"

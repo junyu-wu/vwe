@@ -29,8 +29,8 @@
   "Vwe style theme.")
 
 (defvar vwe-style-terminal--colors
-  '((none nil nil nil)
-	(bg                   "#293039" "unspecified-bg" "unspecified-bg") ; official background
+  '((none                 nil nil nil)
+	(bg                   "unspecified" "unspecified-bg" "unspecified-bg") ; official background
     (fg                   "#f8f8f2" "#ffffff" "brightwhite") ; official foreground
     (current              "#44475a" "#303030" "brightblack") ; official current-line/selection
     (comt                 "#6272a4" "#5f5faf" "blue")        ; official comt
