@@ -639,7 +639,9 @@ IGNORES is a ignore file of directory list."
 	  (progn
 		(clipboard-yank))
 	(progn
-	  (insert (shell-command-to-string "xclip -o -selection clipboard")))))
+	  (let* ((clipboard (shell-command-to-string "xclip -o -selection clipboard")))
+		(kill-new clipboard)
+		(insert clipboard)))))
 
 (defun vwe@lib--func-call-by-name (name)
   "Call functuion by NAME."
