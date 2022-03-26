@@ -125,6 +125,27 @@ MODE."
 								 (buffer-name buffername))
 			   (kill-buffer buffername)))))
 
+(defun vwe@prog--gud-init ()
+  "GUD init."
+  (setq gdb-gud-control-all-threads t))
+
+(defun vwe@prog--gdb-init ()
+  "GDB init."
+  (add-hook 'gud-mode-hook #'gud-tooltip-mode)
+  (setq gdb-many-windows t
+		gdb-show-main t
+		gdb-show-changed-values t
+		gdb-use-colon-colon-notation t
+		gdb-speedbar-auto-raise t
+		gdb-non-stop-setting t
+		gdb-thread-buffer-verbose-names t
+		gdb-thread-buffer-arguments t
+		gdb-thread-buffer-locations t
+		gdb-thread-buffer-addresses t
+		gdb-stack-buffer-addresses t
+		;; gdb-mi-decode-strings 'utf-8
+		))
+
 (defun vwe@lsp--run ()
   "Run lsp deferred."
   (interactive)
@@ -133,7 +154,10 @@ MODE."
 
 (defun vwe@base--prog-init ()
   "Prog init."
-  (add-hook 'prog-mode-hook #'hs-minor-mode))
+  (add-hook 'prog-mode-hook #'hs-minor-mode)
+
+  (vwe@prog--gdb-init)
+  (vwe@prog--gud-init))
 
 ;; ***************************************************************************
 ;; config

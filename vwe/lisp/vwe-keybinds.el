@@ -62,9 +62,9 @@
 	("C-|"                                wve-edit-bound--temp-show)
 	("C-M-|"                              vwe-edit-bound--remove-overlays)
 	("C-M-="                              cua-rectangle-mark-mode)
-	("M-)"                                sp-up-sexp)
+	("M-'"                                sp-up-sexp)
 	("M-("                                sp-down-sexp)
-	("M-'"                                sp-backward-unwrap-sexp)
+	("M-="                                sp-backward-unwrap-sexp)
 	("M-l"                                vwe-edit-toggle-case--lower-case)
 	("M-u"                                vwe-edit-toggle-case--upper-case)
 	("M-c"                                vwe-edit-toggle-case--capitalize)
@@ -508,30 +508,142 @@
 				  (markdown-mode)
 				  "C-M-<return>")
 
+  (vwe-key-define gdb-breakpoint
+				  ("gdb-breakpoint"
+				   (("t" gdb-toggle-breakpoint "toggle breakpoint")
+					("d" gdb-delete-breakpoint "delete breakpoint")
+					("g" gdb-goto-breakpoint "goto breakpoint")
+					("C-u" vwe-key:gud "gud" :face (:foreground "yellow" :underline t :weight bold))
+					("C-d" vwe-key:gdb "gdb" :face (:foreground "yellow" :underline t :weight bold))
+					("C-b" vwe-key:gdb-buffers "gdb buffers" :face (:foreground "yellow" :underline t :weight bold))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  (gdb-breakpoints-mode))
+
+  (vwe-key-define gdb-thread
+				  ("gdb-thread"
+				   (("d" gdb-display-disassembly-for-thread "display disassembly")
+					("s" gdb-display-stack-for-thread "display stack")
+					("l" gdb-display-locals-for-thread "display locals")
+					("r" gdb-display-registers-for-thread "display registers")
+					("C-u" vwe-key:gud "gud" :face (:foreground "yellow" :underline t :weight bold))
+					("C-d" vwe-key:gdb "gdb" :face (:foreground "yellow" :underline t :weight bold))
+					("C-b" vwe-key:gdb-buffers "gdb buffers" :face (:foreground "yellow" :underline t :weight bold))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  (gdb-threads-mode))
+
+  (vwe-key-define gdb-memory
+				  ("gdb-memory"
+				   (("C-u" vwe-key:gud "gud" :face (:foreground "yellow" :underline t :weight bold))
+					("C-d" vwe-key:gdb "gdb" :face (:foreground "yellow" :underline t :weight bold))
+					("C-b" vwe-key:gdb-buffers "gdb buffers" :face (:foreground "yellow" :underline t :weight bold))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  (gdb-memory-mode))
+
+  (vwe-key-define gdb-disassembly
+				  ("gdb-disassembly"
+				   (("C-u" vwe-key:gud "gud" :face (:foreground "yellow" :underline t :weight bold))
+					("C-d" vwe-key:gdb "gdb" :face (:foreground "yellow" :underline t :weight bold))
+					("C-b" vwe-key:gdb-buffers "gdb buffers" :face (:foreground "yellow" :underline t :weight bold))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  (gdb-disassembly-mode))
+
+  (vwe-key-define gdb-locals
+				  ("gdb-locals"
+				   (("C-u" vwe-key:gud "gud" :face (:foreground "yellow" :underline t :weight bold))
+					("C-d" vwe-key:gdb "gdb" :face (:foreground "yellow" :underline t :weight bold))
+					("C-b" vwe-key:gdb-buffers "gdb buffers" :face (:foreground "yellow" :underline t :weight bold))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  (gdb-locals-mode))
+
+  (vwe-key-define gdb-registers
+				  ("gdb-registers"
+				   (("C-u" vwe-key:gud "gud" :face (:foreground "yellow" :underline t :weight bold))
+					("C-d" vwe-key:gdb "gdb" :face (:foreground "yellow" :underline t :weight bold))
+					("C-b" vwe-key:gdb-buffers "gdb buffers" :face (:foreground "yellow" :underline t :weight bold))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  (gdb-registers-mode))
+
+  (vwe-key-define gdb-inferior-io
+				  ("gdb-inferior-io"
+				   (("C-u" vwe-key:gud "gud" :face (:foreground "yellow" :underline t :weight bold))
+					("C-d" vwe-key:gdb "gdb" :face (:foreground "yellow" :underline t :weight bold))
+					("C-b" vwe-key:gdb-buffers "gdb buffers" :face (:foreground "yellow" :underline t :weight bold))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  (gdb-inferior-io-mode))
+
+  (vwe-key-define gdb-frames
+				  ("gdb-frames"
+				   (("C-u" vwe-key:gud "gud" :face (:foreground "yellow" :underline t :weight bold))
+					("C-d" vwe-key:gdb "gdb" :face (:foreground "yellow" :underline t :weight bold))
+					("C-b" vwe-key:gdb-buffers "gdb buffers" :face (:foreground "yellow" :underline t :weight bold))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
+				  (gdb-frames-mode))
+
+  (vwe-key-define gdb
+				  ("GDB"
+				   (("g" gdb "gdb")
+					("m" gdb-many-windows "many windos")
+					("r" gdb-restore-windows "restore windos")
+					("d" gdb-display-buffertype-buffer "display buffer")
+					("f" gdb-frame-buffertype-buffer "frame buffer")
+					("C-u" vwe-key:gud "gud" :face (:foreground "yellow" :underline t :weight bold))
+					("C-b" vwe-key:gdb-buffers "gdb buffers" :face (:foreground "yellow" :underline t :weight bold))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
+
+  (vwe-key-define gdb-buffers
+				  ("gdb-buffers"
+				   (("m" gdb-display-memory-buffer "display memory buffer")
+					("a" gdb-display-disassembly-buffer "display disassembly buffer")
+					("s" gdb-display-stack-buffer "display stack buffer")
+					("i" gdb-display-io-buffer "display io buffer")
+					("g" gdb-display-gdb-buffer "display gdb buffer")
+					("l" gdb-display-locals-buffer "display localsbuffer")
+					("t" gdb-display-threads-buffer "display threads buffer")
+					("r" gdb-display-registers-buffer "display registers buffer")
+					("b" gdb-display-breakpoints-buffer "display breakpoints buffer")
+					("M" gdb-frame-memory-buffer "frame memory buffer")
+					("A" gdb-frame-disassembly-buffer "frame disassembly buffer")
+					("S" gdb-frame-stack-buffer "frame stack buffer")
+					("I" gdb-frame-io-buffer "frame io buffer")
+					("G" gdb-frame-gdb-buffer "frame gdb buffer")
+					("L" gdb-frame-locals-buffer "frame localsbuffer")
+					("T" gdb-frame-threads-buffer "frame threads buffer")
+					("R" gdb-frame-registers-buffer "frame registers buffer")
+					("B" gdb-frame-breakpoints-buffer "frame breakpoints buffer")
+					("C-d" vwe-key:gdb "gdb" :face (:foreground "yellow" :underline t :weight bold))
+					("C-u" vwe-key:gud "gud" :face (:foreground "yellow" :underline t :weight bold))
+					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
+
   (vwe-key-define gud
 				  ("GUD"
-				   (("g" gdb "gdb")
-					("G" gud-gdb "gud")
-					("m" gdb-many-windows "many windos")
-					("R" gdb-restore-windows "restore windos")
+				   (("g" gud-gdb "gud")
 					("x" vwe@prog--gud-or-gud-go "gud go")
 					("d" vwe@prog--gdb-disable "disable gdb")
 					("b" vwe@prog--gud-breakpoint-set-or-remove "breakpoint")
 					("k" vwe@prog--gud-proc-kill "kill gud")
+					("B" gud-break "breakpoint")
+					("R" gud-remove "remove breakpoint")
+					("C-t" gud-tbreak "temp breakpoint")
+					("r" gud-refresh "refresh")
+					("p" gud-print "print")
 					("c" gud-cont "continue")
 					("n" gud-next "next")
 					("s" gud-step "step")
+					("S" gud-stepi "stepi")
 					("u" gud-until "until")
-					("r" gud-run "run")
-					("i" gud-nexti "nexti")
+					("U" gud-up "up")
+					("D" gud-down "down")
 					("f" gud-finish "finish")
-					("j" gud-jdb-find-source "find source")
-					("t" gud-stepi "stepi")
-					("p" gud-print "print")
+					("j" gud-jump "jump")
+					("C" gud-gdb-complete-command "complete command")
+					("j" gud-stop-subjob "stop subjob")
+					("r" gud-run "run")
+					("N" gud-nexti "nexti")
+					("F" gud-jdb-find-source "find source")
 					("w" gud-watch "watch")
-					("o" gud-tooltip-mode "tooltip mode")
-					("M" menu-bar-mode "menu bar mode")
-					("T" tool-bar-mode "tool bar mode")
+					("T" gud-tooltip-mode "tooltip mode")
+					("C-d" vwe-key:gdb "gdb" :face (:foreground "yellow" :underline t :weight bold))
+					("C-b" vwe-key:gdb-buffers "gdb buffers" :face (:foreground "yellow" :underline t :weight bold))
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (gud-mode gdb-mode sdb-mode dbx-mode perldb-mode xdb-mode jdb-mode))
 
