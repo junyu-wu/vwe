@@ -160,8 +160,8 @@
 					("u" vwe-key:undo "undo" :face (:foreground "yellow" :underline t :weight bold))
 					("X" vwe-key:proxy "proxy" :face (:foreground "yellow" :underline t :weight bold))
 					("s" vwe-key:consult "consult" :face (:foreground "yellow" :underline t :weight bold))
+					("g" vwe-key:gud "gud" :face (:foreground "yellow" :underline t :weight bold))
 					("e" vwe-edit-region--mark-edit "edit region")
-					("g" magit-diff-dwim "magit diff")
 					("F" follow-mode "follow mode")
 					("U" esup "esup")
 					("O" command-log-mode "command log")
@@ -266,6 +266,7 @@
   (vwe-key-define magit
 				  (("magit" :face (:background "red" :foreground "white" :weight bold))
 				   (("s" magit-status "status")
+					("g" magit-diff-dwim "magit diff")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  )
 

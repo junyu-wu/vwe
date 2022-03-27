@@ -89,7 +89,8 @@ MODE."
 (defun vwe@prog--gud-or-gud-go ()
   "If gdb isn't running; run gdb, else call gud-go."
   (interactive)
-  (if (and gud-comint-buffer
+  (if (and (bound-and-true-p gud-comint-buffer)
+		   gud-comint-buffer
            (buffer-name gud-comint-buffer)
            (get-buffer-process gud-comint-buffer)
            (with-current-buffer gud-comint-buffer
@@ -113,17 +114,59 @@ MODE."
   (kill-process (get-buffer-process gud-comint-buffer)))
 
 (defun vwe@prog--gdb-disable ()
-  "DBD disable."
+  "GBD disable."
   (interactive)
   (tool-bar-mode -1)
   (delete-other-windows)
   (vwe@prog--gud-proc-kill)
-  (cl-loop for buffername in (buffer-list)
-		   collect
-		   (progn
-			 (when (string-match "\\*gud-[a-z A-Z 0-9].*\\'"
-								 (buffer-name buffername))
-			   (kill-buffer buffername)))))
+  (dolist (buf (vwe@lib--buffer-asterisk-list t))
+	(when (and (bufferp buf) (string-match "\\*gud-[a-z A-Z 0-9].*\\'" (buffer-name buf)))
+	  (kill-buffer buf))))
+
+(defun vwe@prog--gdb-get-project-name ()
+  "Get current gdb project name."
+  (when (and (bound-and-true-p gud-comint-buffer) (bufferp gud-comint-buffer))
+	(let* ((name (cadr (split-string (buffer-name gud-comint-buffer) "-"))))
+	  (setq name (substring name  0 (- (length name) 1)))
+	  name)))
+
+(defun vwe@prog--gdb-switch-buffers (&optional buf)
+  "Switch BUF.
+If buf in not exist, display this buf."
+  (interactive
+   (list
+	(completing-read (format "select buf(%s):" (buffer-name (current-buffer)))
+					 (list "gud/gdb" "source" "breakpoints" "threads" "stack" "locals" "memory" "disassembly" "registers" "io" "frames"))))
+  (let* ((name (vwe@prog--gdb-get-project-name))
+		 (to))
+	(when name
+	  (cond
+	   ((string-match-p "gub" buf) (setq to (format "*%s-%s*" buf name)))
+	   ((string-match-p "gdb" buf) (setq to (format "*%s-%s*" buf name)))
+	   ((string-match-p "stack" buf) (setq to (format "*%s frames of %s*" buf name)))
+	   ((string-match-p "io" buf) (setq to (format "*input/output of %s*" name)))
+	   (t (setq to (format "*%s of %s*" buf name))))
+
+	  (if (get-buffer to)
+		  (if (get-buffer-window to)
+			  (select-window (get-buffer-window to))
+			(vwe@prog--gdb-display-buffers to))
+		(vwe@prog--gdb-display-buffers to))
+	  (message (format "select %s buffer." to)))))
+
+(defun vwe@prog--gdb-display-buffers (buf)
+  "Display BUF."
+  (cond
+   ((or (string-match-p "gub" buf) (string-match-p "gdb" buf)) (gdb-display-gdb-buffer))
+   ((string-match-p "source" buf) (gdb-display-source-buffer))
+   ((string-match-p "breakpoints" buf) (gdb-display-breakpoints-buffer))
+   ((string-match-p "threads" buf) (gdb-display-threads-buffer))
+   ((string-match-p "locals" buf) (gdb-display-locals-buffer))
+   ((string-match-p "memory" buf) (gdb-display-memory-buffer))
+   ((string-match-p "disassembly" buf) (gdb-display-disassembly-buffer))
+   ((string-match-p "registers" buf) (gdb-display-registers-buffer))
+   ((string-match-p "io" buf) (gdb-display-io-buffer))
+   ((string-match-p "stack" buf) (gdb-display-stack-buffer))))
 
 (defun vwe@prog--gud-init ()
   "GUD init."
