@@ -86,7 +86,7 @@ MODE."
 								  vwe@prog--language-and-mode-alist))))
   (funcall (cdr (assoc mode vwe@prog--language-and-mode-alist))))
 
-(defun vwe@prog--gud-or-gud-go ()
+(defun vwe@prog--gud-gdb-exec ()
   "If gdb isn't running; run gdb, else call gud-go."
   (interactive)
   (if (and (bound-and-true-p gud-comint-buffer)
@@ -103,9 +103,10 @@ MODE."
   "Set/clear breakpoint."
   (interactive)
   (save-excursion
-    (if (eq (car (fringe-bitmaps-at-pos (point))) 'breakpoint)
-        (gud-remove nil)
-      (gud-break nil))))
+	(when (bound-and-true-p gud-comint-buffer)
+	  (if (eq (car (fringe-bitmaps-at-pos (point))) 'breakpoint)
+		  (gud-remove nil)
+		(gud-break nil)))))
 
 (defun vwe@prog--gud-proc-kill ()
   "Kill gdb process."
@@ -126,7 +127,7 @@ MODE."
 (defun vwe@prog--gdb-get-project-name ()
   "Get current gdb project name."
   (when (and (bound-and-true-p gud-comint-buffer) (bufferp gud-comint-buffer))
-	(let* ((name (cadr (split-string (buffer-name gud-comint-buffer) "-"))))
+	(let* ((name (string-remove-prefix "*gud-" (buffer-name gud-comint-buffer))))
 	  (setq name (substring name  0 (- (length name) 1)))
 	  name)))
 
