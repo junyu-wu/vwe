@@ -19,18 +19,18 @@
 ;; along with this program.  If not, see <https://www.gnu.org/licenses/>.
 
 ;;; Commentary:
-;; go get golang.org/x/tools/cmd/goimports
-;; go get golang.org/x/tools/cmd/godoc
-;; go get golang.org/x/tools/cmd/guru
-;; go get golang.org/x/tools/cmd/gorename
-;; go get golang.org/x/lint/golint
-;; go get github.com/rogpeppe/godef
-;; go get -u github.com/josharian/impl
-;; go get -u github.com/davidrjenni/reftools/cmd/fillstruct
-;; go get -u github.com/cweill/gotests/...
-;; go get -u github.com/kisielk/errcheck
-;; go get github.com/mdempsky/unconvert
-;; go get golang.org/x/tools/gopls@latest  ;; go lsp
+;; go install golang.org/x/tools/cmd/goimports@latest
+;; go install golang.org/x/tools/cmd/godoc@latest
+;; go install golang.org/x/tools/cmd/guru@latest
+;; go install golang.org/x/tools/cmd/gorename@latest
+;; go install golang.org/x/lint/golint@latest
+;; go install github.com/rogpeppe/godef@latest
+;; go install -u github.com/josharian/impl@latest
+;; go install -u github.com/davidrjenni/reftools/cmd/fillstruct@latest
+;; go install -u github.com/cweill/gotests/...@latest
+;; go install -u github.com/kisielk/errcheck@latest
+;; go install github.com/mdempsky/unconvert@latest
+;; go install golang.org/x/tools/gopls@latest  ;; go lsp
 
 ;;; Code:
 ;; ***************************************************************************
