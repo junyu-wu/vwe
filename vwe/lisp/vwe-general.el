@@ -303,38 +303,40 @@
 (vwe@lib--package 'company
 				  (progn
 					(defvar vwe@pkg--company-general-backends
-					  '((company-files ;; file path
-						 ;; company-dabbrev ;; buffer word
-						 company-dabbrev-code ;; buffer code
-						 company-keywords ;; local keywords
-						 company-capf :with company-yasnippet
-						 ;;company-abbrev
-						 ;; company-etags
-						 ))
+					  '(company-files ;; file path
+						 company-keywords ;; 在语言中具有特定含义的单词
+						 company-dabbrev ;; 在打开的缓冲区的内容中搜索完成候选
+						 company-dabbrev-code ;; 在打开的缓冲区的内容中搜索完成候选
+						 company-semantic ;;
+						 company-capf)
 					  "General company backends.")
 
 					(defvar vwe@pkg--company-with-yas-p
 					  nil
 					  "Company backends with yas.")
 
-					(defun vwe@pkg--company-make-mode-local-backends (backends)
+					(defun vwe@pkg--company-make-mode-local-backends (backends &optional ignores)
 					  "Make mode local BACKENDS."
-					  (let* ((backends (progn
-										 (unless (listp backends) (setq backends (list backends)))
-										 (list (append backends (car vwe@pkg--company-general-backends))))))
+					  (let* ((bks (progn
+									(unless (listp backends) (setq backends (list backends)))
+									(append backends vwe@pkg--company-general-backends))))
+						(when (and ignores (listp ignores))
+						  (dolist (ibk ignores)
+							(setq bks (delq ibk bks))))
+
 						(set (make-local-variable 'company-backends)
-						   	 (if vwe@pkg--company-with-yas-p
-								 (mapcar #'vwe@pkg--company-backends-with-yas backends)
-							   backends))))
+							 (if vwe@pkg--company-with-yas-p
+								 (mapcar #'vwe@pkg--company-backends-with-yas bks)
+							   bks))))
 
-					(defun vwe@pkg--company-backends-with-yas (backend)
-					  "Company backends with yasnippet."
-					  (if (or (and (listp backend) (member 'company-yasnippet backend)))
-						  backend
-						(append (if (consp backend) backend (list backend))
-								'(:with company-yasnippet))))
+					  (defun vwe@pkg--company-backends-with-yas (backend)
+						"Company backends with yasnippet."
+						(if (or (and (listp backend) (member 'company-yasnippet backend)))
+							backend
+						  (append (if (consp backend) backend (list backend))
+								  '(:with company-yasnippet))))
 
-					(add-hook 'prog-mode-hook #'global-company-mode))
+					  (add-hook 'prog-mode-hook #'global-company-mode))
 				  (progn
 					(vwe@lib--keymap-set company-search-map
 										 '(("C-n" company-select-next)
@@ -344,12 +346,12 @@
 										   ("C-p" company-select-previous)
 										   ("<tab>" company-complete-common-or-cycle)))
 
-					(add-to-list 'company-transformers #'delete-dups)
+					;; (add-to-list 'company-transformers #'delete-dups)
 
 					;;
 					;; `company-prescient'
 					;;
-					(vwe@lib--package 'company-prescient (add-hook 'company-mode-hook #'company-prescient-mode))
+					;; (vwe@lib--package 'company-prescient (add-hook 'company-mode-hook #'company-prescient-mode))
 					;;
 					;; `company-quickhelp'
 					;;
@@ -374,11 +376,15 @@
 						company-tooltip-limit 12
 						company-idle-delay 0
 						company-require-match nil
-						company-minimum-prefix-length 0
+						company-minimum-prefix-length 1
 						company-show-numbers t
 						company-echo-delay (if (display-graphic-p) nil 0)
 
-						company-dabbrev-downcase nil
+						company-transformers '(delete-dups
+											   delete-consecutive-dups
+											   company-sort-by-occurrence)
+
+						company-dabbrev-downcase t
 						company-dabbrev-ignore-case t
 
 						vwe@pkg--company-with-yas-p nil

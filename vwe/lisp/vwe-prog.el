@@ -384,6 +384,7 @@ If buf in not exist, display this buf."
 (require 'vwe-clojure)
 (require 'vwe-csharp)
 (require 'vwe-rust)
+(require 'vwe-shell)
 (require 'vwe-bat)
 (require 'vwe-scheme)
 (require 'vwe-ahk)
