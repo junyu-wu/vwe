@@ -65,12 +65,13 @@
   (if deactivate
 	  (progn
 		(setq buffer-read-only t)
-		(local-unset-key (kbd "SPC SPC")))
+		;; (local-unset-key (kbd "SPC SPC"))
+		(local-unset-key (kbd "ESC SPC")))
 	(progn
 	  (unless (or (vwe-editor--tmp-buffer-p (current-buffer))
 				  (vwe-editor--filter-func))
 		(setq buffer-read-only t)
-		(local-set-key (kbd "SPC SPC") (lambda ()
+		(local-set-key (kbd "ESC SPC") (lambda ()
 									 (interactive)
 									 (vwe-editor--toggle-submode t)
 									 (setq vwe-editor--submode 'edit)
