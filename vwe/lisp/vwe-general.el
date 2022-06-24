@@ -617,7 +617,7 @@
 				  (progn
 					(setenv "GPG_AGENT_INFO" nil)
 					(epa-file-enable))
-				  (setq epa-file-inhibit-auto-save nil)
+				  (setq epa-file-inhibit-auto-save t)
 				  nil nil t)
 
 ;;
