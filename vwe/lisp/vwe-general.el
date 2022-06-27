@@ -258,8 +258,13 @@
 ;; `yasnippet' include `yasnippet-snippets' `auto-yasnippet'
 ;;
 (vwe@lib--package 'yasnippet
-				  (add-hook 'prog-mode-hook #'yas-global-mode)
 				  (progn
+					(add-hook 'prog-mode-hook #'yas-global-mode)
+					(add-hook 'org-mode-hook #'yas-global-mode))
+				  (progn
+					(defun vwe@pkg--yas-expand-snippet ()
+					  "Replace text in yasnippet template."
+					  (yas-expand-snippet (buffer-string) (point-min) (point-max)))
 					(yas-reload-all)
 					;;
 					;; `yasnippet-snippets'
@@ -281,18 +286,12 @@
 					  "\\.org$"
 					  ["default-reveal-org.org"
 					   (lambda ()
-						 (when (fboundp 'yas-expand-snippet)
-						   (yas-expand-snippet (buffer-string)
-											   (point-min)
-											   (point-max))))])
+						 (when (fboundp 'yas-expand-snippet) (vwe@pkg--yas-expand-snippet)))])
 					(define-auto-insert
 					  "\\.txt$"
 					  ["default-reveal-org.org"
 					   (lambda ()
-						 (when (fboundp 'yas-expand-snippet)
-						   (yas-expand-snippet (buffer-string)
-											   (point-min)
-											   (point-max))))]))
+						 (when (fboundp 'yas-expand-snippet) (vwe@pkg--yas-expand-snippet)))]))
 				  (setq auto-insert nil
 						auto-insert-query nil
 						auto-insert-directory (vwe@lib--path-vwe-etc "templates")))
