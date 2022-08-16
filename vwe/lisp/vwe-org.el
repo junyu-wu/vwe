@@ -168,16 +168,41 @@
 					;;
 					;; `org-superstart'
 					;;
-					(vwe@lib--package 'org-superstar
-					  				  (add-hook 'org-mode-hook (lambda() (org-superstar-mode 1)))
-									  nil
-									  (setq org-hidden-keywords '(title)
-											org-cycle-level-faces nil
-											;; org-n-level-faces 7
-											org-superstar-cycle-headline-bullets nil
-											org-superstar-first-inlinetask-bullet ?㊕
-											org-superstar-leading-fallback ?.
-											org-superstar-headline-bullets-list '("☰" "☱" "☲" "☳" "☴" "☶" "☵" "☷" "☯")))
+					;; (vwe@lib--package 'org-superstar
+					;;   				  (add-hook 'org-mode-hook (lambda() (org-superstar-mode 1)))
+					;; 				  nil
+					;; 				  (setq org-hidden-keywords '(title)
+					;; 						org-cycle-level-faces nil
+					;; 						;; org-n-level-faces 7
+					;; 						org-superstar-cycle-headline-bullets nil
+					;; 						org-superstar-first-inlinetask-bullet ?㊕
+					;; 						org-superstar-leading-fallback ?.
+					;; 						org-superstar-headline-bullets-list ;; '("☰" "☱" "☲" "☳" "☴" "☶" "☵" "☷" "☯")
+					;; 						;; '("◯" "Ⅰ" "Ⅱ" "Ⅲ" "Ⅳ" "Ⅴ" "Ⅵ" "Ⅶ" "Ⅷ" "Ⅸ" "Ⅹ" "Ⅺ" "Ⅻ")
+					;; 						;; '("0" "ⅰ" "ⅱ" "ⅲ" "ⅳ" "ⅴ" "ⅵ" "ⅶ" "ⅷ" "ⅸ" "ⅹ")
+					;; 						'("0" "1" "2" "3" "4" "5" "6" "7" "8" "9" "A" "B" "C" "D" "E" "F")))
+
+					;;
+					;; `org-num'
+					;;
+					(vwe@lib--package 'org-num
+									  (progn
+										(add-hook 'org-mode-hook #'org-num-mode))
+									  nil nil nil nil t)
+
+					;;
+					;; `org-bars'
+					;;
+					(vwe@lib--package 'org-bars
+									  (progn
+										(add-hook 'org-mode-hook #'org-bars-mode))
+									  (progn)
+									  (setq org-bars-stars
+											'(:empty "○" :invisible "▸" :visible "▾")
+											org-bars-color-options
+											'(:bar-color "#8c8c8c" :desaturate-level-faces 50 :darken-level-faces 30))
+									  t
+									  (vwe@lib--path-vwe-site-lisp "org-bars"))
 
 					;;
 					;; `ox-reveal' 演示文件生成 ;; https://github.com/hakimel/reveal.js/

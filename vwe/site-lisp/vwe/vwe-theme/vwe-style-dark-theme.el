@@ -358,7 +358,7 @@
 	(org-level-5 :inherit bold :foreground ,ecyan)
 	(org-level-6 :inherit bold :foreground ,other-blue)
 	(org-level-7 :inherit bold :foreground ,purple)
-	(org-level-8 :weight normal :foreground ,pink)
+	(org-level-8 :inherit bold :foreground ,pink)
 	(org-level-9 :weight normal :foreground ,comt)
 	(org-link :foreground ,cyan :underline t)
 	(org-priority :foreground ,cyan)
