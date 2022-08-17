@@ -162,6 +162,7 @@
 					("s" vwe-key:consult "consult" :face (:foreground "yellow" :underline t :weight bold))
 					("g" vwe-key:gud "gud" :face (:foreground "yellow" :underline t :weight bold))
 					("e" vwe-edit-region--mark-edit "edit region")
+					("C-x" vwe-editor-toggle-submode "editor toggle")
 					("F" follow-mode "follow mode")
 					("U" esup "esup")
 					("O" command-log-mode "command log")

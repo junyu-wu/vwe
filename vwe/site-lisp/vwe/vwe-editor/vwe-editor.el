@@ -97,6 +97,19 @@
    ((eq vwe-editor--submode 'edit) (vwe-editor--edit-submode deactivate))
    (t (vwe-editor--view-submode deactivate))))
 
+(defun vwe-editor-toggle-submode ()
+  "Toggle editor submode activate or DEACTIVATE."
+  (interactive)
+  (cond
+   ((eq vwe-editor--submode 'view)
+	(vwe-editor--edit-submode t)
+	(setq vwe-editor--submode 'edit)
+	(vwe-editor--edit-submode))
+   ((eq vwe-editor--submode 'edit)
+	(vwe-editor--view-submode t)
+	(setq vwe-editor--submode 'view)
+	(vwe-editor--view-submode))))
+
 (defun vwe-editor--find-file (func &rest args)
   "Find FUNC and ARGS file."
   (apply func args)
