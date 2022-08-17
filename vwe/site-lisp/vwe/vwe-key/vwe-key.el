@@ -86,6 +86,14 @@
   '((t (:background "DarkOrange" :foreground "white" :weight bold)))
   "Hint face.")
 
+(defface vwe-key--read-only-face
+  '((t (:background "#434C5E" :foreground "DarkOrange" :weight bold)))
+  "Read only face.")
+
+(defface vwe-key--read-and-write-face
+  '((t (:background "#434C5E" :foreground "SpringGreen" :weight bold)))
+  "Read and write face.")
+
 (defface vwe-key--footer-face
   '((t (:background "#434C5E" :foreground "#B0BEC5" :weight bold)))
   "Footer face.")
@@ -153,7 +161,13 @@
   "Make content TITLE and add face."
   (let* ((original-title title)
 		 (title-make)
-		 (other (propertize (format " [%s]    ｡◕‿◕｡ " major-mode) 'face 'vwe-key--title-other-face)))
+		 (ro (if buffer-read-only
+				 (propertize " (RO) " 'face 'vwe-key--read-only-face)
+			   (propertize " (RW) " 'face 'vwe-key--read-and-write-face)))
+		 ;; (other (propertize (format " [%s]    ｡◕‿◕｡ " major-mode) 'face 'vwe-key--title-other-face))
+		 (other (concat (propertize (format " [%s]" major-mode) 'face 'vwe-key--title-other-face)
+						(format "%s" ro)
+						(propertize "    ｡◕‿◕｡ " 'face 'vwe-key--title-other-face))))
 	(when original-title
 	  (if (listp original-title)
 		  (let* ((title-str (car original-title))
