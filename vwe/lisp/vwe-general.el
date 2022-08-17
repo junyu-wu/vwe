@@ -54,6 +54,7 @@
 				  (setq column-number-mode t
 						line-number-mode t
 						line-move-visual t
+						auto-save-mode t
 
 						track-eol t
 						set-mark-command-repeat-pop t)
@@ -64,6 +65,8 @@
 				  nil
 				  (setq auto-save-default vwe@custom--buffer-auto-save?
 						auto-save-visited-interval 1
+						auto-save-timeout 5
+						auto-save-interval 5
 						auto-save-list-file-prefix (concat (vwe@lib--path-cache "auto-save")))
 				  nil nil t)
 
@@ -163,12 +166,12 @@
 				  (setq enable-recursive-minibuffers t
 						savehist-file (vwe@lib--path-cache "savehist/history" t)
 						history-length 1000
+						savehist-autosave-interval 5
 						savehist-additional-variables '(mark-ring
 														global-mark-ring
 														search-ring
 														regexp-search-ring
-														extended-command-history)
-						savehist-autosave-interval 300))
+														extended-command-history)))
 
 ;;
 ;; `ibuffer'
@@ -616,7 +619,7 @@
 				  (progn
 					(setenv "GPG_AGENT_INFO" nil)
 					(epa-file-enable))
-				  (setq epa-file-inhibit-auto-save t)
+				  (setq epa-file-inhibit-auto-save nil)
 				  nil nil t)
 
 ;;
