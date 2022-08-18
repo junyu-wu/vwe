@@ -195,13 +195,14 @@
 					;;
 					(vwe@lib--package 'org-bars
 									  (progn
+										(autoload 'org-bars-mode (vwe@lib--path-vwe-site-lisp "org-bars/org-bars.el" t) "Org bars mode." t t)
 										(add-hook 'org-mode-hook #'org-bars-mode))
 									  (progn)
 									  (setq org-bars-stars
 											'(:empty "○" :invisible "▸" :visible "▾")
 											org-bars-color-options
 											'(:bar-color "#8c8c8c" :desaturate-level-faces 50 :darken-level-faces 30))
-									  t
+									  nil
 									  (vwe@lib--path-vwe-site-lisp "org-bars"))
 
 					;;
