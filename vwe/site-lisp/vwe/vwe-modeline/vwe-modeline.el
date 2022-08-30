@@ -221,7 +221,7 @@
   "Misc face.")
 
 (defface vwe-modeline--modified-face
-  '((t (:foreground "red")))
+  '((t (:foreground "red" :background "yellow")))
   "Face for the 'modified' indicator symbol in the mode-line.")
 
 (defface vwe-modeline--info-face
@@ -243,6 +243,14 @@
 (defface vwe-modeline--mouse-face
   '((t (:foreground "LightSeaGreen")))
   "Face for error status indicators in the mode-line.")
+
+(defface vwe-modeline--read-only-face
+  '((t (:background "#434C5E" :foreground "DarkOrange" :weight bold)))
+  "Read only face.")
+
+(defface vwe-modeline--read-and-write-face
+  '((t (:background "#434C5E" :foreground "SpringGreen" :weight bold)))
+  "Read and write face.")
 
 (defvar vwe-modeline--default-format
   mode-line-format
@@ -315,8 +323,8 @@ corresponding to the mode line clicked."
          (if read-only "RO" (if modified "MD" "RW"))
          'face `(:inherit
                  ,(if modified 'vwe-modeline--modified-face
-                    (if read-only 'vwe-modeline--info-face
-                      'vwe-modeline--warning-face)))
+                    (if read-only 'vwe-modeline--read-only-face
+                      'vwe-modeline--read-and-write-face)))
          'help-echo (format
                      "Buffer is %s and %smodified\nmouse-1: Toggle read-only status."
                      (if read-only "read-only" "writable")
