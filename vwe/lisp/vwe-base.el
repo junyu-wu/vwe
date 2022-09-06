@@ -48,6 +48,22 @@ SOURCE-NAME is source name."
   (vwe@lib--package-load 'seq)
   (vwe@lib--package-load 'popup))
 
+(defun vwe@base--version ()
+  "Current VWE version."
+  (let* ((path (concat user-emacs-directory ".version"))
+		 (buf (if (file-exists-p path)
+				  (find-file-noselect path) nil))
+		 (vwev))
+		 (when buf
+		   (with-current-buffer buf
+			 (goto-char (point-min))
+			 (setq vwev (princ (buffer-string)))))))
+
+(defun vwe-version ()
+  "Get VEW version."
+  (interactive)
+  (message "vwe %s (emacs %s, %s)" (vwe@base--version) emacs-version system-configuration))
+
 (defvar vwe@base--socks-proxy-services
   nil
   "Socks proxy services.")

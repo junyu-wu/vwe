@@ -94,6 +94,18 @@
   '((t (:background "#434C5E" :foreground "SpringGreen" :weight bold)))
   "Read and write face.")
 
+(defface vwe-key--modified-face
+  '((t (:foreground "red" :background "#434C5E")))
+  "Modified face.")
+
+(defface vwe-key--major-mode-face
+  '((t (:foreground "gold" :background "#434C5E" :weight bold)))
+  "Major face.")
+
+(defface vwe-key--buffer-name-face
+  '((t (:foreground "cyan" :background "#434C5E")))
+  "Buffer name face.")
+
 (defface vwe-key--footer-face
   '((t (:background "#434C5E" :foreground "#B0BEC5" :weight bold)))
   "Footer face.")
@@ -162,11 +174,17 @@
   (let* ((original-title title)
 		 (title-make)
 		 (ro (if buffer-read-only
-				 (propertize " (RO) " 'face 'vwe-key--read-only-face)
-			   (propertize " (RW) " 'face 'vwe-key--read-and-write-face)))
+				 (propertize "RO " 'face 'vwe-key--read-only-face)
+			   (propertize "RW " 'face 'vwe-key--read-and-write-face)))
 		 ;; (other (propertize (format " [%s]    ｡◕‿◕｡ " major-mode) 'face 'vwe-key--title-other-face))
-		 (other (concat (propertize (format " [%s]" major-mode) 'face 'vwe-key--title-other-face)
-						(format "%s" ro)
+		 (other (format "%s%s%s%s" (propertize (format " %s " (format "%s" major-mode)) 'face 'vwe-key--major-mode-face)
+						(propertize (format "%s " (buffer-name)) 'face 'vwe-key--buffer-name-face
+									'help-echo (buffer-file-name))
+						(format "%s" (if (buffer-modified-p)
+										 (concat ro
+												 (propertize "MD "
+															 'face 'vwe-key--modified-face))
+									   ro))
 						(propertize "    ｡◕‿◕｡ " 'face 'vwe-key--title-other-face))))
 	(when original-title
 	  (if (listp original-title)
