@@ -31,17 +31,16 @@
 ;;
 ;; `rustic'
 ;;
-(vwe@lib--package 'rustic
-				  (progn
-					(add-hook 'rustic-mode-hook
-							  ((lambda ()
-								 (vwe@lib--server-lsp
-								  vwe@custom--lsp
-								  :lsp (progn
-										 (setq rustic-format-on-save nil
-											   rustic-lsp-formatto t)))))
-							  nil t))
-				  (setq rustic-format-on-save t))
+(vwe@lib--pkg rustic
+  :init ((add-hook 'rustic-mode-hook
+				   ((lambda ()
+					  (vwe@lib--server-lsp
+					   vwe@custom--lsp
+					   :lsp (progn
+							  (setq rustic-format-on-save nil
+									rustic-lsp-formatto t)))))
+				   nil t))
+  :variable ((setq rustic-format-on-save t)))
 
 (provide 'vwe-rust)
 ;;; vwe-rust.el ends here

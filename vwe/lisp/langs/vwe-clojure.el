@@ -27,7 +27,7 @@
 ;;
 ;; `cider'
 ;;
-(vwe@lib--package 'cider)
+(vwe@lib--pkg cider)
 
 (provide 'vwe-clojure)
 ;;; vwe-clojure.el ends here

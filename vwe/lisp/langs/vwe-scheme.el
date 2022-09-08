@@ -27,10 +27,9 @@
 ;;
 ;; `geiser' repl 交互模式
 ;;
-(vwe@lib--package 'geiser
-				  nil nil
-				  (setq scheme-program-name "guile"
-						geiser-active-implementations '(guile)))
+(vwe@lib--pkg geiser
+  :variable ((setq scheme-program-name "guile"
+				   geiser-active-implementations '(guile))))
 
 (provide 'vwe-scheme)
 ;;; vwe-scheme.el ends here

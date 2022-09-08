@@ -39,62 +39,56 @@
 ;;
 ;; `java-mode'
 ;;
-(vwe@lib--package 'java-mode
-				  (progn
-					;; (add-hook 'lsp-mode-hook #'lsp-lens-mode)
-					;; (add-hook 'java-mode-hook #'lsp-java-boot-lens-mode)
-					;; (add-hook 'java-mode-hook #'vwe@java--init)
-					;; (add-hook 'before-save-hook #'lsp-format-buffer nil t)
-					(add-hook 'java-mode-hook
-							  (lambda ()
-								(vwe@lib--server-lsp
-								 vwe@custom--lsp
-								 :lsp (progn
-										(add-hook 'before-save-hook
-												  #'lsp-format-buffer nil t)))
-								(lsp-deferred)
-								(lsp-lens-mode 1)))
+(vwe@lib--pkg java-mode
+  :init ((add-hook 'java-mode-hook
+				   (lambda ()
+					 (vwe@lib--server-lsp
+					  vwe@custom--lsp
+					  :lsp (progn
+							 (add-hook 'before-save-hook
+									   #'lsp-format-buffer nil t)))
+					 (lsp-deferred)
+					 (lsp-lens-mode 1)))
 
-					;;
-					;; `lsp-java'
-					;;
-					(vwe@lib--package 'lsp-java
-									  (progn
-										(add-hook 'java-mode-hook (lambda ()
-																	(lsp-java-lens-mode 1)
-																	(lsp-java-boot-lens-mode 1)))
+		 ;;
+		 ;; `lsp-java'
+		 ;;
+		 (vwe@lib--pkg lsp-java
+		   :init ((add-hook 'java-mode-hook (lambda ()
+											  (lsp-java-lens-mode 1)
+											  (lsp-java-boot-lens-mode 1)))
 
-										(setq lsp-java-server-install-dir (vwe@lib--path-cache "lsp/eclipse.jdt.ls")
-											  lsp-java-workspace-dir (vwe@lib--path-cache "java/workspace")
-											  lsp-java-workspace-cache-dir (vwe@lib--path-cache "java/workspace/.cache")
-											  lsp-java-java-path "java"))
-									  (progn
-										;;
-										;; `dap-java'
-										;;
-										(vwe@lib--package 'dap-java nil nil
-														  (setq dap-java-test-runner
-																(concat (vwe@lib--path-cache "lsp/eclipse.jdt.ls")
-																		"/test-runner/junit-platform-console-standalone.jar"))
-														  t nil t))
-									  (setq lsp-java-import-gradle-enabled t
-											lsp-java-import-maven-enabled t
-											lsp-java-maven-download-sources t
-											lsp-java-references-code-lens-enabled t
-											lsp-java-signature-help-enabled t
-											lsp-java-implementations-code-lens-enabled t
-											lsp-java-format-enabled t
-											lsp-java-save-actions-organize-imports t
-											lsp-java-autobuild-enabled t
-											lsp-java-completion-enabled t
-											lsp-java-completion-overwrite nil
-											lsp-java-completion-guess-method-arguments t
-											lsp-java-format-comments-enabled t
-											lsp-java-code-generation-use-blocks t
-											lsp-java-code-generation-generate-comments t
-											lsp-java-code-generation-to-string-limit-elements 0
-											lsp-java-inhibit-message t)))
-				  nil nil nil t)
+				  (setq lsp-java-server-install-dir (vwe@lib--path-cache "lsp/eclipse.jdt.ls")
+						lsp-java-workspace-dir (vwe@lib--path-cache "java/workspace")
+						lsp-java-workspace-cache-dir (vwe@lib--path-cache "java/workspace/.cache")
+						lsp-java-java-path "java"))
+		   :config (;;
+					;; `dap-java'
+					;;
+					(vwe@lib--pkg dap-java
+					  :variable ((setq dap-java-test-runner
+									   (concat (vwe@lib--path-cache "lsp/eclipse.jdt.ls")
+											   "/test-runner/junit-platform-console-standalone.jar")))
+					  :undefer t
+					  :buildin t))
+		   :variable ((setq lsp-java-import-gradle-enabled t
+							lsp-java-import-maven-enabled t
+							lsp-java-maven-download-sources t
+							lsp-java-references-code-lens-enabled t
+							lsp-java-signature-help-enabled t
+							lsp-java-implementations-code-lens-enabled t
+							lsp-java-format-enabled t
+							lsp-java-save-actions-organize-imports t
+							lsp-java-autobuild-enabled t
+							lsp-java-completion-enabled t
+							lsp-java-completion-overwrite nil
+							lsp-java-completion-guess-method-arguments t
+							lsp-java-format-comments-enabled t
+							lsp-java-code-generation-use-blocks t
+							lsp-java-code-generation-generate-comments t
+							lsp-java-code-generation-to-string-limit-elements 0
+							lsp-java-inhibit-message t))))
+  :buildin t)
 
 (provide 'vwe-java)
 ;;; vwe-java.el ends here

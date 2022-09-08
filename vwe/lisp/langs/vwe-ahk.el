@@ -27,7 +27,7 @@
 ;;
 ;; `ahk-mode'
 ;;
-(vwe@lib--package 'ahk-mode)
+(vwe@lib--pkg ahk-mode)
 
 (provide 'vwe-ahk)
 ;;; vwe-ahk.el ends here

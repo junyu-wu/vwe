@@ -30,17 +30,17 @@
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
-(vwe@lib--package nil
-				  (progn
-					(push '("\\.action\\'" . conf-mode) auto-mode-alist)
-					(push '("\\.bxrc\\'" . conf-mode) auto-mode-alist)))
+(vwe@lib--pkg nil
+  :init ((push '("\\.action\\'" . conf-mode) auto-mode-alist)
+		 (push '("\\.bxrc\\'" . conf-mode) auto-mode-alist))
+  :always t)
 
 ;;
 ;; `text-mode'
 ;;
-(vwe@lib--package 'text-mode
-				  (push '("\\.txt\\'" . org-mode) auto-mode-alist)
-				  nil nil nil nil t)
+(vwe@lib--pkg text-mode
+  :init ((push '("\\.txt\\'" . org-mode) auto-mode-alist))
+  :buildin t)
 
 ;;
 ;; init edit

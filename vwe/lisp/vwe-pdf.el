@@ -25,15 +25,10 @@
 
 ;;; Code:
 
-(vwe@lib--package 'pdf-tools
-				  nil nil
-				  (progn
-					(vwe@lib--package 'pdf-view
-									  (progn
-										(push '("\\.[pP][dD][fF]\\'" . pdf-view-mode) auto-mode-alist)
-										)
-									  nil nil nil nil t))
-				  t)
+(vwe@lib--pkg pdf-tools
+  :config ((vwe@lib--pkg pdf-view
+			 :init ((push '("\\.[pP][dD][fF]\\'" . pdf-view-mode) auto-mode-alist))
+			 :buildin t)))
 
 (provide 'vwe-pdf)
 ;;; vwe-pdf.el ends here

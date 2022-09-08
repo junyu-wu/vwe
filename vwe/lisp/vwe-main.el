@@ -74,7 +74,13 @@
 		   ;;
 		   ;; after init
 		   ;;
-		   (require 'vwe-after-init))))
+		   (require 'vwe-after-init)
+
+		   ;;
+		   ;; after init
+		   ;;
+		   (when vwe@custom--test-init?
+			 (require 'vwe-test-init)))))
 
 (vwe@lib--log "Initialization finished.")
 

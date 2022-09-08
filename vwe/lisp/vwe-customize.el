@@ -124,18 +124,21 @@
   :type 'string)
 
 (defcustom vwe@custom--source-list
-  '(("melpa" .       (("melpa". "https://melpa.org/packages/")
+  '(("melpa"       . (("melpa". "https://melpa.org/packages/")
 					  ("gnu" . "https://elpa.gnu.org/packages/")
 					  ("org"  . "http://orgmode.org/elpa/")))
 	("china-melpa" . (("melpa-cn" . "http://elpa.emacs-china.org/melpa/")
 					  ("org-cn"   . "http://elpa.emacs-china.org/org/")
-					  ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/"))))
+					  ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
+	("ustc"        . (("gnu" . "http://mirrors.ustc.edu.cn/elpa/gnu/")
+                      ("melpa" . "http://mirrors.ustc.edu.cn/elpa/melpa/")
+                      ("nongnu" . "http://mirrors.ustc.edu.cn/elpa/nongnu/"))))
   "Source Options."
   :group 'vwe-base
   :type 'list)
 
 (defcustom vwe@custom--source
-  "melpa"
+  "ustc"
   "Source name."
   :group 'vwe-base
   :type 'string)
@@ -403,6 +406,16 @@ If nil hide all buffers."
   :type 'integer)
 
 ;; ***************************************************************************
+;; test
+;; ***************************************************************************
+(defcustom vwe@custom--test-init?
+  t
+  "Is load test init."
+  :group 'vwe-base
+  :type 'boolean)
+
+
+;; ***************************************************************************
 ;; process
 ;; ***************************************************************************
 (defcustom vwe@custom--tags-command
@@ -437,11 +450,14 @@ If nil hide all buffers."
 ;; ***************************************************************************
 ;; lib
 ;; ***************************************************************************
- (defun vwe@custom--vwe-customize ()
-	"Open custom file."
-	(interactive)
-	(customize-group 'vwe))
+(defun vwe@custom--vwe-customize ()
+  "Open custom file."
+  (interactive)
+  (customize-group 'vwe))
 
+;; ***************************************************************************
+;; load finished
+;; ***************************************************************************
 (vwe@lib--log "Initialization of Customize configuration is complete.")
 
 (provide 'vwe-customize)

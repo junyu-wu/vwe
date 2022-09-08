@@ -48,54 +48,49 @@
 ;;
 ;; `python'
 ;;
-(vwe@lib--package 'python
-				  (progn
-					(push '("\\.py\\'" . python-mode) auto-mode-alist))
+(vwe@lib--pkg python
+  :init ((push '("\\.py\\'" . python-mode) auto-mode-alist))
+  :config (;;
+		   ;; `py-autopep8' 根据autopep8格式化代码
+		   ;;
+		   (vwe@lib--pkg py-autopep8
+			 :init((add-hook 'python-mode-hook #'py-autopep8-enable-on-save)))
 
-				  (progn
-					;;
-					;; `py-autopep8' 根据autopep8格式化代码
-					;;
-					(vwe@lib--package 'py-autopep8
-					  				  (add-hook 'python-mode-hook #'py-autopep8-enable-on-save))
+		   ;;
+		   ;; `anaconda-mode'
+		   ;;
+		   (vwe@lib--pkg anaconda-mode
+			 :init ((add-hook 'python-mode-hook 'anaconda-mode)))
 
-					;;
-					;; `anaconda-mode'
-					;;
-					(vwe@lib--package 'anaconda-mode
-					  				  (add-hook 'python-mode-hook 'anaconda-mode))
+		   ;;
+		   ;; `company-anaconda'
+		   ;;
+		   (vwe@lib--pkg company-anaconda
+			 :config ((with-eval-after-load 'company
+						(add-hook 'python-mode-hook
+								  (lambda ()
+									(vwe@pkg--company-make-mode-local-backends
+									 'company-anaconda))))))
 
-					;;
-					;; `company-anaconda'
-					;;
-					(vwe@lib--package 'company-anaconda nil nil
-									  (with-eval-after-load 'company
-										(add-hook 'python-mode-hook
-												  (lambda ()
-													(vwe@pkg--company-make-mode-local-backends
-													 'company-anaconda)))))
+		   ;;
+		   ;; `elpy'
+		   ;;
+		   (vwe@lib--pkg elpy
+			 :init ((add-hook 'elpy-mode-hook (lambda () (elpy-shell-set-local-shell (elpy-project-root)))))
+			 :variable ((setq elpy-shell-add-to-shell-history t
+							  elpy-rpc-virtualenv-path (vwe@lib--path-cache "elpy/rpc-venv")
+							  elpy-rpc-python-command "python3"
+							  elpy-get-info-from-shell t)))
 
-					;;
-					;; `elpy'
-					;;
-					(vwe@lib--package 'elpy
-					  				  (progn
-										(add-hook 'elpy-mode-hook (lambda () (elpy-shell-set-local-shell (elpy-project-root)))))
-					  				  (setq elpy-shell-add-to-shell-history t
-											elpy-rpc-virtualenv-path (vwe@lib--path-cache "elpy/rpc-venv")
-											elpy-rpc-python-command "python3"
-											elpy-get-info-from-shell t))
-
-					;;
-					;; `conda' anaconda
-					;;
-					(vwe@lib--package 'conda
-									  nil
-									  (conda-env-initialize-interactive-shells)
-									  (setq conda-anaconda-home (getenv "CONDA_HOME"))))
-				  (setq indent-tabs-mode nil
-						python-indent-offset 4
-						python-shell-interpreter "python3"))
+		   ;;
+		   ;; `conda' anaconda
+		   ;;
+		   (vwe@lib--pkg conda
+			 :config ((conda-env-initialize-interactive-shells))
+			 :variable ((setq conda-anaconda-home (getenv "CONDA_HOME")))))
+  :variable ((setq indent-tabs-mode nil
+				   python-indent-offset 4
+				   python-shell-interpreter "python3")))
 
 (provide 'vwe-python)
 ;;; vwe-python.el ends here

@@ -32,28 +32,28 @@
 ;; config
 ;; ***************************************************************************
 
-(vwe@lib--package nil
-				  (with-eval-after-load 'company
-					  (add-hook 'c-mode-hook
-								(lambda ()
-								  (vwe@pkg--company-make-mode-local-backends
-								   '(company-semantic company-cmake company-clang))))
-					  (add-hook 'c++-mode-hook
-								(lambda ()
-								  (vwe@pkg--company-make-mode-local-backends
-								   '(company-semantic company-cmake company-clang))))))
+(vwe@lib--pkg nil
+  :init ((with-eval-after-load 'company
+		   (add-hook 'c-mode-hook
+					 (lambda ()
+					   (vwe@pkg--company-make-mode-local-backends
+						'(company-semantic company-cmake company-clang))))
+		   (add-hook 'c++-mode-hook
+					 (lambda ()
+					   (vwe@pkg--company-make-mode-local-backends
+						'(company-semantic company-cmake company-clang)))))))
 
 ;;
 ;; `modern-c++-font-lock'
 ;;
-(vwe@lib--package 'modern-cpp-font-lock
-				  (add-hook 'c++-mode-hook #'modern-c++-font-lock-mode)
-				  (modern-c++-font-lock-mode t))
+(vwe@lib--pkg modern-cpp-font-lock
+  :init ((add-hook 'c++-mode-hook #'modern-c++-font-lock-mode))
+  :config ((modern-c++-font-lock-mode t)))
 
 ;;
 ;; `disaster' 查看当前的汇编代码
 ;;
-(vwe@lib--package 'disaster)
+(vwe@lib--pkg disaster)
 
 (provide 'vwe-clang)
 ;;; vwe-clang.el ends here

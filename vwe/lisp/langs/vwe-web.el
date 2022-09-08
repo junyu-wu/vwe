@@ -71,16 +71,15 @@
 ;;
 ;; `css-mode'
 ;;
-(vwe@lib--package 'css-mode
-				  nil nil
-				  (with-eval-after-load 'company
-					(add-hook 'css-mode-hook
-							  (lambda ()
-								(vwe@pkg--company-make-mode-local-backends
-								 'company-css))))
-				  (setq css-indent-offset 2
-						flycheck-stylelintrc (vwe@lib--path-vwe-etc "web/.stylelintrc" t)
-						flycheck-css-stylelint-executable "stylelint"))
+(vwe@lib--pkg css-mode
+  :config ((with-eval-after-load 'company
+			 (add-hook 'css-mode-hook
+					   (lambda ()
+						 (vwe@pkg--company-make-mode-local-backends
+						  'company-css)))))
+  :variable ((setq css-indent-offset 2
+				   flycheck-stylelintrc (vwe@lib--path-vwe-etc "web/.stylelintrc" t)
+				   flycheck-css-stylelint-executable "stylelint")))
 
 ;; ==============================
 ;; javascript
@@ -89,16 +88,14 @@
 ;;
 ;; `js2-mode'
 ;;
-(vwe@lib--package 'js2-mode
-				  (progn
-					(push '("\\.js\\'" . js2-mode) auto-mode-alist))
-				  nil
-				  (setq indent-tabs-mode nil
-						js2-basic-offset 2
-						js-indent-level 2
-						js2-global-externs '("module" "require" "assert"
-											 "setInterval" "console" "__dirname__")
-						flycheck-javascript-eslint-executable "eslint"))
+(vwe@lib--pkg js2-mode
+  :init ((push '("\\.js\\'" . js2-mode) auto-mode-alist))
+  :variable ((setq indent-tabs-mode nil
+				   js2-basic-offset 2
+				   js-indent-level 2
+				   js2-global-externs '("module" "require" "assert"
+										"setInterval" "console" "__dirname__")
+				   flycheck-javascript-eslint-executable "eslint")))
 
 ;; ==============================
 ;; json
@@ -107,7 +104,7 @@
 ;;
 ;; `json-mode'
 ;;
-(vwe@lib--package 'json-mode)
+(vwe@lib--pkg json-mode)
 
 ;; ==============================
 ;; web misc
@@ -116,59 +113,55 @@
 ;;
 ;; `web-mode'
 ;;
-(vwe@lib--package 'web-mode
-				  (progn
-					(push '("\\.html\\'" . web-mode) auto-mode-alist)
-					(push '("\\.vue\\'" . web-mode) auto-mode-alist))
-				  (progn
+(vwe@lib--pkg web-mode
+  :init ((push '("\\.html\\'" . web-mode) auto-mode-alist)
+		 (push '("\\.vue\\'" . web-mode) auto-mode-alist))
+  :config ((with-eval-after-load 'autoinsert
+			 (define-auto-insert
+			   "\\.html$"
+			   ["default-html.html"
+				(lambda ()
+				  (when (fboundp 'yas-expand-snippet)
+					(yas-expand-snippet (buffer-string)
+										(point-min)
+										(point-max))))]))
 
-					(with-eval-after-load 'autoinsert
-					  (define-auto-insert
-						"\\.html$"
-						["default-html.html"
-						 (lambda ()
-						   (when (fboundp 'yas-expand-snippet)
-							 (yas-expand-snippet (buffer-string)
-												 (point-min)
-												 (point-max))))]))
+		   ;;
+		   ;; `company-web'
+		   ;;
+		   (vwe@lib--pkg company-web
+			 :config ((with-eval-after-load 'company
+						(add-hook 'web-mode-hook
+								  (lambda ()
+									(vwe@pkg--company-make-mode-local-backends
+									 'company-web-html)))))))
+  :variable ((setq web-mode-markup-indent-offset 2
+				   web-mode-css-indent-offset 2
+				   web-mode-code-indent-offset 2
 
-					;;
-					;; `company-web'
-					;;
-					(vwe@lib--package 'company-web nil nil
-									  (with-eval-after-load 'company
-										(add-hook 'web-mode-hook
-												  (lambda ()
-													(vwe@pkg--company-make-mode-local-backends
-													 'company-web-html))))))
-				  (setq web-mode-markup-indent-offset 2
-						web-mode-css-indent-offset 2
-						web-mode-code-indent-offset 2
+				   web-mode-style-padding 1
+				   web-mode-script-padding 1
+				   web-mode-block-padding 0
 
-						web-mode-style-padding 1
-						web-mode-script-padding 1
-						web-mode-block-padding 0
+				   web-mode-enable-auto-pairing nil
 
-						web-mode-enable-auto-pairing nil
+				   web-mode-enable-css-colorization t
+				   web-mode-enable-block-face t
+				   web-mode-enable-part-face t
+				   web-mode-enable-comment-interpolation t
+				   web-mode-enable-heredoc-fontification t
 
-						web-mode-enable-css-colorization t
-						web-mode-enable-block-face t
-						web-mode-enable-part-face t
-						web-mode-enable-comment-interpolation t
-						web-mode-enable-heredoc-fontification t
-
-						web-mode-enable-current-element-highlight t
-						web-mode-enable-current-column-highlight t))
+				   web-mode-enable-current-element-highlight t
+				   web-mode-enable-current-column-highlight t)))
 
 ;;
 ;; `skewer-mode'
 ;;
-(vwe@lib--package 'skewer-mode
-				  (progn
-					(add-hook 'js2-mode-hook #'skewer-mode)
-					(add-hook 'css-mode-hook #'skewer-css-mode)
-					(add-hook 'html-mode-hook #'skewer-html-mode)
-					(add-hook 'web-mode-hook #'skewer-html-mode)))
+(vwe@lib--pkg skewer-mode
+  :init ((add-hook 'js2-mode-hook #'skewer-mode)
+		 (add-hook 'css-mode-hook #'skewer-css-mode)
+		 (add-hook 'html-mode-hook #'skewer-html-mode)
+		 (add-hook 'web-mode-hook #'skewer-html-mode)))
 
 (provide 'vwe-web)
 ;;; vwe-web.el ends here

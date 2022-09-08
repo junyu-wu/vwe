@@ -63,18 +63,11 @@
 ;; ***************************************************************************
 
 ;;
-;; `doom-themes'
-;;
-(vwe@lib--package 'doom-themes)
-
-;;
 ;; `vwe-style'
 ;;
-(vwe@lib--package 'vwe-style
-				  (progn
-					(vwe@lib--load-theme (vwe@lib--path-vwe-site-lisp "vwe/vwe-theme")))
-				  nil nil nil
-				  (vwe@lib--path-vwe-site-lisp "vwe/vwe-theme"))
+(vwe@lib--pkg vwe-style
+  :init ((vwe@lib--load-theme (vwe@lib--path-vwe-site-lisp "vwe/vwe-theme")))
+  :path (vwe@lib--path-vwe-site-lisp "vwe/vwe-theme"))
 
 (vwe@theme--init)
 

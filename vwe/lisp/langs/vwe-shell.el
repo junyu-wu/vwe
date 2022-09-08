@@ -27,18 +27,19 @@
 ;;
 ;; `shell-script-mode'
 ;;
-(vwe@lib--package 'sh-script
-				  nil
-				  (progn
-					;;
-					;; `company-shell'
-					;;
-					(vwe@lib--package 'company-shell nil nil
-									  (with-eval-after-load 'company
-										(add-hook 'sh-mode-hook
-												  (lambda ()
-													(vwe@pkg--company-make-mode-local-backends
-													 '(company-shell company-shell-env company-dabbrev-code) '(company-capf))))))))
+(vwe@lib--pkg sh-script
+  :config (;;
+		   ;; `company-shell'
+		   ;;
+		   (vwe@lib--pkg company-shell
+			 :config ((with-eval-after-load 'company
+						(add-hook 'sh-mode-hook
+								  (lambda ()
+									(vwe@pkg--company-make-mode-local-backends
+									 '(company-shell
+									   company-shell-env
+									   company-dabbrev-code)
+									 '(company-capf)))))))))
 
 (provide 'vwe-shell)
 ;;; vwe-shell.el ends here

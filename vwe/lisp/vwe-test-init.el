@@ -1,8 +1,7 @@
-;;; vwe-protobuf.el ---                              -*- lexical-binding: t; -*-
 
-;; Copyright (C) 2022  WuJunyu
+;; Copyright (C) 2022  ys
 
-;; Author: WuJunyu <vistar_w@hotmail.com>
+;; Author: ys <vistar_w@hotmail.com>
 ;; Keywords:
 
 ;; This program is free software; you can redistribute it and/or modify
@@ -24,7 +23,9 @@
 
 ;;; Code:
 
-(vwe@lib--pkg protobuf-mode)
 
-(provide 'vwe-protobuf)
-;;; vwe-protobuf.el ends here
+
+
+
+(provide 'vwe-test-init)
+;;; vwe-test-init.el ends here

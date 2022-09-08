@@ -43,41 +43,39 @@
 ;;
 ;; `go-mode'
 ;;
-(vwe@lib--package 'go-mode
-				  (progn
-					(push '("\\.go\\'" . go-mode) auto-mode-alist)
-					(add-hook 'go-mode-hook (lambda () (add-hook 'before-save-hook #'gofmt-before-save nil t)))
-					;; (add-hook 'go-mode-hook (lambda () (vwe@lib--server-lsp vwe@custom--lsp
-					;; 														:lsp (progn
-					;; 															   (add-hook 'before-save-hook #'lsp-format-buffer nil t)
-					;; 															   (add-hook 'before-save-hook #'lsp-organize-imports nil t)))))
-					)
-				  (progn
-					(vwe@lib--keymap-set go-mode-map
-										 '(("M-." godef-jump)))
-					(with-eval-after-load 'exec-path-from-shell
-					  (exec-path-from-shell-copy-envs '("GOPATH" "GO111MODULE" "GOPROXY")))
+(vwe@lib--pkg go-mode
+  :init ((push '("\\.go\\'" . go-mode) auto-mode-alist)
+		 (add-hook 'go-mode-hook (lambda () (add-hook 'before-save-hook #'gofmt-before-save nil t)))
+		 ;; (add-hook 'go-mode-hook (lambda () (vwe@lib--server-lsp vwe@custom--lsp
+		 ;; 														:lsp (progn
+		 ;; 															   (add-hook 'before-save-hook #'lsp-format-buffer nil t)
+		 ;; 															   (add-hook 'before-save-hook #'lsp-organize-imports nil t)))))
+		 )
+  :config ((vwe@lib--keymap-set go-mode-map
+								'(("M-." godef-jump)))
+		   (with-eval-after-load 'exec-path-from-shell
+			 (exec-path-from-shell-copy-envs '("GOPATH" "GO111MODULE" "GOPROXY")))
 
-					;;
-					;; `go-guru' go代码编辑扩展
-					;;
-					(vwe@lib--package 'go-guru (add-hook 'go-mode-hook #'go-guru-hl-identifier-mode))
+		   ;;
+		   ;; `go-guru' go代码编辑扩展
+		   ;;
+		   (vwe@lib--pkg go-guru
+			 :init ((add-hook 'go-mode-hook #'go-guru-hl-identifier-mode)))
 
-					;;
-					;; `go-tag'
-					;; go get github.com/fatih/gomodifytags
-					;;
-					(vwe@lib--package 'go-tag nil nil
-									  (setq go-tag-args (list "-transform" "lispcase")))
-					)
-
-				  (setq go-command (concat (getenv "GOROOT") "/bin/go")
-						gofmt-command (concat (getenv "GOPATH") "/bin/goimports")
-						flycheck-go-gofmt-executable (concat (getenv "GOPATH") "/bin/goimports")
-						flycheck-go-golint-executable (concat (getenv "GOPATH") "/bin/golint")
-						flycheck-go-build-executable (concat (getenv "GOROOT") "/bin/go")
-						flycheck-go-vet-executable (concat (getenv "GOROOT") "/bin/go")
-						flycheck-go-test-executable (concat (getenv "GOROOT") "/bin/go")))
+		   ;;
+		   ;; `go-tag'
+		   ;; go get github.com/fatih/gomodifytags
+		   ;;
+		   (vwe@lib--pkg go-tag
+			 :variable ((setq go-tag-args (list "-transform" "lispcase"))))
+		   )
+  :variable ((setq go-command (concat (getenv "GOROOT") "/bin/go")
+				   gofmt-command (concat (getenv "GOPATH") "/bin/goimports")
+				   flycheck-go-gofmt-executable (concat (getenv "GOPATH") "/bin/goimports")
+				   flycheck-go-golint-executable (concat (getenv "GOPATH") "/bin/golint")
+				   flycheck-go-build-executable (concat (getenv "GOROOT") "/bin/go")
+				   flycheck-go-vet-executable (concat (getenv "GOROOT") "/bin/go")
+				   flycheck-go-test-executable (concat (getenv "GOROOT") "/bin/go"))))
 
 (provide 'vwe-golang)
 ;;; vwe-golang.el ends here

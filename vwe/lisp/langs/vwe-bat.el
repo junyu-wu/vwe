@@ -27,11 +27,9 @@
 ;;
 ;; `bat-mode' Windows批处理文件的编辑
 ;;
-(vwe@lib--package 'bat-mode
-				  nil
-				  (progn
-					(vwe@lib--package 'bmx-mode)
-					(bmx-mode t)))
+(vwe@lib--pkg bat-mode
+  :config ((vwe@lib--pkg bmx-mode)
+		   (bmx-mode t)))
 
 (provide 'vwe-bat)
 ;;; vwe-bat.el ends here

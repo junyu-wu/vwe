@@ -24,7 +24,7 @@
 
 ;;; Code:
 
-(vwe@lib--package 'yaml-mode)
+(vwe@lib--pkg yaml-mode)
 
 (provide 'vwe-yaml)
 ;;; vwe-yaml.el ends here

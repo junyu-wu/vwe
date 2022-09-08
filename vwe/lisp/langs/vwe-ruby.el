@@ -34,73 +34,64 @@
 ;;
 ;; `ruby'
 ;;
-(vwe@lib--package 'ruby-mode nil
-				  (progn
-					;;
-					;; `rvm'
-					;;
-					(vwe@lib--package 'rvm
-									  (add-hook 'ruby-mode-hook
-												(lambda ()
-												  (rvm-activate-corresponding-ruby)
-												  (rvm-use-default))))
+(vwe@lib--pkg ruby-mode
+  :config (;;
+		   ;; `rvm'
+		   ;;
+		   (vwe@lib--pkg rvm
+			 :init ((add-hook 'ruby-mode-hook
+							  (lambda ()
+								(rvm-activate-corresponding-ruby)
+								(rvm-use-default)))))
 
-					;;
-					;; `inf-ruby' 连接ruby repl
-					;;
-					(vwe@lib--package 'inf-ruby
-									  (add-hook 'ruby-mode-hook #'inf-ruby-minor-mode)
-									  (progn
-										(with-eval-after-load 'rvm
-										  (advice-add 'inf-ruby-console-auto
-													  :before #'rvm-activate-corresponding-ruby)))
-									  (vwe@lib--keymap-set compilation-shell-minor-mode-map
-														   '(("M-RET" nil))))
-					;;
-					;; `robe' 辅助ruby repl加载程序或gem.包括位置与跳转
-					;;
-					(vwe@lib--package 'robe
-									  (progn
-										(add-hook 'ruby-mode-hook #'robe-mode)
-										(with-eval-after-load 'company
-										  (add-hook 'ruby-mode-hook
-													(lambda ()
-													  (vwe@pkg--company-make-mode-local-backends
-													   'company-robe))))))
+		   ;;
+		   ;; `inf-ruby' 连接ruby repl
+		   ;;
+		   (vwe@lib--pkg inf-ruby
+			 :init ((add-hook 'ruby-mode-hook #'inf-ruby-minor-mode))
+			 :config ((with-eval-after-load 'rvm
+						(advice-add 'inf-ruby-console-auto
+									:before #'rvm-activate-corresponding-ruby)))
+			 :variable ((vwe@lib--keymap-set compilation-shell-minor-mode-map
+											 '(("M-RET" nil)))))
+		   ;;
+		   ;; `robe' 辅助ruby repl加载程序或gem.包括位置与跳转
+		   ;;
+		   (vwe@lib--pkg robe
+			 :init ((add-hook 'ruby-mode-hook #'robe-mode)
+					(with-eval-after-load 'company
+					  (add-hook 'ruby-mode-hook
+								(lambda ()
+								  (vwe@pkg--company-make-mode-local-backends
+								   'company-robe))))))
 
-					;;
-					;; `ruby-electric' 自动添加 'end'
-					;;
-					(vwe@lib--package 'ruby-electric
-									  (add-hook 'ruby-mode-hook #'ruby-electric-mode)
-									  (vwe@lib--keymap-set ruby-electric-mode-map
-														   '(("SPC" nil))))
+		   ;;
+		   ;; `ruby-electric' 自动添加 'end'
+		   ;;
+		   (vwe@lib--pkg ruby-electric
+			 :init ((add-hook 'ruby-mode-hook #'ruby-electric-mode))
+			 :config ((vwe@lib--keymap-set ruby-electric-mode-map
+										   '(("SPC" nil)))))
 
-					;;
-					;; `rubocop' 代码分析与格式化 flycheck with rubocop
-					;;
-					(vwe@lib--package 'rubocop
-									  (add-hook 'ruby-mode-hook #'rubocop-mode)
-									  nil
-									  ;; (setq rubocop-autocorrect-on-save t
-									  ;; 		rubocop-autocorrect-command "rubocop -A --format emacs")
-									  )
-					(vwe@lib--package 'rubocopfmt
-									  (progn
-										(add-hook 'before-save-hook #'rubocopfmt nil t)))
+		   ;;
+		   ;; `rubocop' 代码分析与格式化 flycheck with rubocop
+		   ;;
+		   (vwe@lib--pkg rubocop
+			 :init ((add-hook 'ruby-mode-hook #'rubocop-mode)))
+		   (vwe@lib--pkg rubocopfmt
+			 :init ((add-hook 'before-save-hook #'rubocopfmt nil t)))
 
-					;;
-					;; `ruby-test-mode'
-					;;
-					(vwe@lib--package 'ruby-test-mode)
+		   ;;
+		   ;; `ruby-test-mode'
+		   ;;
+		   (vwe@lib--pkg ruby-test-mode)
 
-					;;
-					;; `solargraph' 后端支持
-					;;
-					(vwe@lib--package 'solargraph
-									  (add-hook 'ruby-mode-hook (lambda() (vwe@lib--package-load 'solargraph)))
-									  nil nil nil
-									  (vwe@lib--path-vwe-site-lisp "emacs-solargraph"))))
+		   ;;
+		   ;; `solargraph' 后端支持
+		   ;;
+		   (vwe@lib--pkg solargraph
+			 :init ((add-hook 'ruby-mode-hook (lambda() (vwe@lib--package-load 'solargraph))))
+			 :path (vwe@lib--path-vwe-site-lisp "emacs-solargraph"))))
 
 
 (provide 'vwe-ruby)
