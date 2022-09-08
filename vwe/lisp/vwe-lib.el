@@ -711,9 +711,9 @@ ARGS is configure.
 				  (macroexp-progn ;; 从本地路径中加载安装
 				   (when (file-directory-p (format "%s" (eval path)))
 					 (push (eval path) load-path)))
-				(macroexp-progn ;; 从源中下载安装
-				 (eval `(unless (package-installed-p ',pkg)
-						  (package-install ',pkg))))))
+				;; 从源中下载安装
+				(eval `(unless (package-installed-p ',pkg)
+						 (package-install ',pkg)))))
 
 			(eval ;; 包加载前初始化
 			 (macroexp-progn (plist-get args :init)))
