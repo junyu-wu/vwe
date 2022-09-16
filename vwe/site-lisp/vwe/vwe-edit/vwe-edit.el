@@ -110,7 +110,12 @@
 	delete-char
 	delete-forward-char
 	delete-backward-char
+	undo-tree-undo
 	org-delete-backward-char
+	org-force-self-insert
+	org-self-insert-command
+	org-beginning-of-line
+	org-end-of-line
 	end-of-line
 	set-mark-command
 	exchange-point-and-mark
