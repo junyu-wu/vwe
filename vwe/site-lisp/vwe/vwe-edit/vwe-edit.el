@@ -759,5 +759,26 @@
 	  (vwe-edit-bound-mode-enable)
 	(vwe-edit-bound-mode-disable)))
 
+;;;###autoload
+(defun vwe-edit--open-newline-above (arg)
+  "Move to the previous line ARG."
+  (interactive "p")
+  (beginning-of-line)
+  (open-line arg)
+  (if (not (member major-mode '(haskell-mode org-mode literate-haskell-mode)))
+      (indent-according-to-mode)
+    (beginning-of-line)))
+
+;;;###autoload
+(defun vwe-edit--open-newline-below (arg)
+  "Move to the next line ARG."
+  (interactive "p")
+  (end-of-line)
+  (open-line arg)
+  (call-interactively 'next-line arg)
+  (if (not (member major-mode '(haskell-mode org-mode literate-haskell-mode)))
+      (indent-according-to-mode)
+    (beginning-of-line)))
+
 (provide 'vwe-edit)
 ;;; vwe-edit.el ends here

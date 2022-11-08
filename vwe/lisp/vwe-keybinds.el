@@ -86,6 +86,9 @@
 	("C-9"                                vwe-move--swap-left-buffer)
 	("C-0"                                vwe-move--swap-right-buffer)
 	("M-j"                                vwe-key:global)
+	("M-n"                                vwe-edit--open-newline-below)
+	("M-p"                                vwe-edit--open-newline-above)
+	("M-n"                                vwe-edit--open-newline-below)
 	("M-RET"                              vwe-key:global)
 
 	([remap comment-dwim]                 comment-dwim-2)
@@ -480,6 +483,7 @@
 					("D" org-tree-slide-mode "tree slide")
 					("r" vwe@org--reveal-load "reveal load")
 					("v" org-preview-html/preview "preview html")
+					("$" youdao-dictionary-search-at-point+ "translate")
 					("DEL" vwe-key:org-template "org template" :footer t :face (:background "magenta" :foreground "white" :weight bold))
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (org-mode)

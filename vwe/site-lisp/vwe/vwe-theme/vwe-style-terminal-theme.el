@@ -79,7 +79,6 @@
 	(fringe :background ,bg :foreground ,fg4)
     (header-line :background ,bg)
     (highlight :foreground ,none :background ,hl)
-	(lazy-highlight :foreground ,fg2 :background ,bg2)
     (line-number :slant italic :foreground ,bg4 :background ,bg)
 	(line-number-current-line :slant italic :foreground ,darkgoldenrod :background ,bg3)
 	(link :foreground ,cyan :underline t)
