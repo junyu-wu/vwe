@@ -387,6 +387,7 @@ If buf in not exist, display this buf."
 (require 'vwe-scheme)
 (require 'vwe-ahk)
 (require 'vwe-yaml)
+(require 'vwe-php)
 
 (provide 'vwe-prog)
 ;;; vwe-prog.el ends here
