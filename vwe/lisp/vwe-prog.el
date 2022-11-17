@@ -388,6 +388,8 @@ If buf in not exist, display this buf."
 (require 'vwe-ahk)
 (require 'vwe-yaml)
 (require 'vwe-php)
+(require 'vwe-powershell)
+(require 'vwe-bat)
 
 (provide 'vwe-prog)
 ;;; vwe-prog.el ends here
