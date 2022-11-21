@@ -777,6 +777,7 @@
 ;;
 (vwe@lib--pkg vwe-move
   :init ((autoload 'vwe-move-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-move/vwe-move.el" t) "Vwe move mode." t t)
+		 (autoload 'vwe-move-zoom-point--toggle (vwe@lib--path-vwe-site-lisp "vwe/vwe-move/vwe-move.el" t) "Vwe move zoom point." t t)
 		 (add-hook 'after-init-hook #'vwe-move-mode))
   :path (vwe@lib--path-vwe-site-lisp "vwe/vwe-move"))
 

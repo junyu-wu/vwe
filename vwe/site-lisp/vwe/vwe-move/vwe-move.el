@@ -703,6 +703,53 @@ SELF is include curretn buffer."
 	(vwe-move-goto-line--disable)))
 
 ;; =============================================================================
+;; zoom point
+;;
+;; =============================================================================
+(defvar vwe-move-zoom-point--level
+  3
+  "Define zoom level.")
+
+(defvar vwe-move-zoom-point--old-scale
+  0
+  "Store current `text-scale-mode-amount' value")
+
+(defvar-local vwe-move-zoom-point--zoomed-p
+  nil
+  "Is zoomed.")
+
+;;;###autoload
+(defun vwe-move-zoom-point--toggle ()
+  "Zoom in or out on the line at point.
+More precisely, increase or decrease the size of the text by the
+amount defined in `*default-zoom-level*', and centers that line
+in the window."
+  (interactive)
+  (unless (fboundp 'text-scale-mode)
+	(text-scale-increase 0))
+  (if vwe-move-zoom-point--zoomed-p
+      (vwe-mode-zoom-point--recover-zoom)
+    (vwe-move-zoom-point--zoom)))
+
+(defun vwe-move-zoom-point--zoom ()
+  "Zoom in on point."
+  (save-excursion
+	(setq vwe-move-zoom-point--old-scale text-scale-mode-amount
+		  vwe-move-zoom-point--zoomed-p t)
+	(text-scale-increase (if (< text-scale-mode-amount vwe-move-zoom-point--level)
+							 vwe-move-zoom-point--level
+						   (+ vwe-move-zoom-point--level 1)))
+	(recenter)))
+
+(defun vwe-mode-zoom-point--recover-zoom ()
+  "Zoom out from point and return to the default text scale."
+  (save-excursion
+	(text-scale-set vwe-move-zoom-point--old-scale)
+	(recenter)
+	(setq text-scale-mode-amount vwe-move-zoom-point--old-scale
+		  vwe-move-zoom-point--zoomed-p nil)))
+
+;; =============================================================================
 ;; mark and goto
 ;; word/symbol,line,expression
 ;; =============================================================================
