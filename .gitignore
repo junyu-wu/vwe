@@ -19,6 +19,9 @@ README.html
 .vwe-project
 .project.cache.vw
 .project.tag.vw
+.dap-breakpoints
+.lsp-session-v1
+.lsp-session*
 org-roam.db
 places
 recentf

@@ -20,6 +20,9 @@
 
 ;;; Commentary:
 
+;; npm set registry https://registry.npm.taobao.org/
+;; npm config rm registry
+;; npm config set prefix "$HOME/.npm_global"
 ;; npm install stylelint -g ;; css flycheck
 ;; npm install eslint -g    ;; js flycheck
 ;; npm install --save-dev --save-exact prettier

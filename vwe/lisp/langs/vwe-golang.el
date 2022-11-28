@@ -25,10 +25,10 @@
 ;; go install golang.org/x/tools/cmd/gorename@latest
 ;; go install golang.org/x/lint/golint@latest
 ;; go install github.com/rogpeppe/godef@latest
-;; go install -u github.com/josharian/impl@latest
-;; go install -u github.com/davidrjenni/reftools/cmd/fillstruct@latest
-;; go install -u github.com/cweill/gotests/...@latest
-;; go install -u github.com/kisielk/errcheck@latest
+;; go install github.com/josharian/impl@latest
+;; go install github.com/davidrjenni/reftools/cmd/fillstruct@latest
+;; go install github.com/cweill/gotests/...@latest
+;; go install github.com/kisielk/errcheck@latest
 ;; go install github.com/mdempsky/unconvert@latest
 ;; go install golang.org/x/tools/gopls@latest  ;; go lsp
 
