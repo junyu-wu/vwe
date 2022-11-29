@@ -686,6 +686,8 @@
 					("d" conda-env-deactivate "conda deactivate")
 					("l" conda-env-list "conda list")
 					("e" elpy-enable "elpy enable")
+					("n" pyenv-mode-set "pyenv set")
+					("u" pyenv-mode-unset "pyenv unset")
 					("s" elpy-shell-switch-to-shell "swithc shell")
 					("j" elpy-django-runserver "run django")
 					("b" python-shell-send-buffer "send buffer")

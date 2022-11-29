@@ -63,6 +63,7 @@
 	 vwe-modeline--segment-buffer-counter)
     (vwe-modeline--segment-space
 	 vwe-modeline--segment-conda-env
+	 vwe-modeline--segment-pyenv-env
 	 vwe-modeline--segment-ruby-env
 	 vwe-modeline--segment-space
 	 vwe-modeline--segment-lsp
@@ -670,6 +671,16 @@ NOT-I is include curretn buffer."
 		(propertize (format "C^[%s]" conda-env)
 					'face 'vwe-modeline--default-face
 					'help-echo (format "anaconda env %s" conda-env)
+					'mouse-face 'vwe-modeline--mouse-face)))))
+
+(defun vwe-modeline--segment-pyenv-env ()
+  "Display current python pyenv env."
+  (when (eq major-mode 'python-mode)
+	(let* ((pyenv-env (getenv "PYENV_VERSION")))
+	  (when pyenv-env
+		(propertize (format "Py^[%s]" pyenv-env)
+					'face 'vwe-modeline--default-face
+					'help-echo (format "anaconda env %s" pyenv-env)
 					'mouse-face 'vwe-modeline--mouse-face)))))
 
 (defun vwe-modeline--segment-ruby-env ()

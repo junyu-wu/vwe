@@ -22,6 +22,7 @@
 ;;; Commentary:
 
 ;; pip install mypy pylint flake8 autopep8
+;; pip install 'python-lsp-server[all]'
 
 ;;; Code:
 ;; ***************************************************************************
@@ -81,6 +82,11 @@
 							  elpy-rpc-virtualenv-path (vwe@lib--path-cache "elpy/rpc-venv")
 							  elpy-rpc-python-command "python3"
 							  elpy-get-info-from-shell t)))
+
+		   ;;
+		   ;; `pyenv'
+		   ;;
+		   (vwe@lib--pkg pyenv-mode)
 
 		   ;;
 		   ;; `conda' anaconda
