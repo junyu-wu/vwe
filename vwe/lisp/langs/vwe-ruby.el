@@ -38,20 +38,25 @@
   :config (;;
 		   ;; `rvm'
 		   ;;
-		   (vwe@lib--pkg rvm
-			 :init ((add-hook 'ruby-mode-hook
-							  (lambda ()
-								(rvm-activate-corresponding-ruby)
-								(rvm-use-default)))))
+		   ;; (vwe@lib--pkg rvm
+		   ;; 	 :init ((add-hook 'ruby-mode-hook
+		   ;; 					  (lambda ()
+		   ;; 						(rvm-activate-corresponding-ruby)
+		   ;; 						(rvm-use-default)))))
+
+		   ;;
+		   ;; `rbenv'
+		   ;;
+		   (vwe@lib--pkg rbenv)
 
 		   ;;
 		   ;; `inf-ruby' 连接ruby repl
 		   ;;
 		   (vwe@lib--pkg inf-ruby
 			 :init ((add-hook 'ruby-mode-hook #'inf-ruby-minor-mode))
-			 :config ((with-eval-after-load 'rvm
-						(advice-add 'inf-ruby-console-auto
-									:before #'rvm-activate-corresponding-ruby)))
+			 ;; :config ((with-eval-after-load 'rvm
+			 ;; 			(advice-add 'inf-ruby-console-auto
+			 ;; 						:before #'rvm-activate-corresponding-ruby)))
 			 :variable ((vwe@lib--keymap-set compilation-shell-minor-mode-map
 											 '(("M-RET" nil)))))
 		   ;;

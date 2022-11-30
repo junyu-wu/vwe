@@ -714,8 +714,11 @@
 				  ("ruby"
 				   (("a" rvm-activate-corresponding-ruby "rvm activate")
 					("u" rvm-use "rvm use")
+					("s" rbenv-use "rbenv use")
+					("g" rbenv-use-global "rbenv use global")
+					("d" rbenv-use-corresponding "use corresponding")
 					("i" inf-ruby "irb")
-					("s" (lambda ()
+					("t" (lambda ()
 						   (interactive)
 						   (funcall
 							(vwe-key-define ruby-send
@@ -728,7 +731,7 @@
 											  ("b" ruby-send-buffer "send buffer")))))) "send ..." :face (:foreground "yellow" :underline t :weight bold))
 					("c" inf-ruby-console-auto "lanuch repl")
 					("r" robe-start "start rebo")
-					("t" ruby-switch-to-inf "switch to ibr")
+					("f" ruby-switch-to-inf "switch to ibr")
 					("n" inf-ruby-switch-setup "switch setup")
 					("p" ruby-switch-to-last-ruby-buffer "back last buffer")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))

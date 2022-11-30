@@ -64,7 +64,8 @@
     (vwe-modeline--segment-space
 	 vwe-modeline--segment-conda-env
 	 vwe-modeline--segment-pyenv-env
-	 vwe-modeline--segment-ruby-env
+	 vwe-modeline--segment-rvm-env
+	 vwe-modeline--segment-rbenv-env
 	 vwe-modeline--segment-space
 	 vwe-modeline--segment-lsp
 	 vwe-modeline--segment-space
@@ -683,12 +684,20 @@ NOT-I is include curretn buffer."
 					'help-echo (format "anaconda env %s" pyenv-env)
 					'mouse-face 'vwe-modeline--mouse-face)))))
 
-(defun vwe-modeline--segment-ruby-env ()
+(defun vwe-modeline--segment-rvm-env ()
   "Display current ruby and gem env."
   (when (and (eq major-mode 'ruby-mode) (fboundp 'rvm--current-ruby) (rvm-working-p))
 	(propertize (format "R^[v:%s|g:%s]" rvm-current-ruby rvm--current-gemset)
 				'face 'vwe-modeline--default-face
 				'help-echo (format "Ruby version %s gem %s" rvm-current-ruby rvm--current-gemset)
+		  		'mouse-face 'vwe-modeline--mouse-face)))
+
+(defun vwe-modeline--segment-rbenv-env ()
+  "Display current ruby and gem env."
+  (when (and (eq major-mode 'ruby-mode) (bound-and-true-p rbenv-version-environment-variable))
+	(propertize (format "Rb^[%s]" (rbenv--active-ruby-version))
+				'face 'vwe-modeline--default-face
+				'help-echo (format "Ruby version %s" (rbenv--active-ruby-version))
 		  		'mouse-face 'vwe-modeline--mouse-face)))
 
 (defun vwe-modeline--segment-winnum ()
