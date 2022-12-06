@@ -37,8 +37,14 @@
   :type 'hook)
 
 (defcustom vwe-key--leader-key
-  "M-RET"
+  "M-z"
   "Keymap quit key."
+  :group 'vwe-key
+  :type 'string)
+
+(defcustom vwe-key--toggle-minibuffer-key
+  "M-z"
+  "Toggle minibuffer key."
   :group 'vwe-key
   :type 'string)
 
@@ -60,11 +66,11 @@
   :group 'vwe-key
   :type 'string)
 
-(defcustom vwe-key--toggle-minibuffer-key
-  "M-RET"
-  "Toggle minibuffer key."
+(defcustom vwe-key--key-sort-p
+  t
+  "Is sort key?"
   :group 'vwe-key
-  :type 'string)
+  :type 'boolean)
 
 (defface vwe-key--default-face
   '((t (:foreground "#B0BEC5" :weight bold)))
@@ -409,6 +415,12 @@ WIN is Window."
 		(set-transient-map vwe-key--keymap-mapping nil 'vwe-key--close-buffer))
 	  (display-buffer-in-side-window vwe-key--buffer-handle alist))))
 
+(defun vwe-key--check-key-code (key)
+  "Check KEY."
+  (if (string-match-p "\\`[a-zA-Z].*\\'" key)
+	  t
+	nil))
+
 ;;;###autoload
 (defmacro vwe-key-define (name define &optional mode leaderkey)
   "Define MODE keymap with NAME and DEFINE.
@@ -422,7 +434,13 @@ LEADERKEY is leader key."
 			 (func-name (intern func-name-str))
 			 (minibuf-func-name (intern (vwe-key--make-minibuffer-function-name-by-func-name func-name-str)))
 			 (define-title (car define-list))
-			 (define-body (cadr define-list)))
+			 (define-body (if vwe-key--key-sort-p
+							  (sort (cadr define-list)
+									(lambda (a b)
+									  (if (and (vwe-key--check-key-code (car a)) (vwe-key--check-key-code (car b)))
+										  (string< (car a) (car b))
+										nil)))
+							(cadr define-list))))
 
 		(eval `(defun ,minibuf-func-name (&optional func)
 				 (interactive

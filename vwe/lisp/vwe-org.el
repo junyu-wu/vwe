@@ -100,8 +100,8 @@
 ;;
 (vwe@lib--pkg org
   :init ((add-hook 'org-mode-hook #'toggle-truncate-lines))
-  :config ((vwe@lib--keymap-set org-mode-map '(("C-<return>" nil)
-											   ("C-<return>" org-meta-return)))
+  :config (;; (vwe@lib--keymap-set org-mode-map '(("C-<return>" nil)
+		   ;; 									   ("C-<return>" org-meta-return)))
 
 		   ;; 代码运行环境
 		   (vwe@lib--pkg ob-go)

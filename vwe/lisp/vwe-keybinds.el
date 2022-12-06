@@ -61,7 +61,8 @@
 	("C-c C-f"                            format-all-buffer)
 	("C-|"                                wve-edit-bound--temp-show)
 	("C-M-|"                              vwe-edit-bound--remove-overlays)
-	("C-M-="                              cua-rectangle-mark-mode)
+	("C-M-="                              rectangle-mark-mode)
+	("C-M--"                              cua-rectangle-mark-mode)
 	("M-'"                                sp-up-sexp)
 	("M-("                                sp-down-sexp)
 	("M-="                                sp-backward-unwrap-sexp)
@@ -91,6 +92,7 @@
 	("M-p"                                vwe-edit--open-newline-above)
 	("M-n"                                vwe-edit--open-newline-below)
 	("M-RET"                              vwe-key:global)
+	("M-z"                              vwe-key:global)
 
 	([remap comment-dwim]                 comment-dwim-2)
 	([remap move-beginning-of-line]       mwim-beginning-of-code-or-line)
@@ -131,7 +133,6 @@
   (vwe-key-define global
 				  (("global" :face (:background "DarkOrange" :foreground "white" :weight bold))
 				   (("B" ibuffer "ibuffer")
-					("@" vwe@lib--minibuffer-switch "switch minibuffer")
 					("i" recentf-open-files "recent files")
 					("D" dired "dired")
 					("C-d" treemacs "treemacs")
@@ -174,6 +175,7 @@
 					("=" vwe-layout--zoom-type-toggle "toggle zoom")
 					("S" sudo-edit "sudo")
 					("b" revert-buffer-with-coding-system "revert coding system")
+					("@" vwe@lib--minibuffer-switch "switch minibuffer")
 					("h" vwe@lib--eol-hidden-dos "hidden dos eol")
 					("^" vwe@lib--eol-remove-dos "remove dos eol")
 					("!" winum-mode "win number")
@@ -322,7 +324,8 @@
 
   (vwe-key-define edit
 				  (("edit" :face (:background "red" :foreground "white" :weight bold))
-				   (("r" cua-rectangle-mark-mode "rectangle mark")
+				   (("r" cua-rectangle-mark-mode "cua rectangle mark")
+					("R" rectangle-mark-mode "rectangle mark")
 					("e" iedit-mode "iedit mode")
 					("E" iedit-rectangle-mode "iedit rectangle mode")
 					("x" er/expand-region "expand region")
@@ -488,7 +491,8 @@
 					("DEL" vwe-key:org-template "org template" :footer t :face (:background "magenta" :foreground "white" :weight bold))
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
 				  (org-mode)
-				  (if vwe@lib--sys-win-p "C-<return>" "M-<return>"))
+				  ;; (if vwe@lib--sys-win-p "C-<return>" "M-<return>")
+				  )
 
   (vwe-key-define markdown
 				  ("markdown"
@@ -694,7 +698,7 @@
 					("r" python-shell-send-region "send region")
 					("k" vwe@python--kill-python-shell "quit")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold))))
-				  (python-mode))
+				  (python-mode inferior-python-mode))
 
   (vwe-key-define golang
 				  ("golang"

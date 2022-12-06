@@ -96,7 +96,8 @@
 		   ;;
 		   (vwe@lib--pkg solargraph
 			 :init ((add-hook 'ruby-mode-hook (lambda() (vwe@lib--package-load 'solargraph))))
-			 :path (vwe@lib--path-vwe-site-lisp "emacs-solargraph"))))
+			 :path (vwe@lib--path-vwe-site-lisp "emacs-solargraph"))
+		   ))
 
 
 (provide 'vwe-ruby)
