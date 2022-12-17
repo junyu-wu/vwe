@@ -23,7 +23,6 @@
 ;;
 
 ;;; Code:
-(require 'cl)
 
 (defgroup vwe-mark nil
   "Customization group for beacon."
@@ -32,308 +31,215 @@
 
 (defvar vwe-mark--mode-keymap
   (let ((keymap (make-sparse-keymap)))
-	(define-key keymap (kbd "C->") #'vwe-mark-position--forward-word)
-	(define-key keymap (kbd "C-<") #'vwe-mark-position--backward-word)
 	keymap)
-  "Move to mark map.")
+  "Mark map.")
 
-;; =============================================================================
-;; word or symbol
-;;
-;; =============================================================================
-(defface vwe-mark--position--face
-  '((t (:inherit 'error :inverse-video nil)))
-  "Position makr hint face.")
-
-(defmacro vwe-mark-position--create-keymap (cmd)
-  "Create keymap CMD."
-  `(dotimes (i 10)
-	 (define-key vwe-mark-position--move-to-mark-map
-	   (kbd (concat "" (number-to-string i)))
-	   (lambda()
-		 (interactive)
-		 (vwe-mark-position--mark-move ,cmd (if (= i 0) 10 i))))))
-
-(defvar vwe-mark-position--move-to-mark-map
-  (let ((keymap (make-sparse-keymap)))
-	keymap)
-  "Move to mark map.")
-
-(defun vwe-mark-position--show-mark-and-move (cmd)
-  "Show before/after current cursor mark and move.
-CMD before/after move func."
-  (let ((mark-list))
-	(save-mark-and-excursion
-	  (call-interactively cmd)
-	  (dotimes (i 10)
-		(let ((before-point (point))
-			  (mark-i (make-overlay (1- (point)) (point))))
-		  (call-interactively cmd)
-		  (when (/= before-point (point))
-			(overlay-put mark-i 'after-string
-						 (propertize (format "%d" (1+ i))
-									 'display '((raise 0.5))
-									 'face 'vwe-mark--position--face))
-			(push mark-i mark-list)))))
-	(vwe-mark-position--create-keymap cmd)
-	(define-key vwe-mark-position--move-to-mark-map
-	  (kbd "q") (lambda ()
-				  (interactive)
-				  (mapc #'delete-overlay mark-list)))
-	(set-transient-map vwe-mark-position--move-to-mark-map
-					   nil
-					   (lambda()
-						 (mapc #'delete-overlay mark-list)))))
-
-(defun vwe-mark-position--mark-move (cmd &optional step)
-  "Move cursor position.
-CMD move func.
-STEP move step."
-  (let ((move-step 1))
-	(when (and (numberp step) (> step 1))
-	  (setq move-step step))
-	(dotimes (_ move-step)
-	  (call-interactively cmd))))
-
-;;;###autoload
-(defun vwe-mark-position--forward-word ()
-  "Forward word."
-  (interactive)
-  (forward-word)
-  (vwe-mark-position--show-mark-and-move #'forward-word))
-
-;;;###autoload
-(defun vwe-mark-position--backward-word ()
-  "Backward word."
-  (interactive)
-  (backward-word)
-  (vwe-mark-position--show-mark-and-move #'backward-word))
-
-;; =============================================================================
-;; paren
-;;
-;; =============================================================================
-
-(defvar vwe-mark-paren--level-face-list
-  '(("1" . '((t (:foreground "red"))))
-	("2" . '((t (:foreground "DeepSkyBlue"))))
-	("3" . '((t (:foreground "green"))))
-	("4" . '((t (:foreground "yellow"))))
-	("5" . '((t (:foreground "cyan"))))
-	("6" . '((t (:foreground "orange"))))
-	("7" . '((t (:foreground "cyan"))))
-	("8" . '((t (:foreground "cyan"))))
-	("9" . '((t (:foreground "cyan"))))
-	("0" . '((t (:foreground "cyan")))))
-  "Face list.")
-
-(defvar vwe-mark-paren--overlay-list
+(defvar-local vwe-mark-multi-edit--list
   nil
-  "Paren overlay list.")
+  "Multi edit list.")
 
-(defvar vwe-mark-paren--move-to-mark-map
-  (let ((keymap (make-sparse-keymap)))
-	keymap)
-  "Move to mark map.")
+(defvar-local vwe-mark-multi-edit--overlay-list
+  '()
+  "Multi edit overlay list.")
 
-(defstruct vwe-mark-paren--obj
-  "Paren pair obj."
-  (level 0) (front) (after) (ovs '()))
+(defvar-local vwe-mark-multi-edit--rect-bound-overlay-list
+  '()
+  "Multi edit rect overlay list.")
 
-(defun vwe-mark-paren--find-nearest-close-paren-of-cur-point (&optional point)
-  "Find the nearest close parenthesis of the current point or other position.
-POINT is current point or position."
-  (unless point
-	(setq point (point)))
-  (save-excursion
-	(condition-case nil
-		(progn
-		  (let ((code (syntax-class (syntax-after (1- point))))
-				(open-code (syntax-class (syntax-after point))))
-			(cond ((= code 5) point)
-				  ((= open-code 4) (forward-list))
-				  ((= code 4) (progn (goto-char (1- point)) (forward-list)))
-				  (t (scan-lists point 1 1)))))
-	  (error
-	   nil))))
+(defvar-local vwe-mark-multi-edit--rect-start-point
+  nil
+  "Rect start point.")
 
-(defun vwe-mark-paren--find-nearest-open-paren-of-cur-point (&optional point)
-  "Find the nearest open parenthesis of the current point or other position.
-POINT is current point or position."
-  (save-excursion
-	(let ((point (vwe-mark-paren--find-nearest-close-paren-of-cur-point point)))
-	  (if point
-		  (progn
-			(goto-char point)
-			(backward-list))
-		nil))))
+(defface vwe-mark-multi-edit--default-face
+  '((t (:foreground nil :background "#00bfff" :bold t)))
+  "Multi edit marked face."
+  :group 'vwiss-vwe)
 
-(defun vwe-mark-paren--find-nearest-open-paren-of-cur-point+1 (&optional point)
-  "Find the nearest open parenthesis of the current point or other position.
-POINT is current point or position."
-  (1+ (vwe-mark-paren--find-nearest-open-paren-of-cur-point point)))
-
-(defun vwe-mark-paren--find-top-paren (&optional point)
-  "Find top open parenthesis.
-POINT is current point or position."
-  (unless point
-	(setq point (point)))
-
-  (let* ((p point))
-	(save-excursion
-	  (condition-case nil
-		  (progn
-			(while t
-			  (setq p (scan-lists p 1 1))))
-		(error
-		 (vwe-mark-paren--find-nearest-open-paren-of-cur-point p))))))
-
-(defmacro vwe-mark-paren--obj-constructor (obj point lv)
-  "Paren pair structs constructor.
-OBJ.
-POINT.
-LV."
-  `(list 'when (list 'vwe-mark-paren--obj-p ,obj)
-		 (list 'save-excursion
-			   (list 'setf (list 'vwe-mark-paren--obj-after ,obj) ,point
-					 (list 'vwe-mark-paren--obj-front ,obj)
-					 (list 'progn
-						   (list 'condition-case 'nil
-								 (list 'progn
-									   (list 'goto-char ,point)
-									   (list '1+ (list 'backward-list)))
-								 (list 'error
-									   'nil)
-								 ))
-					 (list 'vwe-mark-paren--obj-level ,obj) ,lv))))
-
-(defun vwe-mark-paren--find-children-paren-pair (&optional point level)
-  "Find all children parentheses that contain the current point.
-POINT is current point or position.
-LEVEL is current level."
-  (unless point (setq point (point)))
-  (when (or (not level) (< level 0)) (setq level 0))
-  (let* ((cur-p point) (lv level) (p-list '()))
-	(save-excursion
-	  (condition-case nil
-		  (progn
-			(while t
-			  (let* ((pp-obj (make-vwe-mark-paren--obj)))
-				(setq cur-p (scan-lists cur-p 1 0))
-				(eval (vwe-mark-paren--obj-constructor pp-obj cur-p lv))
-				(setq p-list (append p-list (list pp-obj))))))
-		(error
-		 (let* ((pp-list p-list)
-				(ppc-list '()))
-		   (loop for ppf
-				 in pp-list
-				 collect
-				 (setq ppc-list (append (vwe-mark-paren--find-children-paren-pair
-										 (vwe-mark-paren--obj-front ppf) (1+ lv))
-										ppc-list))) ;; loop
-		   (setq p-list (append p-list ppc-list))))))
-	p-list))
-
-(defun vwe-mark-paren--find-paren-pair (&optional point)
-  "Find all parentheses that contain the current point.
-POINT is current point or position.
-LEVEL is current level."
-  (unless point
-	(setq point (point)))
-
-  (save-excursion
-	(let* ((p (vwe-mark-paren--find-top-paren point))
-		   (p-list '())
-		   (lv 0)
-		   (obj (make-vwe-mark-paren--obj)))
-	  (when p
-		(setf (vwe-mark-paren--obj-front obj) (1+ p)
-			  (vwe-mark-paren--obj-after obj) (scan-lists p 1 0)
-			  (vwe-mark-paren--obj-level obj) lv)
-		(setq p-list (cons obj p-list)
-			  p-list (append p-list (vwe-mark-paren--find-children-paren-pair (1+ p) (1+ lv))))
-		)
-	  p-list)))
-
-(defmacro vwe-mark-paren--overlay-factory (ov str face)
-  "Paren pair overlay factory.
-OV.
-STR.
-FACE."
-  `(overlay-put ,ov 'face ,face)
-  `(overlay-put ,ov 'display '((height 1.5)))
-  `(overlay-put ,ov 'after-string
-				(propertize ,str
-							'display '((raise 0.5))
-							'face ,face)))
-
-(defun vwe-mark-paren--find-level-face (lv)
-  "Find face.
-LV."
-  (unless (stringp lv)
-	(setq lv (number-to-string lv)))
-  (cdr (assoc lv vwe-mark-paren--level-face-list)))
-
-(defun vwe-mark-paren--paren-show-mark-obj (ov-obj index)
-  "Make obj mark.
-OV-OBJ.
-INDEX."
-  (when (and ov-obj (vwe-mark-paren--obj-p ov-obj))
-	(let* ((front-ov (make-overlay
-					  (1- (vwe-mark-paren--obj-front ov-obj))
-					  (vwe-mark-paren--obj-front ov-obj)))
-		   (after-ov (make-overlay
-					  (1- (vwe-mark-paren--obj-after ov-obj))
-					  (vwe-mark-paren--obj-after ov-obj)))
-		   (lv-face (vwe-mark-paren--find-level-face (vwe-mark-paren--obj-level ov-obj))))
-	  (vwe-mark-paren--overlay-factory front-ov (concat (number-to-string index) "a") lv-face)
-	  (vwe-mark-paren--overlay-factory after-ov (concat (number-to-string index) "b") lv-face)
-	  (setf (vwe-mark-paren--obj-ovs ov-obj) (append (vwe-mark-paren--obj-ovs ov-obj)
-													 (list front-ov after-ov))))))
-
-(defun vwe-mark-paren--paren-show-mark (objs)
-  "Paren show mark.
-OBJS."
-  (when (and vwe-mark-paren--overlay-list (overlayp vwe-mark-paren--overlay-list)) (mapc #'delete-overlay vwe-mark-paren--overlay-list))
-  (let* ((len (length objs))
-		 (ovs '()))
-	(dotimes (i len)
-	  (vwe-mark-paren--paren-show-mark-obj (nth i objs) i)
-	  (setq ovs (cons (vwe-mark-paren--obj-ovs (nth i objs)) ovs)))
-
-	(define-key vwe-mark-paren--move-to-mark-map
-	  (kbd "b") (lambda (p)
-				  (interactive "ngoto after paren:")
-				  (setq p (vwe-mark-paren--obj-after (nth p objs)))
-				  (goto-char p)))
-	(define-key vwe-mark-paren--move-to-mark-map
-	  (kbd "a") (lambda (p)
-				  (interactive "ngoto front paren:")
-				  (setq p (vwe-mark-paren--obj-front (nth p objs)))
-				  (goto-char p)))
-	(define-key vwe-mark-paren--move-to-mark-map
-	  (kbd "q") (lambda ()
-				  (interactive)
-				  (mapc (lambda (ov) (mapc #'delete-overlay ov)) ovs)
-				  (vwe-mark-paren-mode -1)))
-	(setq vwe-mark-paren--overlay-list ovs)))
+(defface vwe-mark-multi-edit--rect-face
+  '((t (:foreground nil :background "#b22222" :bold t)))
+  "Multi edit rect marked face."
+  :group 'vwiss-vwe)
 
 ;;;###autoload
-(defun vwe-mark-paren--paren-pair ()
-  "Show paren pair mark."
+(defun vwe-mark-multi-edit--chars ()
+  "Edit multiple chars in range."
   (interactive)
-  (vwe-mark-paren-mode t)
-  (vwe-mark-paren--paren-show-mark (vwe-mark-paren--find-paren-pair (point))))
+  (when (region-active-p)
+	(let* ((chars '())
+		   (start (region-beginning))
+		   (end (region-end)))
+	  (save-excursion
+		(goto-char end)
+		(while (>= (point) start)
+		  (add-to-list 'chars (cons (1- (point)) (point)))
+		  (backward-char)))
+	  (setq vwe-mark-multi-edit--list chars)
+	  (goto-char end)
+	  (vwe-mark-multi-edit--kmacro-start))))
 
-(define-minor-mode vwe-mark-paren-mode
-  "Mark paren mode."
-  :group 'vwe-mark
-  :keymap vwe-mark-paren--move-to-mark-map
-  (if vwe-mark-paren-mode
-	  t
-	(when vwe-mark-paren--overlay-list
-	  (mapc #'delete-overlay vwe-mark-paren--overlay-list))
-	(setq vwe-mark-paren--overlay-list nil)))
+;;;###autoload
+(defun vwe-mark-multi-edit--words ()
+  "Edit multiple words in range."
+  (interactive)
+  (when (region-active-p)
+	(let* ((words '())
+		   (start (region-beginning))
+		   (end (region-end)))
+	  (save-excursion
+		(goto-char end)
+		(while (>= (point) start)
+		  (when (bounds-of-thing-at-point 'word)
+			(add-to-list 'words (bounds-of-thing-at-point 'word) t))
+		  (backward-word)))
+	  (setq vwe-mark-multi-edit--list words)
+	  (goto-char (cdr (car vwe-mark-multi-edit--list)))
+	  (vwe-mark-multi-edit--kmacro-start))))
+
+;;;###autoload
+(defun vwe-mark-multi-edit--symbols ()
+  "Edit multiple symbols in range."
+  (interactive)
+  (when (region-active-p)
+	(let* ((symbol '())
+		   (start (region-beginning))
+		   (end (region-end)))
+	  (save-excursion
+		(goto-char end)
+		(while (>= (point) start)
+		  (when (bounds-of-thing-at-point 'symbol)
+			(add-to-list 'symbol (bounds-of-thing-at-point 'symbol) t))
+		  (backward-sexp)))
+	  (setq vwe-mark-multi-edit--list symbol)
+	  (goto-char (cdr (car vwe-mark-multi-edit--list)))
+	  (vwe-mark-multi-edit--kmacro-start))))
+
+;;;###autoload
+(defun vwe-mark-multi-edit--lines ()
+  "Edit multiple lines in range."
+  (interactive)
+  (when (region-active-p)
+	(let* ((line '())
+		   (start (region-beginning))
+		   (end (region-end)))
+	  (save-excursion
+		(goto-char end)
+		(while (< (point) end)
+          (unless (string-match-p "^[ ]*$" (buffer-substring-no-properties (point-at-bol) (point-at-eol)))
+            (when (bounds-of-thing-at-point 'line)
+              (add-to-list 'vwe-mark-multi-edit--list (bounds-of-thing-at-point 'line) t)))
+          (forward-line))
+		(while (>= (point) start)
+		  (when (bounds-of-thing-at-point 'line)
+			(add-to-list 'line (cons (car (bounds-of-thing-at-point 'line)) (1- (cdr (bounds-of-thing-at-point 'line)))) t))
+		  (backward-word)))
+	  (setq vwe-mark-multi-edit--list line)
+	  (goto-char end)
+	  (vwe-mark-multi-edit--kmacro-start))))
+
+(defun vwe-mark-multi-edit--make-overlay ()
+  "Make overlay."
+  (when vwe-mark-multi-edit--list
+	(dolist (item vwe-mark-multi-edit--list)
+	  (let* ((overlay (make-overlay (car item) (cdr item))))
+		(overlay-put overlay 'face 'vwe-mark-multi-edit--default-face)
+		(add-to-list 'vwe-mark-multi-edit--overlay-list overlay t)))))
+
+(defun vwe-mark-multi-edit--kmacro-start ()
+  "Start kmacro."
+  (when (region-active-p)
+	(deactivate-mark))
+  (remove-hook 'post-command-hook #'vwe-mark-multi-edit--rect-monitor-post-command t)
+  (vwe-mark-multi-edit--make-overlay)
+  (advice-add 'keyboard-quit :before #'vwe-mark-multi-edit--exit)
+  (kmacro-start-macro 0))
+
+(defun vwe-mark-multi-edit--exit ()
+  "Keyboard-quit advice."
+  (end-kbd-macro)
+  (vwe-mark-multi-edit--apply-all)
+  (advice-remove 'keyboard-quit #'vwe-mark-multi-edit--exit)
+
+  (when vwe-mark-multi-edit--overlay-list
+	(mapc #'delete-overlay vwe-mark-multi-edit--overlay-list))
+
+  (when vwe-mark-multi-edit--rect-bound-overlay-list
+	(mapc #'delete-overlay vwe-mark-multi-edit--rect-bound-overlay-list))
+
+  (setq vwe-mark-multi-edit--list nil
+		vwe-mark-multi-edit--overlay-list '()
+		vwe-mark-multi-edit--rect-bound-overlay-list '()))
+
+(defun vwe-mark-multi-edit--apply-all ()
+  "Apply all kmacro."
+  (when vwe-mark-multi-edit--list
+	(dolist (item (cdr vwe-mark-multi-edit--overlay-list))
+	  (goto-char (overlay-end item))
+	  (call-last-kbd-macro))))
+
+;;;###autoload
+(defun vwe-mark-multi-edit--rect-mark ()
+  "Rect mark."
+  (interactive)
+  (setq vwe-mark-multi-edit--rect-start-point (point))
+  (setq vwe-mark-multi-edit--rect-bound-overlay-list '())
+  (add-hook 'post-command-hook #'vwe-mark-multi-edit--rect-monitor-post-command nil t))
+
+(defun vwe-mark-multi-edit--rect-monitor-post-command ()
+  "Rect monitor post command."
+  (if (eq this-command 'keyboard-quit)
+	  (progn
+		(mapc #'delete-overlay vwe-mark-multi-edit--rect-bound-overlay-list)
+		(remove-hook 'post-command-hook #'vwe-mark-multi-edit--rect-monitor-post-command t))
+	(when vwe-mark-multi-edit--rect-start-point
+	  (mapc #'delete-overlay vwe-mark-multi-edit--rect-bound-overlay-list)
+	  (let* ((start-point (save-excursion
+							(goto-char vwe-mark-multi-edit--rect-start-point)
+							(cons (line-number-at-pos) (current-column))))
+			 (start-line (car start-point))
+			 (start-column (cdr start-point))
+			 (current-line (line-number-at-pos))
+			 (current-column (current-column))
+			 (rect-start-line (min start-line current-line))
+             (rect-end-line (max start-line current-line))
+             (rect-start-column (min start-column current-column))
+             (rect-end-column (max start-column current-column)))
+		(dotimes (line (1+ (- rect-end-line rect-start-line)))
+          (let ((overlay (make-overlay (save-excursion
+                                         (goto-line (+ rect-start-line line))
+                                         (move-to-column rect-start-column)
+                                         (point))
+                                       (save-excursion
+                                         (goto-line (+ rect-start-line line))
+                                         (move-to-column rect-end-column)
+                                         (point)))))
+            (overlay-put overlay 'face 'vwe-mark-multi-edit--rect-face)
+            (add-to-list 'vwe-mark-multi-edit--rect-bound-overlay-list overlay t)))))))
+
+(defun vwe-mark-multi-edit--rect-symbols ()
+  "Multi edit rect symbols."
+  (interactive)
+  (when vwe-mark-multi-edit--rect-bound-overlay-list
+	(dolist (bound-overlay vwe-mark-multi-edit--rect-bound-overlay-list)
+	  (when (and (overlay-start bound-overlay) (overlay-end bound-overlay))
+		(save-excursion
+		  (goto-char (overlay-start bound-overlay))
+		  (when (bounds-of-thing-at-point 'symbol)
+			(add-to-list 'vwe-mark-multi-edit--list (bounds-of-thing-at-point 'symbol))))))
+	(goto-char (cdr (car vwe-mark-multi-edit--list)))
+	(vwe-mark-multi-edit--kmacro-start)))
+
+(defun vwe-mark-multi-edit--rect-edit ()
+  "Multi edit rect insert STR."
+  (interactive)
+  (when vwe-mark-multi-edit--rect-bound-overlay-list
+	(dolist (bound-overlay vwe-mark-multi-edit--rect-bound-overlay-list)
+	  (when (and (overlay-start bound-overlay) (overlay-end bound-overlay))
+		(save-excursion
+		  (goto-char (overlay-start bound-overlay))
+		  (add-to-list 'vwe-mark-multi-edit--list (cons (point) (point)))
+		  )))
+	(goto-char (cdr (car vwe-mark-multi-edit--list)))
+	(vwe-mark-multi-edit--kmacro-start)))
 
 ;;
 ;; mode

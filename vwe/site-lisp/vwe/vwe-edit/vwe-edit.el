@@ -528,6 +528,7 @@
 	(goto-char (car pos))
 	(insert str)))
 
+;;;###autoload
 (defun vwe-edit-toggle-case--capitalize ()
   "Capitalize."
   (interactive)

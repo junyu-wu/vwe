@@ -788,6 +788,7 @@
   :init ((autoload 'vwe-edit-region--mark-edit (vwe@lib--path-vwe-site-lisp "vwe/vwe-edit/vwe-edit.el" t) "Vwe edit mode." t t)
 		 (autoload 'vwe-edit-toggle-case--upper-case (vwe@lib--path-vwe-site-lisp "vwe/vwe-edit/vwe-edit.el" t) "Vwe edit mode." t t)
 		 (autoload 'vwe-edit-toggle-case--lower-case (vwe@lib--path-vwe-site-lisp "vwe/vwe-edit/vwe-edit.el" t) "Vwe edit mode." t t)
+		 (autoload 'vwe-edit-toggle-case--capitalize (vwe@lib--path-vwe-site-lisp "vwe/vwe-edit/vwe-edit.el" t) "Vwe edit mode." t t)
 		 (autoload 'vwe-edit-toggle-case--select-convert (vwe@lib--path-vwe-site-lisp "vwe/vwe-edit/vwe-edit.el" t) "Vwe edit mode." t t)
 		 (autoload 'vwe-edit-bound-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-edit/vwe-edit.el" t) "Vwe edit bound mode." t t)
 		 (autoload 'wve-edit-bound--temp-show (vwe@lib--path-vwe-site-lisp "vwe/vwe-edit/vwe-edit.el" t) "Vwe edit bound mode." t t)
@@ -824,6 +825,18 @@
 		 (autoload 'vwe-paren--toggle (vwe@lib--path-vwe-site-lisp "vwe/vwe-paren/vwe-paren.el" t) "Vwe paren mode." t t)
 		 (add-hook 'after-init-hook #'vwe-paren-mode)
 		 (add-hook 'prog-mode-hook #'vwe-paren--toggle))
+  :path(vwe@lib--path-vwe-site-lisp "vwe/vwe-paren"))
+
+;;
+;; `vwe-mark'
+;;
+(vwe@lib--pkg vwe-mark
+  :init ((autoload 'vwe-mark-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-mark/vwe-mark.el" t) "Vwe mark mode." t t)
+		 (autoload 'vwe-mark-multi-edit--chars (vwe@lib--path-vwe-site-lisp "vwe/vwe-mark/vwe-mark.el" t) "Vwe mark multi edit chars." t t)
+		 (autoload 'vwe-mark-multi-edit--words (vwe@lib--path-vwe-site-lisp "vwe/vwe-mark/vwe-mark.el" t) "Vwe mark multi edit words." t t)
+		 (autoload 'vwe-mark-multi-edit--symbols (vwe@lib--path-vwe-site-lisp "vwe/vwe-mark/vwe-mark.el" t) "Vwe mark multi edit symbols." t t)
+		 (autoload 'vwe-mark-multi-edit--lines (vwe@lib--path-vwe-site-lisp "vwe/vwe-mark/vwe-mark.el" t) "Vwe mark multi edit lines." t t)
+		 (autoload 'vwe-mark-multi-edit--rect-mark (vwe@lib--path-vwe-site-lisp "vwe/vwe-mark/vwe-mark.el" t) "Vwe mark multi edit rect mark." t t))
   :path(vwe@lib--path-vwe-site-lisp "vwe/vwe-paren"))
 
 (vwe@lib--log "Initialization of General configuration is complete.")
