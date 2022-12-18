@@ -46,12 +46,16 @@
   '()
   "Multi edit rect overlay list.")
 
+(defvar-local vwe-mark-multi-edit--current-point
+  nil
+  "Rect start point.")
+
 (defvar-local vwe-mark-multi-edit--rect-start-point
   nil
   "Rect start point.")
 
 (defface vwe-mark-multi-edit--default-face
-  '((t (:foreground nil :background "#00bfff" :bold t)))
+  '((t (:foreground nil :background "#20b2aa" :bold t)))
   "Multi edit marked face."
   :group 'vwiss-vwe)
 
@@ -171,10 +175,12 @@
 
 (defun vwe-mark-multi-edit--apply-all ()
   "Apply all kmacro."
-  (when vwe-mark-multi-edit--list
+  (when vwe-mark-multi-edit--overlay-list
 	(dolist (item (cdr vwe-mark-multi-edit--overlay-list))
-	  (goto-char (overlay-end item))
-	  (call-last-kbd-macro))))
+	  (save-excursion
+		(when (overlay-end item)
+		  (goto-char (overlay-end item))
+		  (call-last-kbd-macro))))))
 
 ;;;###autoload
 (defun vwe-mark-multi-edit--rect-mark ()
@@ -240,6 +246,38 @@
 		  )))
 	(goto-char (cdr (car vwe-mark-multi-edit--list)))
 	(vwe-mark-multi-edit--kmacro-start)))
+
+;;;###autoload
+(defun vwe-mark-multi-edit--replace ()
+  "Replace symbol or region range."
+  (interactive)
+  (let* ((str (if (region-active-p)
+				  (buffer-substring (region-beginning) (region-end))
+				(thing-at-point 'symbol)))
+		 (point (point))
+		 (len (length str))
+		 (start (point-min))
+		 (end (point-max))
+		 (current-overlay (if (region-active-p)
+							  (make-overlay (region-beginning) (region-end))
+							(make-overlay (car (bounds-of-thing-at-point 'symbol))
+										  (cdr (bounds-of-thing-at-point 'symbol))))))
+	(save-excursion
+	  (goto-char end)
+	  (catch 'break
+		(while (search-backward str nil t)
+		  (let* ((search-start (point))
+				 (search-end (+ search-start len)))
+			(cond
+			 ((= point search-start) (setq point (+ search-start len)))
+			 ((= point search-end) (setq point search-end))
+			 (t (add-to-list 'vwe-mark-multi-edit--list (cons search-start search-end)))))
+		  (when (<= (point) start)
+			(throw 'break nil)))))
+	(goto-char point)
+	(vwe-mark-multi-edit--kmacro-start)
+	(overlay-put current-overlay 'face 'vwe-mark-multi-edit--rect-face)
+	(add-to-list 'vwe-mark-multi-edit--overlay-list current-overlay)))
 
 ;;
 ;; mode

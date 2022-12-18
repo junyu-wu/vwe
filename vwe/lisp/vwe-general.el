@@ -836,7 +836,8 @@
 		 (autoload 'vwe-mark-multi-edit--words (vwe@lib--path-vwe-site-lisp "vwe/vwe-mark/vwe-mark.el" t) "Vwe mark multi edit words." t t)
 		 (autoload 'vwe-mark-multi-edit--symbols (vwe@lib--path-vwe-site-lisp "vwe/vwe-mark/vwe-mark.el" t) "Vwe mark multi edit symbols." t t)
 		 (autoload 'vwe-mark-multi-edit--lines (vwe@lib--path-vwe-site-lisp "vwe/vwe-mark/vwe-mark.el" t) "Vwe mark multi edit lines." t t)
-		 (autoload 'vwe-mark-multi-edit--rect-mark (vwe@lib--path-vwe-site-lisp "vwe/vwe-mark/vwe-mark.el" t) "Vwe mark multi edit rect mark." t t))
+		 (autoload 'vwe-mark-multi-edit--rect-mark (vwe@lib--path-vwe-site-lisp "vwe/vwe-mark/vwe-mark.el" t) "Vwe mark multi edit rect mark." t t)
+		 (autoload 'vwe-mark-multi-edit--replace (vwe@lib--path-vwe-site-lisp "vwe/vwe-mark/vwe-mark.el" t) "Vwe mark multi edit replace." t t))
   :path(vwe@lib--path-vwe-site-lisp "vwe/vwe-paren"))
 
 (vwe@lib--log "Initialization of General configuration is complete.")
