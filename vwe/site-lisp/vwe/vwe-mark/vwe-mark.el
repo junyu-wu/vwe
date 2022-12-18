@@ -279,6 +279,34 @@
 	(overlay-put current-overlay 'face 'vwe-mark-multi-edit--rect-face)
 	(add-to-list 'vwe-mark-multi-edit--overlay-list current-overlay)))
 
+;;;###autoload
+(defun vwe-mark-multi-edit--rect-replace (replace)
+  "REPLACE symbol or region range."
+  (interactive "sreplace:")
+  (when vwe-mark-multi-edit--rect-bound-overlay-list
+	(let* ((str replace)
+		   (point (point)))
+	  (dolist (bound vwe-mark-multi-edit--rect-bound-overlay-list)
+		(when (and (overlay-start bound) (overlay-end bound))
+		  (let* ((len (length str))
+				 (start (overlay-start bound))
+				 (end (overlay-end bound)))
+			(save-excursion
+			  (goto-char end)
+			  (catch 'break
+				(while (search-backward str nil t)
+				  (let* ((search-start (point))
+						 (search-end (+ search-start len)))
+					(cond
+					 ((= point search-start) (setq point (+ search-start len)))
+					 ((= point search-end) (setq point search-end))
+					 (t (add-to-list 'vwe-mark-multi-edit--list (cons search-start search-end)))))
+				  (when (<= (point) start)
+					(throw 'break nil))))
+			  ))))
+	  (goto-char (cdar vwe-mark-multi-edit--list))
+	  (vwe-mark-multi-edit--kmacro-start))))
+
 ;;
 ;; mode
 ;;
