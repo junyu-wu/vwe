@@ -92,7 +92,7 @@
 	("M-p"                                vwe-edit--open-newline-above)
 	("M-n"                                vwe-edit--open-newline-below)
 	("M-RET"                              vwe-key:global)
-	("M-z"                              vwe-key:global)
+	("M-z"                                vwe-key:global)
 
 	([remap comment-dwim]                 comment-dwim-2)
 	([remap move-beginning-of-line]       mwim-beginning-of-code-or-line)

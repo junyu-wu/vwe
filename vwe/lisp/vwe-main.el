@@ -60,7 +60,11 @@
 		   (require 'vwe-ui)
 		   (require 'vwe-general)
 
+		   ;;
+		   ;; inti lang
+		   ;;
 		   (require 'vwe-lang)
+
 		   ;;
 		   ;; inti misc
 		   ;;

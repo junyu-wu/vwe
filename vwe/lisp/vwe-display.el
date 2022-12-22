@@ -155,8 +155,9 @@ apply ORIGINAL and ARGS."
 		   (when (derived-mode-p 'prog-mode)
 			 (symbol-overlay-mode 1)))
 
-		 (advice-add #'set-mark :after #'vwe@pkg--symbol-overlay-turn-off)
-		 (advice-add #'deactivate-mark :after #'vwe@pkg--symbol-overlay-turn-on))
+		 ;; (advice-add #'set-mark :after #'vwe@pkg--symbol-overlay-turn-off)
+		 ;; (advice-add #'deactivate-mark :after #'vwe@pkg--symbol-overlay-turn-on)
+		 )
   :variable ((setq symbol-overlay-idle-time 0.1)))
 
 ;;
