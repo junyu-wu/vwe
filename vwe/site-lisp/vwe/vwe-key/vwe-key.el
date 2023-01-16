@@ -182,7 +182,6 @@
 		 (ro (if buffer-read-only
 				 (propertize "RO " 'face 'vwe-key--read-only-face)
 			   (propertize "RW " 'face 'vwe-key--read-and-write-face)))
-		 ;; (other (propertize (format " [%s]    ｡◕‿◕｡ " major-mode) 'face 'vwe-key--title-other-face))
 		 (other (format "%s%s%s%s" (propertize (format " %s " (format "%s" major-mode)) 'face 'vwe-key--major-mode-face)
 						(propertize (format "%s " (buffer-name)) 'face 'vwe-key--buffer-name-face
 									'help-echo (buffer-file-name))
