@@ -27,6 +27,7 @@
 (vwe@lib--pkg lua-mode
   :init ((autoload 'lua-mode "lua-mode" "Lua editing mode." t)
 		 (add-to-list 'auto-mode-alist '("\\.lua$" . lua-mode))
+		 (add-to-list 'auto-mode-alist '("\\.nse$" . lua-mode))
 		 (add-to-list 'interpreter-mode-alist '("lua" . lua-mode)))
   :config ((vwe@lib--pkg company-lua
 			 :init ((add-hook 'lua-mode-hook

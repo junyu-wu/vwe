@@ -41,6 +41,15 @@
 	(mermaid . t))
   "Org language alist.")
 
+(defvar vwe@org--emphasis-alist
+  '(("bold (*)" . "*")
+	("italic (/)" . "/")
+	("underlined (_)" . "_")
+	("strikethrough (+)" . "+")
+	("code (~)" . "~")
+	("verbatim (=)" . "="))
+  "Org emphasis alist.")
+
 (defun vwe@org--template (str &optional mod)
   "Insert STR and MOD expand org template."
   (let* ((text))
@@ -56,6 +65,37 @@
 		(org-tempo-complete-tag)))
 	(when mod (insert mod) (forward-line))
 	(when text (insert text))))
+
+
+(defun vwe@org--emphasis-text (&optional emph)
+  "Insert STR and EMPH expand org sign."
+  (interactive
+   (list
+	(completing-read "emphasis:" (mapcar (lambda(item)
+										   (car item))
+										 vwe@org--emphasis-alist))))
+
+  (setq emph (cdr (assoc emph vwe@org--emphasis-alist)))
+
+  (if (region-active-p)
+	  (save-excursion
+		(let* ((begin (region-beginning))
+			   (end (region-end)))
+		  (goto-char begin)
+		  (if (or (equal (line-beginning-position) begin) (equal 32 (char-before)))
+			  (insert emph)
+			(insert (concat " " emph))
+			(setq end (1+ end)))
+		  (goto-char (1+ end))
+		  (if (or (equal (line-end-position) end) (equal 32 (char-after)))
+			  (insert emph)
+			(insert (concat emph " ")))))
+
+	(save-excursion
+	  (goto-char (line-beginning-position))
+	  (insert emph)
+	  (goto-char (line-end-position))
+	  (insert emph))))
 
 (defun vwe@org--insert-sub-level-element()
   "Insert sub level element."
@@ -91,6 +131,34 @@
   (setq org-format-latex-options (plist-put org-format-latex-options
 											:scale scale)))
 
+(defun vwe@org--create-inline-image-advice (img)
+  "Create inline IMG advice."
+  (let* ((color (if (equal (frame-parameter nil 'background-mode) 'dark)
+					(format "%s" "#5f5f5f")
+				  (format "%s" "#c5c5c5c"))))
+	(nconc img (list :background color))))
+
+(defun vwe@org--insert-link-and-clipboard-image (width)
+  "Org insert clipboard image and insert link.
+WIDTH insert to org image width."
+  (interactive (list
+                (read-string (format "image width: ") nil nil "800")))
+
+  (let* ((dir (concat (file-name-base (buffer-file-name)) ".assets/"))
+		 (name (concat "img_" (format-time-string "%Y%m%d_%H%M%S") ".png"))
+		 (path (concat (file-name-base (buffer-name)) ".assets/" name)))
+	(unless (file-exists-p dir)
+      (mkdir dir))
+
+	(cond ((string-equal system-type "gnu/linux")
+		   (progn
+			 (shell-command (concat "xclip -selection clipboard -t image/png -o > " path))
+			 (insert (concat "#+ATTR_NAME: " name
+							 "\n#+ATTR_HTML: :width " width
+							 "\n[[file:" path "]]\n")))))
+
+	(org-redisplay-inline-images)))
+
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
@@ -102,6 +170,9 @@
   :init ((add-hook 'org-mode-hook #'toggle-truncate-lines))
   :config (;; (vwe@lib--keymap-set org-mode-map '(("C-<return>" nil)
 		   ;; 									   ("C-<return>" org-meta-return)))
+
+		   (advice-add 'org--create-inline-image
+					   :filter-return #'vwe@org--create-inline-image-advice)
 
 		   ;; 代码运行环境
 		   (vwe@lib--pkg ob-go)

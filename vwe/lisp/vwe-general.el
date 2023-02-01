@@ -115,6 +115,10 @@
   :init ((add-hook 'after-init-hook #'global-so-long-mode))
   :buildin t)
 
+(vwe@lib--pkg delsel
+  :init ((add-hook 'after-init-hook #'delete-selection-mode))
+  :buildin t)
+
 ;;; depand pkgs
 ;;
 ;; `vwe-modeline'
@@ -454,7 +458,7 @@
 ;; `iedit' 批量编辑
 ;;
 (vwe@lib--pkg iedit
-  :init ((vwe@lib--keymap-set isearch-mode-map
+ :init ((vwe@lib--keymap-set isearch-mode-map
 							  '(("C-;" iedit-mode-from-isearch)))))
 
 ;;
