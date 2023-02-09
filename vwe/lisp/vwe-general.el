@@ -458,7 +458,7 @@
 ;; `iedit' 批量编辑
 ;;
 (vwe@lib--pkg iedit
- :init ((vwe@lib--keymap-set isearch-mode-map
+  :init ((vwe@lib--keymap-set isearch-mode-map
 							  '(("C-;" iedit-mode-from-isearch)))))
 
 ;;
@@ -593,6 +593,10 @@
 ;; `exec-path-from-shell'
 ;;
 (vwe@lib--pkg exec-path-from-shell
+  :config ((when (daemonp)
+			 (exec-path-from-shell-initialize))
+		   (when (memq window-system '(mac ns x))
+			 (exec-path-from-shell-initialize)))
   :variable ((setq exec-path-from-shell-check-startup-files nil
 				   exec-path-from-shell-variables '("PATH")
 				   exec-path-from-shell-arguments nil)))
