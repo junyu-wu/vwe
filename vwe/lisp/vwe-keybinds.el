@@ -323,11 +323,21 @@
 					("r" vwe-tags--remove-tags "remove tags")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
+  (vwe-key-define mark-multi-edit
+				  (("mark multi edit" :face (:background "red" :foreground "white" :weight bold))
+				   (("m" vwe-mark-mode "mark mode")
+					("c" vwe-mark-multi-edit--chars "mark edit chars")
+					("w" vwe-mark-multi-edit--words "mark edit words")
+					("s" vwe-mark-multi-edit--symbols "mark edit symbols")
+					("l" vwe-mark-multi-edit--lines "mark edit lines")
+					("e" vwe-mark-multi-edit--rect-mark "mark edit rect mark")
+					("r" vwe-mark-multi-edit--replace "mark edit replace")
+					("R" vwe-mark-multi-edit--rect-replace "mark edit rect replace"))))
   (vwe-key-define edit
 				  (("edit" :face (:background "red" :foreground "white" :weight bold))
 				   (("r" cua-rectangle-mark-mode "cua rectangle mark")
 					("R" rectangle-mark-mode "rectangle mark")
-					("e" iedit-mode "iedit mode")
+					("d" iedit-mode "iedit mode")
 					("E" iedit-rectangle-mode "iedit rectangle mode")
 					("x" er/expand-region "expand region")
 					("i" imenu-list-smart-toggle "imenu list")
@@ -336,7 +346,8 @@
 					("b" wve-edit-bound--temp-show "edit bound")
 					("B" vwe-edit-bound--remove-overlays "remove edit bound")
 					("a" embark-act "embark act")
-					("m" eacl-complete-multiline "eacl complete multiline")
+					("e" eacl-complete-multiline "eacl complete multiline")
+					("m" vwe-key:mark-multi-edit "mark multi edit" :face (:foreground "yellow" :underline t :weight bold))
 					("s" hs-show-block "show block")
 					("h" hs-hide-block "show block")
 					("S" hs-show-all "show block")
@@ -445,11 +456,11 @@
 
   (vwe-key-define org
 				  ("org"
-				   (("l" org-insert-link "+link")
-					("L" org-store-link "store link")
+				   (("l" org-store-link "store link")
+					("L" org-insert-link "+link")
 
 					("C-c" org-ctrl-c-ctrl-c "C-c")
-					("w" org-open-at-point "open browser")
+					("w" org-open-at-point "open point or browser")
 	  				("a" outline-show-all "show all")
 					("c" org-show-subtree "show subtree")
 					("t" org-cycle "cycle")

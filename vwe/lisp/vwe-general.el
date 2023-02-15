@@ -63,6 +63,7 @@
   :init ((add-hook 'auto-save-hook #'vwe@lib--buffer-save-all)
 		 (add-hook 'find-file-hook (lambda()
 									 (when (equal major-mode 'org-mode)
+									   (goto-char (point-min))
 									   (org-shifttab nil)))))
   :variable ((setq auto-save-default vwe@custom--buffer-auto-save?
 				   auto-save-visited-interval 5
