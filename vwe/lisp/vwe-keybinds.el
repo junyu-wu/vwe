@@ -43,6 +43,8 @@
 	("M-s"                                consult-locate)
 	("C-x C-b"                            ibuffer)
 	("C-x C-f"                            find-file)
+	("C-x C-n"                            make-frame)
+	("C-x <down>"                            make-frame)
 	("C-;"                                iedit-mode)
 	("C-M-;"                              iedit-rectangle-mode)
 	("C-="                                er/expand-region)
@@ -54,6 +56,7 @@
 	("M-@"                                vwe@lib--minibuffer-switch)
 	("M-C-k"                              vwe@lib--buffer-kill-current)
 	("M-C-y"                              vwe@lib--window-kill-current)
+	("M-C-g"                              delete-frame)
 	("M-C-o"                              vwe@lib--window-maximize)
 	("M-C-r"                              browse-kill-ring)
 	("M-C-z"                              eval-defun)
@@ -323,16 +326,15 @@
 					("r" vwe-tags--remove-tags "remove tags")
 					("RET" vwe-key:global "global" :footer t :face (:background "DarkOrange" :foreground "white" :weight bold)))))
 
-  (vwe-key-define mark-multi-edit
+  (vwe-key-define mark-edit
 				  (("mark multi edit" :face (:background "red" :foreground "white" :weight bold))
 				   (("m" vwe-mark-mode "mark mode")
 					("c" vwe-mark-multi-edit--chars "mark edit chars")
 					("w" vwe-mark-multi-edit--words "mark edit words")
 					("s" vwe-mark-multi-edit--symbols "mark edit symbols")
 					("l" vwe-mark-multi-edit--lines "mark edit lines")
-					("e" vwe-mark-multi-edit--rect-mark "mark edit rect mark")
 					("r" vwe-mark-multi-edit--replace "mark edit replace")
-					("R" vwe-mark-multi-edit--rect-replace "mark edit rect replace"))))
+					("t" vwe-mark-rect--mark "mark edit rect"))))
   (vwe-key-define edit
 				  (("edit" :face (:background "red" :foreground "white" :weight bold))
 				   (("r" cua-rectangle-mark-mode "cua rectangle mark")

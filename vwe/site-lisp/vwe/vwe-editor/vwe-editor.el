@@ -65,7 +65,6 @@
   (if deactivate
 	  (progn
 		(setq buffer-read-only t)
-		;; (local-unset-key (kbd "SPC SPC"))
 		(local-unset-key (kbd "ESC SPC")))
 	(progn
 	  (unless (or (vwe-editor--tmp-buffer-p (current-buffer))

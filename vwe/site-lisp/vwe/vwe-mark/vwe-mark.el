@@ -42,10 +42,6 @@
   '()
   "Multi edit overlay list.")
 
-(defvar-local vwe-mark-multi-edit--rect-bound-overlay-list
-  '()
-  "Multi edit rect overlay list.")
-
 (defvar-local vwe-mark-multi-edit--current-point
   nil
   "Rect start point.")
@@ -152,7 +148,6 @@
   "Start kmacro."
   (when (region-active-p)
 	(deactivate-mark))
-  (remove-hook 'post-command-hook #'vwe-mark-multi-edit--rect-monitor-post-command t)
   (vwe-mark-multi-edit--make-overlay)
   (advice-add 'keyboard-quit :before #'vwe-mark-multi-edit--exit)
   (kmacro-start-macro 0))
@@ -166,12 +161,8 @@
   (when vwe-mark-multi-edit--overlay-list
 	(mapc #'delete-overlay vwe-mark-multi-edit--overlay-list))
 
-  (when vwe-mark-multi-edit--rect-bound-overlay-list
-	(mapc #'delete-overlay vwe-mark-multi-edit--rect-bound-overlay-list))
-
   (setq vwe-mark-multi-edit--list nil
-		vwe-mark-multi-edit--overlay-list '()
-		vwe-mark-multi-edit--rect-bound-overlay-list '()))
+		vwe-mark-multi-edit--overlay-list '()))
 
 (defun vwe-mark-multi-edit--apply-all ()
   "Apply all kmacro."
@@ -183,85 +174,50 @@
 		  (call-last-kbd-macro))))))
 
 ;;;###autoload
-(defun vwe-mark-multi-edit--rect-mark ()
-  "Rect mark."
-  (interactive)
-  (setq vwe-mark-multi-edit--rect-start-point (point))
-  (setq vwe-mark-multi-edit--rect-bound-overlay-list '())
-  (add-hook 'post-command-hook #'vwe-mark-multi-edit--rect-monitor-post-command nil t))
-
-(defun vwe-mark-multi-edit--rect-monitor-post-command ()
-  "Rect monitor post command."
-  (if (eq this-command 'keyboard-quit)
-	  (progn
-		(mapc #'delete-overlay vwe-mark-multi-edit--rect-bound-overlay-list)
-		(remove-hook 'post-command-hook #'vwe-mark-multi-edit--rect-monitor-post-command t))
-	(when vwe-mark-multi-edit--rect-start-point
-	  (mapc #'delete-overlay vwe-mark-multi-edit--rect-bound-overlay-list)
-	  (let* ((start-point (save-excursion
-							(goto-char vwe-mark-multi-edit--rect-start-point)
-							(cons (line-number-at-pos) (current-column))))
-			 (start-line (car start-point))
-			 (start-column (cdr start-point))
-			 (current-line (line-number-at-pos))
-			 (current-column (current-column))
-			 (rect-start-line (min start-line current-line))
-             (rect-end-line (max start-line current-line))
-             (rect-start-column (min start-column current-column))
-             (rect-end-column (max start-column current-column)))
-		(dotimes (line (1+ (- rect-end-line rect-start-line)))
-          (let ((overlay (make-overlay (save-excursion
-                                         (goto-line (+ rect-start-line line))
-                                         (move-to-column rect-start-column)
-                                         (point))
-                                       (save-excursion
-                                         (goto-line (+ rect-start-line line))
-                                         (move-to-column rect-end-column)
-                                         (point)))))
-            (overlay-put overlay 'face 'vwe-mark-multi-edit--rect-face)
-            (add-to-list 'vwe-mark-multi-edit--rect-bound-overlay-list overlay t)))))))
-
-(defun vwe-mark-multi-edit--rect-symbols ()
-  "Multi edit rect symbols."
-  (interactive)
-  (when vwe-mark-multi-edit--rect-bound-overlay-list
-	(dolist (bound-overlay vwe-mark-multi-edit--rect-bound-overlay-list)
-	  (when (and (overlay-start bound-overlay) (overlay-end bound-overlay))
-		(save-excursion
-		  (goto-char (overlay-start bound-overlay))
-		  (when (bounds-of-thing-at-point 'symbol)
-			(add-to-list 'vwe-mark-multi-edit--list (bounds-of-thing-at-point 'symbol))))))
-	(goto-char (cdr (car vwe-mark-multi-edit--list)))
-	(vwe-mark-multi-edit--kmacro-start)))
-
-(defun vwe-mark-multi-edit--rect-edit ()
-  "Multi edit rect insert STR."
-  (interactive)
-  (when vwe-mark-multi-edit--rect-bound-overlay-list
-	(dolist (bound-overlay vwe-mark-multi-edit--rect-bound-overlay-list)
-	  (when (and (overlay-start bound-overlay) (overlay-end bound-overlay))
-		(save-excursion
-		  (goto-char (overlay-start bound-overlay))
-		  (add-to-list 'vwe-mark-multi-edit--list (cons (point) (point)))
-		  )))
-	(goto-char (cdr (car vwe-mark-multi-edit--list)))
-	(vwe-mark-multi-edit--kmacro-start)))
-
-;;;###autoload
-(defun vwe-mark-multi-edit--replace ()
-  "Replace symbol or region range."
-  (interactive)
-  (let* ((str (if (region-active-p)
+(defun vwe-mark-multi-edit--replace (&optional type)
+  "Replace TYPE(symbol, word, defun...) or region range."
+  (interactive
+   (list
+	(completing-read "type:" (mapcar (lambda(item)
+									   (car item))
+									 '(("word" . 'word)
+									   ("symbol" . 'symbol)
+									   ("list" . 'list)
+									   ("sexp" . 'sexp)
+									   ("defun" . 'defun)
+									   ("filename" . 'filename)
+									   ("url" . 'url)
+									   ("email" . 'email)
+									   ("uuid" . 'uuid)
+									   ("sentence" . 'sentence)
+									   ("whitespace" . 'whitespace)
+									   ("line" . 'line)
+									   ("page" . 'page))))))
+  (let* ((type (intern (cdr (assoc type '(("word" . "word")
+										  ("symbol" . "symbol")
+										  ("list" . "list")
+										  ("sexp" . "sexp")
+										  ("defun" . "defun")
+										  ("filename" . "filename")
+										  ("url" . "url")
+										  ("email" . "email")
+										  ("uuid" . "uuid")
+										  ("sentence" . "sentence")
+										  ("whitespace" . "whitespace")
+										  ("line" . "line")
+										  ("page" . "page"))))))
+		 (str (if (region-active-p)
 				  (buffer-substring (region-beginning) (region-end))
-				(thing-at-point 'symbol)))
+				(thing-at-point type)))
 		 (point (point))
 		 (len (length str))
 		 (start (point-min))
 		 (end (point-max))
 		 (current-overlay (if (region-active-p)
 							  (make-overlay (region-beginning) (region-end))
-							(make-overlay (car (bounds-of-thing-at-point 'symbol))
-										  (cdr (bounds-of-thing-at-point 'symbol))))))
+							(make-overlay (car (bounds-of-thing-at-point type))
+										  (cdr (bounds-of-thing-at-point type)))))
+		 (total 1))
 	(save-excursion
 	  (goto-char end)
 	  (catch 'break
@@ -271,41 +227,150 @@
 			(cond
 			 ((= point search-start) (setq point (+ search-start len)))
 			 ((= point search-end) (setq point search-end))
-			 (t (add-to-list 'vwe-mark-multi-edit--list (cons search-start search-end)))))
+			 (t (progn
+				  (add-to-list 'vwe-mark-multi-edit--list (cons search-start search-end))
+				  (setq total (1+ total))))))
 		  (when (<= (point) start)
 			(throw 'break nil)))))
 	(goto-char point)
 	(vwe-mark-multi-edit--kmacro-start)
 	(overlay-put current-overlay 'face 'vwe-mark-multi-edit--rect-face)
-	(add-to-list 'vwe-mark-multi-edit--overlay-list current-overlay)))
+	(add-to-list 'vwe-mark-multi-edit--overlay-list current-overlay)
+	(message "%S find total: %S" str total)))
+
+;;
+;; rect edit
+;;
+(defvar-local vwe-mark-rect--active-p
+  nil
+  "Rectangle is active.")
+
+(defvar-local vwe-mark-multi-edit--rect-bound-overlay-list
+  '()
+  "Multi edit rect overlay list.")
+
+(defvar-local vwe-mark-rect--rectangle-vector
+  '(:point-begin nil :point-end nil :line-begin nil :line-end nil :column-begin nil :column-end nil)
+  "Rectangle vector.")
+
+(defun vwe-mark-rect--mark-finish ()
+  "Finish mark and overlay mark rect."
+  (interactive)
+  (local-unset-key (kbd "C-m"))
+  (local-set-key (kbd "C-m") #'vwe-mark-rect--edit-exit)
+  (local-set-key (kbd "C-g") #'vwe-mark-rect--quit)
+  (plist-put vwe-mark-rect--rectangle-vector :point-end (point))
+  (remove-hook 'post-command-hook #'vwe-mark-rect--post-command t)
+  (goto-line (plist-get vwe-mark-rect--rectangle-vector :line-begin))
+  (move-to-column (plist-get vwe-mark-rect--rectangle-vector :column-begin))
+  (vwe-mark-rect--edit))
+
+(defun vwe-mark-rect--quit ()
+  "Remove rect overlay."
+  (interactive)
+  (remove-hook 'post-command-hook #'vwe-mark-rect--post-command t)
+  (advice-remove 'keyboard-quit #'vwe-mark-rect--edit-exit)
+  (mapc #'delete-overlay vwe-mark-multi-edit--rect-bound-overlay-list)
+  (local-unset-key (kbd "C-m"))
+  (local-unset-key (kbd "C-g"))
+  (setq vwe-mark-rect--rectangle-vector '(:point-begin nil :point-end nil :line-begin nil :line-end nil :column-begin nil :column-end nil)
+		vwe-mark-multi-edit--rect-bound-overlay-list nil))
+
+(defun vwe-mark-rect--flash-overlay ()
+  "Flash overlay."
+  (mapcar
+   (lambda (elem)
+	 (overlay-put elem 'face 'vwe-mark-multi-edit--rect-face))
+   vwe-mark-multi-edit--rect-bound-overlay-list))
 
 ;;;###autoload
-(defun vwe-mark-multi-edit--rect-replace (replace)
-  "REPLACE symbol or region range."
-  (interactive "sreplace:")
+(defun vwe-mark-rect--mark ()
+  "Mark rect."
+  (interactive)
+  (setq vwe-mark-multi-edit--rect-bound-overlay-list '())
+
+  (plist-put vwe-mark-rect--rectangle-vector :point-begin (point))
+  (plist-put vwe-mark-rect--rectangle-vector :line-begin (line-number-at-pos))
+  (plist-put vwe-mark-rect--rectangle-vector :line-end (line-number-at-pos))
+  (plist-put vwe-mark-rect--rectangle-vector :column-begin (current-column))
+  (plist-put vwe-mark-rect--rectangle-vector :column-end (current-column))
+
+  (local-set-key (kbd "C-m") #'vwe-mark-rect--mark-finish)
+  (add-hook 'post-command-hook #'vwe-mark-rect--post-command nil t))
+
+(defun vwe-mark-rect--post-command ()
+  "Mark rectangles post command."
+  (mapc #'delete-overlay vwe-mark-multi-edit--rect-bound-overlay-list)
+  (if (equal this-command 'keyboard-quit)
+	  (vwe-mark-rect--quit)
+	(let* ((beginl (plist-get vwe-mark-rect--rectangle-vector :line-begin))
+		   (endl (progn
+				   (plist-put vwe-mark-rect--rectangle-vector :line-end (line-number-at-pos))
+				   (plist-get vwe-mark-rect--rectangle-vector :line-end)))
+		   (privc (plist-get vwe-mark-rect--rectangle-vector :column-end))
+		   (beginc (progn
+					 (plist-put vwe-mark-rect--rectangle-vector :column-end (current-column))
+					 (plist-get vwe-mark-rect--rectangle-vector :column-begin)))
+		   (endc (plist-get vwe-mark-rect--rectangle-vector :column-end))
+		   (totall (1+ (abs (- endl beginl))))
+		   (line (min beginl endl))
+		   (startc (min beginc endc))
+		   (stopc (max beginc endc))
+		   (totalc (save-excursion
+					 (goto-char (point-at-eol))
+					 (current-column))))
+	  (when (< totalc privc)
+		(move-to-column privc t))
+	  (dotimes (il totall)
+		(save-excursion
+		  (goto-line (+ line il))
+
+		  (let ((totalc+ (progn
+						   (goto-char (point-at-eol))
+						   (current-column)))
+				(overlay (make-overlay (progn (move-to-column startc t) (point))
+									   (progn (move-to-column stopc t) (point)))))
+			(when (>= (current-column) totalc+) (move-to-column (1+ totalc+) t))
+			(add-to-list 'vwe-mark-multi-edit--rect-bound-overlay-list overlay t)))))
+	(vwe-mark-rect--flash-overlay)))
+
+(defun vwe-mark-rect--inside-rect-p ()
+  "Point is inside rect."
+  (let* ((beginc (plist-get vwe-mark-rect--rectangle-vector :column-begin))
+		 (endc (plist-get vwe-mark-rect--rectangle-vector :column-end))
+		 (beginb (min beginc endc))
+		 (endb (max beginc endc)))
+	(when (or (>= (current-column) beginb) (<= (current-column) endb)) t)))
+
+(defun vwe-mark-rect--edit ()
+  "Rect Edit."
+  (interactive)
+  (when (and vwe-mark-multi-edit--rect-bound-overlay-list (vwe-mark-rect--inside-rect-p))
+	(advice-add 'keyboard-quit :before #'vwe-mark-rect--edit-exit)
+	(kmacro-start-macro 0)))
+
+(defun vwe-mark-rect--edit-apply-all ()
+  "Apply all kmacro."
   (when vwe-mark-multi-edit--rect-bound-overlay-list
-	(let* ((str replace)
-		   (point (point)))
-	  (dolist (bound vwe-mark-multi-edit--rect-bound-overlay-list)
-		(when (and (overlay-start bound) (overlay-end bound))
-		  (let* ((len (length str))
-				 (start (overlay-start bound))
-				 (end (overlay-end bound)))
-			(save-excursion
-			  (goto-char end)
-			  (catch 'break
-				(while (search-backward str nil t)
-				  (let* ((search-start (point))
-						 (search-end (+ search-start len)))
-					(cond
-					 ((= point search-start) (setq point (+ search-start len)))
-					 ((= point search-end) (setq point search-end))
-					 (t (add-to-list 'vwe-mark-multi-edit--list (cons search-start search-end)))))
-				  (when (<= (point) start)
-					(throw 'break nil))))
-			  ))))
-	  (goto-char (cdar vwe-mark-multi-edit--list))
-	  (vwe-mark-multi-edit--kmacro-start))))
+	(let* ((beginl (plist-get vwe-mark-rect--rectangle-vector :line-begin))
+		   (endl (plist-get vwe-mark-rect--rectangle-vector :line-end))
+		   (beginc (plist-get vwe-mark-rect--rectangle-vector :column-begin))
+		   (endc (plist-get vwe-mark-rect--rectangle-vector :column-end))
+		   (line (min beginl endl))
+		   (totall (1+ (abs (- endl beginl)))))
+	  (dotimes (il totall)
+		(save-excursion
+		  (goto-line (+ line il))
+		  (move-to-column beginc)
+		  (unless (= beginl (line-number-at-pos))
+			(call-last-kbd-macro)))))))
+
+(defun vwe-mark-rect--edit-exit ()
+  "Keyboard-quit advice."
+  (interactive)
+  (end-kbd-macro)
+  (vwe-mark-rect--edit-apply-all)
+  (vwe-mark-rect--quit))
 
 ;;
 ;; mode
