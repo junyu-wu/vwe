@@ -618,6 +618,20 @@ IGNORES is a ignore file of directory list."
 ;; ************************************************************************
 ;; func call
 ;; ************************************************************************
+(defun vwe@lib--kill-ring-save ()
+  "Copy."
+  (interactive)
+  (if (region-active-p)
+	  (kill-ring-save (region-beginning) (region-end) t)
+	(kill-ring-save (point-at-bol) (point-at-eol) nil)))
+
+(defun vwe@lib--kill-region ()
+  "Cut."
+  (interactive)
+  (if (region-active-p)
+	  (kill-region (region-beginning) (region-end) t)
+	(kill-region (point-at-bol) (point-at-eol) nil)))
+
 (defun vwe@lib--copy-to-clipboard ()
   "Copy to clipboard."
   (interactive)
@@ -704,30 +718,32 @@ ARGS is configure.
 		  (eval (macroexp-progn (plist-get args :init)))
 		  (eval (macroexp-progn (plist-get args :config)))
 		  (eval (macroexp-progn (append (plist-get args :variable) '(nil)))))
-	  (if pkg ;; 加载安装包并进行配置
-		  (progn
-			(unless buildin ;; 不安装,按照系统自带包处理
-			  (if path ;; 安装包
-				  (macroexp-progn ;; 从本地路径中加载安装
-				   (when (file-directory-p (format "%s" (eval path)))
-					 (push (eval path) load-path)))
-				(eval ;; 从源中下载安装
-				 `(unless (package-installed-p ',pkg)
-					(package-install ',pkg)))))
+	  (condition-case nil
+		  (when pkg ;; 加载安装包并进行配置
+			(progn
+			  (unless buildin ;; 不安装,按照系统自带包处理
+				(if path ;; 安装包
+					(macroexp-progn ;; 从本地路径中加载安装
+					 (when (file-directory-p (format "%s" (eval path)))
+					   (push (eval path) load-path)))
+				  (eval ;; 从源中下载安装
+				   `(unless (package-installed-p ',pkg)
+					  (package-install ',pkg)))))
 
-			(eval ;; 包加载前初始化
-			 (macroexp-progn (plist-get args :init)))
+			  (eval ;; 包加载前初始化
+			   (macroexp-progn (plist-get args :init)))
 
-			(eval ;; 包需要的预加载或预定义
-			 (macroexp-progn (append (plist-get args :preload) '(nil))))
+			  (eval ;; 包需要的预加载或预定义
+			   (macroexp-progn (append (plist-get args :preload) '(nil))))
 
-			(when undefer ;; 延迟加载
-			  (eval `(require ',pkg)))
+			  (when undefer ;; 延迟加载
+				(eval `(require ',pkg)))
 
-			(with-eval-after-load (format "%s" pkg) ;; 包加载后配置
-			  (eval (macroexp-progn (plist-get args :config)))
-			  (eval (macroexp-progn (append (plist-get args :variable) '(nil))))))
-		`(message "pkg %S not found or package inner error" ,pkg)))))
+			  (with-eval-after-load (format "%s" pkg) ;; 包加载后配置
+				(eval (macroexp-progn (plist-get args :config)))
+				(eval (macroexp-progn (append (plist-get args :variable) '(nil)))))))
+		(error
+		 `(message "pkg %S not found or package inner error" ,pkg))))))
 
 (defmacro vwe@lib--load-theme (theme-path)
   "Load THEME-PATH."

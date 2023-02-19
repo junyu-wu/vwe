@@ -132,13 +132,16 @@
 					  ("gnu-cn"   . "http://elpa.emacs-china.org/gnu/")))
 	("ustc"        . (("gnu" . "http://mirrors.ustc.edu.cn/elpa/gnu/")
                       ("melpa" . "http://mirrors.ustc.edu.cn/elpa/melpa/")
-                      ("nongnu" . "http://mirrors.ustc.edu.cn/elpa/nongnu/"))))
+                      ("nongnu" . "http://mirrors.ustc.edu.cn/elpa/nongnu/")))
+	("tsinghua"    . (("gnu"    . "http://mirrors.tuna.tsinghua.edu.cn/elpa/gnu/")
+                      ("nongnu" . "http://mirrors.tuna.tsinghua.edu.cn/elpa/nongnu/")
+                      ("melpa"  . "http://mirrors.tuna.tsinghua.edu.cn/elpa/melpa/"))))
   "Source Options."
   :group 'vwe-base
   :type 'list)
 
 (defcustom vwe@custom--source
-  "ustc"
+  "melpa"
   "Source name."
   :group 'vwe-base
   :type 'string)
