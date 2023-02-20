@@ -542,6 +542,7 @@
 	(goto-char (car pos))
 	(insert str)))
 
+;;;###autoload
 (defun vwe-edit-toggle-case--underline ()
   "Underline."
   (interactive)
@@ -555,6 +556,7 @@
 	(goto-char (car pos))
 	(insert str)))
 
+;;;###autoload
 (defun vwe-edit-toggle-case--camel-case ()
   "Camel case."
   (interactive)
@@ -568,6 +570,7 @@
 	(goto-char (car pos))
 	(insert str)))
 
+;;;###autoload
 (defun vwe-edit-toggle-case--hyphen ()
   "Hyphen."
   (interactive)

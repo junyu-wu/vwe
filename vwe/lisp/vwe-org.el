@@ -159,6 +159,17 @@ WIDTH insert to org image width."
 
 	(org-redisplay-inline-images)))
 
+(defun vwe@org--get-tags ()
+  "Get current buffer all tags."
+  (let* ((tags '()))
+	(org-map-entries
+     (lambda ()
+       (let ((tag-str (car (last (org-heading-components)))))
+		 (when tag-str
+		   (setq tags
+				 (append tags (split-string tag-str ":" t)))))))
+	(-uniq tags)))
+
 ;; ***************************************************************************
 ;; config
 ;; ***************************************************************************
@@ -203,8 +214,7 @@ WIDTH insert to org image width."
 		   ;; `toc-org' 刷新目录
 		   ;;
 		   (vwe@lib--pkg toc-org
-			 :init ((add-hook 'org-mode-hook #'toc-org-mode))
-			 :config ((add-to-list 'org-tag-alist '("TOC" . T))))
+			 :init ((add-hook 'org-mode-hook #'toc-org-mode)))
 
 		   ;;
 		   ;; `org-preview-html' html方式查看org,通过eww
