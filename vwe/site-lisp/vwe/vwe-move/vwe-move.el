@@ -511,10 +511,12 @@ TMP is tmp buffer."
 			  vwe-move--switch-buffer-buffer-store-list nil)
 		(dotimes (i (length bufname-list))
 		  (if tmp?
-			  (setq vwe-move--switch-buffer-temp-buffer-store-list (append vwe-move--switch-buffer-temp-buffer-store-list
-																		   (list (cons (format "%d" (1+ i)) (nth i bufname-list)))))
-			(setq vwe-move--switch-buffer-buffer-store-list (append vwe-move--switch-buffer-buffer-store-list
-																	(list (cons (format "%d" (1+ i)) (nth i bufname-list))))))
+			  (setq vwe-move--switch-buffer-temp-buffer-store-list
+					(append vwe-move--switch-buffer-temp-buffer-store-list
+							(list (cons (format "%d" (1+ i)) (nth i bufname-list)))))
+			(setq vwe-move--switch-buffer-buffer-store-list
+				  (append vwe-move--switch-buffer-buffer-store-list
+						  (list (cons (format "%d" (1+ i)) (nth i bufname-list))))))
 		  (insert-button (concat (propertize (if (< i 9)
 												 (format "%d:" (1+ i))
 											   (format ".:"))
@@ -557,7 +559,8 @@ TMP is tmp buffer."
 	(let* ((id (number-to-string (line-number-at-pos))))
 	  (when (and (vwe-move--switch-get-buffer-name-by-id id)
 				 (get-buffer (vwe-move--switch-get-buffer-name-by-id id)))
-		(unless (equal vwe-move--switch-buffer-current-buffer (get-buffer (vwe-move--switch-get-buffer-name-by-id id)))
+		(unless (equal vwe-move--switch-buffer-current-buffer
+					   (get-buffer (vwe-move--switch-get-buffer-name-by-id id)))
 		  (kill-buffer (vwe-move--switch-get-buffer-name-by-id id)))
 		(vwe-move--display-switch-side-buffer)))))
 

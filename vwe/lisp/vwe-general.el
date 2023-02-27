@@ -774,7 +774,8 @@
 		 (autoload 'vwe-layout--window-height-shrink (vwe@lib--path-vwe-site-lisp "vwe/vwe-layout/vwe-layout.el" t) "Vwe global layout mode." t t)
 		 (autoload 'vwe-layout--window-width-enlarge (vwe@lib--path-vwe-site-lisp "vwe/vwe-layout/vwe-layout.el" t) "Vwe global layout mode." t t)
 		 (autoload 'vwe-layout--window-width-shrink (vwe@lib--path-vwe-site-lisp "vwe/vwe-layout/vwe-layout.el" t) "Vwe global layout mode." t t)
-		 (autoload 'vwe-layout-zoom-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-layout/vwe-layout.el" t) "Vwe global layout mode." t t))
+		 (autoload 'vwe-layout-config-mode (vwe@lib--path-vwe-site-lisp "vwe/vwe-layout/vwe-layout.el" t) "Vwe global layout mode." t t)
+		 (add-hook 'after-init-hook #'vwe-layout-config-mode))
   :path (vwe@lib--path-vwe-site-lisp "vwe/vwe-layout"))
 
 ;;

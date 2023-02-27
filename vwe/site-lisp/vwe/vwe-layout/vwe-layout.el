@@ -232,12 +232,10 @@ HORIZONTAL horizontal or vertical."
 ;; mode
 ;;
 (defun vwe-layout--enable ()
-  "Enable mode."
-  (vwe-layout-zoom-mode t))
+  "Enable mode.")
 
 (defun vwe-layout--disable ()
-  "Disable mode."
-  (vwe-layout-zoom-mode -1))
+  "Disable mode.")
 
 ;;;###autoload
 (define-minor-mode vwe-layout-mode
@@ -246,6 +244,88 @@ HORIZONTAL horizontal or vertical."
   (if vwe-layout-mode
 	  (vwe-layout--enable)
     (vwe-layout--disable)))
+
+;;
+;; windows config layout
+;;
+(defvar vwe-layout-config--list
+  '()
+  "Windows layout list.")
+
+(defvar vwe-layout-config--last-config
+  nil
+  "Last layout config.")
+
+(defun vwe-layout-config--store-last-config (func &rest args)
+  "Store last config and apply FUNC(ARGS).
+Notice: Shortcut keys only."
+  (let* ((config (current-window-configuration))
+		 (buf (buffer-name)))
+	(apply func args)
+	(when (and cursor-type
+			   cursor-in-non-selected-windows
+			   (not (equal buf (buffer-name))))
+	  (setq vwe-layout-config--last-config config))))
+
+(defun vwe-layout-config--toggle-last-config ()
+  "Toggle last CONFIG."
+  (interactive)
+  (set-window-configuration vwe-layout-config--last-config))
+
+;;;###autoload
+(defun vwe-layout-config--store (name)
+  "Store NAME layout config."
+  (interactive (let* ((name (read-string "store layout: ")))
+				 (list name)))
+  (unless name
+	(setq name (format "%s-%s"
+					   (buffer-name)
+					   (car (time-convert nil t)))))
+  (setq vwe-layout-config--list (append
+								 (list (cons name (current-window-configuration)))
+								 vwe-layout-config--list)))
+
+(defun vwe-layout-config--toggle-config (name)
+  "Toggle NAME layout config."
+  (interactive
+   (list
+	(completing-read "toggle layout: "
+					 (mapcar (lambda(item)
+							   (car item))
+							 vwe-layout-config--list))))
+  (when (or vwe-layout-config--list vwe-layout-config--last-config)
+	(if (and name vwe-layout-config--list)
+		(progn
+		  (setq name (cdr (assoc name vwe-layout-config--list)))
+		  (set-window-configuration name))
+	  (set-window-configuration vwe-layout-config--list))))
+
+;;
+;; windows config layout mode
+;;
+(defun vwe-layout-config--enable ()
+  "Enable mode."
+  (interactive)
+  (advice-add #'vwe-layout-config--toggle-config :around #'vwe-layout-config--store-last-config)
+  (advice-add #'find-file :around #'vwe-layout-config--store-last-config)
+  (advice-add #'switch-to-buffer :around #'vwe-layout-config--store-last-config)
+  (advice-add #'delete-window :around #'vwe-layout-config--store-last-config))
+
+(defun vwe-layout-config--disable ()
+  "Disable mode."
+  (interactive)
+  (advice-remove #'vwe-layout-config--toggle-config #'vwe-layout-config--store-last-config)
+  (advice-remove #'find-file #'vwe-layout-config--store-last-config)
+  (advice-remove #'switch-to-buffer #'vwe-layout-config--store-last-config)
+  (advice-remove #'delete-window #'vwe-layout-config--store-last-config))
+
+;;;###autoload
+(define-minor-mode vwe-layout-config-mode
+  "Vwe layout config mode."
+  :global t
+  (if vwe-layout-config-mode
+	  (vwe-layout-config--enable)
+    (vwe-layout-config--disable)))
 
 (provide 'vwe-layout)
 ;;; vwe-layout.el ends here
