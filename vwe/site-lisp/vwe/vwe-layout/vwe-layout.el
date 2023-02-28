@@ -307,6 +307,7 @@ Notice: Shortcut keys only."
   "Enable mode."
   (interactive)
   (advice-add #'vwe-layout-config--toggle-config :around #'vwe-layout-config--store-last-config)
+  (advice-add #'vwe-layout-config--toggle-last-config :around #'vwe-layout-config--store-last-config)
   (advice-add #'find-file :around #'vwe-layout-config--store-last-config)
   (advice-add #'switch-to-buffer :around #'vwe-layout-config--store-last-config)
   (advice-add #'delete-window :around #'vwe-layout-config--store-last-config))
